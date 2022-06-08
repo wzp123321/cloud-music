@@ -4,8 +4,15 @@
     <div class="container"></div>
   </div>
 </template>
-<script lang="ts" setup>
+<script lang="ts">
+import { defineComponent } from 'vue';
 import Header from '../header/header.vue';
+
+export default defineComponent({
+  components: {
+    Header,
+  },
+});
 </script>
 <style lang="less" scoped>
 .home {

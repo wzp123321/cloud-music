@@ -17,7 +17,7 @@ export default defineConfig({
       },
     ],
     // 支持的后缀
-    extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue'],
+    extensions: ['.js', '.ts', '.tsx', '.jsx', '.vue', '.less'],
   },
   // 开发选项
   server: {
