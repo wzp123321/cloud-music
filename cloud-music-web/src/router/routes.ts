@@ -1,4 +1,4 @@
-import { RouteRecordRaw } from 'vue-router'
+import { RouteRecordRaw } from 'vue-router';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -6,8 +6,8 @@ const routes: RouteRecordRaw[] = [
     meta: {
       name: '首页',
     },
-    component: () => import('../views/home/home.vue'),
+    component: () => import('@/pages/portal/portal.vue'),
   },
-]
+];
 
-export default routes
+export default routes;

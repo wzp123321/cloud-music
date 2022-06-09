@@ -1,7 +1,9 @@
 <template>
   <div class="home">
     <Header></Header>
-    <div class="container"></div>
+    <div class="container">
+      <router-view></router-view>
+    </div>
   </div>
 </template>
 <script lang="ts">

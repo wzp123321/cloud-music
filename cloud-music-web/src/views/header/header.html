@@ -1,0 +1,21 @@
+<div class="header">
+  <div class="header-container flex-row-justify-center">
+    <div class="flex-row-start-center">
+      <img src="../../assets/images/logo.png" />
+      <ul class="header-container--tabs">
+        <li
+          v-for="(item, index) in headerService.menus"
+          :key="'menus-' + index"
+          :class="{ active: headerService.currentTab === item.url }"
+          @click="onLinkTo(item.url)"
+        >
+          {{ item.name }}
+        </li>
+      </ul>
+    </div>
+    <div class="flex-row-start-center">
+      <input />
+      <div class="header-tabs">121</div>
+    </div>
+  </div>
+</div>
