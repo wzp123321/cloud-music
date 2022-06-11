@@ -1,5 +1,10 @@
-export interface KeyValue {
-  code: string;
+export interface CodeNameKV<T> {
+  code: T;
+  name: string;
+}
+
+export interface IdNameKV<T> {
+  id: T;
   name: string;
 }
 
