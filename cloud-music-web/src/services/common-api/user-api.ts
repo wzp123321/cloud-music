@@ -1,0 +1,31 @@
+export interface UserVO {
+  accountStatus: number;
+  anchor: true;
+  authStatus: number;
+  authenticationTypes: number;
+  authority: number;
+  avatarImgId: number;
+  avatarImgIdStr: string;
+  avatarImgId_str: string;
+  avatarUrl: string;
+  backgroundImgId: number;
+  backgroundImgIdStr: string;
+  backgroundUrl: string;
+  birthday: number;
+  city: number;
+  defaultAvatar: false;
+  description: string;
+  detailDescription: string;
+  djStatus: number;
+  expertTags: string[];
+  followed: false;
+  gender: number;
+  mutual: false;
+  nickname: string;
+  province: number;
+  remarkName: null;
+  signature: string;
+  userId: number;
+  userType: number;
+  vipType: number;
+}

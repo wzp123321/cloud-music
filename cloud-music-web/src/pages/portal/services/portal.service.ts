@@ -3,12 +3,12 @@
  * @Author: wanzp
  * @Date: 2022-06-09 22:02:59
  * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2022-06-11 22:13:27
+ * @Last Modified time: 2022-06-12 20:26:32
  */
 import { ref } from 'vue';
 import router from '@/router';
 
-import { BannerVO, BannerRes, PlayListRes } from './portal-api';
+import { BannerVO, BannerRes, PlayListRes, PlayListVO } from './portal-api';
 
 import portalService from './portal-request.service';
 
@@ -22,6 +22,7 @@ class PortService {
   private _bannerList = ref<BannerVO[]>([]);
   public readonly recommendPlayListNavs = recommendPlayListNavs; // 推荐歌单类型
   private _selectedRecommendPlayListType = ref<string>(recommendPlayListNavs[0].code);
+  private _playList = ref<PlayListVO[]>([]);
   //#endregion
   //#region
   public get loading(): boolean {
@@ -35,6 +36,9 @@ class PortService {
   }
   public set selectedRecommendPlayListType(value: string) {
     this._selectedRecommendPlayListType.value = value;
+  }
+  public get playList(): PlayListVO[] {
+    return this._playList.value;
   }
   //#endregion
   //#region
@@ -90,16 +94,22 @@ class PortService {
   }
   //#endregion
   //#region 加载不同类型歌单
-  async getPlayListByType() {
-    const params = {
-      limit: 10,
-      cat: this._selectedRecommendPlayListType.value,
-    };
-    const res: PlayListRes = await portalService.getPlayListByType(params);
-    if (res?.code === 200) {
-      console.log(res);
+  getPlayListByType = async () => {
+    try {
+      const params = {
+        limit: 10,
+        cat: this._selectedRecommendPlayListType.value,
+      };
+      const res: PlayListRes = await portalService.getPlayListByType(params);
+      if (res?.code === 200) {
+        this._playList.value = res?.playlists.slice(0, 8);
+      } else {
+        this._playList.value = [];
+      }
+    } catch (error) {
+      this._playList.value = [];
     }
-  }
+  };
 }
 
 export default new PortService();

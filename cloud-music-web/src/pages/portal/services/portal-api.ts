@@ -1,3 +1,5 @@
+import { UserVO } from '@/services/common-api/user-api';
+
 /**
  * 首页banner
  */
@@ -42,4 +44,40 @@ export interface PlayListRes {
 /**
  * 歌单
  */
-export interface PlayListVO {}
+export interface PlayListVO {
+  adType: number;
+  anonimous: false;
+  cloudTrackCount: number;
+  commentCount: number;
+  commentThreadId: string;
+  copywriter: string;
+  coverImgId: string;
+  coverImgId_str: string;
+  coverImgUrl: string;
+  coverStatus: number;
+  createTime: number;
+  creator: UserVO;
+  description: string;
+  highQuality: true;
+  id: number;
+  name: string;
+  newImported: false;
+  ordered: true;
+  playCount: number;
+  privacy: number;
+  recommendInfo: null;
+  shareCount: number;
+  specialType: number;
+  status: number;
+  subscribed: null;
+  subscribedCount: number;
+  tag: string;
+  tags: string[];
+  totalDuration: number;
+  trackCount: number;
+  trackNumberUpdateTime: number;
+  trackUpdateTime: number;
+  tracks: null;
+  updateTime: number;
+  userId: number;
+}

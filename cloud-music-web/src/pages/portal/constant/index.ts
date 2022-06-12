@@ -1,4 +1,4 @@
-import { CodeNameKV } from '@/services/common-api';
+import { CodeNameKV } from '@/services/common-api/common-api';
 
 // 推荐歌单
 export const recommendPlayListNavs: CodeNameKV<string>[] = [

@@ -1,7 +1,7 @@
 /**
  * echart变量 不同主题变量不同
  */
-import {} from '@/services/common-api';
+import {} from '@/services/common-api/common-api';
 
 export const themeConstant: {
   [key: string]: any;

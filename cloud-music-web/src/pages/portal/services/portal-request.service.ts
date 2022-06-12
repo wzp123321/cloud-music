@@ -1,6 +1,6 @@
 import { LoadPlayListParams, BannerRes, PlayListRes } from './portal-api';
 import { postRequest } from '@/services/request';
-import { ResTemplate } from '@/services/common-api';
+import { ResTemplate } from '@/services/common-api/common-api';
 
 const portalService = {
   /**

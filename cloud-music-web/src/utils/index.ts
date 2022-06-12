@@ -2,7 +2,7 @@ import store from '@/store/index';
 import axios from 'axios';
 import ServiceConfig from '../config/request';
 
-import { ResTemplate } from '@/services/common-api';
+import { ResTemplate } from '@/services/common-api/common-api';
 // 节流防抖 时间戳
 let timeStamp: any;
 // components
