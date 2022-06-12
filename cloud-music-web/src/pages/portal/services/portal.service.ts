@@ -3,12 +3,12 @@
  * @Author: wanzp
  * @Date: 2022-06-09 22:02:59
  * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2022-06-12 20:26:32
+ * @Last Modified time: 2022-06-12 21:33:58
  */
 import { ref } from 'vue';
 import router from '@/router';
 
-import { BannerVO, BannerRes, PlayListRes, PlayListVO } from './portal-api';
+import { BannerVO, BannerRes, PlayListRes, PlayListVO, HotSingerRes, SingerVO } from './portal-api';
 
 import portalService from './portal-request.service';
 
@@ -23,6 +23,7 @@ class PortService {
   public readonly recommendPlayListNavs = recommendPlayListNavs; // 推荐歌单类型
   private _selectedRecommendPlayListType = ref<string>(recommendPlayListNavs[0].code);
   private _playList = ref<PlayListVO[]>([]);
+  private _hotSingerList = ref<SingerVO[]>([]);
   //#endregion
   //#region
   public get loading(): boolean {
@@ -40,16 +41,20 @@ class PortService {
   public get playList(): PlayListVO[] {
     return this._playList.value;
   }
+  public get hotSingerList(): SingerVO[] {
+    return this._hotSingerList.value;
+  }
   //#endregion
   //#region
   init() {
     this._loading.value = true;
-    this.getBannerLsit();
-    this.getPlayListByType();
+    this.queryBannerLsit();
+    this.queryPlayListByType();
+    this.queryHotSinger();
   }
   //#endregion
   //#region
-  async getBannerLsit() {
+  async queryBannerLsit() {
     try {
       const res: BannerRes = await portalService.getBannerList();
       if (res?.code === 200 && res?.banners?.length) {
@@ -94,7 +99,7 @@ class PortService {
   }
   //#endregion
   //#region 加载不同类型歌单
-  getPlayListByType = async () => {
+  queryPlayListByType = async () => {
     try {
       const params = {
         limit: 10,
@@ -110,6 +115,16 @@ class PortService {
       this._playList.value = [];
     }
   };
+  //#endregion
+  //#region 热门歌手
+  async queryHotSinger() {
+    const res: HotSingerRes = await portalService.getHotSingerList({ limit: 10 });
+    if (res?.code === 200) {
+      this._hotSingerList.value = res?.artists.slice(0, 8);
+    } else {
+      this._hotSingerList.value = [];
+    }
+  }
 }
 
 export default new PortService();

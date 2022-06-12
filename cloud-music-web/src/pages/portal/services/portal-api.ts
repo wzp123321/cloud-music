@@ -81,3 +81,33 @@ export interface PlayListVO {
   updateTime: number;
   userId: number;
 }
+
+/**
+ * 热门歌手响应结果
+ */
+export interface HotSingerRes {
+  code: number;
+  more: boolean;
+  artists: SingerVO[];
+}
+
+/**
+ * 歌手详情
+ */
+export interface SingerVO {
+  albumSize: number;
+  alias: string[];
+  briefDesc: string;
+  followed: false;
+  id: number;
+  img1v1Id: string;
+  img1v1Id_str: string;
+  img1v1Url: string;
+  musicSize: number;
+  name: string;
+  picId: string;
+  picId_str: string;
+  picUrl: string;
+  topicPerson: number;
+  trans: string;
+}

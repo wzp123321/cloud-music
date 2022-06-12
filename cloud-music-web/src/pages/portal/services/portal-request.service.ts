@@ -1,6 +1,5 @@
-import { LoadPlayListParams, BannerRes, PlayListRes } from './portal-api';
+import { LoadPlayListParams, BannerRes, PlayListRes, HotSingerRes } from './portal-api';
 import { postRequest } from '@/services/request';
-import { ResTemplate } from '@/services/common-api/common-api';
 
 const portalService = {
   /**
@@ -20,6 +19,16 @@ const portalService = {
   async getPlayListByType(params: LoadPlayListParams): Promise<PlayListRes> {
     const url = '/top/playlist/highquality';
     const res: PlayListRes = await postRequest(url, params);
+    return res;
+  },
+  /**
+   * 查询热门歌手
+   * @param params
+   * @returns
+   */
+  async getHotSingerList(params: { limit: number }): Promise<HotSingerRes> {
+    const url = '/top/artists';
+    const res: HotSingerRes = await postRequest(url, params);
     return res;
   },
 };
