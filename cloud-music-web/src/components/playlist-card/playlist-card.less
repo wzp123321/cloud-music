@@ -21,13 +21,19 @@
     height: 262px;
     transition: all 0.75s;
     overflow: hidden;
-  }
 
-  &--cover:hover img {
-    cursor: pointer;
-    transform: scale(1.07);
-    transform-origin: center center;
-    transition: transform 0.75s cubic-bezier(0, 1, 0.75, 1);
+    img {
+      width: 100%;
+      height: 100%;
+      transition: transform 0.75s;
+    }
+
+    &:hover img {
+      cursor: pointer;
+      transform: scale(1.17);
+      transform-origin: center center;
+      transition: transform 0.75s cubic-bezier(0, 1, 0.75, 1);
+    }
   }
 
   &--play-count {
