@@ -77,7 +77,7 @@ export interface PlayListVO {
   trackCount: number;
   trackNumberUpdateTime: number;
   trackUpdateTime: number;
-  tracks: null;
+  tracks: { name: string }[];
   updateTime: number;
   userId: number;
 }
@@ -110,4 +110,12 @@ export interface SingerVO {
   picUrl: string;
   topicPerson: number;
   trans: string;
+}
+
+/**
+ * 查询新碟参数
+ */
+export interface NewDVDParams {
+  limit: number;
+  area: string;
 }

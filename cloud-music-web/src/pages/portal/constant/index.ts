@@ -27,3 +27,27 @@ export const recommendPlayListNavs: CodeNameKV<string>[] = [
     name: '经典',
   },
 ];
+
+// 新碟区域
+export const areaList: CodeNameKV<string>[] = [
+  {
+    code: 'ALL',
+    name: '全部',
+  },
+  {
+    code: 'ZH',
+    name: '华语',
+  },
+  {
+    code: 'EA',
+    name: '欧美',
+  },
+  {
+    code: 'KR',
+    name: '韩国',
+  },
+  {
+    code: 'JP',
+    name: '日本',
+  },
+];

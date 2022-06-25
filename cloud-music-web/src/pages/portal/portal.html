@@ -30,6 +30,13 @@
 
   <!-- 新碟上架 -->
   <type-nav :title="'新碟上架'"></type-nav>
+  <div class="portal-rank mt16">
+    <port-rank-detail :playlistVO="portal.hotMusicRankVO"></port-rank-detail>
+    <port-rank-detail :playlistVO="portal.newMusicRankVO"></port-rank-detail>
+    <port-rank-detail :playlistVO="portal.surgeRankVO"></port-rank-detail>
+    <port-rank-detail :playlistVO="portal.eaMusicRankVO"></port-rank-detail>
+    <port-rank-detail :playlistVO="portal.krjpMusicRankVO"></port-rank-detail>
+  </div>
 
   <!-- 新碟上架 -->
   <type-nav :title="'热门歌手'"></type-nav>

@@ -25,18 +25,24 @@
     img {
       width: 100%;
       height: 100%;
+      transition: transform 0.75s;
     }
-  }
 
-  &--cover:hover img {
-    cursor: pointer;
-    transform: scale(1.07);
-    transform-origin: center center;
-    transition: transform 0.75s cubic-bezier(0, 1, 0.75, 1);
+    &:hover img {
+      cursor: pointer;
+      transform: scale(1.17);
+      transform-origin: center center;
+      transition: transform 0.75s cubic-bezier(0, 1, 0.75, 1);
+    }
   }
 
   &--play-count {
     margin-top: 10px;
+
+    .iconfont.icon-z {
+      font-size: 18px;
+      margin-right: 4px;
+    }
 
     span,
     .iconfont {

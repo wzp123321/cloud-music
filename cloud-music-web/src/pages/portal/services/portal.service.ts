@@ -2,8 +2,8 @@
  * @Description： 首页服务
  * @Author: wanzp
  * @Date: 2022-06-09 22:02:59
- * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2022-06-12 21:33:58
+ * @Last Modified by: zpwan
+ * @Last Modified time: 2022-06-25 16:13:56
  */
 import { ref } from 'vue';
 import router from '@/router';
@@ -24,6 +24,11 @@ class PortService {
   private _selectedRecommendPlayListType = ref<string>(recommendPlayListNavs[0].code);
   private _playList = ref<PlayListVO[]>([]);
   private _hotSingerList = ref<SingerVO[]>([]);
+  private _surgeRankVO = ref<PlayListVO | null>(null); // 飙升榜
+  private _newMusicRankVO = ref<PlayListVO | null>(null); // 新歌榜
+  private _hotMusicRankVO = ref<PlayListVO | null>(null); // 热歌榜
+  private _eaMusicRankVO = ref<PlayListVO | null>(null); // 欧美
+  private _krjpMusicRankVO = ref<PlayListVO | null>(null); // 日韩
   //#endregion
   //#region
   public get loading(): boolean {
@@ -38,6 +43,21 @@ class PortService {
   public set selectedRecommendPlayListType(value: string) {
     this._selectedRecommendPlayListType.value = value;
   }
+  public get surgeRankVO(): PlayListVO | null {
+    return this._surgeRankVO.value;
+  }
+  public get newMusicRankVO(): PlayListVO | null {
+    return this._newMusicRankVO.value;
+  }
+  public get hotMusicRankVO(): PlayListVO | null {
+    return this._hotMusicRankVO.value;
+  }
+  public get eaMusicRankVO(): PlayListVO | null {
+    return this._eaMusicRankVO.value;
+  }
+  public get krjpMusicRankVO(): PlayListVO | null {
+    return this._krjpMusicRankVO.value;
+  }
   public get playList(): PlayListVO[] {
     return this._playList.value;
   }
@@ -51,6 +71,7 @@ class PortService {
     this.queryBannerLsit();
     this.queryPlayListByType();
     this.queryHotSinger();
+    this.getSomeRankList();
   }
   //#endregion
   //#region
@@ -108,7 +129,7 @@ class PortService {
       };
       const res: PlayListRes = await portalService.getPlayListByType(params);
       if (res?.code === 200) {
-        this._playList.value = res?.playlists.slice(0, 8);
+        this._playList.value = res?.playlists.slice(0, 10);
       } else {
         this._playList.value = [];
       }
@@ -126,6 +147,59 @@ class PortService {
       this._hotSingerList.value = [];
     }
   }
+  //#endregion
+  //#region 新碟
+  /**
+   * 19723756 飙升
+   * 3779629 新歌
+   * 3778678 热歌
+   * 2809513713 欧美
+   * 745956260 韩语
+   */
+  async getSomeRankList() {
+    try {
+      const types = [19723756, 3779629, 3778678, 2809513713, 745956260];
+      const promiseArr = types.map((item) => {
+        return portalService.getRankDetailById({ id: item });
+      });
+      const resArr = await Promise.all(promiseArr);
+      if (resArr?.length) {
+        this._surgeRankVO.value = {
+          ...resArr[0].playlist,
+          tracks: resArr[0].playlist?.tracks.splice(0, 5),
+        };
+        this._newMusicRankVO.value = {
+          ...resArr[1].playlist,
+          tracks: resArr[1].playlist?.tracks.splice(0, 5),
+        };
+        this._hotMusicRankVO.value = {
+          ...resArr[2].playlist,
+          tracks: resArr[2].playlist?.tracks.splice(0, 5),
+        };
+        this._eaMusicRankVO.value = {
+          ...resArr[3].playlist,
+          tracks: resArr[3].playlist?.tracks.splice(0, 5),
+        };
+        this._krjpMusicRankVO.value = {
+          ...resArr[4].playlist,
+          tracks: resArr[4].playlist?.tracks.splice(0, 5),
+        };
+      } else {
+        this._surgeRankVO.value = null;
+        this._newMusicRankVO.value = null;
+        this._hotMusicRankVO.value = null;
+        this._eaMusicRankVO.value = null;
+        this._krjpMusicRankVO.value = null;
+      }
+    } catch (error) {
+      this._surgeRankVO.value = null;
+      this._newMusicRankVO.value = null;
+      this._hotMusicRankVO.value = null;
+      this._eaMusicRankVO.value = null;
+      this._krjpMusicRankVO.value = null;
+    }
+  }
+  //#endregion
 }
 
 export default new PortService();
