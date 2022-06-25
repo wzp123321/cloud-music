@@ -1,5 +1,5 @@
 import { LoadPlayListParams, BannerRes, PlayListRes, HotSingerRes } from './portal-api';
-import { postRequest } from '@/services/request';
+import { getRequest, postRequest } from '@/services/request';
 
 const portalService = {
   /**
@@ -17,8 +17,8 @@ const portalService = {
    * @returns
    */
   async getPlayListByType(params: LoadPlayListParams): Promise<PlayListRes> {
-    const url = '/top/playlist/highquality';
-    const res: PlayListRes = await postRequest(url, params);
+    const url = '/top/playlist';
+    const res: PlayListRes = await getRequest(url, params);
     return res;
   },
   /**

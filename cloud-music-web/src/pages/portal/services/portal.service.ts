@@ -100,6 +100,7 @@ class PortService {
   //#endregion
   //#region 加载不同类型歌单
   queryPlayListByType = async () => {
+    console.log(1231);
     try {
       const params = {
         limit: 10,

@@ -15,7 +15,7 @@
     :title="'推荐歌单'"
     :navs="portal.recommendPlayListNavs"
     v-model:selectedCode="portal.selectedRecommendPlayListType"
-    @change="portal.getPlayListByType"
+    @change="portal.queryPlayListByType"
   ></type-nav>
   <div class="mt16 flex-wrap flex-row-justify-start">
     <playlist-card
