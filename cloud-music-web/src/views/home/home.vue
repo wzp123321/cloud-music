@@ -25,7 +25,7 @@ export default defineComponent({
   flex-direction: column;
 
   .container {
-    width: 1200px;
+    width: 1400px;
     margin: 0 auto;
     flex: 1 1 auto;
   }

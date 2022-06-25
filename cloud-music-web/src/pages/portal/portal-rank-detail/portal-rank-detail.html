@@ -1,0 +1,6 @@
+<div class="portal-rank-detail flex flex-column">
+  <img class="cover-img" :src="playlistVO?.coverImgUrl" alt="" />
+  <ul class="flex1">
+    <li v-for="(item, index) in playlistVO?.tracks" :key="'tracks' +index">{{ item.name }}</li>
+  </ul>
+</div>
