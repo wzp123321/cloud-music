@@ -8,6 +8,20 @@ const routes: RouteRecordRaw[] = [
     },
     component: () => import('@/pages/portal/portal.vue'),
   },
+  {
+    path: '/artists',
+    meta: {
+      name: '歌手',
+    },
+    component: () => import('@/pages/artist/artist.vue'),
+  },
+  {
+    path: '/artist_detail',
+    meta: {
+      name: '歌手详情',
+    },
+    component: () => import('@/pages/artist-detail/artist-detail.vue'),
+  },
 ];
 
 export default routes;
