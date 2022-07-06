@@ -140,10 +140,14 @@ class PortService {
   //#endregion
   //#region 热门歌手
   async queryHotSinger() {
-    const res: HotSingerRes = await portalService.getHotSingerList({ limit: 10 });
-    if (res?.code === 200) {
-      this._hotSingerList.value = res?.artists.slice(0, 8);
-    } else {
+    try {
+      const res: HotSingerRes = await portalService.getHotSingerList({ limit: 10 });
+      if (res?.code === 200) {
+        this._hotSingerList.value = res?.artists.slice(0, 7);
+      } else {
+        this._hotSingerList.value = [];
+      }
+    } catch (error) {
       this._hotSingerList.value = [];
     }
   }

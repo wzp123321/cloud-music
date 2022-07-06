@@ -7,7 +7,7 @@
  */
 import { defineComponent, PropType, toRef } from 'vue';
 
-import { PlayListVO } from '../services/portal-api';
+import { PlayListVO, SingerVO } from '../services/portal-api';
 
 export default defineComponent({
   name: 'PortalRankDetail',
@@ -20,8 +20,14 @@ export default defineComponent({
   setup(props) {
     const playlistVO = toRef(props, 'playlistVO');
 
+    const formatSinger = (list: SingerVO[]) => {
+      return list?.map((item) => item.name).join('/');
+    };
+
     return {
       playlistVO,
+
+      formatSinger,
     };
   },
 });

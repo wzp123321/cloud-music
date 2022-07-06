@@ -20,7 +20,7 @@
   <div class="mt16 flex-wrap flex-row-justify-start">
     <playlist-card
       v-for="(item, index) in portal.playList"
-      ::key="'playlist_'+ index"
+      :key="'playlist_'+ index"
       :title="item.name"
       :id="item.id"
       :coverImageUrl="item.coverImgUrl"
@@ -30,7 +30,7 @@
 
   <!-- 新碟上架 -->
   <type-nav :title="'新碟上架'"></type-nav>
-  <div class="portal-rank mt16">
+  <div class="portal-rank mt16 mb48">
     <port-rank-detail :playlistVO="portal.hotMusicRankVO"></port-rank-detail>
     <port-rank-detail :playlistVO="portal.newMusicRankVO"></port-rank-detail>
     <port-rank-detail :playlistVO="portal.surgeRankVO"></port-rank-detail>
@@ -40,4 +40,11 @@
 
   <!-- 新碟上架 -->
   <type-nav :title="'热门歌手'"></type-nav>
+  <ul class="portal-hot-artists flex-row-justify-center mt24">
+    <li v-for="(item, index) in portal.hotSingerList" :key="'artist_'+ index" class="flex-column">
+      <img :src="item?.img1v1Url" alt="" />
+      <p class="artist mt17" :title="item?.name">{{ item?.name }}</p>
+      <p class="count mt6">{{ item?.musicSize }}首歌</p>
+    </li>
+  </ul>
 </div>
