@@ -3,7 +3,7 @@
  * @Author: mikey.zhaopeng
  * @Date: 2022-06-11 20:50:37
  * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2022-06-12 20:06:18
+ * @Last Modified time: 2022-07-10 15:44:34
  */
 import { defineComponent, PropType, toRef } from 'vue';
 import { useRouter } from 'vue-router';
@@ -11,7 +11,7 @@ import { useRouter } from 'vue-router';
 import { CodeNameKV } from '@/services/common-api/common-api';
 
 export default defineComponent({
-  name: 'TypeNav',
+  name: 'CmNavBar',
   props: {
     // 标题
     title: {

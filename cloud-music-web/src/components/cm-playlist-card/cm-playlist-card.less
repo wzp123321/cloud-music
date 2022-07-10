@@ -1,4 +1,4 @@
-.playlist-card {
+.cm-playlist-card {
   width: 262px;
   height: 350px;
   overflow: hidden;
@@ -22,13 +22,13 @@
     transition: all 0.75s;
     overflow: hidden;
 
-    img {
+    :deep(.cm-skeleton) img {
       width: 100%;
       height: 100%;
       transition: transform 0.75s;
     }
 
-    &:hover img {
+    &:hover :deep(.cm-skeleton) img {
       cursor: pointer;
       transform: scale(1.17);
       transform-origin: center center;

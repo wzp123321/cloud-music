@@ -5,11 +5,14 @@ import '@vue/runtime-core'
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    CmNavbar: typeof import('./src/components/cm-navbar/cm-navbar.vue')['default']
+    CmPlaylistCard: typeof import('./src/components/cm-playlist-card/cm-playlist-card.vue')['default']
+    CmSkeleton: typeof import('./src/components/cm-skeleton/cm-skeleton.vue')['default']
     ElTree: typeof import('element-plus/es')['ElTree']
-    PlaylistCard: typeof import('./src/components/playlist-card/playlist-card.vue')['default']
+    PlaylistCard: typeof import('./src/components/cm-playlist-card/playlist-card.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
-    TypeNav: typeof import('./src/components/type-nav/type-nav.vue')['default']
+    TypeNav: typeof import('./src/components/cm-navbar/type-nav.vue')['default']
   }
 }
 
