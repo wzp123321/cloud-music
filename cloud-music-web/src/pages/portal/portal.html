@@ -41,7 +41,12 @@
   <!-- 新碟上架 -->
   <cm-navbar :title="'热门歌手'"></cm-navbar>
   <ul class="portal-hot-artists flex-row-justify-center mt24">
-    <li v-for="(item, index) in portal.hotSingerList" :key="'artist_'+ index" class="flex-column">
+    <li
+      v-for="(item, index) in portal.hotSingerList"
+      :key="'artist_'+ index"
+      class="flex-column"
+      @click="portal.linkToAritstDetail(item.id)"
+    >
       <img :src="item?.img1v1Url" alt="" />
       <p class="artist mt17" :title="item?.name">{{ item?.name }}</p>
       <p class="count mt6">{{ item?.musicSize }}首歌</p>

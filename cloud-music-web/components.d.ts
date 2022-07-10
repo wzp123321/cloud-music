@@ -5,6 +5,8 @@ import '@vue/runtime-core'
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    CmError: typeof import('./src/components/cm-error/cm-error.vue')['default']
+    CmLoading: typeof import('./src/components/cm-error/cm-loading.vue')['default']
     CmNavbar: typeof import('./src/components/cm-navbar/cm-navbar.vue')['default']
     CmPlaylistCard: typeof import('./src/components/cm-playlist-card/cm-playlist-card.vue')['default']
     CmSkeleton: typeof import('./src/components/cm-skeleton/cm-skeleton.vue')['default']

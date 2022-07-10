@@ -2,8 +2,8 @@
  * @Description： 首页服务
  * @Author: wanzp
  * @Date: 2022-06-09 22:02:59
- * @Last Modified by: zpwan
- * @Last Modified time: 2022-06-25 16:13:56
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2022-07-10 21:39:49
  */
 import { ref } from 'vue';
 import router from '@/router';
@@ -204,6 +204,15 @@ class PortService {
     }
   }
   //#endregion
+  //#region
+  linkToAritstDetail(id: number) {
+    router.push({
+      path: '/artist_detail',
+      query: {
+        id,
+      },
+    });
+  }
 }
 
 export default new PortService();
