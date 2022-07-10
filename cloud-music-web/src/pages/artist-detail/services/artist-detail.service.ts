@@ -10,33 +10,34 @@ import artistDetailService from './ad.service';
 
 import { ArtistVO } from './artist-detail-api';
 import { FResHandler } from '@/utils';
+import { ref } from 'vue';
 
 class ArtistDetail {
   //#region
   private _id = 0;
   private _artistVO?: ArtistVO;
-  private _loading = false;
-  private _is_error = false;
+  private _loading = ref<boolean>(false);
+  private _is_error = ref<boolean>(false);
   //#endregion
   //#region
-  public id(): number {
+  public get id(): number {
     return this._id;
   }
-  public artistVO(): ArtistVO {
+  public get artistVO(): ArtistVO {
     return this._artistVO as ArtistVO;
   }
-  public loading(): boolean {
-    return this._loading;
+  public get loading(): boolean {
+    return this._loading.value;
   }
-  public is_error(): boolean {
-    return this._is_error;
+  public get is_error(): boolean {
+    return this._is_error.value;
   }
   //#endregion
   //#region
   async init() {
     this._id = Number(FGetQueryParam('id'));
-    this._loading = true;
-    this._is_error = false;
+    this._loading.value = true;
+    this._is_error.value = false;
     try {
       const res = await artistDetailService.getArtistDetail({
         id: this._id,
@@ -46,9 +47,9 @@ class ArtistDetail {
         this._artistVO = result;
       }
     } catch (error) {
-      this._is_error = true;
+      this._is_error.value = true;
     } finally {
-      this._loading = false;
+      this._loading.value = false;
     }
   }
   //#endregion
