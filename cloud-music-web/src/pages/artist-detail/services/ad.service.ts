@@ -10,9 +10,8 @@ const artistDetailService = {
    * @returns
    */
   async getArtistDetail(params: { id: number }): Promise<ResTemplate<ArtistVO>> {
-    const url = '/artist/detail';
+    const url = '/artists';
     const res: ResTemplate<ArtistVO> = await getRequest(url, params);
-
     return res;
   },
 };
