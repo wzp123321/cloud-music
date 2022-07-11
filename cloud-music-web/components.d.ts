@@ -5,6 +5,7 @@ import '@vue/runtime-core'
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    ElButton: typeof import('element-plus/es')['ElButton']
     ElTree: typeof import('element-plus/es')['ElTree']
     PlaylistCard: typeof import('./src/components/playlist-card/playlist-card.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
