@@ -9,6 +9,13 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/pages/portal/portal.vue'),
   },
   {
+    path: '/demo',
+    meta: {
+      name: 'demo',
+    },
+    component: () => import('@/views/demo.vue'),
+  },
+  {
     path: '/artists',
     meta: {
       name: '歌手',
