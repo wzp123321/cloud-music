@@ -12,13 +12,54 @@ h3,
 h4,
 h5,
 h6,
-ul {
+ul,
+p {
   margin: 0;
+  padding: 0;
 }
 
 ol,
 ul {
   list-style: none;
+}
+
+/* 滚动条整体部分 */
+*::-webkit-scrollbar {
+  /* Y轴滚动条宽度 */
+  width: 6px;
+  /* X轴滚动条高度 */
+  height: 12px;
+}
+
+/* 外层轨道 */
+*::-webkit-scrollbar-track {
+  background: #efefef;
+  border-radius: 2px;
+}
+
+/*  内层轨道 */
+*::-webkit-scrollbar-track-piece {
+  background-color: #fff;
+}
+
+/* 滚动条两端的按钮 */
+*::-webkit-scrollbar-button {
+  background-color: #fff;
+}
+
+/* 滚动条里面的滑块 */
+*::-webkit-scrollbar-thumb {
+  background: #bfbfbf;
+  border-radius: 10px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: #888888;
+}
+
+/* 边角，即两个滚动条的交汇处 */
+*::-webkit-scrollbar-corner {
+  background: #fff;
 }
 
 each(range(1000), {

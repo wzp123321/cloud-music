@@ -17,8 +17,8 @@ const portalService = {
    * @returns
    */
   async getPlayListByType(params: LoadPlayListParams): Promise<PlayListRes> {
-    const url = '/top/playlist/highquality';
-    const res: PlayListRes = await postRequest(url, params);
+    const url = '/top/playlist';
+    const res: PlayListRes = await getRequest(url, params);
     return res;
   },
   /**

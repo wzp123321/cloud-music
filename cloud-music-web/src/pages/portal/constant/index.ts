@@ -7,8 +7,8 @@ export const recommendPlayListNavs: CodeNameKV<string>[] = [
     name: '华语',
   },
   {
-    code: '伤感',
-    name: '伤感',
+    code: '古风',
+    name: '古风',
   },
   {
     code: '怀旧',
@@ -19,8 +19,8 @@ export const recommendPlayListNavs: CodeNameKV<string>[] = [
     name: '影视原声',
   },
   {
-    code: '90后',
-    name: '90后',
+    code: '流行',
+    name: '流行',
   },
   {
     code: '经典',

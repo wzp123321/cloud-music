@@ -1,5 +1,6 @@
 .portal {
-  width: 100%;
+  width: 1400px;
+  margin: 0 auto;
   height: 100%;
 
   .el-carousel.banner-carousel {
@@ -14,7 +15,40 @@
   &-rank {
     display: grid;
     grid-template-columns: repeat(5, 264px);
-    grid-template-rows: repeat(5, 520px);
+    grid-template-rows: repeat(1, 620px);
     gap: 20px;
+    background-color: rgba(247, 247, 247, 1);
+  }
+
+  &-hot-artists {
+    li {
+      width: 182px;
+      overflow: hidden;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    li img {
+      width: 182px;
+      height: 182px;
+      border-radius: 50%;
+    }
+
+    li > p.artist {
+      height: 22px;
+      font-size: 16px;
+      line-height: 22px;
+      font-weight: 400;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      justify-content: center;
+      padding: 0 5px;
+    }
+
+    li > p.count {
+      font-size: 12px;
+      color: #999;
+    }
   }
 }

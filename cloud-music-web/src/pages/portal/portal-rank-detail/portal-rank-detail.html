@@ -1,6 +1,17 @@
 <div class="portal-rank-detail flex flex-column">
   <img class="cover-img" :src="playlistVO?.coverImgUrl" alt="" />
-  <ul class="flex1">
-    <li v-for="(item, index) in playlistVO?.tracks" :key="'tracks' +index">{{ item.name }}</li>
+  <ul>
+    <li v-for="(item, index) in playlistVO?.tracks" :key="'tracks' +index" class="mt23 flex-row-start-center">
+      <div class="sort">
+        <img v-if="index === 0" src="../../../assets/images/rank/rank-top.png" alt="" />
+        <img v-if="index === 1" src="../../../assets/images/rank/rank-secondary.png" alt="" />
+        <img v-if="index === 2" src="../../../assets/images/rank/rank-third.png" alt="" />
+        <span v-if="index > 2">{{ index + 1 }}</span>
+      </div>
+      <div class="info flex-column">
+        <p class="name" :title="item.name">{{ item.name }}</p>
+        <p class="mt4 artist" :title="formatSinger(item.ar)">{{ formatSinger(item.ar) }}</p>
+      </div>
+    </li>
   </ul>
 </div>
