@@ -4,14 +4,14 @@
     <li
       v-for="(item, index) in navs"
       :key="'nav_'+ index"
-      :class="{selected: selectedCode === item.code }"
+      :class="[selectedCode === item.code ? 'selected' : '' , `font${fontSize}`]"
       @click="onNavChange(item.code)"
     >
       {{ item.name }}
     </li>
   </ul>
-  <span class="load-more" @click="loadMore">
+  <span :class="['load-more', `font${fontSize}`]" @click="loadMore" v-if="hasLoadMore">
     更多
-    <i class="iconfont icon-xiangyou"></i>
+    <i :class="['iconfont icon-xiangyou', `font${fontSize}`]"></i>
   </span>
 </div>

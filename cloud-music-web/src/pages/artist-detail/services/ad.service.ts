@@ -9,9 +9,9 @@ const artistDetailService = {
    * @param params
    * @returns
    */
-  async getArtistDetail(params: { id: number }): Promise<ResTemplate<ArtistVO>> {
+  async getArtistDetail(params: { id: number }): Promise<ArtistVO> {
     const url = '/artists';
-    const res: ResTemplate<ArtistVO> = await getRequest(url, params);
+    const res: ArtistVO = await getRequest(url, params);
     return res;
   },
 };

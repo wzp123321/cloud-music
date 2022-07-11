@@ -1,6 +1,61 @@
 <div class="artist-detail" v-loading="artistDetail.loading">
-  <div class="artist-detail--info flex">
+  <div class="artist-detail--info flex-row-start-center">
     <div class="info-bg"></div>
-    <img src="" alt="" />
+    <img class="avatar" :src="artistDetail.artistVO?.artist?.img1v1Url" alt="" />
+    <div class="flex-column ml42" ellipsis>
+      <h6>{{ artistDetail.artistVO?.artist?.name }}</h6>
+      <div class="flex-row-start-center mt16 mb16">
+        <label>单曲：</label>
+        <span class="mr40 num">{{ artistDetail.artistVO?.artist?.musicSize }}</span>
+        <label>专辑：</label>
+        <span class="mr40 num">{{ artistDetail.artistVO?.artist?.albumSize }}</span>
+        <label>MV：</label>
+        <span class="mr40 num">{{ artistDetail.artistVO?.artist?.mvSize }}</span>
+      </div>
+      <div class="alias">{{ artistDetail.artistVO?.artist?.alias?.join('、') }}</div>
+      <div class="desc mt16">
+        <label class="font16">简介：</label>
+        <span :title="artistDetail.artistVO?.artist?.briefDesc" class="font16"
+          >{{ artistDetail.artistVO?.artist?.briefDesc }}</span
+        >
+      </div>
+    </div>
+  </div>
+
+  <div class="artist-detail--tabs mt60">
+    <cm-navbar
+      class="mb24"
+      :title="''"
+      :navs="artistDetail.navs"
+      v-model:selectedCode="artistDetail.selectedCode"
+      :fontSize="22"
+      :hasLoadMore="false"
+      @change="artistDetail.handleNavChange"
+    ></cm-navbar>
+    <!-- 单曲 -->
+    <table v-show="artistDetail.selectedCode === artistDetail.navs[0].code" style="width: 100%" frame="void">
+      <thead>
+        <tr>
+          <th style="width: 10%">序号</th>
+          <th style="width: 30%">歌曲</th>
+          <th style="width: 30%">专辑</th>
+          <th style="width: 30%">时长</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          v-for="(item, index) in artistDetail.artistVO?.hotSongs.splice((artistDetail.page - 1) * artistDetail.pageSize, artistDetail.page * artistDetail.pageSize)"
+          :key="'song_' + index"
+        >
+          <td style="width: 10%" class="sort">
+            <span>{{ (artistDetail.page - 1) * artistDetail.pageSize + index + 1 }}</span>
+            <img :src="item?.al?.picUrl" alt="" />
+          </td>
+          <td style="width: 30%">{{ item.name }}</td>
+          <td style="width: 30%">{{ item.al.name }}</td>
+          <td style="width: 30%">{{ item.dt }}</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </div>

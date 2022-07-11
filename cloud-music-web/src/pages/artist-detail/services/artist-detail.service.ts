@@ -9,8 +9,26 @@ import { FGetQueryParam } from '@/utils/token';
 import artistDetailService from './ad.service';
 
 import { ArtistVO } from './artist-detail-api';
-import { FResHandler } from '@/utils';
 import { ref } from 'vue';
+
+const navs = [
+  {
+    code: '0',
+    name: '单曲',
+  },
+  {
+    code: '1',
+    name: '专辑',
+  },
+  {
+    code: '2',
+    name: 'MV',
+  },
+  {
+    code: '3',
+    name: '简介',
+  },
+];
 
 class ArtistDetail {
   //#region
@@ -18,6 +36,10 @@ class ArtistDetail {
   private _artistVO?: ArtistVO;
   private _loading = ref<boolean>(false);
   private _is_error = ref<boolean>(false);
+  private _selectedCode = ref<string>(navs[0].code);
+  private _page = ref<number>(1);
+  public readonly navs = navs;
+  public readonly pageSize = 20;
   //#endregion
   //#region
   public get id(): number {
@@ -32,6 +54,18 @@ class ArtistDetail {
   public get is_error(): boolean {
     return this._is_error.value;
   }
+  public get selectedCode(): string {
+    return this._selectedCode.value;
+  }
+  public set selectedCode(value: string) {
+    this._selectedCode.value = value;
+  }
+  public get page(): number {
+    return this._page.value;
+  }
+  public set page(value: number) {
+    this._page.value = value;
+  }
   //#endregion
   //#region
   async init() {
@@ -42,15 +76,19 @@ class ArtistDetail {
       const res = await artistDetailService.getArtistDetail({
         id: this._id,
       });
-      const result = FResHandler<ArtistVO>(res);
-      if (result) {
-        this._artistVO = result;
+      if (res) {
+        this._artistVO = res;
       }
     } catch (error) {
       this._is_error.value = true;
     } finally {
       this._loading.value = false;
     }
+  }
+  //#endregion
+  //#region
+  handleNavChange() {
+    this._page.value = 1;
   }
   //#endregion
 }

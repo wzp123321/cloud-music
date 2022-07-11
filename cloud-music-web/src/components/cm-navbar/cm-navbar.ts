@@ -28,10 +28,20 @@ export default defineComponent({
       type: String,
       default: '',
     },
+    // 是否有加载更多
+    hasLoadMore: {
+      type: Boolean,
+      default: true,
+    },
     // 加载更多地址
     loadMoreUrl: {
       type: String,
       default: '',
+    },
+    // 字体
+    fontSize: {
+      type: Number,
+      default: 14,
     },
   },
   setup(props, { emit }) {
@@ -40,6 +50,8 @@ export default defineComponent({
     const navs = toRef(props, 'navs');
     const selectedCode = toRef(props, 'selectedCode');
     const loadMoreUrl = toRef(props, 'loadMoreUrl');
+    const hasLoadMore = toRef(props, 'hasLoadMore');
+    const fontSize = toRef(props, 'fontSize');
 
     // 切换
     const onNavChange = (code: string) => {
@@ -58,6 +70,8 @@ export default defineComponent({
       navs,
       selectedCode,
       loadMoreUrl,
+      hasLoadMore,
+      fontSize,
 
       onNavChange,
       loadMore,

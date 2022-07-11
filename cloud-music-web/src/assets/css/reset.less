@@ -18,9 +18,18 @@ p {
   padding: 0;
 }
 
+* {
+  box-sizing: border-box;
+}
+
 ol,
 ul {
   list-style: none;
+}
+
+*[ellipsis] {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* 滚动条整体部分 */

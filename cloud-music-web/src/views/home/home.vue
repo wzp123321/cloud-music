@@ -23,6 +23,7 @@ export default defineComponent({
   height: 100%;
   display: flex;
   flex-direction: column;
+  overflow-x: hidden;
 
   .container {
     width: 1400px;
