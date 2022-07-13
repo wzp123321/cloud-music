@@ -19,9 +19,13 @@ button:active {
   color: var(--color-primary-active);
 }
 
+button[radius]{
+  border-radius: 32px;
+}
+
 /* 普通按钮-主要 */
 button[primary] {
-  color: var(--color-default);
+  color: var(--color-text-primary);
   background-color: var(--color-primary);
   border-color: var(--color-primary);
 }

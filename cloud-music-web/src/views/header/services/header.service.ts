@@ -23,9 +23,16 @@ class HeaderService {
     return this._menus;
   }
   //#endregion
+  //#region
   adjustActiveTab(url: string) {
     this._currentTab.value = url;
   }
+  //#endregion
+  //#region
+  linkToPortal() {
+    window.location.href = '/';
+  }
+  //#endregion
 }
 
 export default new HeaderService();

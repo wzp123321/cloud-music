@@ -17,14 +17,17 @@ table > thead > tr {
   width: 100%;
 }
 table > thead > tr > th {
-  height: 52px;
+  height: 46px;
+  line-height: 46px;
   padding: 0px 10px;
-
+  font-size: 14px;
+  
   color: var(--color-text-title);
   background-color: var(--color-table-header);
-
+  
   font-weight: var(--param-font-medium);
-  text-align: center;
+
+  text-align: left;
 }
 
 /* 表格内容 */
@@ -35,19 +38,24 @@ table > tbody > tr {
   transition-duration: var(--param-transition-time);
 }
 table > tbody > tr > td {
-  height: 48px;
+  height: 70px;
   padding: 0px 10px;
+  border: 0;
+  border-image-width: 0;
+
+  line-height: 22px;
+  font-size: 14px;
 
   color: var(--color-text-primary);
   background-color: var(--color-default);
 
-  text-align: center;
+  text-align: left;
 }
 table > tbody > tr:nth-child(even) > td {
   background-color: var(--color-table-body);
 }
 table > tbody > tr:hover > td {
-  background-color: var(--color-hover);
+  background-color: var(--color-table-td-hover);
 }
 
 /* 垂直滚动 */

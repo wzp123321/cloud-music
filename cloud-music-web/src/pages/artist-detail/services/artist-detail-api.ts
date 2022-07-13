@@ -54,3 +54,46 @@ export interface ArtistVO {
     };
   }[];
 }
+
+export interface AlbumRes {
+  artist: ArtistVO;
+  code: number;
+  hotAlbums: AlbumVO[];
+}
+
+/**
+ * 专辑
+ */
+export interface AlbumVO {
+  alias: string[];
+  artist: ArtistVO;
+  blurPicUrl: string;
+  briefDesc: string;
+  commentThreadId: string;
+  company: string;
+  companyId: number;
+  copyrightId: number;
+  description: string;
+  id: number;
+  mark: number;
+  name: string;
+  pic: number;
+  picId: number;
+  picId_str: string;
+  picUrl: string;
+  publishTime: number;
+  size: number;
+  status: number;
+  subType: string;
+  tags: string;
+  type: string;
+}
+
+// mv响应
+export interface MVRes {
+  code: number;
+  mvs: MvVO[];
+}
+
+// mv
+export interface MvVO {}

@@ -6,8 +6,8 @@
   --color-hover: rgba(230, 247, 255, 1) !important;
   --color-active: rgba(186, 231, 255, 1) !important;
   --color-primary: #ffe12c !important;
-  --color-primary-hover: rgba(64, 169, 255, 1) !important;
-  --color-primary-active: rgba(9, 109, 217, 1) !important;
+  --color-primary-hover: #fadd3c !important;
+  --color-primary-active: #fcda1d !important;
   --color-danger: rgba(255, 78, 87, 1) !important;
   --color-danger-hover: rgba(255, 78, 87, 0.15) !important;
   --color-danger-active: rgba(210, 7, 0, 1) !important;
@@ -32,8 +32,9 @@
   --color-box-focus: rgba(24, 144, 255, 0.2) !important;
 
   /* 表格 */
-  --color-table-header: rgba(237, 245, 252, 1) !important;
-  --color-table-body: rgb(245, 245, 245, 1) !important;
+  --color-table-header: #fafafa !important;
+  --color-table-body: #fafafa !important;
+  --color-table-td-hover: #f5f5f5 !important;
 
   /* 滚动条 */
   --color-scrollbar: rgba(0, 0, 0, 0.25) !important;

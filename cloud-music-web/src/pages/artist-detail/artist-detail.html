@@ -12,13 +12,15 @@
         <label>MV：</label>
         <span class="mr40 num">{{ artistDetail.artistVO?.artist?.mvSize }}</span>
       </div>
-      <div class="alias">{{ artistDetail.artistVO?.artist?.alias?.join('、') }}</div>
       <div class="desc mt16">
         <label class="font16">简介：</label>
         <span :title="artistDetail.artistVO?.artist?.briefDesc" class="font16"
           >{{ artistDetail.artistVO?.artist?.briefDesc }}</span
         >
       </div>
+      <button radius primary style="width: 180px" class="mt12">
+        <i class="iconfont icon-24gf-play mr6"></i>播放全部歌曲
+      </button>
     </div>
   </div>
 
@@ -33,29 +35,51 @@
       @change="artistDetail.handleNavChange"
     ></cm-navbar>
     <!-- 单曲 -->
-    <table v-show="artistDetail.selectedCode === artistDetail.navs[0].code" style="width: 100%" frame="void">
-      <thead>
-        <tr>
-          <th style="width: 10%">序号</th>
-          <th style="width: 30%">歌曲</th>
-          <th style="width: 30%">专辑</th>
-          <th style="width: 30%">时长</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          v-for="(item, index) in artistDetail.artistVO?.hotSongs.splice((artistDetail.page - 1) * artistDetail.pageSize, artistDetail.page * artistDetail.pageSize)"
-          :key="'song_' + index"
-        >
-          <td style="width: 10%" class="sort">
-            <span>{{ (artistDetail.page - 1) * artistDetail.pageSize + index + 1 }}</span>
-            <img :src="item?.al?.picUrl" alt="" />
-          </td>
-          <td style="width: 30%">{{ item.name }}</td>
-          <td style="width: 30%">{{ item.al.name }}</td>
-          <td style="width: 30%">{{ item.dt }}</td>
-        </tr>
-      </tbody>
-    </table>
+    <div v-show="artistDetail.selectedCode === artistDetail.navs[0].code">
+      <table style="width: 100%">
+        <thead>
+          <tr>
+            <th style="width: 10%">序号</th>
+            <th style="width: 30%">歌曲</th>
+            <th style="width: 30%">专辑</th>
+            <th style="width: 30%">时长</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="(item, index) in artistDetail.artistVO?.hotSongs.slice((artistDetail.page - 1) * artistDetail.pageSize, artistDetail.page * artistDetail.pageSize)"
+            :key="'song_' + index"
+          >
+            <td style="width: 10%" class="sort">
+              <span>{{ (artistDetail.page - 1) * artistDetail.pageSize + index + 1 }}</span>
+              <img :src="item?.al?.picUrl" alt="" />
+            </td>
+            <td ellipsis style="width: 30%">{{ item.name }}</td>
+            <td ellipsis style="width: 30%">{{ item.al.name }}</td>
+            <td ellipsis style="width: 30%">{{ formatDuration(item.dt) }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="flex-row-center-center">
+        <el-pagination
+          layout="prev, pager, next"
+          :total="artistDetail.total"
+          :page-size="artistDetail.pageSize"
+          v-model:currentPage="artistDetail.page"
+        />
+      </div>
+    </div>
+
+    <!-- 专辑 -->
+    <div v-show="artistDetail.selectedCode === artistDetail.navs[1].code" class="album-list flex-wrap">
+      <cm-album-card
+        v-for="(item, index) in artistDetail.albumList"
+        :key="'album_' + index"
+        :coverImageUrl="item.picUrl"
+        :title="item.name"
+        :publishTime="item.publishTime"
+        :id="item.id"
+      ></cm-album-card>
+    </div>
   </div>
 </div>

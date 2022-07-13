@@ -1,5 +1,5 @@
 /*
- * @Descrption: 歌单卡片
+ * @Descrption: 专辑卡片
  * @Author: wanzp
  * @Date: 2022-06-12 19:42:40
  * @Last Modified by: mikey.zhaopeng
@@ -7,8 +7,10 @@
  */
 import { defineComponent, toRef } from 'vue';
 
+import { formatDate } from '@/core/utils';
+
 export default defineComponent({
-  name: 'CMPlayListCard',
+  name: 'CMAlbumCard',
   props: {
     coverImageUrl: {
       type: String,
@@ -18,7 +20,7 @@ export default defineComponent({
       type: String,
       defualt: '',
     },
-    playCount: {
+    publishTime: {
       type: Number,
       default: 0,
     },
@@ -28,15 +30,18 @@ export default defineComponent({
     },
   },
   setup(props) {
-    // const coverImageUrl = toRef(props, 'coverImageUrl');
-    // const title = toRef(props, 'title');
-    // const playCount = toRef(props, 'playCount');
-    // const id = toRef(props, 'id');
-    // return {
-    //   coverImageUrl,
-    //   title,
-    //   id,
-    //   playCount,
-    // };
+    const coverImageUrl = toRef(props, 'coverImageUrl');
+    const title = toRef(props, 'title');
+    const publishTime = toRef(props, 'publishTime');
+    const id = toRef(props, 'id');
+
+    return {
+      coverImageUrl,
+      title,
+      publishTime,
+      id,
+
+      formatDate,
+    };
   },
 });

@@ -3,12 +3,12 @@
  * @Author: wanzp
  * @Date: 2022-07-06 21:40:47
  * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2022-07-06 21:42:21
+ * @Last Modified time: 2022-07-13 21:52:13
  */
-import { FGetQueryParam } from '@/utils/token';
+import { FGetQueryParam } from '@/core/token';
 import artistDetailService from './ad.service';
 
-import { ArtistVO } from './artist-detail-api';
+import { ArtistVO, AlbumVO, MvVO } from './artist-detail-api';
 import { ref } from 'vue';
 
 const navs = [
@@ -38,6 +38,9 @@ class ArtistDetail {
   private _is_error = ref<boolean>(false);
   private _selectedCode = ref<string>(navs[0].code);
   private _page = ref<number>(1);
+  private _total = ref<number>(1);
+  private _albumList = ref<AlbumVO[]>([]);
+  private _mvList = ref<MvVO[]>([]);
   public readonly navs = navs;
   public readonly pageSize = 20;
   //#endregion
@@ -66,6 +69,15 @@ class ArtistDetail {
   public set page(value: number) {
     this._page.value = value;
   }
+  public get total(): number {
+    return this._total.value;
+  }
+  public get albumList(): AlbumVO[] {
+    return this._albumList.value;
+  }
+  public get mvList(): MvVO[] {
+    return this._mvList.value;
+  }
   //#endregion
   //#region
   async init() {
@@ -78,6 +90,7 @@ class ArtistDetail {
       });
       if (res) {
         this._artistVO = res;
+        this._total.value = res?.hotSongs?.length;
       }
     } catch (error) {
       this._is_error.value = true;
@@ -87,8 +100,54 @@ class ArtistDetail {
   }
   //#endregion
   //#region
-  handleNavChange() {
+  handleNavChange = () => {
     this._page.value = 1;
+    switch (this._selectedCode.value) {
+      case '1':
+        this.queryArtistAlbum();
+        break;
+      case '2':
+        this.queryArtistMV();
+        break;
+    }
+  };
+  //#endregion
+  //#region
+  handleSongsPageChange = (value: number) => {
+    this._page.value = value;
+  };
+  //#endregion
+  //#region
+  async queryArtistAlbum() {
+    try {
+      const res = await artistDetailService.getArtistAlbumList({
+        id: this._id,
+      });
+      if (res?.hotAlbums?.length) {
+        this._albumList.value = res?.hotAlbums;
+      } else {
+        this._albumList.value = [];
+      }
+    } catch (error) {
+      this._albumList.value = [];
+    }
+  }
+  //#endregion
+  //#region
+  async queryArtistMV() {
+    try {
+      const res = await artistDetailService.getArtistMVList({
+        id: this._id,
+      });
+      console.log(res);
+      if (res?.mvs?.length) {
+        this._mvList.value = res?.mvs;
+      } else {
+        this._mvList.value = [];
+      }
+    } catch (error) {
+      this._mvList.value = [];
+    }
   }
   //#endregion
 }

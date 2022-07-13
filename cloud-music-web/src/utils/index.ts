@@ -2,7 +2,6 @@ import store from '@/store/index';
 import axios from 'axios';
 import ServiceConfig from '../config/request';
 
-import { ResTemplate } from '@/services/common-api/common-api';
 // 节流防抖 时间戳
 let timeStamp: any;
 // components
@@ -182,28 +181,4 @@ export const throttle = (fn: () => void, timeout = 500) => {
     fn();
     clearTimeout(timeStamp);
   }, timeout);
-};
-
-/**
- * 响应处理
- * @param res 响应体
- * @returns 返回数据
- * @throws 异常信息
- */
-export function FResHandler<T = void>(res: ResTemplate<T>): T {
-  if (res?.success) {
-    return res.data;
-  }
-
-  throw res?.message ?? '未知原因';
-}
-
-/**
- * 日期格式化
- * @param timeStamp
- * @param formatStr
- * @returns
- */
-export const formatDate = (timeStamp: number | Date, formatStr: string) => {
-  return dayjs(timeStamp).format(formatStr);
 };

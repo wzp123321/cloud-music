@@ -1,3 +1,5 @@
+import { ResTemplate } from '@/services/common-api/common-api';
+
 /**
  * 获取地址参数项
  * @param key 参数名
@@ -27,4 +29,18 @@ export function FGetCookie(key: string): string | undefined {
   if (match.length > 2) {
     return decodeURIComponent(match[2]);
   }
+}
+
+/**
+ * 响应处理
+ * @param res 响应体
+ * @returns 返回数据
+ * @throws 异常信息
+ */
+export function FResHandler<T = void>(res: ResTemplate<T>): T {
+  if (res?.success) {
+    return res.data;
+  }
+
+  throw res?.message ?? '未知原因';
 }

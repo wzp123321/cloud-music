@@ -1,0 +1,12 @@
+<div class="cm-album-card">
+  <div class="cm-album-card--cover">
+    <cm-skeleton width="100%" :height="'236px'" :imageUrl="coverImageUrl" sourceType="image"> </cm-skeleton>
+  </div>
+  <h6 :title="title">{{ title }}</h6>
+  <div class="cm-album-card--play-count">
+    <span>{{ formatDate(publishTime, 'YYYY-MM-DD') }}</span>
+  </div>
+  <div class="cm-album-card--icon">
+    <i class="iconfont icon-24gf-play"></i>
+  </div>
+</div>
