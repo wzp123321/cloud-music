@@ -1,4 +1,3 @@
-<div class="cm-skeleton" :style="{width, height, borderRadius}">
-  <template v-if="sourceType === 'image' && loaded"><img v-show="loaded" :src="imageUrl" alt="" /></template>
-  <template v-if="sourceType === 'text'"><slot></slot></template>
+<div class="cm-skeleton" :style="{width, minWidth: width, height, borderRadius}">
+  <img v-if="loaded" :src="imageUrl" alt="" />
 </div>

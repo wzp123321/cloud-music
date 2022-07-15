@@ -10,10 +10,6 @@ import { defineComponent, PropType, toRef, watch, ref } from 'vue';
 export default defineComponent({
   name: 'CmSkeleton',
   props: {
-    sourceType: {
-      type: String as PropType<'image' | 'text'>,
-      default: 'image',
-    },
     width: {
       type: String,
       default: '100%',
@@ -32,7 +28,6 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const sourceType = toRef(props, 'sourceType');
     const width = toRef(props, 'width');
     const height = toRef(props, 'height');
     const imageUrl = toRef(props, 'imageUrl');
@@ -49,9 +44,7 @@ export default defineComponent({
         const img = new Image();
         img.src = newVal;
         img.onload = (e) => {
-          setTimeout(() => {
-            loaded.value = true;
-          }, 200);
+          loaded.value = true;
         };
       },
       {
@@ -63,7 +56,6 @@ export default defineComponent({
       width,
       height,
       borderRadius,
-      sourceType,
       imageUrl,
       loaded,
     };

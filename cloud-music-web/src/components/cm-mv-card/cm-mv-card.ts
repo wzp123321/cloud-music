@@ -1,14 +1,16 @@
 /*
- * @Descrption: 歌单卡片
+ * @Descrption: MV
  * @Author: wanzp
  * @Date: 2022-06-12 19:42:40
  * @Last Modified by: mikey.zhaopeng
  * @Last Modified time: 2022-06-12 20:43:33
  */
-import { defineComponent } from 'vue';
+import { defineComponent, toRef } from 'vue';
+
+import { formatDate } from '@/core/utils';
 
 export default defineComponent({
-  name: 'CMPlayListCard',
+  name: 'CMAMVCard',
   props: {
     coverImageUrl: {
       type: String,
@@ -18,7 +20,7 @@ export default defineComponent({
       type: String,
       defualt: '',
     },
-    playCount: {
+    publishTime: {
       type: Number,
       default: 0,
     },
@@ -28,15 +30,18 @@ export default defineComponent({
     },
   },
   setup(props) {
-    // const coverImageUrl = toRef(props, 'coverImageUrl');
-    // const title = toRef(props, 'title');
-    // const playCount = toRef(props, 'playCount');
-    // const id = toRef(props, 'id');
-    // return {
-    //   coverImageUrl,
-    //   title,
-    //   id,
-    //   playCount,
-    // };
+    const coverImageUrl = toRef(props, 'coverImageUrl');
+    const title = toRef(props, 'title');
+    const publishTime = toRef(props, 'publishTime');
+    const id = toRef(props, 'id');
+
+    return {
+      coverImageUrl,
+      title,
+      publishTime,
+      id,
+
+      formatDate,
+    };
   },
 });

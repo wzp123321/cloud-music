@@ -1,5 +1,5 @@
 <div class="portal-rank-detail flex flex-column">
-  <img class="cover-img" :src="playlistVO?.coverImgUrl" alt="" />
+  <cm-skeleton width="100%" :height="'234px'" :imageUrl="playlistVO?.coverImgUrl" sourceType="image"> </cm-skeleton>
   <ul>
     <li v-for="(item, index) in playlistVO?.tracks" :key="'tracks' +index" class="mt23 flex-row-start-center">
       <div class="sort">

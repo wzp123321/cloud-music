@@ -47,7 +47,9 @@
       class="flex-column"
       @click="portal.linkToAritstDetail(item.id)"
     >
-      <img :src="item?.img1v1Url" alt="" />
+      <cm-skeleton width="100%" :height="'182px'" :imageUrl="item?.img1v1Url" sourceType="image" :borderRadius="'50%'">
+      </cm-skeleton>
+      <!-- <img :src="item?.img1v1Url" alt="" /> -->
       <p class="artist mt17" :title="item?.name">{{ item?.name }}</p>
       <p class="count mt6">{{ item?.musicSize }}首歌</p>
     </li>
