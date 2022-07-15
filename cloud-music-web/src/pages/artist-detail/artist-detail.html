@@ -42,6 +42,7 @@
       :hasLoadMore="false"
       @change="artistDetail.handleNavChange"
     ></cm-navbar>
+    <cm-loading v-if="artistDetail.itemLoading"></cm-loading>
     <!-- 单曲 -->
     <div v-show="artistDetail.selectedCode === artistDetail.navs[0].code">
       <table style="width: 100%">
@@ -79,7 +80,10 @@
     </div>
 
     <!-- 专辑 -->
-    <div v-show="artistDetail.selectedCode === artistDetail.navs[1].code" class="album-list flex-wrap">
+    <div
+      v-show="artistDetail.selectedCode === artistDetail.navs[1].code && !artistDetail.itemLoading"
+      class="album-list flex-wrap"
+    >
       <cm-album-card
         v-for="(item, index) in artistDetail.albumList"
         :key="'album_' + index"
@@ -88,6 +92,23 @@
         :publishTime="item.publishTime"
         :id="item.id"
       ></cm-album-card>
+    </div>
+
+    <!-- MV -->
+    <div
+      v-show="artistDetail.selectedCode === artistDetail.navs[2].code && !artistDetail.itemLoading"
+      class="mv-list flex-wrap"
+    >
+      <cm-mv-card
+        v-for="(item, index) in artistDetail.mvList"
+        :key="'album_' + index"
+        :coverImageUrl="item.imgurl16v9"
+        :title="item.name"
+        :duration="item.duration"
+        :playCount="item.playCount"
+        :publishTime="item.publishTime"
+        :id="item.id"
+      ></cm-mv-card>
     </div>
   </div>
 </div>

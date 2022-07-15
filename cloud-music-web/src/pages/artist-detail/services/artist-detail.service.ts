@@ -3,7 +3,7 @@
  * @Author: wanzp
  * @Date: 2022-07-06 21:40:47
  * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2022-07-13 21:52:13
+ * @Last Modified time: 2022-07-15 21:18:57
  */
 import { FGetQueryParam } from '@/core/token';
 import artistDetailService from './ad.service';
@@ -41,6 +41,7 @@ class ArtistDetail {
   private _total = ref<number>(1);
   private _albumList = ref<AlbumVO[]>([]);
   private _mvList = ref<MvVO[]>([]);
+  private _itemLoading = ref<boolean>(false);
   public readonly navs = navs;
   public readonly pageSize = 20;
   //#endregion
@@ -77,6 +78,9 @@ class ArtistDetail {
   }
   public get mvList(): MvVO[] {
     return this._mvList.value;
+  }
+  public get itemLoading(): boolean {
+    return this._itemLoading.value;
   }
   //#endregion
   //#region
@@ -119,6 +123,10 @@ class ArtistDetail {
   //#endregion
   //#region
   async queryArtistAlbum() {
+    if (this._albumList.value?.length) {
+      return;
+    }
+    this._itemLoading.value = true;
     try {
       const res = await artistDetailService.getArtistAlbumList({
         id: this._id,
@@ -130,11 +138,19 @@ class ArtistDetail {
       }
     } catch (error) {
       this._albumList.value = [];
+    } finally {
+      setTimeout(() => {
+        this._itemLoading.value = false;
+      }, 300);
     }
   }
   //#endregion
   //#region
   async queryArtistMV() {
+    if (this._mvList.value?.length) {
+      return;
+    }
+    this._itemLoading.value = true;
     try {
       const res = await artistDetailService.getArtistMVList({
         id: this._id,
@@ -147,6 +163,10 @@ class ArtistDetail {
       }
     } catch (error) {
       this._mvList.value = [];
+    } finally {
+      setTimeout(() => {
+        this._itemLoading.value = false;
+      }, 300);
     }
   }
   //#endregion

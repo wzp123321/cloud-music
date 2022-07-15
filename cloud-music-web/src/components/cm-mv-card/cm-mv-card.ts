@@ -7,7 +7,7 @@
  */
 import { defineComponent, toRef } from 'vue';
 
-import { formatDate } from '@/core/utils';
+import { formatDate, formatDuration } from '@/core/utils';
 
 export default defineComponent({
   name: 'CMAMVCard',
@@ -28,20 +28,33 @@ export default defineComponent({
       type: Number,
       default: 0,
     },
+    playCount: {
+      type: Number,
+      default: 0,
+    },
+    duration: {
+      type: String,
+      default: '',
+    },
   },
   setup(props) {
     const coverImageUrl = toRef(props, 'coverImageUrl');
     const title = toRef(props, 'title');
     const publishTime = toRef(props, 'publishTime');
     const id = toRef(props, 'id');
+    const playCount = toRef(props, 'playCount');
+    const duration = toRef(props, 'duration');
 
     return {
       coverImageUrl,
       title,
       publishTime,
       id,
+      playCount,
+      duration,
 
       formatDate,
+      formatDuration,
     };
   },
 });

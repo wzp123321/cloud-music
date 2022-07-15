@@ -1,6 +1,10 @@
 <div class="cm-mv-card">
   <div class="cm-mv-card--cover">
-    <cm-skeleton width="100%" :height="'236px'" :imageUrl="coverImageUrl" sourceType="image"> </cm-skeleton>
+    <cm-skeleton width="100%" :height="'210px'" :imageUrl="coverImageUrl" sourceType="image"> </cm-skeleton>
+    <div class="duration flex-row-justify-center">
+      <span><i class="iconfont icon-z"></i>{{ playCount }}</span>
+      <span>{{ formatDuration(duration) }}</span>
+    </div>
   </div>
   <h6 :title="title">{{ title }}</h6>
   <div class="cm-mv-card--play-count">

@@ -1,9 +1,7 @@
 .cm-mv-card {
   position: relative;
-  width: 236px;
-  height: 310px;
+  width: 320px;
   overflow: hidden;
-  margin-bottom: 24px;
 
   h6 {
     color: var(--color-text-primary);
@@ -18,8 +16,9 @@
   }
 
   &--cover {
-    width: 236px;
-    height: 236px;
+    position: relative;
+    width: 320px;
+    height: 210px;
     transition: all 0.75s;
     overflow: hidden;
 
@@ -34,6 +33,19 @@
       transform: scale(1.17);
       transform-origin: center center;
       transition: transform 0.75s cubic-bezier(0, 1, 0.75, 1);
+    }
+
+    .duration {
+      width: 100%;
+      height: 23px;
+      line-height: 23px;
+      padding: 3px 4px;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      color: var(--color-default);
+      font-size: 14px;
+      z-index: 1;
     }
   }
 
@@ -76,8 +88,8 @@
   &:hover {
     .cm-mv-card--cover::after {
       content: '';
-      width: 236px;
-      height: 236px;
+      width: 320px;
+      height: 210px;
       position: absolute;
       top: 0;
       left: 0;
