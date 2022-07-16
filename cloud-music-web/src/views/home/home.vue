@@ -18,6 +18,7 @@ export default defineComponent({
 </script>
 <style lang="less" scoped>
 .home {
+  position: relative;
   width: 100%;
   margin: 0 auto;
   height: 100%;
