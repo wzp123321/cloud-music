@@ -21,40 +21,38 @@ export interface ArtistVO {
     img1v1Id_str: string;
     mvSize: number;
   };
-  hotSongs: {
-    rtUrls: string[];
-    ar: { id: number; name: string; alia: string[] }[];
-    al: {
-      id: number;
-      name: string;
-      picUrl: string;
-      pic_str: string;
-      pic: number;
-      alia: string[];
-    };
-    st: number;
-    rtype: number;
-    pst: number;
-    alia: string[];
-    mv: number;
-    dt: number;
+  hotSongs: MusicVO[];
+}
+
+export interface MusicVO {
+  name: string;
+  id: number;
+  ar: {
+    id: number[];
     name: string;
-    id: number;
-    privilege: {
-      id: number;
-      fee: number;
-      payed: number;
-      st: number;
-      pl: number;
-      dl: number;
-      sp: number;
-      cp: number;
-      subp: number;
-      maxbr: number;
-      fl: number;
-      flag: number;
-    };
+    tns: string[];
+    alias: string[];
   }[];
+  alia: string[];
+  al: {
+    id: number;
+    name: string;
+    picUrl: string;
+    pic_str: string;
+    pic: number;
+  };
+  dt: number;
+  djId: number;
+  copyright: number;
+  mark: number;
+  originCoverType: number;
+  resourceState: true;
+  version: number;
+  single: number;
+  rtype: number;
+  mst: number;
+  mv: number;
+  publishTime: number;
 }
 
 export interface AlbumRes {

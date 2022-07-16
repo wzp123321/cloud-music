@@ -1,8 +1,103 @@
 .play-controller {
+  cursor: pointer;
+  z-index: 99;
   position: fixed;
-  bottom: 0;
+  bottom: -56px;
   left: 0;
   width: 100%;
-  background-color: #fff;
-  box-shadow: 0 0 20px 0 rgb(0 0 0 / 10%);
+  padding-top: 20px;
+  transition: all 233ms;
+
+  &.locked {
+    bottom: 0;
+  }
+
+  .control {
+    position: relative;
+    height: 56px;
+    background-color: #fff;
+    box-shadow: 0 0 20px 0 rgb(0 0 0 / 10%);
+
+    &-panel {
+      position: relative;
+      width: 1400px;
+      margin: 0 auto;
+
+      .lock-switch {
+        position: absolute;
+        top: -25px;
+        right: 0;
+        background-color: #fff;
+        border-radius: 50%;
+        width: 54px;
+        height: 54px;
+        text-align: center;
+        z-index: 0;
+      }
+
+      .lock-switch .iconfont {
+        position: relative;
+        font-size: 16px;
+        top: 8px;
+      }
+
+      .playing,
+      .switch,
+      .operate-btn {
+        height: 56px;
+        color: var(--color-text-secondary);
+        z-index: 999;
+      }
+
+      // 播放区
+      .playing .progress {
+        flex: 1 1 auto;
+      }
+
+      .playing .progress span {
+        height: 22px;
+        line-height: 22px;
+        font-size: 14px;
+      }
+
+      .playing {
+        width: 460px;
+
+        img {
+          width: 64px;
+          height: 56px;
+        }
+      }
+
+      // 切换区
+      .switch {
+        .iconfont {
+          font-size: 24px;
+        }
+
+        .iconfont.icon-24gl-playCircle,
+        .iconfont.icon-zanting {
+          font-size: 36px;
+          margin: 0 12px;
+        }
+      }
+
+      // 操作区
+      .operate-btn {
+        .iconfont {
+          font-size: 16px;
+        }
+
+        .iconfont + .iconfont {
+          z-index: 11;
+          margin-left: 8px;
+        }
+      }
+    }
+  }
+
+  &:hover {
+    bottom: 0;
+    transition: all 233ms;
+  }
 }

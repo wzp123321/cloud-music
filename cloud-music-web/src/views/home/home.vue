@@ -4,15 +4,20 @@
     <div class="container">
       <router-view></router-view>
     </div>
+    <!-- 音乐播放器 -->
+    <play-controller></play-controller>
   </div>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue';
+
 import Header from '../header/header.vue';
+import PlayController from './components/play-controller/play-controller.vue';
 
 export default defineComponent({
   components: {
     Header,
+    'play-controller': PlayController,
   },
 });
 </script>
