@@ -16,6 +16,17 @@ export function formatDuration(timeStamp: number) {
 }
 
 /**
+ * 格式化人数
+ * @param timeStamp
+ * @returns
+ */
+export function formatPlayCount(count: number) {
+  const unit = count > 9999 ? 'w' : '';
+  const fCount = count > 9999 ? Number((count / 10000).toFixed(1)) : count;
+  return `${fCount}${unit}`;
+}
+
+/**
  * 日期格式化
  * @param timeStamp
  * @param formatStr

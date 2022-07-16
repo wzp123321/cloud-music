@@ -7,7 +7,7 @@
  */
 import { defineComponent, toRef } from 'vue';
 
-import { formatDate, formatDuration } from '@/core/utils';
+import { formatPlayCount, formatDuration } from '@/core/utils';
 
 export default defineComponent({
   name: 'CMAMVCard',
@@ -53,7 +53,7 @@ export default defineComponent({
       playCount,
       duration,
 
-      formatDate,
+      formatPlayCount,
       formatDuration,
     };
   },

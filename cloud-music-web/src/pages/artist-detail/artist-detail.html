@@ -42,9 +42,14 @@
       :hasLoadMore="false"
       @change="artistDetail.handleNavChange"
     ></cm-navbar>
+    <!-- loading -->
     <cm-loading v-if="artistDetail.itemLoading"></cm-loading>
+    <!-- error -->
+    <cm-error v-if="artistDetail.is_error"></cm-error>
     <!-- 单曲 -->
-    <div v-show="artistDetail.selectedCode === artistDetail.navs[0].code">
+    <div
+      v-show="artistDetail.selectedCode === artistDetail.navs[0].code  && !artistDetail.itemLoading  && !artistDetail.is_error"
+    >
       <table style="width: 100%">
         <thead>
           <tr>
@@ -63,9 +68,21 @@
               <span>{{ (artistDetail.page - 1) * artistDetail.pageSize + index + 1 }}</span>
               <img :src="item?.al?.picUrl" alt="" />
             </td>
-            <td ellipsis style="width: 30%">{{ item.name }}</td>
+            <td ellipsis style="width: 30%">
+              <span class="mname">{{ item.name }}</span>
+              <span class="tag">无损</span>
+              <span class="mv">mv</span>
+            </td>
             <td ellipsis style="width: 30%">{{ item.al.name }}</td>
-            <td ellipsis style="width: 30%">{{ formatDuration(item.dt) }}</td>
+            <td ellipsis style="width: 30%">
+              <span class="dt">{{ formatDuration(item.dt) }}</span>
+              <div class="op-btn flex-row-start-center">
+                <i class="iconfont icon-24gf-play"></i>
+                <i class="iconfont icon-tianjia"></i>
+                <i class="iconfont icon-jushoucang"></i>
+                <i class="iconfont icon-xiazai"></i>
+              </div>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -81,7 +98,7 @@
 
     <!-- 专辑 -->
     <div
-      v-show="artistDetail.selectedCode === artistDetail.navs[1].code && !artistDetail.itemLoading"
+      v-show="artistDetail.selectedCode === artistDetail.navs[1].code && !artistDetail.itemLoading && !artistDetail.is_error"
       class="album-list flex-wrap"
     >
       <cm-album-card
@@ -96,7 +113,7 @@
 
     <!-- MV -->
     <div
-      v-show="artistDetail.selectedCode === artistDetail.navs[2].code && !artistDetail.itemLoading"
+      v-show="artistDetail.selectedCode === artistDetail.navs[2].code && !artistDetail.itemLoading && !artistDetail.is_error"
       class="mv-list flex-wrap"
     >
       <cm-mv-card
@@ -109,6 +126,19 @@
         :publishTime="item.publishTime"
         :id="item.id"
       ></cm-mv-card>
+    </div>
+
+    <!-- desc -->
+    <div
+      v-show="artistDetail.selectedCode === artistDetail.navs[3].code && !artistDetail.itemLoading && !artistDetail.is_error"
+      class="desc flex-wrap"
+    >
+      <p class="subtitle">简介</p>
+      <div class="text" v-html="artistDetail?.desc?.briefDesc"></div>
+      <template v-for="(item, index) in artistDetail?.desc?.introduction" :key="'desc_' + index">
+        <p class="subtitle">{{ item.ti }}</p>
+        <div class="text" v-html="item.txt"></div>
+      </template>
     </div>
   </div>
 </div>

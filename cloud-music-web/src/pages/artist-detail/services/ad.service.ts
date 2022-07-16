@@ -1,6 +1,6 @@
 import { getRequest } from '@/services/request';
 
-import { ArtistVO, AlbumRes, MVRes } from './artist-detail-api';
+import { ArtistVO, AlbumRes, MVRes, DescRes } from './artist-detail-api';
 
 const artistDetailService = {
   /**
@@ -31,6 +31,16 @@ const artistDetailService = {
   async getArtistMVList(params: { id: number }): Promise<MVRes> {
     const url = '/artist/mv';
     const res: MVRes = await getRequest(url, params);
+    return res;
+  },
+  /**
+   * 获取歌手描述
+   * @param params
+   * @returns
+   */
+  async getArtistDesc(params: { id: number }): Promise<DescRes> {
+    const url = '/artist/desc';
+    const res: DescRes = await getRequest(url, params);
     return res;
   },
 };

@@ -8,7 +8,7 @@
 import { FGetQueryParam } from '@/core/token';
 import artistDetailService from './ad.service';
 
-import { ArtistVO, AlbumVO, MvVO } from './artist-detail-api';
+import { ArtistVO, AlbumVO, MvVO, DescRes } from './artist-detail-api';
 import { ref } from 'vue';
 
 const navs = [
@@ -42,6 +42,13 @@ class ArtistDetail {
   private _albumList = ref<AlbumVO[]>([]);
   private _mvList = ref<MvVO[]>([]);
   private _itemLoading = ref<boolean>(false);
+  private _desc = ref<DescRes>({
+    briefDesc: '',
+    code: 0,
+    count: 0,
+    introduction: [],
+    topicData: [],
+  });
   public readonly navs = navs;
   public readonly pageSize = 20;
   //#endregion
@@ -82,6 +89,9 @@ class ArtistDetail {
   public get itemLoading(): boolean {
     return this._itemLoading.value;
   }
+  public get desc(): DescRes {
+    return this._desc.value;
+  }
   //#endregion
   //#region
   async init() {
@@ -113,6 +123,9 @@ class ArtistDetail {
       case '2':
         this.queryArtistMV();
         break;
+      case '3':
+        this.queryArtistDesc();
+        break;
     }
   };
   //#endregion
@@ -126,6 +139,7 @@ class ArtistDetail {
     if (this._albumList.value?.length) {
       return;
     }
+    this._is_error.value = false;
     this._itemLoading.value = true;
     try {
       const res = await artistDetailService.getArtistAlbumList({
@@ -138,6 +152,7 @@ class ArtistDetail {
       }
     } catch (error) {
       this._albumList.value = [];
+      this._is_error.value = true;
     } finally {
       setTimeout(() => {
         this._itemLoading.value = false;
@@ -150,6 +165,7 @@ class ArtistDetail {
     if (this._mvList.value?.length) {
       return;
     }
+    this._is_error.value = false;
     this._itemLoading.value = true;
     try {
       const res = await artistDetailService.getArtistMVList({
@@ -163,10 +179,47 @@ class ArtistDetail {
       }
     } catch (error) {
       this._mvList.value = [];
+      this._is_error.value = true;
     } finally {
       setTimeout(() => {
         this._itemLoading.value = false;
       }, 300);
+    }
+  }
+  //#endregion
+  //#region
+  async queryArtistDesc() {
+    if (this._desc.value?.briefDesc) {
+      return;
+    }
+    this._is_error.value = false;
+    this._itemLoading.value = true;
+    try {
+      const res = await artistDetailService.getArtistDesc({
+        id: this._id,
+      });
+      if (res?.code === 200) {
+        this._desc.value = res;
+      } else {
+        this._desc.value = {
+          briefDesc: '',
+          code: 0,
+          count: 0,
+          introduction: [],
+          topicData: [],
+        };
+      }
+    } catch (error) {
+      this._is_error.value = true;
+      this._desc.value = {
+        briefDesc: '',
+        code: 0,
+        count: 0,
+        introduction: [],
+        topicData: [],
+      };
+    } finally {
+      this._itemLoading.value = false;
     }
   }
   //#endregion

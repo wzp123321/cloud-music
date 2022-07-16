@@ -1,3 +1,5 @@
+import { UserVO } from '@/services/common-api/user-api';
+
 // 歌手详情
 export interface ArtistVO {
   artist: {
@@ -96,4 +98,101 @@ export interface MVRes {
 }
 
 // mv
-export interface MvVO {}
+export interface MvVO {
+  artist: ArtistVO;
+  artistName: string;
+  duration: number;
+  id: number;
+  imgurl: string;
+  imgurl16v9: string;
+  name: string;
+  playCount: number;
+  publishTime: string;
+  status: number;
+  subed: boolean;
+}
+
+// 描述响应
+export interface DescRes {
+  briefDesc: string;
+  code: number;
+  count: number;
+  introduction: {
+    ti: string;
+    txt: string;
+  }[];
+  topicData: {
+    addTime: number;
+    categoryId: number;
+    categoryName: string;
+    commentCount: number;
+    commentThreadId: string;
+    coverUrl: string;
+    creator: UserVO;
+    id: number;
+    liked: false;
+    likedCount: number;
+    mainTitle: string;
+    memo: string;
+    number: number;
+    readCount: number;
+    recmdContent: string;
+    recmdTitle: string;
+    rectanglePicUrl: string;
+    relatedResource: string;
+    reward: false;
+    rewardCount: number;
+    rewardMoney: number;
+    seriesId: number;
+    shareContent: string;
+    shareCount: number;
+    showComment: true;
+    showRelated: true;
+    summary: string;
+    tags: string[];
+    title: string;
+    topic: {
+      adInfo: string;
+      addTime: number;
+      auditStatus: number;
+      auditTime: number;
+      auditor: string;
+      categoryId: number;
+      content: {
+        content: string;
+        id: number;
+        type: number;
+      }[];
+      cover: number;
+      delReason: string;
+      fromBackend: false;
+      headPic: number;
+      hotScore: number;
+      id: number;
+      mainTitle: string;
+      memo: string;
+      number: number;
+      pubImmidiatly: true;
+      pubTime: number;
+      readCount: number;
+      recomdContent: '';
+      recomdTitle: '';
+      rectanglePic: number;
+      reward: false;
+      seriesId: number;
+      shareContent: string;
+      showComment: true;
+      showRelated: true;
+      startText: string;
+      status: number;
+      summary: string;
+      tags: string[];
+      title: string;
+      updateTime: number[];
+      userId: number;
+      wxTitle: string;
+    };
+    url: string;
+    wxTitle: string;
+  }[];
+}

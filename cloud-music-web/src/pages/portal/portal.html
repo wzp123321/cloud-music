@@ -6,7 +6,8 @@
       :key="'banner'+item"
       @click="portal.handleBannerLinkTo(item.url, item.targetType, item.targetId)"
     >
-      <img :src="item.imageUrl" alt="" />
+      <cm-skeleton width="100%" :height="'320px'" :imageUrl="item.imageUrl" sourceType="image" :borderRadius="'none'">
+      </cm-skeleton>
     </el-carousel-item>
   </el-carousel>
 
