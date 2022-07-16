@@ -8,6 +8,7 @@
 import { defineComponent, computed } from 'vue';
 
 import artistDetail from './services/artist-detail.service';
+import player from '@/views/home/components/play-controller/play-controller.service';
 
 import { ElPagination } from 'element-plus';
 
@@ -25,9 +26,15 @@ export default defineComponent({
       return artistDetail.artistVO?.hotSongs?.length;
     });
 
+    const onPlay = (index: number) => {
+      player.play(artistDetail?.artistVO?.hotSongs, index);
+    };
+
     return {
       artistDetail,
       total,
+
+      onPlay,
       formatDuration,
     };
   },

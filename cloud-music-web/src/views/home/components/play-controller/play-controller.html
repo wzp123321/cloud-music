@@ -3,25 +3,36 @@
     <div class="control-panel flex-row-justify-center">
       <div class="playing flex-row-start-center">
         <!-- 头像 -->
-        <img v-if="player?.musicVO?.al?.picUrl" :src="player?.musicVO?.al?.picUrl" alt="" />
+        <img v-if="player?.musicVO?.pic" :src="player?.musicVO?.pic" alt="" />
         <img v-else src="../../../../assets/images/common/common-avatar-default.png" alt="" />
         <!-- 进度 -->
         <div class="progress ml20">
+          <!-- 音乐播放器 -->
+          <audio
+            :src="player?.musicVO?.url"
+            :ref="player.musicRef"
+            @timeupdate="player.handleTimeupdate"
+            @ended="player.handlePlayEnd('next')"
+          ></audio>
+
           <div class="flex-row-justify-center">
-            <span>{{ player?.musicVO?.al?.name ? player?.musicVO?.al?.name : '酷你音乐-陪着我·不要停' }}</span>
-            <div><span>00:00</span>/<span>{{ formatDuration(player?.musicVO?.dt) }}</span></div>
+            <span>{{ player?.musicVO?.name ? player?.musicVO?.name : '酷你音乐-陪着我·不要停' }}</span>
+            <div>
+              <span>{{ formatDuration(player.play_timestamp) }}</span> /
+              <span>{{ formatDuration(player?.musicVO?.dt) }}</span>
+            </div>
           </div>
         </div>
       </div>
 
       <div class="switch flex-row-start-center">
-        <i class="iconfont icon-shangyishou" title="上一首"></i>
+        <i class="iconfont icon-shangyishou" title="上一首" @click="player.handlePlayEnd('preview')"></i>
         <i
           :class="['iconfont', player?.is_playing ? 'icon-zanting' : 'icon-24gl-playCircle' ]"
           :title="player?.is_playing ? '暂停' : '播放'"
           @click="player.switchPlayStatus"
         ></i>
-        <i class="iconfont icon-xiayishou" title="下一首"></i>
+        <i class="iconfont icon-xiayishou" title="下一首" @click="player.handlePlayEnd('next')"></i>
       </div>
 
       <div class="operate-btn flex-row-start-center">

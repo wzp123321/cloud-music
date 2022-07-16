@@ -6,6 +6,9 @@ import dayjs from 'dayjs';
  * @returns
  */
 export function formatDuration(timeStamp: number) {
+  if (!timeStamp) {
+    return '00:00';
+  }
   const hour = Math.floor(timeStamp / (60 * 60 * 1000));
   const min = Math.floor((timeStamp - hour * 60 * 60 * 1000) / (60 * 1000));
   const sec = Math.floor((timeStamp - min * 60 * 1000) / 1000);

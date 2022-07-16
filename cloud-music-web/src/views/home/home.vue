@@ -35,6 +35,7 @@ export default defineComponent({
     width: 1400px;
     margin: 0 auto;
     flex: 1 1 auto;
+    padding-bottom: 90px;
   }
 }
 </style>

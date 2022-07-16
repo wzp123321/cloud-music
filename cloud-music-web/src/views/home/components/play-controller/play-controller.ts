@@ -8,7 +8,7 @@ import { ref } from 'vue';
  */
 import { defineComponent } from 'vue';
 
-import player from './play-controller.service';
+import player from '@/views/home/components/play-controller/play-controller.service';
 
 import { formatDuration } from '@/core/utils';
 
