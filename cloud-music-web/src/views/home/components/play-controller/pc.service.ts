@@ -17,7 +17,7 @@ const musicService = {
    */
   async getLyricById(params: { id: number }) {
     const url = '/lyric';
-    const res = await postRequest(url, params);
+    const res = await getRequest(url, params);
     return res;
   },
   /**
@@ -27,7 +27,7 @@ const musicService = {
    */
   async getSongDownloadUrl(params: { id: number }) {
     const url = '/song/download/url';
-    const res = await postRequest(url, params);
+    const res = await getRequest(url, params);
     return res;
   },
 };

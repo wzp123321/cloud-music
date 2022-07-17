@@ -3,12 +3,14 @@
  * @Author: zpwan
  * @Date: 2022-07-16 14:55:54
  * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2022-07-17 16:43:19
+ * @Last Modified time: 2022-07-17 17:18:56
  */
 import { ref, nextTick } from 'vue';
 import { MusicVO } from '@/pages/artist-detail/services/artist-detail-api';
 
 import musicService from './pc.service';
+
+import message from '@/utils/message';
 
 enum PLAY_TYPE {
   LOOP = '循环播放',
@@ -48,6 +50,7 @@ class Player {
   private _index = ref<number>(0); // 当前播放索引
   private _is_mute = ref<boolean>(false); // 是否静音
   private _play_timestamp = ref<number>(0); // 当前播放进度
+  private _lrc = ref<string[]>([]);
 
   private _progress = ref<number>(0);
   private _dragging = ref<boolean>(false);
@@ -84,6 +87,9 @@ class Player {
   }
   public get dragging(): boolean {
     return this._dragging.value;
+  }
+  public get lrc(): string[] {
+    return this._lrc.value;
   }
   //#endregion
   constructor() {
@@ -256,10 +262,19 @@ class Player {
   //#region
   async getSongLyric() {
     try {
-      const res = await musicService.getLyricById({ id: this._musicVO.value.id });
-      console.log(res);
-    } catch (error) {}
+      try {
+        const res = await musicService.getLyricById({ id: this._musicVO.value.id });
+        this._lrc.value = res?.lrc?.lyric?.split(/\n/);
+      } catch (error) {
+        this._lrc.value = [];
+      }
+    } catch (error) {
+      this._lrc.value = [];
+    }
   }
+  //#endregion
+  //#region
+  renderLyric(time: number) {}
   //#endregion
   //#region
   switchIsMute() {
@@ -268,8 +283,18 @@ class Player {
   //#endregion
   //#region
   async downloadMusic() {
-    const res = await musicService.getSongDownloadUrl({ id: this._musicVO.value.id });
-    console.log(res);
+    try {
+      const res = await musicService.getSongDownloadUrl({ id: this._musicVO.value.id });
+      if (res?.data?.url) {
+        const a = document.createElement('a');
+        a.href = res?.data?.url;
+        a.click();
+      } else {
+        message.error('当前歌曲不可下载！');
+      }
+    } catch (error) {
+      message.error('服务异常！');
+    }
   }
   //#endregion
 }
