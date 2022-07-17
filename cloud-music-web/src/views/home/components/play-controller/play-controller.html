@@ -6,7 +6,7 @@
         <img v-if="player?.musicVO?.pic" :src="player?.musicVO?.pic" alt="" />
         <img v-else src="../../../../assets/images/common/common-avatar-default.png" alt="" />
         <!-- 进度 -->
-        <div class="progress ml20">
+        <div class="progress ml20 flex-coulmn">
           <!-- 音乐播放器 -->
           <audio
             :src="player?.musicVO?.url"
@@ -15,13 +15,20 @@
             @ended="player.handlePlayEnd('next')"
           ></audio>
 
-          <div class="flex-row-justify-center">
+          <div class="flex-row-justify-center mb8">
             <span>{{ player?.musicVO?.name ? player?.musicVO?.name : '酷你音乐-陪着我·不要停' }}</span>
             <div>
               <span>{{ formatDuration(player.play_timestamp) }}</span> /
               <span>{{ formatDuration(player?.musicVO?.dt) }}</span>
             </div>
           </div>
+          <el-slider
+            v-model="player.progress"
+            :show-tooltip="false"
+            @change="player.handleProgressChange"
+            @mousedown="player.handleProgressSliderMouseDown"
+            @mouseup="player.handleProgressSliderMouseUp"
+          />
         </div>
       </div>
 
@@ -37,7 +44,7 @@
 
       <div class="operate-btn flex-row-start-center">
         <i class="iconfont icon-jushoucang" title="收藏"></i>
-        <i class="iconfont icon-xiazai" title="下载"></i>
+        <i class="iconfont icon-xiazai" title="下载" @click="player.downloadMusic"></i>
         <i
           v-for="(item, index) in Object.keys(player.playTypes)"
           :class="['iconfont', player.playTypes[item]]"

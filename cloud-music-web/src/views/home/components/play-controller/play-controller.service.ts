@@ -3,7 +3,7 @@
  * @Author: zpwan
  * @Date: 2022-07-16 14:55:54
  * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2022-07-16 21:59:30
+ * @Last Modified time: 2022-07-17 16:43:19
  */
 import { ref, nextTick } from 'vue';
 import { MusicVO } from '@/pages/artist-detail/services/artist-detail-api';
@@ -48,6 +48,9 @@ class Player {
   private _index = ref<number>(0); // 当前播放索引
   private _is_mute = ref<boolean>(false); // 是否静音
   private _play_timestamp = ref<number>(0); // 当前播放进度
+
+  private _progress = ref<number>(0);
+  private _dragging = ref<boolean>(false);
   public readonly musicRef = ref<any>(null);
   //#endregion
 
@@ -72,6 +75,15 @@ class Player {
   }
   public get play_timestamp(): number {
     return this._play_timestamp.value;
+  }
+  public get progress(): number {
+    return this._progress.value;
+  }
+  public set progress(value: number) {
+    this._progress.value = value;
+  }
+  public get dragging(): boolean {
+    return this._dragging.value;
   }
   //#endregion
   constructor() {
@@ -108,12 +120,7 @@ class Player {
     this._musicVO.value = this._musicList.value[index];
     this._index.value = index;
     nextTick(() => {
-      if (!this._musicVO.value.url) {
-        this.handlePlayEnd();
-        return;
-      }
-      this.musicRef.value.currentTime = 0;
-      this.musicRef.value.play();
+      this.handlePlay();
     });
     this._is_playing.value = true;
     this.handleStorage();
@@ -128,12 +135,13 @@ class Player {
   //#region
   handleTimeupdate(e: Event) {
     this._play_timestamp.value = this.musicRef.value.currentTime * 1000;
+
+    this._progress.value = Number(Math.round((100 * this._play_timestamp.value) / this._musicVO.value.dt));
   }
   //#endregion
   //#region
   handlePlayEnd(switchType: string = 'next') {
     const type = Object.keys(playTypes)[this._typeIndex.value % Object.keys(playTypes).length];
-    console.log(type);
     switch (type) {
       case PLAY_TYPE.LOOP:
         this.switchMusic(switchType);
@@ -141,12 +149,7 @@ class Player {
       case PLAY_TYPE.SINGLE:
         this._play_timestamp.value = 0;
         nextTick(() => {
-          if (!this._musicVO.value.url) {
-            this.handlePlayEnd('next');
-            return;
-          }
-          this.musicRef.value.currentTime = 0;
-          this.musicRef.value.play();
+          this.handlePlay();
         });
 
         this._is_playing.value = true;
@@ -156,18 +159,40 @@ class Player {
         this._index.value = Math.round(Number((Math.random() * this._musicList.value.length).toFixed(0)));
         this._musicVO.value = this._musicList.value[this._index.value];
         nextTick(() => {
-          if (!this._musicVO.value.url) {
-            this.handlePlayEnd('next');
-            return;
-          }
-          this.musicRef.value.currentTime = 0;
-          this.musicRef.value.play();
+          this.handlePlay();
         });
         this._is_playing.value = true;
         this.handleStorage();
         break;
     }
   }
+  //#endregion
+  //#region
+  handleProgressChange = () => {
+    this._dragging.value = false;
+    this.musicRef.value.currentTime = this._play_timestamp.value / 1000;
+  };
+  //#endregion
+  //#region
+  handleProgressSliderMouseDown = (e: MouseEvent) => {
+    if (this._musicList.value?.length === 0) {
+      return;
+    }
+    this._dragging.value = true;
+    this._is_playing.value = false;
+    this.musicRef.value.pause();
+  };
+  //#endregion
+  //#region
+  handleProgressSliderMouseUp = (e: MouseEvent) => {
+    if (this._musicList.value?.length === 0) {
+      return;
+    }
+    this._dragging.value = false;
+    this._is_playing.value = true;
+    this._play_timestamp.value = this._musicVO.value.dt * (this._progress.value / 100);
+    this.musicRef.value.play();
+  };
   //#endregion
   //#region
   switchPlayType() {
@@ -181,12 +206,7 @@ class Player {
     }
     this._is_playing.value = !this._is_playing.value;
     if (this._is_playing.value) {
-      if (!this._musicVO.value.url) {
-        this.handlePlayEnd();
-        return;
-      }
-      this.musicRef.value.currentTime = 0;
-      this.musicRef.value.play();
+      this.handlePlay(false);
     } else {
       this.musicRef.value.pause();
     }
@@ -202,14 +222,7 @@ class Player {
         this._index.value = this._index.value === -1 ? this._musicList.value.length - 1 : this._index.value;
         this._musicVO.value = this._musicList.value[this._index.value];
         nextTick(() => {
-          if (!this._musicVO.value.url) {
-            this.handlePlayEnd();
-            return;
-          }
-          this.musicRef.value.currentTime = 0;
-          console.log(this.musicRef.value, this._play_timestamp);
-          this.musicRef.value.play();
-          this._is_playing.value = true;
+          this.handlePlay();
         });
         this.handleStorage();
         break;
@@ -217,15 +230,8 @@ class Player {
         this._index.value += 1;
         this._index.value = this._index.value === this._musicList.value.length ? 0 : this._index.value;
         this._musicVO.value = this._musicList.value[this._index.value];
-        setTimeout(() => {
-          if (!this._musicVO.value.url) {
-            this.handlePlayEnd();
-            return;
-          }
-          this.musicRef.value.currentTime = 0;
-          console.log(this._play_timestamp);
-          this.musicRef.value.play();
-          this._is_playing.value = true;
+        nextTick(() => {
+          this.handlePlay();
         });
         this.handleStorage();
         break;
@@ -233,8 +239,37 @@ class Player {
   }
   //#endregion
   //#region
+  handlePlay(resetFlag: boolean = true) {
+    if (!this._musicVO.value.url) {
+      this.handlePlayEnd();
+      return;
+    }
+    if (resetFlag) {
+      this.musicRef.value.currentTime = 0;
+    }
+    this.musicRef.value.play();
+    this._is_playing.value = true;
+
+    this.getSongLyric();
+  }
+  //#endregion
+  //#region
+  async getSongLyric() {
+    try {
+      const res = await musicService.getLyricById({ id: this._musicVO.value.id });
+      console.log(res);
+    } catch (error) {}
+  }
+  //#endregion
+  //#region
   switchIsMute() {
     this._is_mute.value = !this._is_mute.value;
+  }
+  //#endregion
+  //#region
+  async downloadMusic() {
+    const res = await musicService.getSongDownloadUrl({ id: this._musicVO.value.id });
+    console.log(res);
   }
   //#endregion
 }
