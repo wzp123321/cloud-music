@@ -30,8 +30,7 @@ export default ({ mode }) => {
       proxy: {
         '/api': {
           target: loadEnv(mode, process.cwd()).VITE_PROXY_URL,
-          changeOrigin: true,
-          ws: true,
+          changeOrigin: true, //是否跨域
           rewrite: (path) => path.replace(/^\/api/, ''),
         },
       },
