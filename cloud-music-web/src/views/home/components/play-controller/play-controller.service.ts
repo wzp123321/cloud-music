@@ -92,6 +92,7 @@ class Player {
   public get lrcList(): string[] {
     return this._lrcList.value;
   }
+  // 每次只能由三个
   public get lrcPancel(): string[] {
     return this._lrcPanel.value;
   }
