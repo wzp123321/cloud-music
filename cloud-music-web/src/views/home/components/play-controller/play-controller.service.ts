@@ -50,7 +50,8 @@ class Player {
   private _index = ref<number>(0); // 当前播放索引
   private _is_mute = ref<boolean>(false); // 是否静音
   private _play_timestamp = ref<number>(0); // 当前播放进度
-  private _lrc = ref<string[]>([]);
+  private _lrcList = ref<string[]>([]); // 歌词
+  private _lrcPanel = ref<string[]>([]); // 歌词面板
 
   private _progress = ref<number>(0);
   private _dragging = ref<boolean>(false);
@@ -88,8 +89,11 @@ class Player {
   public get dragging(): boolean {
     return this._dragging.value;
   }
-  public get lrc(): string[] {
-    return this._lrc.value;
+  public get lrcList(): string[] {
+    return this._lrcList.value;
+  }
+  public get lrcPancel(): string[] {
+    return this._lrcPanel.value;
   }
   //#endregion
   constructor() {
@@ -264,12 +268,12 @@ class Player {
     try {
       try {
         const res = await musicService.getLyricById({ id: this._musicVO.value.id });
-        this._lrc.value = res?.lrc?.lyric?.split(/\n/);
+        this._lrcList.value = res?.lrc?.lyric?.split(/\n/);
       } catch (error) {
-        this._lrc.value = [];
+        this._lrcList.value = [];
       }
     } catch (error) {
-      this._lrc.value = [];
+      this._lrcList.value = [];
     }
   }
   //#endregion
