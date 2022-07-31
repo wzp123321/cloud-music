@@ -31,7 +31,9 @@
           />
         </div>
         <!-- 歌词 -->
-        <div class="lrc-list" v-show="player.lrcList?.length">{{ player.lrcList }}</div>
+        <div class="lrc-list" v-show="player.lrcList?.length">
+          <p v-html="player.getShowLyc()"></p>
+        </div>
       </div>
 
       <div class="switch flex-row-start-center">
@@ -56,9 +58,10 @@
         >
         </i>
         <i
-          :class="['iconfont', player.is_mute ? 'icon-jingyin' : 'icon-24gl-volumeMiddle']"
+          :class="['mr6 iconfont', player.is_mute ? 'icon-jingyin' : 'icon-24gl-volumeMiddle']"
           @click="player.switchIsMute"
         ></i>
+        <el-slider v-model="player.volume" :show-tooltip="false" @change="player.handleVolumeChange" />
       </div>
 
       <span class="lock-switch" @click="handleLockorNot">

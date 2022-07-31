@@ -20,7 +20,7 @@ export default defineComponent({
     'el-slider': ElSlider,
   },
   setup() {
-    const locked = ref<boolean>(false);
+    const locked = ref<boolean>(true);
 
     // 锁定与否
     const handleLockorNot = () => {
