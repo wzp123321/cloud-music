@@ -29,6 +29,13 @@ const routes: RouteRecordRaw[] = [
     },
     component: () => import('@/pages/artist-detail/artist-detail.vue'),
   },
+  {
+    path: '/album_detail',
+    meta: {
+      name: '专辑详情',
+    },
+    component: () => import('@/pages/album-detail/album-detail.vue'),
+  },
 ];
 
 export default routes;

@@ -171,7 +171,6 @@ class Player {
     } else {
       // 比当前数组最后一条大
       if (this._play_timestamp.value > this._lrcList.value[this._lrcPanel.value.length].time) {
-        console.log(this._lrcPanel.value.length, this._lrcList.value[this._lrcPanel.value.length].lyc);
         this._lrcPanel.value.push(this._lrcList.value[this._lrcPanel.value.length].lyc);
       }
     }
