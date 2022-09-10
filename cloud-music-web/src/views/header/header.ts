@@ -2,11 +2,11 @@
  * @Description: 头部
  * @Author: wanzp
  * @Date: 2022-06-09 22:23:48
- * @Last Modified by: wanzp
- * @Last Modified time: 2022-06-09 22:28:08
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2022-09-10 20:52:46
  */
-import { defineComponent } from 'vue';
-import headerService from './services/header.service';
+import { defineComponent, ref } from 'vue';
+import header from './services/header.service';
 import { watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
@@ -16,6 +16,8 @@ export default defineComponent({
     const route = useRoute();
     const router = useRouter();
 
+    header.loadDefaultKeyword();
+
     const onLinkTo = (url: string) => {
       router.push({
         path: url,
@@ -23,17 +25,28 @@ export default defineComponent({
       });
     };
 
+    const handleSearch = () => {
+      router.push({
+        path: '/search',
+        query: {
+          keyword: header.keyword,
+        },
+      });
+      header.keyword = '';
+    };
+
     watch(
       () => route.path,
       () => {
-        headerService.adjustActiveTab(route.path);
+        header.adjustActiveTab(route.path);
       },
     );
 
     return {
-      onLinkTo,
+      header,
 
-      headerService,
+      handleSearch,
+      onLinkTo,
     };
   },
 });

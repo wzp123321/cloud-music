@@ -12,6 +12,7 @@ declare module '@vue/runtime-core' {
     CmNavbar: typeof import('./src/components/cm-navbar/cm-navbar.vue')['default']
     CmPlaylistCard: typeof import('./src/components/cm-playlist-card/cm-playlist-card.vue')['default']
     CmSkeleton: typeof import('./src/components/cm-skeleton/cm-skeleton.vue')['default']
+    Loading: typeof import('element-plus/es')['ElLoadingDirective']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }
