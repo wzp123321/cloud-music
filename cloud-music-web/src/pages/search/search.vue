@@ -1,11 +1,8 @@
 <template>
   <div class="search" v-loading="isLoading">
-    <cm-navbar
-      :title="'搜索结果'"
-      :navs="navs"
-      v-model:selectedCode="search.type"
-      @change="search.handleTypeChange"
-    ></cm-navbar>
+    <cm-navbar :title="'搜索结果'" :navs="navs" v-model:selectedCode="search.type" @change="search.handleTypeChange">
+    </cm-navbar>
+    <cm-table v-if="search.type === SEARCH_TYPE.单曲" :dataSource="search.songs"></cm-table>
   </div>
 </template>
 <script lang="ts" setup>
@@ -36,7 +33,7 @@ const navs = computed(() => {
 
 onMounted(() => {
   search.loadingResult$.pipe(takeUntil(destroy$)).subscribe((v) => {
-    isLoading.value = v;
+    isLoading.value = v ?? false;
   });
 });
 
@@ -51,5 +48,9 @@ onUnmounted(() => {
   height: 100%;
 
   overflow: hidden;
+
+  .cm-navbar {
+    padding: 60px 0 24px;
+  }
 }
 </style>
