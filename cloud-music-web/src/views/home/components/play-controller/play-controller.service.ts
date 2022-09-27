@@ -146,8 +146,27 @@ class Player {
   //#region
   handleTimeupdate(e: Event) {
     this._play_timestamp.value = this.musicRef.value.currentTime * 1000;
+    console.log(
+      'this.musicRef.value.currentTime * 1000-------',
+      this.formatDuration(this.musicRef.value.currentTime * 1000),
+    );
+    console.log(
+      'this.musicRef.value.currentTime * 1000-------',
+      ((this.musicRef.value.currentTime * 1000 - 60 * 60 * 1000) / 60) * 1000,
+    );
 
     this._progress.value = Number(Math.round((100 * this._play_timestamp.value) / this._musicVO.value.dt));
+  }
+  //#endregion
+  //#region
+  formatDuration(timeStamp: number) {
+    const min = Math.floor(timeStamp / (60 * 1000));
+    const sec = Math.floor((timeStamp - min * 60 * 1000) / 1000);
+    const over = timeStamp - min * 60 * 1000 - sec * 1000;
+
+    return `${min > 9 ? min.toFixed(0) : '0' + min.toFixed(0)}:${
+      sec > 9 ? sec.toFixed(0) : 0 + sec.toFixed(0)
+    }.${over}`;
   }
   //#endregion
   //#region
@@ -258,6 +277,7 @@ class Player {
     if (resetFlag) {
       this.musicRef.value.currentTime = 0;
     }
+    document.title = this._musicVO.value.name ?? '网抑云Music';
     this.musicRef.value.play();
     this._is_playing.value = true;
 
