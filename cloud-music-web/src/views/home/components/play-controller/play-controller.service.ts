@@ -3,7 +3,7 @@
  * @Author: zpwan
  * @Date: 2022-07-16 14:55:54
  * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2022-07-17 17:18:56
+ * @Last Modified time: 2022-07-27 20:40:51
  */
 import { ref, nextTick } from 'vue';
 import { MusicVO } from '@/pages/artist-detail/services/artist-detail-api';
@@ -33,6 +33,11 @@ interface PlayMisc {
   id: number;
 }
 
+interface Lyric {
+  time: number;
+  lyc: string;
+}
+
 class Player {
   //#region
   public readonly playTypes = playTypes;
@@ -50,8 +55,9 @@ class Player {
   private _index = ref<number>(0); // 当前播放索引
   private _is_mute = ref<boolean>(false); // 是否静音
   private _play_timestamp = ref<number>(0); // 当前播放进度
-  private _lrcList = ref<string[]>([]); // 歌词
+  private _lrcList = ref<Lyric[]>([]); // 歌词
   private _lrcPanel = ref<string[]>([]); // 歌词面板
+  private _volume = ref<number>(50);
 
   private _progress = ref<number>(0);
   private _dragging = ref<boolean>(false);
@@ -89,13 +95,20 @@ class Player {
   public get dragging(): boolean {
     return this._dragging.value;
   }
-  public get lrcList(): string[] {
+  public get lrcList(): Lyric[] {
     return this._lrcList.value;
   }
   // 每次只能由三个
-  public get lrcPancel(): string[] {
+  public get lrcPanel(): string[] {
     return this._lrcPanel.value;
   }
+  public get volume(): number {
+    return this._volume.value;
+  }
+  public set volume(value: number) {
+    this._volume.value = value;
+  }
+
   //#endregion
   constructor() {
     if (window.localStorage.getItem('cloud-music-list')) {
@@ -156,6 +169,24 @@ class Player {
     );
 
     this._progress.value = Number(Math.round((100 * this._play_timestamp.value) / this._musicVO.value.dt));
+    if (this._lrcList.value?.length === 0) {
+      this._lrcPanel.value = [];
+      return;
+    }
+    if (this._lrcPanel.value?.length === 0) {
+      this._lrcPanel.value.push(this._lrcList.value?.[0].lyc);
+      this._lrcPanel.value.push(this._lrcList.value?.[1].lyc);
+    } else {
+      // 比当前数组最后一条大
+      if (this._play_timestamp.value > this._lrcList.value[this._lrcPanel.value.length].time) {
+        this._lrcPanel.value.push(this._lrcList.value[this._lrcPanel.value.length].lyc);
+      }
+    }
+  }
+  //#endregion
+  //#region
+  getShowLyc() {
+    return this._lrcPanel.value?.length ? this._lrcPanel.value[this._lrcPanel.value?.length - 1] : '';
   }
   //#endregion
   //#region
@@ -171,6 +202,9 @@ class Player {
   //#endregion
   //#region
   handlePlayEnd(switchType: string = 'next') {
+    if (this._musicList.value?.length === 0) {
+      return;
+    }
     const type = Object.keys(playTypes)[this._typeIndex.value % Object.keys(playTypes).length];
     switch (type) {
       case PLAY_TYPE.LOOP:
@@ -224,6 +258,13 @@ class Player {
     this.musicRef.value.play();
   };
   //#endregion
+  //#region
+  handleVolumeChange = () => {
+    this._dragging.value = false;
+    this.musicRef.value.volume = this._volume.value / 100;
+  };
+  //#endregion
+
   //#region
   switchPlayType() {
     this._typeIndex.value++;
@@ -280,18 +321,32 @@ class Player {
     document.title = this._musicVO.value.name ?? '网抑云Music';
     this.musicRef.value.play();
     this._is_playing.value = true;
-
     this.getSongLyric();
   }
   //#endregion
   //#region
   async getSongLyric() {
     try {
-      try {
-        const res = await musicService.getLyricById({ id: this._musicVO.value.id });
-        this._lrcList.value = res?.lrc?.lyric?.split(/\n/);
-      } catch (error) {
-        this._lrcList.value = [];
+      const res = await musicService.getLyricById({ id: this._musicVO.value.id });
+      const lrcs = res?.lrc?.lyric?.split(/\n/);
+
+      if (lrcs?.length) {
+        lrcs?.forEach((item: string) => {
+          const l = item.split(']');
+
+          const timeStr = l?.[0]?.replace('[', '');
+          const t = timeStr?.split(':');
+          const s = t?.[1]?.split('.');
+          const time =
+            Number(t?.[0]?.startsWith('0') ? t?.[0]?.replace('0', '') : t?.[0]) * (60 * 1000) +
+            Number(s?.[0]?.startsWith('0') ? s?.[0]?.replace('0', '') : s?.[0]) * 1000 +
+            Number(s?.[1] ?? '');
+          const lyc = l[1] as string;
+          this._lrcList.value.push({
+            time,
+            lyc,
+          });
+        });
       }
     } catch (error) {
       this._lrcList.value = [];

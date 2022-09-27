@@ -1,12 +1,12 @@
 <div class="header">
   <div class="header-container flex-row-justify-center">
     <div class="flex-row-start-center">
-      <img src="../../assets/images/portal/portal-logo.png" @click="headerService.linkToPortal" />
+      <img src="../../assets/images/portal/portal-logo.png" @click="header.linkToPortal" />
       <ul class="header-container--tabs">
         <li
-          v-for="(item, index) in headerService.menus"
+          v-for="(item, index) in header.menus"
           :key="'menus-' + index"
-          :class="{ active: headerService.currentTab === item.url }"
+          :class="{ active: header.currentTab === item.url }"
           @click="onLinkTo(item.url)"
         >
           {{ item.name }}
@@ -14,8 +14,13 @@
       </ul>
     </div>
     <div class="flex-row-start-center">
-      <input placeholder="搜索音乐/歌手/歌单/MV" />
-      <div class="header-tabs font14 ml24">登录/注册</div>
+      <input
+        placeholder="搜索音乐/歌手/歌单/MV"
+        v-model="header.keyword"
+        :maxlength="20"
+        @keydown.enter="handleSearch"
+      />
+      <div class="header-tabs font14 ml16">{{ header.username ? header.username : '登录/注册'}}</div>
     </div>
   </div>
 </div>

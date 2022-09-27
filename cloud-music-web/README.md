@@ -18,4 +18,4 @@ You can learn more about Take Over mode [here](https://github.com/johnsoncodehk/
 
 ## 使用文档
 
-[文档地址](https://neteasecloudmusicapi.vercel.app/#/?id=neteasecloudmusicapi)
+[文档地址](https://neteasecloudmusicapi.js.org/#/?id=neteasecloudmusicapi)

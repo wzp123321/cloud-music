@@ -16,6 +16,13 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/views/demo.vue'),
   },
   {
+    path: '/search',
+    meta: {
+      name: 'search',
+    },
+    component: () => import('@/pages/search/search.vue'),
+  },
+  {
     path: '/artists',
     meta: {
       name: '歌手',
@@ -28,6 +35,20 @@ const routes: RouteRecordRaw[] = [
       name: '歌手详情',
     },
     component: () => import('@/pages/artist-detail/artist-detail.vue'),
+  },
+  {
+    path: '/album_detail',
+    meta: {
+      name: '专辑详情',
+    },
+    component: () => import('@/pages/album-detail/album-detail.vue'),
+  },
+  {
+    path: '/mvplay',
+    meta: {
+      name: 'MV播放',
+    },
+    component: () => import('@/pages/mvplay/mvplay.vue'),
   },
 ];
 
