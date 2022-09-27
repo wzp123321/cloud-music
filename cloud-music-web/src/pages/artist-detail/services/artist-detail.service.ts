@@ -2,13 +2,14 @@
  * @Descrption: 歌手详情服务
  * @Author: wanzp
  * @Date: 2022-07-06 21:40:47
- * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2022-07-15 21:18:57
+ * @Last Modified by: zpwan
+ * @Last Modified time: 2022-09-27 20:40:20
  */
 import { FGetQueryParam } from '@/core/token';
 import artistDetailService from './ad.service';
 
 import { ArtistVO, AlbumVO, MvVO, DescRes } from './artist-detail-api';
+import { IMusic } from '@/services/common-api/common-api';
 import { ref } from 'vue';
 
 const navs = [
@@ -36,9 +37,8 @@ class ArtistDetail {
   private _artistVO?: ArtistVO;
   private _loading = ref<boolean>(false);
   private _is_error = ref<boolean>(false);
+  private _songs = ref<IMusic[]>([]);
   private _selectedCode = ref<string>(navs[0].code);
-  private _page = ref<number>(1);
-  private _total = ref<number>(1);
   private _albumList = ref<AlbumVO[]>([]);
   private _mvList = ref<MvVO[]>([]);
   private _itemLoading = ref<boolean>(false);
@@ -59,6 +59,9 @@ class ArtistDetail {
   public get artistVO(): ArtistVO {
     return this._artistVO as ArtistVO;
   }
+  public get songs(): IMusic[] {
+    return this._songs.value;
+  }
   public get loading(): boolean {
     return this._loading.value;
   }
@@ -70,15 +73,6 @@ class ArtistDetail {
   }
   public set selectedCode(value: string) {
     this._selectedCode.value = value;
-  }
-  public get page(): number {
-    return this._page.value;
-  }
-  public set page(value: number) {
-    this._page.value = value;
-  }
-  public get total(): number {
-    return this._total.value;
   }
   public get albumList(): AlbumVO[] {
     return this._albumList.value;
@@ -104,7 +98,17 @@ class ArtistDetail {
       });
       if (res) {
         this._artistVO = res;
-        this._total.value = res?.hotSongs?.length;
+        this._songs.value = res?.hotSongs?.map((item) => {
+          return {
+            dt: item?.dt,
+            url: '',
+            name: item?.name,
+            alName: item?.al?.name ?? '',
+            artist: item?.ar?.[0]?.name,
+            picUrl: item?.al?.picUrl,
+            id: item?.id,
+          };
+        });
       }
     } catch (error) {
       this._is_error.value = true;
@@ -115,7 +119,6 @@ class ArtistDetail {
   //#endregion
   //#region
   handleNavChange = () => {
-    this._page.value = 1;
     switch (this._selectedCode.value) {
       case '1':
         this.queryArtistAlbum();
@@ -127,11 +130,6 @@ class ArtistDetail {
         this.queryArtistDesc();
         break;
     }
-  };
-  //#endregion
-  //#region
-  handleSongsPageChange = (value: number) => {
-    this._page.value = value;
   };
   //#endregion
   //#region

@@ -9,10 +9,21 @@ import { ref } from 'vue';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 import { postRequest } from '@/services/request';
+import { SEARCH_TYPE } from './search.api';
 
 export class SearchService {
   //#region
   private _keyword = ref<string>('');
+
+  private _type = ref<number>(SEARCH_TYPE.单曲);
+
+  public get type(): number {
+    return this._type.value;
+  }
+
+  public set type(value: number) {
+    this._type.value = value;
+  }
 
   private readonly _loadingResult$ = new BehaviorSubject<boolean>(true);
 
@@ -32,6 +43,7 @@ export class SearchService {
     const url = '/search';
     const params = {
       keywords: this._keyword.value,
+      type: this._type.value,
     };
     const res = await postRequest(url, params);
 
@@ -39,4 +51,6 @@ export class SearchService {
       console.log(res);
     }
   }
+
+  handleTypeChange() {}
 }

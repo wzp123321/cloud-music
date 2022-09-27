@@ -2,11 +2,11 @@
  * @Description: 音乐播放服务
  * @Author: zpwan
  * @Date: 2022-07-16 14:55:54
- * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2022-07-27 20:40:51
+ * @Last Modified by: zpwan
+ * @Last Modified time: 2022-09-27 20:38:58
  */
 import { ref, nextTick } from 'vue';
-import { MusicVO } from '@/pages/artist-detail/services/artist-detail-api';
+import { IMusic } from '@/services/common-api/common-api';
 
 import musicService from './pc.service';
 
@@ -24,15 +24,6 @@ const playTypes = {
   [PLAY_TYPE.RANDOM]: 'icon-24gl-shuffle',
 };
 
-interface PlayMisc {
-  dt: number;
-  url: string;
-  name: string;
-  artist: string;
-  pic: string;
-  id: number;
-}
-
 interface Lyric {
   time: number;
   lyc: string;
@@ -41,15 +32,16 @@ interface Lyric {
 class Player {
   //#region
   public readonly playTypes = playTypes;
-  private _musicVO = ref<PlayMisc>({
+  private _musicVO = ref<IMusic>({
     name: '',
     artist: '',
     url: '',
+    alName: '',
     dt: 0,
-    pic: '',
+    picUrl: '',
     id: 0,
   });
-  private _musicList = ref<PlayMisc[]>([]); // 播放的音乐数组
+  private _musicList = ref<IMusic[]>([]); // 播放的音乐数组
   private _is_playing = ref<boolean>(false);
   private _typeIndex = ref<number>(0); // 当前播放类型索引
   private _index = ref<number>(0); // 当前播放索引
@@ -65,10 +57,10 @@ class Player {
   //#endregion
 
   //#region
-  public get musicVO(): PlayMisc {
+  public get musicVO(): IMusic {
     return this._musicVO.value;
   }
-  public get musicList(): PlayMisc[] {
+  public get musicList(): IMusic[] {
     return this._musicList.value;
   }
   public get is_playing(): boolean {
@@ -118,7 +110,7 @@ class Player {
     }
   }
   //#region
-  async play(songs: MusicVO[], index: number) {
+  async play(songs: IMusic[], index: number) {
     this._musicList.value = [];
     this._play_timestamp.value = 0;
     if (!songs || songs?.length === 0) {
@@ -128,16 +120,17 @@ class Player {
       return item?.id;
     });
     const res = await musicService.getSongUrlByIds({ id: ids?.join(',') });
-    const list = res?.data.sort((a: PlayMisc, b: PlayMisc) => {
+    const list = res?.data.sort((a: IMusic, b: IMusic) => {
       return ids.indexOf(a.id) - ids.indexOf(b.id);
     });
     songs.forEach((item, i) => {
       this._musicList.value.push({
-        artist: item.ar[0].name,
-        dt: item.dt,
+        artist: item?.artist,
+        dt: item?.dt,
         url: list[i].url,
+        alName: item?.alName ?? '',
         name: item.name,
-        pic: item.al.picUrl,
+        picUrl: item?.picUrl,
         id: list[i].id,
       });
     });
@@ -159,14 +152,6 @@ class Player {
   //#region
   handleTimeupdate(e: Event) {
     this._play_timestamp.value = this.musicRef.value.currentTime * 1000;
-    console.log(
-      'this.musicRef.value.currentTime * 1000-------',
-      this.formatDuration(this.musicRef.value.currentTime * 1000),
-    );
-    console.log(
-      'this.musicRef.value.currentTime * 1000-------',
-      ((this.musicRef.value.currentTime * 1000 - 60 * 60 * 1000) / 60) * 1000,
-    );
 
     this._progress.value = Number(Math.round((100 * this._play_timestamp.value) / this._musicVO.value.dt));
     if (this._lrcList.value?.length === 0) {

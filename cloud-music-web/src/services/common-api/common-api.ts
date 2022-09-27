@@ -1,9 +1,9 @@
-export interface CodeNameKV<T> {
+export interface ICodeName<T> {
   code: T;
   name: string;
 }
 
-export interface IdNameKV<T> {
+export interface IIdName<T> {
   id: T;
   name: string;
 }
@@ -11,7 +11,7 @@ export interface IdNameKV<T> {
 /**
  *  接口返参
  */
-export interface ResTemplate<T> {
+export interface IResTemplate<T> {
   code: number;
   message: string;
   success: boolean;
@@ -20,10 +20,27 @@ export interface ResTemplate<T> {
 /**
  * 列表接口响应
  */
-export interface HttpListResponsive<T> {
+export interface IHttpListResponsive<T> {
   list: T;
   pageNum: number;
   pageSize: number;
   pages: number;
   total: number;
+}
+
+/**
+ * @param id
+ * @param name 歌曲名称
+ * @param picUrl 封面
+ * @param alName 专辑名称
+ * @param duration 时长
+ */
+export interface IMusic {
+  dt: number;
+  url: string;
+  name: string;
+  alName: string;
+  artist: string;
+  picUrl: string;
+  id: number;
 }

@@ -8,7 +8,7 @@
 import { defineComponent, PropType, toRef } from 'vue';
 import { useRouter } from 'vue-router';
 
-import { CodeNameKV } from '@/services/common-api/common-api';
+import { ICodeName } from '@/services/common-api/common-api';
 
 export default defineComponent({
   name: 'CmNavBar',
@@ -20,7 +20,7 @@ export default defineComponent({
     },
     // 菜单
     navs: {
-      type: Array as PropType<CodeNameKV<string>[]>,
+      type: Array as PropType<ICodeName<string>[]>,
       default: [],
     },
     // 选中id

@@ -1,0 +1,73 @@
+table {
+  thead tr th {
+    color: #999;
+    font-size: 14px;
+  }
+
+  tbody tr td {
+    position: relative;
+  }
+
+  tbody tr td.sort span,
+  tbody tr td.sort img {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  tbody tr td.sort span {
+    font-weight: 600;
+    left: 10px;
+  }
+
+  tbody tr td.sort img {
+    flex-shrink: 0;
+    left: 60px;
+    width: 54px;
+    height: 54px;
+  }
+
+  tbody tr td span.tag {
+    margin: 0 5px;
+    flex-shrink: 0;
+    font-size: 15px;
+    color: #e6b86d;
+    cursor: pointer;
+    font-size: 12px;
+    padding: 1px 2px;
+    border: 1px solid #e6b86d;
+    border-radius: 4px;
+  }
+  tbody tr td span.mv {
+    margin-left: 5px;
+    flex-shrink: 0;
+    font-size: 12px;
+    padding: 1px 3px;
+    border-radius: 5px;
+    font-weight: 400;
+    cursor: pointer;
+    color: var(--color-default);
+    background-color: #666;
+  }
+
+  tbody tr td .op-btn {
+    cursor: pointer;
+    display: none;
+    transition: all 233ms;
+  }
+
+  tbody tr td .op-btn i.iconfont + i.iconfont {
+    font-size: 16px;
+    margin-left: 24px;
+  }
+
+  tbody tr:hover td span.dt {
+    display: none;
+    transition: all 233ms;
+  }
+
+  tbody tr:hover td .op-btn {
+    display: inline-block;
+    transition: all 233ms;
+  }
+}

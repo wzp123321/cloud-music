@@ -1,7 +1,7 @@
-import { CodeNameKV } from '@/services/common-api/common-api';
+import { ICodeName } from '@/services/common-api/common-api';
 
 // 推荐歌单
-export const recommendPlayListNavs: CodeNameKV<string>[] = [
+export const recommendPlayListNavs: ICodeName<string>[] = [
   {
     code: '华语',
     name: '华语',
@@ -29,7 +29,7 @@ export const recommendPlayListNavs: CodeNameKV<string>[] = [
 ];
 
 // 新碟区域
-export const areaList: CodeNameKV<string>[] = [
+export const areaList: ICodeName<string>[] = [
   {
     code: 'ALL',
     name: '全部',

@@ -1,4 +1,4 @@
-import { ResTemplate } from '@/services/common-api/common-api';
+import { IResTemplate } from '@/services/common-api/common-api';
 
 /**
  * 获取地址参数项
@@ -37,7 +37,7 @@ export function FGetCookie(key: string): string | undefined {
  * @returns 返回数据
  * @throws 异常信息
  */
-export function FResHandler<T = void>(res: ResTemplate<T>): T {
+export function FResHandler<T = void>(res: IResTemplate<T>): T {
   if (res?.success) {
     return res.data;
   }
