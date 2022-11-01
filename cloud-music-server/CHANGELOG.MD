@@ -214,7 +214,7 @@
 
 ### 4.0.0 | 2021.1.03
 
-- 新增云盘上传接口,新增二维码登录相关接口和相关 demo(http://localhost:3000/qrlogin.html, http://localhost:3000/cloud.html),更新 d.ts
+- 新增云盘上传接口,新增二维码登录相关接口和相关 demo(http://localhost:10130/qrlogin.html, http://localhost:10130/cloud.html),更新 d.ts
 
 - 升级部分接口加密方法("linuxapi" 都替换到了"api")
 
