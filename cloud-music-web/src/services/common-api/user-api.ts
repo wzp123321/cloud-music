@@ -1,4 +1,4 @@
-export interface UserVO {
+export interface Common_IUserVO {
   accountStatus: number;
   anchor: true;
   authStatus: number;

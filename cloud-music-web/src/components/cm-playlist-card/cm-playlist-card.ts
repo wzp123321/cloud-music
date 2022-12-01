@@ -5,6 +5,7 @@
  * @Last Modified by: mikey.zhaopeng
  * @Last Modified time: 2022-06-12 20:43:33
  */
+import { useRouter } from 'vue-router';
 import { defineComponent } from 'vue';
 
 export default defineComponent({
@@ -28,6 +29,7 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const router = useRouter();
     // const coverImageUrl = toRef(props, 'coverImageUrl');
     // const title = toRef(props, 'title');
     // const playCount = toRef(props, 'playCount');
@@ -38,5 +40,17 @@ export default defineComponent({
     //   id,
     //   playCount,
     // };
+    const linkToDetailPage = (id: string) => {
+      router.push({
+        path: '/playlist_detail',
+        query: {
+          id,
+        },
+      });
+    };
+
+    return {
+      linkToDetailPage,
+    };
   },
 });

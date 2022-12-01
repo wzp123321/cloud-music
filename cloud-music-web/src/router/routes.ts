@@ -15,6 +15,15 @@ const routes: RouteRecordRaw[] = [
     },
     component: () => import('@/views/demo.vue'),
   },
+  // 歌单详情
+  {
+    path: '/playlist_detail',
+    meta: {
+      name: 'playlist_detail',
+    },
+    component: () => import('@/pages/playlist/playlist-detail/playlist-detail.vue'),
+  },
+  // 搜索
   {
     path: '/search',
     meta: {
@@ -22,6 +31,7 @@ const routes: RouteRecordRaw[] = [
     },
     component: () => import('@/pages/search/search.vue'),
   },
+  // 歌手列表
   {
     path: '/artists',
     meta: {
@@ -29,13 +39,15 @@ const routes: RouteRecordRaw[] = [
     },
     component: () => import('@/pages/artist/artist.vue'),
   },
+  // 歌手详情
   {
     path: '/artist_detail',
     meta: {
       name: '歌手详情',
     },
-    component: () => import('@/pages/artist-detail/artist-detail.vue'),
+    component: () => import('@/pages/artist/artist-detail/artist-detail.vue'),
   },
+  // 专辑详情
   {
     path: '/album_detail',
     meta: {
@@ -43,6 +55,7 @@ const routes: RouteRecordRaw[] = [
     },
     component: () => import('@/pages/album-detail/album-detail.vue'),
   },
+  // mv
   {
     path: '/mvplay',
     meta: {
