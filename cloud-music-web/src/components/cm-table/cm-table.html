@@ -31,6 +31,6 @@
     </tr>
   </tbody>
 </table>
-<div class="flex-row-center-center">
+<div class="flex-row-center-center" v-if="total > pageSize">
   <el-pagination layout="prev, pager, next" :total="total" :page-size="pageSize" v-model:currentPage="page" />
 </div>

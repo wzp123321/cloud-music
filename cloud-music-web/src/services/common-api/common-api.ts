@@ -1,3 +1,5 @@
+import { Common_IUserVO } from './user-api';
+
 export interface ICodeName<T> {
   code: T;
   name: string;
@@ -35,7 +37,7 @@ export interface IHttpListResponsive<T> {
  * @param alName 专辑名称
  * @param duration 时长
  */
-export interface IMusic {
+export interface Common_IMusic {
   dt: number;
   url: string;
   name: string;

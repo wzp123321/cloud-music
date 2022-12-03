@@ -1,4 +1,4 @@
-import { UserVO } from '@/services/common-api/user-api';
+import { Common_IUserVO } from '@/services/common-api/user-api';
 
 // 歌手详情
 export interface ArtistVO {
@@ -21,10 +21,10 @@ export interface ArtistVO {
     img1v1Id_str: string;
     mvSize: number;
   };
-  hotSongs: MusicVO[];
+  hotSongs: AD_IMusicVO[];
 }
 
-export interface MusicVO {
+export interface AD_IMusicVO {
   name: string;
   id: number;
   ar: {
@@ -42,16 +42,8 @@ export interface MusicVO {
     pic: number;
   };
   dt: number;
-  djId: number;
   copyright: number;
   mark: number;
-  originCoverType: number;
-  resourceState: true;
-  version: number;
-  single: number;
-  rtype: number;
-  mst: number;
-  mv: number;
   publishTime: number;
 }
 
@@ -126,7 +118,7 @@ export interface DescRes {
     commentCount: number;
     commentThreadId: string;
     coverUrl: string;
-    creator: UserVO;
+    creator: Common_IUserVO;
     id: number;
     liked: false;
     likedCount: number;

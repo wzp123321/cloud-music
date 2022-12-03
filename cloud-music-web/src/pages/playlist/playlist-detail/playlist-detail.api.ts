@@ -1,4 +1,5 @@
 import { Common_IUserVO } from '../../../services/common-api/user-api';
+import { AD_IMusicVO } from '../../artist/artist-detail/services/artist-detail-api';
 
 export interface PD_IPlaylistDetail {
   backgroundCoverUrl: string;
@@ -32,4 +33,6 @@ export interface PD_IPlaylistDetail {
   titleImage: string;
   titleImageUrl: string;
   trackCount: string;
+
+  tracks: AD_IMusicVO[];
 }

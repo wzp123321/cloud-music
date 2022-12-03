@@ -6,7 +6,7 @@
  * @Last Modified time: 2022-09-27 20:33:30
  */
 import { defineComponent, PropType, ref, computed } from 'vue';
-import { IMusic } from './../../services/common-api/common-api';
+import { Common_IMusic } from './../../services/common-api/common-api';
 import { formatDuration } from '@/core/utils';
 
 import player from '@/views/home/components/play-controller/play-controller.service';
@@ -20,7 +20,7 @@ export default defineComponent({
   },
   props: {
     dataSource: {
-      type: Array as PropType<IMusic[]>,
+      type: Array as PropType<Common_IMusic[]>,
       default: [],
     },
   },

@@ -3,7 +3,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { ref } from 'vue';
 
 import CommonService from '../../services/common.service';
-import { MP_IMvDetail } from './mvplay.api';
+import { MP_IMvDetail, MP_IMVCommentRes } from './mvplay.api';
 
 class MvPlayerService {
   //#region
@@ -35,12 +35,21 @@ class MvPlayerService {
 
   private _mvUrlResult$ = new BehaviorSubject<string>('');
 
+  private _mvCommentResult$ = new BehaviorSubject<MP_IMVCommentRes>({
+    comments: [],
+    hotComments: [],
+  });
+
   public get mvDetailResult$() {
     return this._mvDetailResult$ as unknown as Observable<MP_IMvDetail>;
   }
 
   public get mvUrlResult$() {
     return this._mvUrlResult$ as unknown as Observable<string>;
+  }
+
+  public get mvCommentResult$() {
+    return this._mvCommentResult$ as unknown as Observable<MP_IMVCommentRes>;
   }
   //#region
   private _mvid = 0;
@@ -86,7 +95,7 @@ class MvPlayerService {
       const commonService = new CommonService();
       const res = await commonService.getMvCommentList(this._mvid);
       console.log(res);
-      // this._mvUrlResult$.next(res?.url);
+      this._mvCommentResult$.next(res);
     } catch (error) {
       this._loading.value = false;
     } finally {

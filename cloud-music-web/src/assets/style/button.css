@@ -12,9 +12,7 @@ button {
 
   transition-duration: var(--param-transition-time);
 }
-button:hover {
-  color: var(--color-primary-hover);
-}
+
 button:active {
   color: var(--color-primary-active);
 }
@@ -29,14 +27,8 @@ button[primary] {
   background-color: var(--color-primary);
   border-color: var(--color-primary);
 }
-button[primary]:enabled:hover {
-  background-color: var(--color-primary-hover);
-  border-color: var(--color-primary-hover);
-}
-button[primary]:enabled:active {
-  background-color: var(--color-primary-active);
-  border-color: var(--color-primary-active);
-}
+
+
 
 /* 文本按钮 */
 button[text] {

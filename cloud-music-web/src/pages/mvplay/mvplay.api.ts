@@ -1,3 +1,5 @@
+import { CM_ICommentVO } from '../../components/cm-comment/cm-comment.api';
+
 export interface MP_IMvDetail {
   artistId: number;
   artistName: string;
@@ -22,4 +24,9 @@ export interface MP_IMvDetail {
   publishTime: string;
   shareCount: string;
   subCount: string;
+}
+
+export interface MP_IMVCommentRes {
+  comments: CM_ICommentVO[];
+  hotComments: CM_ICommentVO[];
 }

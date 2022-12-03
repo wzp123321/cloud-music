@@ -1,5 +1,6 @@
 <template>
-  <div class="playlist-detail" id="playlist-detail">
+  <cm-loading v-if="playListDetailService.loading"></cm-loading>
+  <div class="playlist-detail" id="playlist-detail" v-if="!playListDetailService.loading">
     <section class="pd-cover">
       <img :src="playListDetail?.coverImgUrl" alt="" />
       <h5>歌单简介</h5>
@@ -11,6 +12,31 @@
         <img :src="playListDetail?.creator?.avatarUrl" alt="" />
         <span>{{ playListDetail?.creator?.nickname }}</span>
       </div>
+      <div class="pd-musiclist-tags mt6 mb24" v-if="playListDetail?.tags?.length">
+        <span v-for="(item, index) in playListDetail?.tags" :key="'tag_' + index"> {{ item }}</span>
+      </div>
+
+      <!-- 歌曲 -->
+      <cm-table :dataSource="musicList"></cm-table>
+
+      <div class="pd-musiclist-header" v-if="commentRes?.hotComments?.length">
+        <h5>热门评论</h5>
+        <span>{{ commentRes?.hotComments?.length }}条</span>
+      </div>
+      <cm-comment
+        v-for="(item, index) in commentRes?.hotComments"
+        :key="'comment-' + index"
+        :commentVO="item"
+      ></cm-comment>
+      <div class="pd-musiclist-header mt60" v-if="commentRes?.comments?.length">
+        <h5>最新评论</h5>
+        <span>{{ commentRes?.comments?.length }}条</span>
+      </div>
+      <cm-comment
+        v-for="(item, index) in commentRes?.comments"
+        :key="'comment-' + index"
+        :commentVO="item"
+      ></cm-comment>
     </section>
   </div>
 </template>
@@ -19,6 +45,8 @@
 import { onMounted, ref } from 'vue';
 import PlayListDetailService from './playlist-detail.service';
 import { PD_IPlaylistDetail } from './playlist-detail.api';
+import { Common_IMusic } from '../../../services/common-api/common-api';
+import { MP_IMVCommentRes } from '../../mvplay/mvplay.api';
 
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -57,11 +85,32 @@ const playListDetail = ref<PD_IPlaylistDetail>({
   titleImage: '',
   titleImageUrl: '',
   trackCount: '',
+  tracks: [],
+});
+const musicList = ref<Common_IMusic[]>([]);
+const commentRes = ref<MP_IMVCommentRes>({
+  comments: [],
+  hotComments: [],
 });
 
 onMounted(() => {
   playListDetailService.playListResult$.pipe(takeUntil(destroy$)).subscribe((v) => {
     playListDetail.value = v;
+    musicList.value = v?.tracks?.map((item) => {
+      return {
+        dt: item.dt,
+        url: '',
+        name: item.name,
+        alName: item.alia?.[0],
+        artist: item.ar?.[0]?.name,
+        picUrl: item.al.picUrl,
+        id: item.id,
+      };
+    });
+  });
+
+  playListDetailService.playListCommentResult$.pipe(takeUntil(destroy$)).subscribe((v) => {
+    commentRes.value = v;
   });
 });
 </script>
@@ -135,6 +184,37 @@ onMounted(() => {
         font-weight: 400;
 
         margin-left: 8px;
+      }
+    }
+
+    &-tags {
+      span {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 12px;
+
+        background-color: rgba(0, 0, 0, 0.08);
+      }
+
+      span + span {
+        margin-left: 12px;
+      }
+    }
+
+    &-header {
+      display: flex;
+      align-items: flex-end;
+
+      h5 {
+        font-size: 22px;
+        line-height: 30px;
+        font-weight: 600;
+      }
+
+      span {
+        margin-left: 8px;
+        font-weight: 300;
+        font-size: 14px;
       }
     }
   }

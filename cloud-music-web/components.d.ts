@@ -6,6 +6,7 @@ import '@vue/runtime-core'
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     CmAlbumCard: typeof import('./src/components/cm-album-card/cm-album-card.vue')['default']
+    CmComment: typeof import('./src/components/cm-comment/cm-comment.vue')['default']
     CmError: typeof import('./src/components/cm-error/cm-error.vue')['default']
     CmLoading: typeof import('./src/components/cm-loading/cm-loading.vue')['default']
     CmMvCard: typeof import('./src/components/cm-mv-card/cm-mv-card.vue')['default']

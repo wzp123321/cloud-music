@@ -4,6 +4,8 @@ enum EPath {
   查询MV详情 = '/mv/detail',
   查询mv播放地址 = '/mv/url',
   获取MV评论 = '/comment/mv',
+
+  获取歌单评论 = '/comment/playlist',
 }
 
 class CommonService {
@@ -32,6 +34,16 @@ class CommonService {
    */
   public async getMvCommentList(id: number) {
     const res = await postRequest(EPath.获取MV评论, { id });
+    return res;
+  }
+
+  /**
+   * 查询歌单评论
+   * @param id
+   * @returns
+   */
+  public async getPlayListCommentList(id: number) {
+    const res = await postRequest(EPath.获取歌单评论, { id });
     return res;
   }
 }
