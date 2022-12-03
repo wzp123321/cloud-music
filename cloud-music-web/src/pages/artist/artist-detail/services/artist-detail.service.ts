@@ -9,7 +9,7 @@ import { FGetQueryParam } from '@/core/token';
 import artistDetailService from './ad.service';
 
 import { ArtistVO, AlbumVO, MvVO, DescRes } from './artist-detail-api';
-import { IMusic } from '@/services/common-api/common-api';
+import { Common_IMusic } from '@/services/common-api/common-api';
 import { ref } from 'vue';
 
 const navs = [
@@ -37,7 +37,7 @@ class ArtistDetail {
   private _artistVO?: ArtistVO;
   private _loading = ref<boolean>(false);
   private _is_error = ref<boolean>(false);
-  private _songs = ref<IMusic[]>([]);
+  private _songs = ref<Common_IMusic[]>([]);
   private _selectedCode = ref<string>(navs[0].code);
   private _albumList = ref<AlbumVO[]>([]);
   private _mvList = ref<MvVO[]>([]);
@@ -59,7 +59,7 @@ class ArtistDetail {
   public get artistVO(): ArtistVO {
     return this._artistVO as ArtistVO;
   }
-  public get songs(): IMusic[] {
+  public get songs(): Common_IMusic[] {
     return this._songs.value;
   }
   public get loading(): boolean {

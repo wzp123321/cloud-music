@@ -121,15 +121,14 @@ class PortService {
   //#endregion
   //#region 加载不同类型歌单
   queryPlayListByType = async () => {
-    console.log(1231);
     try {
       const params = {
-        limit: 10,
+        limit: 15,
         cat: this._selectedRecommendPlayListType.value,
       };
       const res: PlayListRes = await portalService.getPlayListByType(params);
       if (res?.code === 200) {
-        this._playList.value = res?.playlists.slice(0, 10);
+        this._playList.value = res?.playlists.slice(0, 15);
       } else {
         this._playList.value = [];
       }
@@ -143,7 +142,7 @@ class PortService {
     try {
       const res: HotSingerRes = await portalService.getHotSingerList({ limit: 10 });
       if (res?.code === 200) {
-        this._hotSingerList.value = res?.artists.slice(0, 7);
+        this._hotSingerList.value = res?.artists.slice(0, 10);
       } else {
         this._hotSingerList.value = [];
       }

@@ -30,7 +30,7 @@
   </div>
 
   <!-- 新碟上架 -->
-  <cm-navbar :title="'新碟上架'"></cm-navbar>
+  <cm-navbar :title="'新碟上架'" :hasLoadMore="false"></cm-navbar>
   <div class="portal-rank mt16 mb48">
     <port-rank-detail :playlistVO="portal.hotMusicRankVO"></port-rank-detail>
     <port-rank-detail :playlistVO="portal.newMusicRankVO"></port-rank-detail>
@@ -40,8 +40,8 @@
   </div>
 
   <!-- 新碟上架 -->
-  <cm-navbar :title="'热门歌手'"></cm-navbar>
-  <ul class="portal-hot-artists flex-row-justify-center mt24">
+  <cm-navbar :title="'热门歌手'" :hasLoadMore="false"></cm-navbar>
+  <ul class="portal-hot-artists mt24">
     <li
       v-for="(item, index) in portal.hotSingerList"
       :key="'artist_'+ index"
@@ -50,7 +50,6 @@
     >
       <cm-skeleton width="100%" :height="'182px'" :imageUrl="item?.img1v1Url" sourceType="image" :borderRadius="'50%'">
       </cm-skeleton>
-      <!-- <img :src="item?.img1v1Url" alt="" /> -->
       <p class="artist mt17" :title="item?.name">{{ item?.name }}</p>
       <p class="count mt6">{{ item?.musicSize }}首歌</p>
     </li>
