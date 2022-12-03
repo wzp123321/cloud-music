@@ -1,72 +1,98 @@
-/*
- * @Descrption: mv播放
- * @Author: wanzp
- * @Date: 2022-09-10 20:20:08
- * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2022-09-10 22:36:35
- */
-import { ref } from 'vue';
+import { FGetQueryParam } from '@/core/token';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { ref } from 'vue';
 
-import { getRequest } from '@/services/request';
+import CommonService from '../../services/common.service';
+import { MP_IMvDetail } from './mvplay.api';
 
-interface MvPlayVO {
-  id: string;
-  needPay: boolean;
-  payInfo: string;
-  r: number;
-  size: number;
-  url: string;
-  validityTime: number;
-}
-
-export class MvPlayService {
+class MvPlayerService {
   //#region
-  private _id: string = '';
+  private _mvDetailResult$ = new BehaviorSubject<MP_IMvDetail>({
+    artistId: 0,
+    artistName: '',
+    artists: {
+      followed: '',
+      id: '',
+      img1v1Url: '',
+      name: '',
+    },
+    commentCount: '',
+    commentThreadId: '',
+    cover: '',
+    coverId: '',
+    coverId_str: '',
+    desc: '',
+    duration: '',
+    id: '',
+    nType: '',
+    name: '',
+    playCount: '',
+    price: '',
+    publishTime: '',
+    shareCount: '',
+    subCount: '',
+  });
 
-  private _url = ref<string>('');
+  private _mvUrlResult$ = new BehaviorSubject<string>('');
 
-  private _size = ref<number>(0);
-
-  private readonly _loadingResult$ = new BehaviorSubject<boolean>(true);
-
-  public get url(): string {
-    return this._url.value;
+  public get mvDetailResult$() {
+    return this._mvDetailResult$ as unknown as Observable<MP_IMvDetail>;
   }
 
-  public get size(): number {
-    return this._size.value;
+  public get mvUrlResult$() {
+    return this._mvUrlResult$ as unknown as Observable<string>;
   }
+  //#region
+  private _mvid = 0;
 
-  public get loadingResult$() {
-    return this._loadingResult$ as unknown as Observable<boolean>;
+  private _loading = ref<boolean>(false);
+
+  public get loading(): boolean {
+    return this._loading.value;
   }
 
   //#endregion
-  constructor(id: string) {
-    this._id = id;
+
+  constructor() {
+    this._mvid = Number(FGetQueryParam('mvid'));
+    this._loading.value = true;
+    const commonService = new CommonService();
+    commonService
+      .getMvDetailById(this._mvid)
+      .then((res) => {
+        this._mvDetailResult$.next(res as MP_IMvDetail);
+      })
+      .catch(() => {
+        this._loading.value = false;
+      });
+    this.queryUrl();
+    this.queryCommentList();
   }
 
-  async query() {
+  async queryUrl() {
     try {
-      const url = '/video/url';
-      const params = {
-        id: this._id,
-      };
-      const res = await getRequest(url, params);
-
-      if (res && res?.urls?.length) {
-        this._url.value = res?.urls?.[0].url;
-        this._size.value = res?.urls?.[0].size;
-
-        this._loadingResult$.next(false);
-      } else {
-        this._loadingResult$.next(false);
-      }
+      const commonService = new CommonService();
+      const res = await commonService.getMvUrlById(this._mvid);
+      this._mvUrlResult$.next(res?.url);
     } catch (error) {
-      this._loadingResult$.next(false);
+      this._loading.value = false;
+    } finally {
+      this._loading.value = false;
     }
   }
 
-  play() {}
+  async queryCommentList() {
+    try {
+      const commonService = new CommonService();
+      const res = await commonService.getMvCommentList(this._mvid);
+      console.log(res);
+      // this._mvUrlResult$.next(res?.url);
+    } catch (error) {
+      this._loading.value = false;
+    } finally {
+      this._loading.value = false;
+    }
+  }
 }
+
+export default MvPlayerService;

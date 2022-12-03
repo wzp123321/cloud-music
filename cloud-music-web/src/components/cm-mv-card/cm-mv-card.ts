@@ -21,8 +21,8 @@ export default defineComponent({
       defualt: '',
     },
     publishTime: {
-      type: Number,
-      default: 0,
+      type: String,
+      default: '',
     },
     id: {
       type: Number,

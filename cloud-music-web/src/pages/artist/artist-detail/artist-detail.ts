@@ -6,6 +6,7 @@
  * @Last Modified time: 2022-09-27 20:32:34
  */
 import { defineComponent } from 'vue';
+import { useRouter } from 'vue-router';
 
 import artistDetail from './services/artist-detail.service';
 
@@ -14,8 +15,20 @@ export default defineComponent({
   setup() {
     artistDetail.init();
 
+    const router = useRouter();
+
+    function handleMvPlay(mvid: number) {
+      router.push({
+        path: '/mvplay',
+        query: {
+          mvid,
+        },
+      });
+    }
+
     return {
       artistDetail,
+      handleMvPlay,
     };
   },
 });

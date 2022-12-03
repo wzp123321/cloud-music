@@ -31,6 +31,7 @@ const routes: RouteRecordRaw[] = [
     },
     component: () => import('@/pages/search/search.vue'),
   },
+
   // 歌手列表
   {
     path: '/artists',
@@ -47,6 +48,7 @@ const routes: RouteRecordRaw[] = [
     },
     component: () => import('@/pages/artist/artist-detail/artist-detail.vue'),
   },
+
   // 专辑详情
   {
     path: '/album_detail',
@@ -55,6 +57,7 @@ const routes: RouteRecordRaw[] = [
     },
     component: () => import('@/pages/album-detail/album-detail.vue'),
   },
+
   // mv
   {
     path: '/mvplay',

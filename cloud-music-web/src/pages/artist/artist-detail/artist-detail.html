@@ -78,10 +78,11 @@
         :key="'album_' + index"
         :coverImageUrl="item.imgurl16v9"
         :title="item.name"
-        :duration="item.duration"
+        :duration="String(item.duration)"
         :playCount="item.playCount"
         :publishTime="item.publishTime"
         :id="item.id"
+        @click.native="handleMvPlay(item.id)"
       ></cm-mv-card>
     </div>
 
