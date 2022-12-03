@@ -298,17 +298,22 @@ $ set HOST=127.0.0.1 && node app.js
 ```
 
 ### npx 方式运行
+
 支持 npx 方式运行,会自动安装依赖和运行
+
 ```
 npx NeteaseCloudMusicApi
 ```
+
 如果需要更新,可使用 `npx NeteaseCloudMusicApi@版本号` 方式运行
 
 或者运行
+
 ```
 npx NeteaseCloudMusicApi@latest
 
 ```
+
 此命令每次执行都会使用最新版
 
 ## Vercel 部署
@@ -444,7 +449,7 @@ $ sudo docker run -d -p 10130:10130 netease-music-api
 
 !> 文档可能会有缓存 , 如果文档版本和 github 上的版本不一致,请清除缓存再查看
 
-!> 由于网易限制,此项目在国外服务器或部分国内云服务上使用会受到限制,如 `460 cheating异常`,如需解决 , 可使用`realIP`参数,传进国内IP解决,如:`?realIP=116.25.146.177`
+!> 由于网易限制,此项目在国外服务器或部分国内云服务上使用会受到限制,如 `460 cheating异常`,如需解决 , 可使用`realIP`参数,传进国内 IP 解决,如:`?realIP=116.25.146.177`
 即可解决
 
 !> 图片加上 `?param=宽y高` 可控制图片尺寸，如 `http://p4.music.126.net/JzNK4a5PjjPIXAgVlqEc5Q==/109951164154280311.jpg?param=200y200`, `http://p4.music.126.net/JzNK4a5PjjPIXAgVlqEc5Q==/109951164154280311.jpg?param=50y50`
@@ -539,12 +544,11 @@ v3.30.0 后支持手动传入 cookie,登录接口返回内容新增 `cookie` 字
 
 调用可参考项目文件例子`/public/qrlogin.html` (访问地址:http://localhost:10130/qrlogin.html)
 
-
 #### 3. 游客登录
-说明 : 直接调用此接口, 可获取游客cookie,如果遇到其他接口未登录状态报400状态码需要验证的错误,可使用此接口获取游客cookie避免报错
+
+说明 : 直接调用此接口, 可获取游客 cookie,如果遇到其他接口未登录状态报 400 状态码需要验证的错误,可使用此接口获取游客 cookie 避免报错
 
 **接口地址 :** `/register/anonimous`
-
 
 #### 注意
 
@@ -552,7 +556,7 @@ v3.30.0 后支持手动传入 cookie,登录接口返回内容新增 `cookie` 字
 
 ### 刷新登录
 
-说明 : 调用此接口 , 可刷新登录状态,返回内容包含新的cookie(不支持刷新二维码登录的cookie)
+说明 : 调用此接口 , 可刷新登录状态,返回内容包含新的 cookie(不支持刷新二维码登录的 cookie)
 
 **调用例子 :** `/login/refresh`
 
@@ -639,7 +643,6 @@ v3.30.0 后支持手动传入 cookie,登录接口返回内容新增 `cookie` 字
 **接口地址 :** `/nickname/check`
 
 **调用例子 :** `/nickname/check?nickname=binaryify`
-
 
 ### 更换绑定手机
 
@@ -760,7 +763,7 @@ signature：用户签名
 
 ### 更新头像
 
-说明 : 登录后调用此接口,使用`'Content-Type': 'multipart/form-data'`上传图片 formData(name 为'imgFile'),可更新头像(参考: https://github.com/Binaryify/NeteaseCloudMusicApi/blob/master/public/avatar_update.html  ),支持命令行调用,参考module_example目录下`avatar_upload.js`
+说明 : 登录后调用此接口,使用`'Content-Type': 'multipart/form-data'`上传图片 formData(name 为'imgFile'),可更新头像(参考: https://github.com/Binaryify/NeteaseCloudMusicApi/blob/master/public/avatar_update.html ),支持命令行调用,参考 module_example 目录下`avatar_upload.js`
 
 **可选参数 :**
 
@@ -1361,20 +1364,19 @@ tags: 歌单标签
 
 **可选参数 :** `limit` : 限制获取歌曲的数量，默认值为当前歌单的歌曲数量
 
-**可选参数 :** `offset` : 默认值为0
+**可选参数 :** `offset` : 默认值为 0
 
 **接口地址 :** `/playlist/track/all`
 
 **调用例子 :** `/playlist/track/all?id=24381616&limit=10&offset=1`
 
-> 注：关于`offset`，你可以这样理解，假设你当前的歌单有100首歌
-> 
-> 你传入limit=10&offset=0等价于limit=10，你会得到第1-10首歌曲
-> 
-> 你传入limit=10&offset=1，你会得到第2-11首歌曲
-> 
-> 如果你设置limit=10&offset=2，你就会得到第3-12首歌曲
-
+> 注：关于`offset`，你可以这样理解，假设你当前的歌单有 100 首歌
+>
+> 你传入 limit=10&offset=0 等价于 limit=10，你会得到第 1-10 首歌曲
+>
+> 你传入 limit=10&offset=1，你会得到第 2-11 首歌曲
+>
+> 如果你设置 limit=10&offset=2，你就会得到第 3-12 首歌曲
 
 ### 歌单详情动态
 
@@ -1386,7 +1388,6 @@ tags: 歌单标签
 
 **调用例子 :** `/playlist/detail/dynamic?id=24381616`
 
-
 ### 歌单更新播放量
 
 说明 : 调用后可更新歌单播放量
@@ -1396,9 +1397,6 @@ tags: 歌单标签
 **接口地址 :** `/playlist/update/playcount`
 
 **调用例子 :** `/playlist/update/playcount?id=24381616`
-
-
-
 
 ### 获取音乐 url
 
@@ -1976,8 +1974,7 @@ tags: 歌单标签
 
    `t`:0 删除
 
-   `type`: 数字,资源类型,对应歌曲,mv,专辑,歌单,电台,视频对应以下类型  
-   
+   `type`: 数字,资源类型,对应歌曲,mv,专辑,歌单,电台,视频对应以下类型
 
    ```
    0: 歌曲
@@ -1995,8 +1992,8 @@ tags: 歌单标签
 
    6: 动态
 
-   ```  
-   
+   ```
+
    `id`:对应资源 id
    `content` :内容 id,可通过 `/comment/mv` 等接口获取
 
@@ -2010,7 +2007,7 @@ tags: 歌单标签
 
 **可选参数 :**
 
-`type`:资源类型,对应以下类型,默认为 0 即 PC  
+`type`:资源类型,对应以下类型,默认为 0 即 PC
 
 ```
 0: pc
@@ -2020,7 +2017,7 @@ tags: 歌单标签
 2: iphone
 
 3: ipad
-```  
+```
 
 **接口地址 :** `/banner`
 
@@ -2034,7 +2031,6 @@ tags: 歌单标签
 
 `type`:资源类型,对应以下类型
 
-
 ```
 1: mv
 
@@ -2045,11 +2041,9 @@ tags: 歌单标签
 6: 动态
 ```
 
-
 `t`: 操作,1 为点赞,其他为取消点赞
 
-`id`: 资源 id  
-
+`id`: 资源 id
 
 **接口地址 :** `/resource/like`
 
@@ -2057,7 +2051,6 @@ tags: 歌单标签
 
 注意：如给动态点赞，不需要传入 id，需要传入 `threadId`,可通过 `event`,`/user/event` 接口获取，如：
 `/resource/like?t=1&type=6&threadId=A_EV_2_6559519868_32953014`
-
 
 ### 获取点赞过的视频
 
@@ -2069,7 +2062,7 @@ tags: 歌单标签
 
 ### 获取歌曲详情
 
-说明 : 调用此接口 , 传入音乐 id(支持多个 id, 用 `,` 隔开), 可获得歌曲详情(dt为歌曲时长)
+说明 : 调用此接口 , 传入音乐 id(支持多个 id, 用 `,` 隔开), 可获得歌曲详情(dt 为歌曲时长)
 
 **必选参数 :** `ids`: 音乐 id, 如 `ids=347230`
 
@@ -2078,6 +2071,7 @@ tags: 歌单标签
 **调用例子 :** `/song/detail?ids=347230`,`/song/detail?ids=347230,347231`
 
 返回字段说明(感谢 [@tuxzz](https://github.com/Binaryify/NeteaseCloudMusicApi/issues/1121#issuecomment-774438040) 整理):
+
 ```
 name: String, 歌曲标题
 id: u64, 歌曲ID
@@ -2434,8 +2428,6 @@ pc: 云盘歌曲信息，如果不存在该字段，则为非云盘歌曲
 口 `/album` , 然后传入 id, 如 `/album?id=32311`
 
 **可选参数 :**
-
-
 
 `area`: ALL:全部,ZH:华语,EA:欧美,KR:韩国,JP:日本
 
@@ -3522,7 +3514,7 @@ type='1009' 获取其 id, 如`/search?keywords= 代码时间 &type=1009`
 
 **可选参数 :** `reason` : 推歌理由
 
-`yunbeiNum`: 云贝数量,默认10
+`yunbeiNum`: 云贝数量,默认 10
 
 **接口地址 :** `/yunbei/rcmd/song`
 
@@ -3617,7 +3609,6 @@ type='1009' 获取其 id, 如`/search?keywords= 代码时间 &type=1009`
 说明 : 调用此接口 , 传入歌手 id, 可获取歌手粉丝
 **必选参数 :** `id` : 歌手 id
 
-
 **接口地址 :** `/artist/fans`
 
 **调用例子 :** `/artist/fans?id=2116&limit=10&offset=0`
@@ -3625,7 +3616,6 @@ type='1009' 获取其 id, 如`/search?keywords= 代码时间 &type=1009`
 ### 歌手粉丝数量
 
 说明 : 调用此接口 , 传入歌手 id, 可获取歌手粉丝数量
-
 
 **必选参数 :** `id` : 歌手 id
 
@@ -3848,7 +3838,7 @@ type='1009' 获取其 id, 如`/search?keywords= 代码时间 &type=1009`
 
 ### 内部版本接口
 
-说明 : 调用此接口 , 可获得内部版本号(从package.json读取)
+说明 : 调用此接口 , 可获得内部版本号(从 package.json 读取)
 
 **接口地址 :** `/inner/version`
 
@@ -3864,8 +3854,7 @@ type='1009' 获取其 id, 如`/search?keywords= 代码时间 &type=1009`
 
 **接口地址 :** `/vip/timemachine`
 
-**调用例子 :** `/vip/timemachine` `/vip/timemachine?startTime=1638288000000&endTime=1640966399999&limit=10`（2021年12月） `/vip/timemachine?startTime=1609430400&endTime=1640966399999&limit=60`(2021年)
-
+**调用例子 :** `/vip/timemachine` `/vip/timemachine?startTime=1638288000000&endTime=1640966399999&limit=10`（2021 年 12 月） `/vip/timemachine?startTime=1609430400&endTime=1640966399999&limit=60`(2021 年)
 
 ## 离线访问此文档
 
