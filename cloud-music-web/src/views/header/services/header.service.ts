@@ -38,10 +38,6 @@ class HeaderService {
     this._currentTab.value = url;
   }
 
-  linkToPortal() {
-    window.location.href = '/';
-  }
-
   async loadDefaultKeyword() {
     const url = '/search/default';
     const res = await getRequest(url);

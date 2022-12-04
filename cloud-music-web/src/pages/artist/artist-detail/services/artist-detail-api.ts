@@ -3,22 +3,15 @@ import { Common_IUserVO } from '@/services/common-api/user-api';
 // 歌手详情
 export interface ArtistVO {
   artist: {
-    img1v1Id: number;
     topicPerson: number;
-    followed: false;
     alias: string[];
     picId: number;
     briefDesc: string;
-    musicSize: number;
-    albumSize: number;
     picUrl: string;
     img1v1Url: string;
-    trans: string;
     name: string;
     id: number;
     publishTime: number;
-    picId_str: string;
-    img1v1Id_str: string;
     mvSize: number;
   };
   hotSongs: AD_IMusicVO[];
@@ -94,12 +87,11 @@ export interface MvVO {
   duration: number;
   id: number;
   imgurl: string;
-  imgurl16v9: string;
+  cover?: string;
   name: string;
   playCount: number;
   publishTime: string;
   status: number;
-  subed: boolean;
 }
 
 // 描述响应

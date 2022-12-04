@@ -25,8 +25,14 @@ export default defineComponent({
       });
     };
 
+    const linkToPortal = () => {
+      router.replace({
+        path: '/',
+      });
+    };
+
     const handleSearch = () => {
-      router.push({
+      router.replace({
         path: '/search',
         query: {
           keyword: header.keyword,
@@ -47,6 +53,7 @@ export default defineComponent({
 
       handleSearch,
       onLinkTo,
+      linkToPortal,
     };
   },
 });

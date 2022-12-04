@@ -1,5 +1,3 @@
-import { Common_IUserVO } from './user-api';
-
 export interface ICodeName<T> {
   code: T;
   name: string;
@@ -44,5 +42,17 @@ export interface Common_IMusic {
   alName: string;
   artist: string;
   picUrl: string;
+  id: number;
+}
+
+/**
+ * 专辑
+ */
+export interface Common_IAblumVO {
+  title: string;
+  publicTime: number;
+  artist: string;
+
+  coverImageUrl: string;
   id: number;
 }

@@ -15,17 +15,6 @@ export default defineComponent({
   setup() {
     artistDetail.init();
 
-    const router = useRouter();
-
-    function handleMvPlay(mvid: number) {
-      router.push({
-        path: '/mvplay',
-        query: {
-          mvid,
-        },
-      });
-    }
-
     onMounted(() => {
       const pageEle = document.getElementsByClassName('home');
       console.log(pageEle);
@@ -38,7 +27,6 @@ export default defineComponent({
 
     return {
       artistDetail,
-      handleMvPlay,
     };
   },
 });

@@ -8,6 +8,7 @@
 import { defineComponent, toRef } from 'vue';
 
 import { formatPlayCount, formatDuration } from '@/core/utils';
+import { useRouter } from 'vue-router';
 
 export default defineComponent({
   name: 'CMAMVCard',
@@ -38,12 +39,22 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const router = useRouter();
     const coverImageUrl = toRef(props, 'coverImageUrl');
     const title = toRef(props, 'title');
     const publishTime = toRef(props, 'publishTime');
     const id = toRef(props, 'id');
     const playCount = toRef(props, 'playCount');
     const duration = toRef(props, 'duration');
+
+    const linkToMvPlay = () => {
+      router.push({
+        path: '/mvplay',
+        query: {
+          mvid: props.id,
+        },
+      });
+    };
 
     return {
       coverImageUrl,
@@ -55,6 +66,7 @@ export default defineComponent({
 
       formatPlayCount,
       formatDuration,
+      linkToMvPlay,
     };
   },
 });
