@@ -14,10 +14,13 @@ import { SEARCH_TYPE } from './search.api';
 
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { watch } from 'fs';
 const destroy$ = new Subject<void>();
 
-const keyword = FGetQueryParam('keyword') as string;
-const search = new SearchService(keyword);
+const keyword = computed(() => {
+  return FGetQueryParam('keyword') as string;
+});
+const search = new SearchService(keyword.value);
 
 search.query();
 const isLoading = ref<boolean>(false);
@@ -29,6 +32,10 @@ const navs = computed(() => {
       name: v,
     };
   });
+});
+
+watch(keyword.value, () => {
+  search.query();
 });
 
 onMounted(() => {

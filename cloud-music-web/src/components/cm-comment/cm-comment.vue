@@ -12,13 +12,13 @@
         </span>
       </p>
 
-      <p class="content mt4" :title="commentVO?.content">{{ commentVO?.content }}</p>
+      <p class="content mt4" :title="commentVO?.content" v-html="commentVO?.content"></p>
 
       <div class="reply mb4" v-if="commentVO?.beReplied?.length">
         <span class="name">{{
           commentVO?.beReplied?.[0]?.user?.nickname ? `${commentVO?.beReplied?.[0]?.user?.nickname}：` : ''
         }}</span>
-        <span class="text">{{ commentVO?.beReplied?.[0]?.content }}</span>
+        <span class="text" v-html="commentVO?.beReplied?.[0]?.content"></span>
       </div>
 
       <div class="publish-time mt8">{{ commentVO?.timeStr }}</div>
