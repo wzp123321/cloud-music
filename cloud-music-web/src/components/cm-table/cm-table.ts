@@ -38,7 +38,7 @@ export default defineComponent({
     });
 
     const onPlay = (index: number) => {
-      player.play(props.dataSource, index);
+      player.play(props.dataSource[index]);
     };
 
     return {

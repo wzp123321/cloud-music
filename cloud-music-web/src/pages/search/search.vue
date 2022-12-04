@@ -1,6 +1,12 @@
 <template>
   <div class="search" v-loading="isLoading">
-    <cm-navbar :title="'搜索结果'" :navs="navs" v-model:selectedCode="search.type" @change="search.handleTypeChange">
+    <cm-navbar
+      :title="'搜索结果'"
+      :navs="navs"
+      v-model:selectedCode="search.type"
+      :hasLoadMore="false"
+      @change="search.handleTypeChange"
+    >
     </cm-navbar>
     <!-- 单曲 -->
     <cm-table v-if="search.type === SEARCH_TYPE.单曲" :dataSource="search.songs"></cm-table>
@@ -88,9 +94,8 @@ onUnmounted(() => {
   }
 
   &-ablum {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: repeat(4, auto);
 
     gap: 16px;
   }

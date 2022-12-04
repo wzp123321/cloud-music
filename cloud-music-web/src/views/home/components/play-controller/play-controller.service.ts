@@ -9,6 +9,7 @@ import { ref, nextTick } from 'vue';
 import { Common_IMusic } from '@/services/common-api/common-api';
 
 import musicService from './pc.service';
+import playListService from '../play-list/play-list.service';
 
 import message from '@/utils/message';
 
@@ -109,33 +110,38 @@ class Player {
       this._musicVO.value = this._musicList.value[this._index.value];
     }
   }
+  getMusicList() {
+    if (window.localStorage.getItem('cloud-music-list')) {
+      this._musicList.value = JSON.parse(window.localStorage.getItem('cloud-music-list') as string);
+    }
+  }
   //#region
-  async play(songs: Common_IMusic[], index: number) {
-    this._musicList.value = [];
-    this._play_timestamp.value = 0;
-    if (!songs || songs?.length === 0) {
+  async play(song: Common_IMusic) {
+    if (!song) {
       return;
     }
-    const ids = songs.map((item) => {
-      return item?.id;
+    const item = {
+      artist: song?.artist,
+      dt: song?.dt,
+      url: '',
+      alName: song?.alName ?? '',
+      name: song.name,
+      picUrl: song?.picUrl,
+      id: song.id,
+    };
+    await playListService.addMusic(item);
+
+    this._musicList.value = [];
+    this._lrcList.value = [];
+    this._lrcPanel.value = [];
+    this._play_timestamp.value = 0;
+
+    this.getMusicList();
+
+    this._musicVO.value = item;
+    this._index.value = this._musicList.value?.findIndex((mItem) => {
+      return mItem.id === song.id;
     });
-    const res = await musicService.getSongUrlByIds({ id: ids?.join(',') });
-    const list = res?.data.sort((a: Common_IMusic, b: Common_IMusic) => {
-      return ids.indexOf(a.id) - ids.indexOf(b.id);
-    });
-    songs.forEach((item, i) => {
-      this._musicList.value.push({
-        artist: item?.artist,
-        dt: item?.dt,
-        url: list[i].url,
-        alName: item?.alName ?? '',
-        name: item.name,
-        picUrl: item?.picUrl,
-        id: list[i].id,
-      });
-    });
-    this._musicVO.value = this._musicList.value[index];
-    this._index.value = index;
     nextTick(() => {
       this.handlePlay();
     });
@@ -145,7 +151,6 @@ class Player {
   //#endregion
   //#region
   handleStorage() {
-    window.localStorage.setItem('cloud-music-list', JSON.stringify(this._musicList.value));
     window.localStorage.setItem('cloud-play-index', this._index.value + '');
   }
   //#endregion
