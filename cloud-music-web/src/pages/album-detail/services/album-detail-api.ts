@@ -1,9 +1,10 @@
-import { MusicVO, ArtistVO } from '@/pages/artist-detail/services/artist-detail-api';
+import { ArtistVO } from '../../artist/artist-detail/services/artist-detail-api';
+import { Common_IMusic } from '../../../services/common-api/common-api';
 
 export interface AlbumRes {
   code: number;
   resourceState: boolean;
-  songs: MusicVO[];
+  songs: Common_IMusic[];
   album: AlbumVO;
 }
 

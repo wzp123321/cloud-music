@@ -1,4 +1,4 @@
-import { UserVO } from '@/services/common-api/user-api';
+import { Common_IUserVO } from '@/services/common-api/user-api';
 
 /**
  * 首页banner
@@ -56,7 +56,7 @@ export interface PlayListVO {
   coverImgUrl: string;
   coverStatus: number;
   createTime: number;
-  creator: UserVO;
+  creator: Common_IUserVO;
   description: string;
   highQuality: true;
   id: number;

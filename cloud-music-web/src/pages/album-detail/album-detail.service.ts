@@ -3,7 +3,7 @@ import { FGetQueryParam } from '@/core/token';
 import infoService from './services/album-detail-service';
 
 import { AlbumVO } from './services/album-detail-api';
-import { MusicVO } from '../artist-detail/services/artist-detail-api';
+import { Common_IMusic } from '../../services/common-api/common-api';
 
 /*
  * @Descrption: 专辑详情服务
@@ -16,12 +16,12 @@ class info {
   //#region
   private _info = ref<AlbumVO>();
 
-  private _songs = ref<MusicVO[]>([]);
+  private _songs = ref<Common_IMusic[]>([]);
 
   public get info(): AlbumVO {
     return this._info.value as AlbumVO;
   }
-  public get songs(): MusicVO[] {
+  public get songs(): Common_IMusic[] {
     return this._songs.value;
   }
   //#endregion

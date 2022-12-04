@@ -6,7 +6,7 @@
  * @Last Modified time: 2022-09-27 20:38:58
  */
 import { ref, nextTick } from 'vue';
-import { IMusic } from '@/services/common-api/common-api';
+import { Common_IMusic } from '@/services/common-api/common-api';
 
 import musicService from './pc.service';
 
@@ -32,7 +32,7 @@ interface Lyric {
 class Player {
   //#region
   public readonly playTypes = playTypes;
-  private _musicVO = ref<IMusic>({
+  private _musicVO = ref<Common_IMusic>({
     name: '',
     artist: '',
     url: '',
@@ -41,7 +41,7 @@ class Player {
     picUrl: '',
     id: 0,
   });
-  private _musicList = ref<IMusic[]>([]); // 播放的音乐数组
+  private _musicList = ref<Common_IMusic[]>([]); // 播放的音乐数组
   private _is_playing = ref<boolean>(false);
   private _typeIndex = ref<number>(0); // 当前播放类型索引
   private _index = ref<number>(0); // 当前播放索引
@@ -57,10 +57,10 @@ class Player {
   //#endregion
 
   //#region
-  public get musicVO(): IMusic {
+  public get musicVO(): Common_IMusic {
     return this._musicVO.value;
   }
-  public get musicList(): IMusic[] {
+  public get musicList(): Common_IMusic[] {
     return this._musicList.value;
   }
   public get is_playing(): boolean {
@@ -110,7 +110,7 @@ class Player {
     }
   }
   //#region
-  async play(songs: IMusic[], index: number) {
+  async play(songs: Common_IMusic[], index: number) {
     this._musicList.value = [];
     this._play_timestamp.value = 0;
     if (!songs || songs?.length === 0) {
@@ -120,7 +120,7 @@ class Player {
       return item?.id;
     });
     const res = await musicService.getSongUrlByIds({ id: ids?.join(',') });
-    const list = res?.data.sort((a: IMusic, b: IMusic) => {
+    const list = res?.data.sort((a: Common_IMusic, b: Common_IMusic) => {
       return ids.indexOf(a.id) - ids.indexOf(b.id);
     });
     songs.forEach((item, i) => {
