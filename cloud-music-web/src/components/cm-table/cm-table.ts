@@ -6,12 +6,16 @@
  * @Last Modified time: 2022-09-27 20:33:30
  */
 import { defineComponent, PropType, ref, computed } from 'vue';
-import { Common_IMusic } from './../../services/common-api/common-api';
+
 import { formatDuration } from '@/core/utils';
 
 import player from '@/views/home/components/play-controller/play-controller.service';
+import playList from '@/views/home/components/play-list/play-list.service';
 
+import { Common_IMusic } from '../../services/common-api/common-api';
+import { PL_IPlayVO } from '../../views/home/components/play-list/play-list.api';
 import { ElPagination } from 'element-plus';
+import message from '@/utils/message';
 
 export default defineComponent({
   name: 'CmTable',
@@ -41,6 +45,21 @@ export default defineComponent({
       player.play(props.dataSource[index]);
     };
 
+    const handleAddPlayItem = (item: Common_IMusic) => {
+      const music: PL_IPlayVO = {
+        artist: item?.artist,
+        dt: item?.dt,
+        url: '',
+        alName: item?.alName ?? '',
+        name: item.name,
+        picUrl: item?.picUrl,
+        id: item.id,
+      };
+      playList.addMusic(music);
+
+      message.success('添加成功');
+    };
+
     return {
       page,
       pageSize,
@@ -49,6 +68,7 @@ export default defineComponent({
 
       formatDuration,
       onPlay,
+      handleAddPlayItem,
     };
   },
 });

@@ -18,8 +18,12 @@
       <ul v-if="playList.musicList?.length">
         <li v-for="(item, index) in playList.musicList" :key="'playlist_' + index">
           <span class="sort mr8">{{ index + 1 }}</span>
-          <span class="name w100" :title="item.name">{{ item.name }}</span>
-          <span>{{ item.artist }}</span>
+          <span class="name m8" :title="item.name">{{ item.name }}</span>
+          <span class="artist">{{ item.artist }}</span>
+          <div class="btn">
+            <i title="播放" class="iconfont icon-24gf-play" @click="handlePlay(item)"></i>
+            <i title="删除" class="iconfont icon-Close" @click="playList.removeMusic(item.id)"></i>
+          </div>
         </li>
       </ul>
       <div class="common-table__empty flex-column-center-center" v-else>
@@ -33,12 +37,17 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
 import playListService from './play-list.service';
-import Player from '../play-controller/play-controller.service';
+import player from '../play-controller/play-controller.service';
+import { PL_IPlayVO } from './play-list.api';
 
 const playList = playListService;
 const playing = computed(() => {
-  return Player?.is_playing;
+  return player?.is_playing;
 });
+
+const handlePlay = (item: PL_IPlayVO) => {
+  player.play(item);
+};
 </script>
 
 <style scoped lang="less">
@@ -52,13 +61,15 @@ const playing = computed(() => {
 
     ul {
       max-height: 320px;
+      min-height: 166px;
 
       overflow-y: auto;
 
       li {
         display: flex;
+        justify-content: space-between;
         align-items: center;
-        padding: 4px 0;
+        padding: 7px 6px;
 
         span {
           display: inline-block;
@@ -66,6 +77,10 @@ const playing = computed(() => {
           font-size: 14px;
 
           line-height: 22px;
+
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
         }
 
         span.sort {
@@ -74,12 +89,27 @@ const playing = computed(() => {
         }
 
         span.name {
-          width: 100px;
-          text-align: left;
+          width: 160px;
+          text-align: center;
+        }
 
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
+        span.artist {
+          width: 100px;
+          text-align: center;
+        }
+
+        i {
+          display: inline-block;
+          font-size: 14px;
+        }
+
+        div.btn {
+          display: flex;
+          align-items: center;
+
+          i + i {
+            margin-left: 10px;
+          }
         }
 
         &:hover {
@@ -91,7 +121,7 @@ const playing = computed(() => {
     }
   }
 
-  i.iconfont {
+  i.iconfont.icon-yinleyule {
     cursor: pointer;
     font-size: 32px;
   }

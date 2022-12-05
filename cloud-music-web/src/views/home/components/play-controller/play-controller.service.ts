@@ -138,10 +138,10 @@ class Player {
 
     this.getMusicList();
 
-    this._musicVO.value = item;
     this._index.value = this._musicList.value?.findIndex((mItem) => {
       return mItem.id === song.id;
     });
+    this._musicVO.value = this._musicList.value?.[this._index.value];
     nextTick(() => {
       this.handlePlay();
     });

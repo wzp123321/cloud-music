@@ -23,7 +23,7 @@
         <span class="dt">{{ formatDuration(item.dt) }}</span>
         <div class="op-btn flex-row-start-center">
           <i class="iconfont icon-24gf-play" @click="onPlay(index)"></i>
-          <i class="iconfont icon-tianjia"></i>
+          <i class="iconfont icon-tianjia" @click="handleAddPlayItem(item)"></i>
           <i class="iconfont icon-jushoucang"></i>
           <i class="iconfont icon-xiazai"></i>
         </div>

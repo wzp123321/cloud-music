@@ -40,7 +40,7 @@ class PlayListService {
 
   removeMusic(id: number) {
     this._musicList.value = this._musicList.value?.filter((item) => {
-      return item?.id === id;
+      return item?.id !== id;
     });
 
     window.localStorage.setItem('cloud-music-list', JSON.stringify(this._musicList.value));

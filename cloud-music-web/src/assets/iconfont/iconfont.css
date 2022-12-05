@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 3459080 */
-  src: url('./font_3459080_8bgdq3vy3xx.woff2') format('woff2'),
-       url('./font_3459080_8bgdq3vy3xx.woff') format('woff'),
-       url('./font_3459080_8bgdq3vy3xx.ttf') format('truetype');
+  src: url('./font_3459080_klievxwmwv.woff2') format('woff2'),
+       url('./font_3459080_klievxwmwv.woff') format('woff'),
+       url('./font_3459080_klievxwmwv.ttf') format('truetype');
 }
 
 .iconfont {
@@ -11,6 +11,10 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-Close:before {
+  content: "\e6a1";
 }
 
 .icon-yinleyule:before {
