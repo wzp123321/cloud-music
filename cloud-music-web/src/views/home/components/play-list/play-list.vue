@@ -15,13 +15,17 @@
           <i class="iconfont icon-yinleyule" title="播放列表"></i>
         </div>
       </template>
-      <ul>
+      <ul v-if="playList.musicList?.length">
         <li v-for="(item, index) in playList.musicList" :key="'playlist_' + index">
           <span class="sort mr8">{{ index + 1 }}</span>
           <span class="name w100" :title="item.name">{{ item.name }}</span>
           <span>{{ item.artist }}</span>
         </li>
       </ul>
+      <div class="common-table__empty flex-column-center-center" v-else>
+        <img src="../../../../assets/images/common/common-data-none.svg" alt="" />
+        <p>暂无数据</p>
+      </div>
     </el-popover>
   </div>
 </template>
