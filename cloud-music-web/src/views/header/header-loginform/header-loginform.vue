@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    popper-class="header-login-dialog"
+    popper-class="header-loginform"
     v-model="loginService.visible"
     title="登录"
     width="600px"
@@ -10,10 +10,10 @@
 </template>
 
 <script lang="ts" setup>
-import loginService from './header-login-dialog.service';
+import loginService from './header-loginform.service';
 </script>
 
 <style scoped lang="less">
-.header-login-dialog {
+.header-loginform {
 }
 </style>

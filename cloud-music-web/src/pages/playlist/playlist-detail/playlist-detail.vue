@@ -96,21 +96,24 @@ const commentRes = ref<MP_IMVCommentRes>({
 onMounted(() => {
   playListDetailService.playListResult$.pipe(takeUntil(destroy$)).subscribe((v) => {
     playListDetail.value = v;
-    musicList.value = v?.tracks?.map((item) => {
+  });
+
+  playListDetailService.playListCommentResult$.pipe(takeUntil(destroy$)).subscribe((v) => {
+    commentRes.value = v;
+  });
+
+  playListDetailService.playListMusicListResult$.pipe(takeUntil(destroy$)).subscribe((v) => {
+    musicList.value = v?.map((item) => {
       return {
         dt: item.dt,
         url: '',
         name: item.name,
-        alName: item.alia?.[0],
+        alName: item.al?.name,
         artist: item.ar?.[0]?.name,
         picUrl: item.al.picUrl,
         id: item.id,
       };
     });
-  });
-
-  playListDetailService.playListCommentResult$.pipe(takeUntil(destroy$)).subscribe((v) => {
-    commentRes.value = v;
   });
 });
 </script>

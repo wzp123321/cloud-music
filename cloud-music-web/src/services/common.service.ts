@@ -6,6 +6,8 @@ enum EPath {
   获取MV评论 = '/comment/mv',
 
   获取歌单评论 = '/comment/playlist',
+
+  获取歌曲详情可批量 = 'song/detail',
 }
 
 class CommonService {
@@ -44,6 +46,16 @@ class CommonService {
    */
   public async getPlayListCommentList(id: number) {
     const res = await postRequest(EPath.获取歌单评论, { id });
+    return res;
+  }
+
+  /**
+   * 根据id获取歌曲详情
+   * @param ids
+   * @returns
+   */
+  public async getMusicDetailByIds(ids: string) {
+    const res = await postRequest(EPath.获取歌曲详情可批量, { ids });
     return res;
   }
 }

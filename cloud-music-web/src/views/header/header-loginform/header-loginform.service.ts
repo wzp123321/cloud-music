@@ -9,6 +9,10 @@ class LoginService {
   }
   //#endregion
 
+  show() {
+    this._visible.value = true;
+  }
+
   handleClose = () => {
     this._visible.value = false;
   };

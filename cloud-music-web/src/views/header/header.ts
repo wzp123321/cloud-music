@@ -10,8 +10,15 @@ import header from './services/header.service';
 import { watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
+import loginService from './header-loginform/header-loginform.service';
+
+import LoginForm from './header-loginform/header-loginform.vue';
+
 export default defineComponent({
   name: 'Header',
+  components: {
+    'login-form': LoginForm,
+  },
   setup() {
     const route = useRoute();
     const router = useRouter();
@@ -41,10 +48,17 @@ export default defineComponent({
       header.keyword = '';
     };
 
+    const handleLoginDialogShow = () => {
+      loginService.show();
+    };
+
     watch(
       () => route.path,
       () => {
         header.adjustActiveTab(route.path);
+      },
+      {
+        immediate: true,
       },
     );
 
@@ -54,6 +68,7 @@ export default defineComponent({
       handleSearch,
       onLinkTo,
       linkToPortal,
+      handleLoginDialogShow,
     };
   },
 });

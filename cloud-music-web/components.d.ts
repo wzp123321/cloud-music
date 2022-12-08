@@ -14,6 +14,7 @@ declare module '@vue/runtime-core' {
     CmPlaylistCard: typeof import('./src/components/cm-playlist-card/cm-playlist-card.vue')['default']
     CmSkeleton: typeof import('./src/components/cm-skeleton/cm-skeleton.vue')['default']
     CmTable: typeof import('./src/components/cm-table/cm-table.vue')['default']
+    ElDialog: typeof import('element-plus/es')['ElDialog']
     ElPopover: typeof import('element-plus/es')['ElPopover']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
