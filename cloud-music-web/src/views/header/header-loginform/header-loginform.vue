@@ -4,7 +4,7 @@
     v-model="loginService.visible"
     title="登录"
     :close-on-click-modal="false"
-    width="540px"
+    width="400px"
     :before-close="loginService.handleClose"
   >
     <!-- 登录表单 -->
@@ -13,16 +13,26 @@
         <li v-for="(item, index) in typeOptions" :key="'type_' + index" @click="loginService.setTab(item.value)"></li>
       </ul>
 
-      <el-form :model="loginService.form">
-        <el-form-item>
+      <img class="hl-bg" src="../../../assets/images/login/login_phone.png" alt="" />
+      <el-form :model="loginService.form" @submit.native.prevent>
+        <el-form-item class="mb30">
           <input
+            :maxlength="loginService.type === ELOGINTYPE.手机 ? 11 : 30"
             v-model="loginService.form.username"
             :placeholder="loginService.type === ELOGINTYPE.手机 ? '请输入手机号码' : '请输入邮箱'"
           />
         </el-form-item>
-        <el-form-item>
-          <input v-model="loginService.form.password" />
+        <el-form-item class="mb30">
+          <el-input
+            v-model="loginService.form.password"
+            type="password"
+            placeholder="请输入密码"
+            show-password
+            maxlength="32"
+          />
         </el-form-item>
+        <el-form-item class="mb8"> <button primary @click="loginService.submit">登录</button></el-form-item>
+        <p>前往注册</p>
       </el-form>
     </div>
   </el-dialog>
@@ -55,15 +65,45 @@ const typeOptions = computed(() => {
     width: 100%;
     height: 100%;
 
+    display: flex;
+    flex-direction: column;
+
     background-size: contain;
     background-repeat: no-repeat;
 
-    .el-form {
-      padding: 60px 72px 0;
+    .hl-bg {
+      margin: 0 auto;
+    }
 
-      input {
+    .el-form {
+      padding: 0 72px;
+
+      input,
+      button {
+        height: 40px;
+        line-height: 40px;
+      }
+
+      input,
+      button,
+      p {
         width: 100%;
       }
+
+      input:focus {
+        box-shadow: none;
+      }
+
+      p {
+        cursor: pointer;
+        text-align: right;
+        height: 22px;
+        line-height: 22px;
+      }
+    }
+
+    hr {
+      background-color: var(--color-text-diliver);
     }
 
     &.email {

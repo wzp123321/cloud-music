@@ -6,7 +6,7 @@
  */
 import { ref } from 'vue';
 
-import { menus } from '../constant/index';
+import { menus } from './constant/index';
 
 import { HTabsVO } from './header-api';
 import { getRequest } from '@/services/request';

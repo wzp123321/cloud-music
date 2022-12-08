@@ -20,8 +20,24 @@
         :maxlength="20"
         @keydown.enter="handleSearch"
       />
-      <div class="header-username font14 ml16" v-if="!header.username" @click="handleLoginDialogShow">登录/注册</div>
-      <div class="header-username font14 ml16" v-if="!!header.username">{{ header.username }}</div>
+      <div class="header-username font14 ml16" v-if="!userInfo?.profile?.nickname" @click="handleLoginDialogShow">
+        登录/注册
+      </div>
+      <div class="header-username font14 ml16" v-if="!!userInfo?.profile?.nickname">
+        <el-popover :show-arrow="false" :teleported="false" placement="bottom" :width="160" trigger="hover">
+          <template #reference>
+            <span :title="userInfo?.profile?.nickname" class="mr8">{{ userInfo?.profile?.nickname }}</span>
+            <img :src="userInfo?.profile?.avatarUrl" alt="" />
+          </template>
+          <ul>
+            <li><i class="iconfont icon-wode"></i>我的主页</li>
+            <li><i class="iconfont icon-youxiangdenglu"></i>我的消息</li>
+            <li><i class="iconfont icon-31huiyuan"></i>我的等级</li>
+            <li><i class="iconfont icon-shezhi"></i>个人设置</li>
+            <li @click="handleLoginOut"><i class="iconfont icon-tuichu"></i>退出</li>
+          </ul>
+        </el-popover>
+      </div>
     </div>
   </div>
 
