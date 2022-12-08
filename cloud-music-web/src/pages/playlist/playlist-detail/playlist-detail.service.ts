@@ -2,6 +2,7 @@ import { ref } from 'vue';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 import { FGetQueryParam } from '@/core/token';
+import { AD_IMusicVO } from '../../artist/artist-detail/services/artist-detail-api';
 import { PD_IPlaylistDetail } from './playlist-detail.api';
 import { MP_IMVCommentRes } from '../../mvplay/mvplay.api';
 import { getRequest } from '../../../services/request';
@@ -52,12 +53,18 @@ class PlayListDetailService {
     hotComments: [],
   });
 
+  private _playListMusicListResult$ = new BehaviorSubject<AD_IMusicVO[]>([]);
+
   public get playListResult$() {
     return this._playListResult$ as unknown as Observable<PD_IPlaylistDetail>;
   }
 
   public get playListCommentResult$() {
     return this._playListCommentResult$ as unknown as Observable<MP_IMVCommentRes>;
+  }
+
+  public get playListMusicListResult$() {
+    return this._playListMusicListResult$ as unknown as Observable<AD_IMusicVO[]>;
   }
   //#region
   private _loading = ref<boolean>(true);
@@ -81,6 +88,11 @@ class PlayListDetailService {
       });
       this._playListResult$.next(res?.playlist);
 
+      const ids = res?.playlist?.trackIds?.map((item: any) => {
+        return item?.id;
+      });
+      this.queryMusicListInPlayList(ids?.join(','));
+
       this.queryCommentList();
     } catch (error) {
     } finally {
@@ -93,6 +105,12 @@ class PlayListDetailService {
     const commonService = new CommonService();
     const res = await commonService.getPlayListCommentList(id);
     this._playListCommentResult$.next(res);
+  }
+
+  async queryMusicListInPlayList(ids: string) {
+    const commonService = new CommonService();
+    const res = await commonService.getMusicDetailByIds(ids);
+    this._playListMusicListResult$.next(res?.songs);
   }
 }
 

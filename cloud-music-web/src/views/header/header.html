@@ -1,15 +1,8 @@
-<!--
- * @Author: wanzp
- * @Date: 2022-06-09 22:23:31
- * @LastEditors: wanzp
- * @LastEditTime: 2022-12-04 12:37:21
- * @Description: 
--->
 <div class="header">
-  <div class="header-container flex-row-justify-center">
+  <div class="header-box flex-row-justify-center">
     <div class="flex-row-start-center">
       <img src="../../assets/images/portal/portal-logo.png" @click="linkToPortal" />
-      <ul class="header-container--tabs">
+      <ul class="header-tabs">
         <li
           v-for="(item, index) in header.menus"
           :key="'menus-' + index"
@@ -27,7 +20,26 @@
         :maxlength="20"
         @keydown.enter="handleSearch"
       />
-      <div class="header-tabs font14 ml16">{{ header.username ? header.username : '登录/注册'}}</div>
+      <div class="header-username font14 ml16" v-if="!userInfo?.profile?.nickname" @click="handleLoginDialogShow">
+        登录/注册
+      </div>
+      <div class="header-username font14 ml16" v-if="!!userInfo?.profile?.nickname">
+        <el-popover :show-arrow="false" :teleported="false" placement="bottom" :width="160" trigger="hover">
+          <template #reference>
+            <span :title="userInfo?.profile?.nickname" class="mr8">{{ userInfo?.profile?.nickname }}</span>
+            <img :src="userInfo?.profile?.avatarUrl" alt="" />
+          </template>
+          <ul>
+            <li><i class="iconfont icon-wode"></i>我的主页</li>
+            <li><i class="iconfont icon-youxiangdenglu"></i>我的消息</li>
+            <li><i class="iconfont icon-31huiyuan"></i>我的等级</li>
+            <li><i class="iconfont icon-shezhi"></i>个人设置</li>
+            <li @click="handleLoginOut"><i class="iconfont icon-tuichu"></i>退出</li>
+          </ul>
+        </el-popover>
+      </div>
     </div>
   </div>
+
+  <login-form></login-form>
 </div>

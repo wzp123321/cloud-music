@@ -4,11 +4,11 @@
   height: 67px;
   line-height: 67px;
 
-  &-container {
+  &-box {
     width: 1400px;
     margin: 0 auto;
 
-    &--tabs {
+    .header-tabs {
       li {
         cursor: pointer;
         display: inline-block;
@@ -32,6 +32,45 @@
     img {
       cursor: pointer;
       height: 48px;
+    }
+
+    .header-username {
+      display: flex;
+      align-items: center;
+
+      color: var(--color-text-secondary);
+      cursor: pointer;
+
+      > span {
+        display: inline-block;
+        width: 75px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      img {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+      }
+
+      :deep(.el-popper.el-popover) {
+        padding: 0 !important;
+
+        li {
+          line-height: 22px;
+          padding: 6px 12px;
+        }
+
+        li:hover {
+          background-color: rgba(0, 0, 0, 0.08);
+        }
+
+        li > i {
+          margin-right: 8px;
+        }
+      }
     }
   }
 }
