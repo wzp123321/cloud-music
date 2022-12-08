@@ -15,6 +15,8 @@ declare module '@vue/runtime-core' {
     CmSkeleton: typeof import('./src/components/cm-skeleton/cm-skeleton.vue')['default']
     CmTable: typeof import('./src/components/cm-table/cm-table.vue')['default']
     ElDialog: typeof import('element-plus/es')['ElDialog']
+    ElForm: typeof import('element-plus/es')['ElForm']
+    ElFormItem: typeof import('element-plus/es')['ElFormItem']
     ElPopover: typeof import('element-plus/es')['ElPopover']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
