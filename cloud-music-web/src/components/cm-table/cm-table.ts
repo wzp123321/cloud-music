@@ -6,6 +6,7 @@
  * @Last Modified time: 2022-09-27 20:33:30
  */
 import { defineComponent, PropType, ref, computed } from 'vue';
+import { useRouter } from 'vue-router';
 
 import { formatDuration } from '@/core/utils';
 
@@ -31,6 +32,7 @@ export default defineComponent({
 
   setup(props) {
     const page = ref<number>(1);
+    const router = useRouter();
 
     const pageSize = 20;
 
@@ -60,6 +62,13 @@ export default defineComponent({
       message.success('添加成功');
     };
 
+    const linkToDetailPage = (id: number) => {
+      router.push({
+        path: '/music_detail',
+        query: { id },
+      });
+    };
+
     return {
       page,
       pageSize,
@@ -69,6 +78,7 @@ export default defineComponent({
       formatDuration,
       onPlay,
       handleAddPlayItem,
+      linkToDetailPage,
     };
   },
 });
