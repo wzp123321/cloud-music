@@ -58,6 +58,15 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/pages/album-detail/album-detail.vue'),
   },
 
+  // 歌曲详情
+  {
+    path: '/music_detail',
+    meta: {
+      name: '歌曲详情',
+    },
+    component: () => import('@/pages/music-detail/music-detail.vue'),
+  },
+
   // mv
   {
     path: '/mvplay',

@@ -1,4 +1,5 @@
-import { getRequest, postRequest } from '@/services/request';
+import { getRequest } from '@/services/request';
+
 const musicService = {
   /**
    * 批量获取歌曲播放地址

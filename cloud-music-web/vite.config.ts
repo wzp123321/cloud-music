@@ -7,7 +7,7 @@ import Components from 'unplugin-vue-components/vite';
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
 
 // https://vitejs.dev/config/
-export default ({ mode }) => {
+export default ({ mode, command }) => {
   return defineConfig({
     resolve: {
       // 别名
@@ -32,6 +32,32 @@ export default ({ mode }) => {
           target: loadEnv(mode, process.cwd()).VITE_PROXY_URL,
           changeOrigin: true, //是否跨域
           rewrite: (path) => path.replace(/^\/api/, ''),
+        },
+      },
+    },
+    build: {
+      assetsDir: 'assets', // 静态资源存放路径
+      sourcemap: loadEnv(mode, process.cwd()).VITE_NODE_ENV !== 'production',
+      outDir: 'dist/ems-admin',
+      rollupOptions: {
+        // 打包拆分 -ToDo 超过一定大小再拆分
+        output: {
+          manualChunks(id) {
+            if (id.includes('node_modules')) {
+              return id.toString().split('node_modules/')[1].split('/')[0].toString();
+            }
+          },
+        },
+        input: {
+          index: resolve(__dirname, './index.html'),
+          admin: resolve(__dirname, './pConfigurationPage.html'),
+        },
+      },
+      minify: 'terser',
+      terserOptions: {
+        compress: {
+          drop_console: command === 'production',
+          drop_debugger: command === 'production',
         },
       },
     },
