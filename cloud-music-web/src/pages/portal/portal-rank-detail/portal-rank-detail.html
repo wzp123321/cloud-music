@@ -1,7 +1,12 @@
 <div class="portal-rank-detail flex flex-column">
   <cm-skeleton width="100%" :height="'234px'" :imageUrl="playlistVO?.coverImgUrl" sourceType="image"> </cm-skeleton>
   <ul>
-    <li v-for="(item, index) in playlistVO?.tracks" :key="'tracks' +index" class="mt23 flex-row-start-center">
+    <li
+      v-for="(item, index) in playlistVO?.tracks"
+      :key="'tracks' +index"
+      class="mt23 flex-row-start-center"
+      @click="linktToDetail"
+    >
       <div class="sort">
         <img v-if="index === 0" src="../../../assets/images/rank/rank-top.png" alt="" />
         <img v-if="index === 1" src="../../../assets/images/rank/rank-secondary.png" alt="" />

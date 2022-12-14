@@ -9,23 +9,6 @@ import message from '@/utils/message';
 import dayjs from 'dayjs';
 
 /**
- * 获取地址栏参数
- * @returns
- */
-export const getUrlParams = (paramName: string) => {
-  // 构造一个含有目标参数的正则表达式的对象
-  const reg = new RegExp('(^|&)' + paramName + '=([^&]*)(&|$)');
-  // 匹配目标参数
-  const url = window.location.search.substr(1).match(reg);
-  // 返回参数值
-  let paramStr = '';
-  if (url !== null) {
-    paramStr = unescape(url[2]);
-  }
-  return paramStr;
-};
-
-/**
  * defer函数
  */
 export default class Deffer {
