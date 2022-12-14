@@ -13,6 +13,7 @@
             :ref="player.musicRef"
             @timeupdate="player.handleTimeupdate"
             @ended="player.handlePlayEnd('next')"
+            @error="player.handlePlayError"
           ></audio>
 
           <div class="flex-row-justify-center mb8">

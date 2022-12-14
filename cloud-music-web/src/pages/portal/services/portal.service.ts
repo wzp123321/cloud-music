@@ -90,33 +90,26 @@ class PortService {
   //#endregion
   //#region banner跳转
   handleBannerLinkTo(url: string, targetType: number, targetId: number) {
+    let path = '';
     switch (targetType) {
       case TARGET_TYPE.单曲:
+        path = '/music_detail';
+        break;
       case TARGET_TYPE.专辑:
-        router.push({
-          path: '',
-          query: {
-            targetId,
-          },
-        });
+        path = '/ablum_detail';
         break;
       case TARGET_TYPE.歌单:
-        router.push({
-          path: '',
-          query: {
-            targetId,
-          },
-        });
-        break;
+        path = '/playlist_detail';
+
       case TARGET_TYPE.独家规划:
-        router.push({
-          path: url,
-          query: {
-            targetId,
-          },
-        });
         break;
     }
+    router.push({
+      path,
+      query: {
+        targetId,
+      },
+    });
   }
   //#endregion
   //#region 加载不同类型歌单

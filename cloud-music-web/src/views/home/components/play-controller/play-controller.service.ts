@@ -32,6 +32,7 @@ interface Lyric {
 
 class Player {
   //#region
+  private _errorList = ref<number[]>([]);
   public readonly playTypes = playTypes;
   private _musicVO = ref<Common_IMusic>({
     name: '',
@@ -301,7 +302,13 @@ class Player {
   //#endregion
   //#region
   handlePlay(resetFlag: boolean = true) {
-    if (!this._musicVO.value.url) {
+    if (
+      !this._musicVO.value.url ||
+      (this._musicList.value?.length > 0 && this._errorList.value?.length === this._musicList.value?.length)
+    ) {
+      this._errorList.value = this._errorList.value?.filter((item) => {
+        return item === this._musicVO.value?.id;
+      });
       this.handlePlayEnd();
       return;
     }
@@ -310,8 +317,31 @@ class Player {
     }
     document.title = this._musicVO.value.name ?? '网抑云Music';
     this.musicRef.value.play();
+    this._errorList.value = this._errorList.value?.filter((item) => {
+      return item === this._musicVO.value?.id;
+    });
+
     this._is_playing.value = true;
     this.getSongLyric();
+  }
+  //#endregion
+  //#region
+  handlePlayError() {
+    if (this._musicList.value?.length > 0 && this._errorList.value?.length === this._musicList.value?.length) {
+      this._is_playing.value = false;
+      this.musicRef.value.pause();
+      return;
+    }
+    if (!this._errorList.value?.includes(this._musicVO.value.id)) {
+      message.error('播放失败');
+
+      this._lrcList.value = [];
+      this._lrcPanel.value = [];
+
+      this._errorList.value.push(this._musicVO.value.id);
+      this._is_playing.value = false;
+      this.musicRef.value.pause();
+    }
   }
   //#endregion
   //#region

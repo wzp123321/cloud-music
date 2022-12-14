@@ -30,7 +30,7 @@ class PlayListService {
       return;
     }
     const url = (await this.queryMusicUrl(value?.id + '')) as string;
-    this._musicList.value.push({
+    this._musicList.value.unshift({
       ...value,
       url,
     });

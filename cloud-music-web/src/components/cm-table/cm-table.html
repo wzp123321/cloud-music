@@ -22,11 +22,11 @@
       <td ellipsis style="width: 30%">
         <span class="dt">{{ formatDuration(item.dt) }}</span>
         <div class="op-btn flex-row-start-center">
-          <i class="iconfont icon-24gf-play" @click="onPlay(index)"></i>
-          <i class="iconfont icon-tianjia" @click="handleAddPlayItem(item)"></i>
-          <i class="iconfont icon-jushoucang"></i>
-          <i class="iconfont icon-xiazai"></i>
-          <i class="iconfont icon-xiangqing" @click="linkToDetailPage(item.id)"></i>
+          <i class="iconfont icon-24gf-play" title="播放" @click="onPlay(index)"></i>
+          <i class="iconfont icon-tianjia" title="添加到歌单" @click="handleAddPlayItem(item)"></i>
+          <i class="iconfont icon-jushoucang" title="收藏"></i>
+          <i class="iconfont icon-xiazai" title="下载"></i>
+          <i class="iconfont icon-xiangqing" title="详情" @click="linkToDetailPage(item.id)"></i>
         </div>
       </td>
     </tr>
