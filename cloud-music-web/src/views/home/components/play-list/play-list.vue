@@ -18,7 +18,7 @@
       <table v-if="playList.musicList?.length" scroll-y>
         <thead>
           <tr>
-            <th style="width: 32px">序号</th>
+            <th style="width: 40px">序号</th>
             <th style="max-width: 100px">名称</th>
             <th>歌手</th>
             <th>专辑</th>
@@ -27,7 +27,7 @@
         </thead>
         <tbody style="height: 200px">
           <tr v-for="(item, index) in playList.musicList">
-            <td style="width: 32px">{{ index + 0 }}</td>
+            <td style="width: 40px">{{ index + 0 }}</td>
             <td style="max-width: 100px">{{ item.name }}</td>
             <td>{{ item.artist }}</td>
             <td>{{ item.alName }}</td>
