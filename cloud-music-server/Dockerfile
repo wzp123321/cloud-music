@@ -11,6 +11,6 @@ COPY --chown=node:node . ./
 
 RUN npm i --omit=dev --ignore-scripts
 
-EXPOSE 3000
+EXPOSE 10130
 
 CMD [ "/sbin/tini", "--", "node", "app.js" ]

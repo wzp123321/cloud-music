@@ -1,6 +1,6 @@
 const assert = require('assert')
 const { default: axios } = require('axios')
-const host = global.host || 'http://localhost:3000'
+const host = global.host || 'http://localhost:10130'
 const config = require('../util/config.json')
 describe('测试获取歌词是否正常', () => {
   it('数据应该有 lrc 字段', (done) => {
