@@ -27,6 +27,12 @@
           <i class="iconfont icon-jushoucang" title="收藏"></i>
           <i class="iconfont icon-xiazai" title="下载"></i>
           <i class="iconfont icon-xiangqing" title="详情" @click="linkToDetailPage(item.id)"></i>
+          <i
+            class="iconfont icon-shanchu"
+            title="从歌单移除"
+            v-if="showRemove"
+            @click="handleRemove(item)"
+          ></i>
         </div>
       </td>
     </tr>

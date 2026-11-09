@@ -28,9 +28,16 @@ export default defineComponent({
       type: Array as PropType<Common_IMusic[]>,
       default: [],
     },
+    // 是否展示“从歌单移除”操作（歌单详情页使用）
+    showRemove: {
+      type: Boolean,
+      default: false,
+    },
   },
 
-  setup(props) {
+  emits: ['remove'],
+
+  setup(props, { emit }) {
     const page = ref<number>(1);
     const router = useRouter();
 
@@ -69,6 +76,10 @@ export default defineComponent({
       });
     };
 
+    const handleRemove = (item: Common_IMusic) => {
+      emit('remove', item);
+    };
+
     return {
       page,
       pageSize,
@@ -79,6 +90,7 @@ export default defineComponent({
       onPlay,
       handleAddPlayItem,
       linkToDetailPage,
+      handleRemove,
     };
   },
 });

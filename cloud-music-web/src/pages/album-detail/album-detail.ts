@@ -6,6 +6,7 @@
  * @Last Modified time: 2022-07-31 15:17:23
  */
 import { defineComponent, onMounted } from 'vue';
+import { FGetQueryParam } from '@/core/token';
 import albumDetail from './album-detail.service';
 
 import { formatDate, formatDuration } from '../../core/utils';
@@ -17,10 +18,13 @@ export default defineComponent({
       albumDetail.query();
     });
 
+    const resourceId = Number(FGetQueryParam('id') ?? 0);
+
     return {
       albumDetail,
       formatDate,
       formatDuration,
+      resourceId,
     };
   },
 });

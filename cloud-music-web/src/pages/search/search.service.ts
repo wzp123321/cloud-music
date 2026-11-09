@@ -9,7 +9,10 @@ import { ref } from 'vue';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 import { getRequest } from '@/services/request';
-import { Common_IMusic, Common_IAblumVO } from '@/services/common-api/common-api';
+import {
+  getSearchMultimatch,
+} from '@/services/search-enhance.api';
+import { Common_IMusic, Common_IAlbumVO } from '@/services/common-api/common-api';
 import { MvVO } from '../artist/artist-detail/services/artist-detail-api';
 import { SEARCH_TYPE } from './search.api';
 
@@ -25,9 +28,12 @@ export class SearchService {
 
   private _songs = ref<Common_IMusic[]>([]);
 
-  private _ablums = ref<Common_IAblumVO[]>([]);
+  private _albums = ref<Common_IAlbumVO[]>([]);
 
   private _mvs = ref<MvVO[]>([]);
+
+  /** 多重匹配概览（各类型匹配数量入口） */
+  private _multimatch = ref<SEARCH_IMultimatchEntry[]>([]);
 
   public get type(): string {
     return this._type.value;
@@ -41,12 +47,16 @@ export class SearchService {
     return this._songs.value;
   }
 
-  public get ablums(): Common_IAblumVO[] {
-    return this._ablums.value;
+  public get albums(): Common_IAlbumVO[] {
+    return this._albums.value;
   }
 
   public get mvs(): MvVO[] {
     return this._mvs.value;
+  }
+
+  public get multimatch(): SEARCH_IMultimatchEntry[] {
+    return this._multimatch.value;
   }
 
   private readonly _loadingResult$ = new BehaviorSubject<boolean>(true);
@@ -85,7 +95,7 @@ export class SearchService {
           });
           break;
         case SEARCH_TYPE.专辑:
-          this._ablums.value = res?.result?.albums?.map((item: any) => {
+          this._albums.value = res?.result?.albums?.map((item: any) => {
             return {
               title: item?.name ?? '',
               artist:
@@ -118,14 +128,61 @@ export class SearchService {
       }
     } catch (error) {
       this._songs.value = [];
-      this._ablums.value = [];
+      this._albums.value = [];
       this._mvs.value = [];
     } finally {
       this._loadingResult$.next(false);
     }
   }
 
+  /** 多重匹配：拉取各类型匹配数量概览 */
+  async queryMultimatch() {
+    try {
+      const res = await getSearchMultimatch({ keywords: this._keyword.value });
+      const result = res?.result ?? {};
+      const orders = result.orders ?? [];
+      this._multimatch.value = orders
+        .map((key: string) => ({
+          key,
+          name: multimatchName(key),
+          code: multimatchCode(key),
+          count: Array.isArray(result[key]) ? result[key].length : 0,
+        }))
+        .filter((v: SEARCH_IMultimatchEntry) => v.count > 0);
+    } catch {
+      this._multimatch.value = [];
+    }
+  }
+
   handleTypeChange = () => {
     this.query();
   };
+}
+
+/** 多重匹配入口项 */
+export interface SEARCH_IMultimatchEntry {
+  /** server 返回的类型 key，如 song/artist/album/playlist/video */
+  key: string;
+  /** 中文名 */
+  name: string;
+  /** 对应 SEARCH_TYPE 的 code，点击可切换到该类型 tab */
+  code: string;
+  /** 该类型匹配数量 */
+  count: number;
+}
+
+const MULTIMATCH_MAP: { [key: string]: { name: string; code: string } } = {
+  song: { name: '单曲', code: SEARCH_TYPE.单曲 },
+  artist: { name: '歌手', code: SEARCH_TYPE.歌手 },
+  album: { name: '专辑', code: SEARCH_TYPE.专辑 },
+  playlist: { name: '歌单', code: SEARCH_TYPE.歌单 },
+  video: { name: '视频', code: SEARCH_TYPE.视频 },
+};
+
+function multimatchName(key: string): string {
+  return MULTIMATCH_MAP[key]?.name ?? key;
+}
+
+function multimatchCode(key: string): string {
+  return MULTIMATCH_MAP[key]?.code ?? '';
 }

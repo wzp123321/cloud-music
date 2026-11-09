@@ -1,0 +1,93 @@
+.daily-recommend {
+  width: 1400px;
+  margin: 0 auto;
+  padding: 24px 0 48px;
+
+  &--section {
+    margin-top: 24px;
+    background-color: var(--color-default);
+    border-radius: 8px;
+    padding: 16px 20px;
+  }
+
+  &--heading {
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+  }
+
+  &--grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    margin-top: 16px;
+  }
+
+  &--song-list {
+    margin-top: 12px;
+  }
+
+  &--song-item {
+    display: flex;
+    align-items: center;
+    height: 44px;
+    padding: 0 12px;
+    font-size: 14px;
+    color: #333;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+
+    &:nth-child(odd) {
+      background-color: rgba(0, 0, 0, 0.02);
+    }
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .cell-index {
+      width: 40px;
+      flex-shrink: 0;
+      color: #999;
+    }
+
+    .cell-name {
+      flex: 2;
+      cursor: pointer;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+
+      &:hover {
+        color: var(--color-primary, #c20c0c);
+      }
+    }
+
+    .cell-artists {
+      flex: 1.5;
+      color: #666;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .cell-album {
+      flex: 1.5;
+      color: #999;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .cell-dislike {
+      width: 80px;
+      flex-shrink: 0;
+      text-align: right;
+      color: #999;
+      cursor: pointer;
+
+      &:hover {
+        color: var(--color-primary, #c20c0c);
+      }
+    }
+  }
+}

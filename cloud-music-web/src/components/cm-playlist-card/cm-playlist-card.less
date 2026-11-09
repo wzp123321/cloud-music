@@ -17,6 +17,7 @@
   }
 
   &--cover {
+    position: relative;
     width: 262px;
     height: 262px;
     transition: all 0.75s;
@@ -48,5 +49,24 @@
     .iconfont {
       color: #999;
     }
+  }
+
+  &--tag {
+    position: absolute;
+    left: 0;
+    top: 0;
+    padding: 2px 8px;
+    background-color: rgba(0, 0, 0, 0.55);
+    color: #fff;
+    font-size: 12px;
+  }
+
+  &--creator {
+    margin-top: 6px;
+    font-size: 12px;
+    color: #999;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }

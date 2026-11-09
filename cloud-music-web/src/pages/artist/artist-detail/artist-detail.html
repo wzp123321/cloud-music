@@ -97,4 +97,9 @@
       </template>
     </div>
   </div>
+
+  <!-- 评论区：复用歌曲评论(comment_music)，取歌手热门歌曲 -->
+  <cm-comment type="music" :id="artistDetail.songs?.[0]?.id || 0"></cm-comment>
+  <!-- 相似推荐：simi_artist -->
+  <cm-simi type="artist" :id="artistId"></cm-simi>
 </div>

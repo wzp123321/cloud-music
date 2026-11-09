@@ -8,6 +8,30 @@ const routes: RouteRecordRaw[] = [
     },
     component: () => import('@/pages/portal/portal.vue'),
   },
+  // 每日推荐
+  {
+    path: '/daily_recommend',
+    meta: {
+      name: '每日推荐',
+    },
+    component: () => import('@/pages/daily-recommend/daily-recommend.vue'),
+  },
+  // 排行榜（含榜单详情）
+  {
+    path: '/rank',
+    meta: {
+      name: '排行榜',
+    },
+    component: () => import('@/pages/rank/rank.vue'),
+  },
+  // 榜单详情（复用排行榜页，按 id 预选）
+  {
+    path: '/rank_detail',
+    meta: {
+      name: '榜单详情',
+    },
+    component: () => import('@/pages/rank/rank.vue'),
+  },
   {
     path: '/demo',
     meta: {
@@ -22,6 +46,22 @@ const routes: RouteRecordRaw[] = [
       name: 'playlist_detail',
     },
     component: () => import('@/pages/playlist/playlist-detail/playlist-detail.vue'),
+  },
+  // 歌单分类 / 精品浏览
+  {
+    path: '/playlist',
+    meta: {
+      name: '歌单',
+    },
+    component: () => import('@/pages/playlist/playlist.vue'),
+  },
+  // 我的收藏歌单
+  {
+    path: '/playlist/my',
+    meta: {
+      name: '我的收藏',
+    },
+    component: () => import('@/pages/playlist/my-playlist.vue'),
   },
   // 搜索
   {
@@ -65,6 +105,15 @@ const routes: RouteRecordRaw[] = [
       name: '歌曲详情',
     },
     component: () => import('@/pages/music-detail/music-detail.vue'),
+  },
+
+  // 用户中心
+  {
+    path: '/user',
+    meta: {
+      name: '用户中心',
+    },
+    component: () => import('@/pages/user/user.vue'),
   },
 
   // mv

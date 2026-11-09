@@ -16,8 +16,29 @@
         <span v-for="(item, index) in playListDetail?.tags" :key="'tag_' + index"> {{ item }}</span>
       </div>
 
+      <!-- 操作栏：订阅 / 编辑 / 添加歌曲 -->
+      <div class="pd-toolbar mb24">
+        <el-button
+          :type="playListDetailService.subscribed ? 'default' : 'primary'"
+          @click="onToggleSubscribe"
+        >
+          {{ playListDetailService.subscribed ? '已收藏' : '收藏' }}
+        </el-button>
+        <el-button @click="openEdit">编辑</el-button>
+        <el-button @click="addVisible = true">添加歌曲</el-button>
+        <span class="pd-stat" v-if="dynamic">
+          <i class="iconfont icon-z"></i> {{ formatStat(dynamic.playCount) }}
+          <i class="iconfont icon-jushoucang ml12"></i> {{ formatStat(dynamic.bookCount ?? dynamic.subscribedCount) }}
+          <i class="iconfont icon-pinglun ml12"></i> {{ formatStat(dynamic.commentCount) }}
+        </span>
+      </div>
+
       <!-- 歌曲 -->
-      <cm-table :dataSource="musicList"></cm-table>
+      <cm-table
+        :dataSource="musicList"
+        :showRemove="true"
+        @remove="onRemove"
+      ></cm-table>
 
       <div class="pd-musiclist-header" v-if="commentRes?.hotComments?.length">
         <h5>热门评论</h5>
@@ -27,6 +48,8 @@
         v-for="(item, index) in commentRes?.hotComments"
         :key="'comment-' + index"
         :commentVO="item"
+        type="playlist"
+        :id="playlistId"
       ></cm-comment>
       <div class="pd-musiclist-header mt60" v-if="commentRes?.comments?.length">
         <h5>最新评论</h5>
@@ -36,9 +59,40 @@
         v-for="(item, index) in commentRes?.comments"
         :key="'comment-' + index"
         :commentVO="item"
+        type="playlist"
+        :id="playlistId"
       ></cm-comment>
+
+      <!-- 相似推荐：simi_playlist（取歌单内歌曲） -->
+      <cm-simi type="playlist" :id="musicList[0]?.id"></cm-simi>
     </section>
   </div>
+
+  <!-- 添加歌曲弹窗 -->
+  <el-dialog title="添加歌曲到歌单" v-model="addVisible" width="420px">
+    <el-input
+      v-model="addSongIds"
+      type="textarea"
+      :rows="3"
+      placeholder="请输入歌曲 ID，多个用逗号分隔"
+    />
+    <template #footer>
+      <el-button @click="addVisible = false">取消</el-button>
+      <el-button type="primary" :loading="adding" @click="onAddSong">确定添加</el-button>
+    </template>
+  </el-dialog>
+
+  <!-- 编辑歌单弹窗 -->
+  <playlist-form-dialog
+    v-model="editVisible"
+    mode="edit"
+    :playlistId="playlistId"
+    :name="playListDetail?.name"
+    :desc="playListDetail?.description"
+    :tags="(playListDetail?.tags || []).join(',')"
+    :showName="true"
+    @success="onEdited"
+  />
 </template>
 
 <script lang="ts" setup>
@@ -47,12 +101,15 @@ import PlayListDetailService from './playlist-detail.service';
 import { PD_IPlaylistDetail } from './playlist-detail.api';
 import { Common_IMusic } from '../../../services/common-api/common-api';
 import { MP_IMVCommentRes } from '../../mvplay/mvplay.api';
-
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import message from '@/utils/message';
+import PlaylistFormDialog from '../components/playlist-form-dialog.vue';
 
 const destroy$ = new Subject<void>();
 const playListDetailService = new PlayListDetailService();
+
+const playlistId = Number(new URLSearchParams(window.location.search).get('id') || '0');
 
 const playListDetail = ref<PD_IPlaylistDetail>({
   backgroundCoverUrl: '',
@@ -92,6 +149,12 @@ const commentRes = ref<MP_IMVCommentRes>({
   comments: [],
   hotComments: [],
 });
+const dynamic = ref<any>(null);
+
+const addVisible = ref(false);
+const addSongIds = ref('');
+const adding = ref(false);
+const editVisible = ref(false);
 
 onMounted(() => {
   playListDetailService.playListResult$.pipe(takeUntil(destroy$)).subscribe((v) => {
@@ -108,14 +171,71 @@ onMounted(() => {
         dt: item.dt,
         url: '',
         name: item.name,
-        alName: item.al?.name,
-        artist: item.ar?.[0]?.name,
-        picUrl: item.al.picUrl,
+        alName: item.alName,
+        artist: item.artist,
+        picUrl: item.picUrl,
         id: item.id,
       };
     });
   });
+
+  playListDetailService.dynamic$.pipe(takeUntil(destroy$)).subscribe((v) => {
+    dynamic.value = v;
+  });
 });
+
+const onToggleSubscribe = async () => {
+  try {
+    await playListDetailService.subscribe(playListDetailService.subscribed ? 2 : 1);
+    message.success(playListDetailService.subscribed ? '收藏成功' : '已取消收藏');
+  } catch (e) {
+    message.error('操作失败，请确认已登录');
+  }
+};
+
+const onRemove = async (item: Common_IMusic) => {
+  try {
+    await playListDetailService.removeTrack(String(item.id));
+    message.success('已移除');
+  } catch (e) {
+    message.error('移除失败，请确认已登录');
+  }
+};
+
+const onAddSong = async () => {
+  const ids = addSongIds.value.trim();
+  if (!ids) {
+    message.error('请输入歌曲 ID');
+    return;
+  }
+  adding.value = true;
+  try {
+    await playListDetailService.addTrack(ids);
+    message.success('添加成功');
+    addVisible.value = false;
+    addSongIds.value = '';
+  } catch (e) {
+    message.error('添加失败，请确认已登录');
+  } finally {
+    adding.value = false;
+  }
+};
+
+const openEdit = () => {
+  editVisible.value = true;
+};
+
+const onEdited = () => {
+  playListDetailService.init();
+};
+
+const formatStat = (val?: number) => {
+  if (val == null) return '0';
+  if (val >= 10000) {
+    return `${(val / 10000).toFixed(1)}万`;
+  }
+  return String(val);
+};
 </script>
 
 <style scoped lang="less">
@@ -218,6 +338,25 @@ onMounted(() => {
         margin-left: 8px;
         font-weight: 300;
         font-size: 14px;
+      }
+    }
+  }
+
+  .pd-toolbar {
+    display: flex;
+    align-items: center;
+
+    .pd-stat {
+      margin-left: 16px;
+      font-size: 13px;
+      color: #999;
+
+      .iconfont {
+        margin-right: 2px;
+      }
+
+      .ml12 {
+        margin-left: 12px;
       }
     }
   }

@@ -1,0 +1,88 @@
+<div class="rank">
+  <cm-navbar :title="'排行榜'" :hasLoadMore="false"></cm-navbar>
+
+  <!-- 所有榜单 toplist -->
+  <section class="rank--section">
+    <h3 class="rank--heading">官方榜单</h3>
+    <cm-error v-if="!portal.toplist.length" :title="'暂无榜单'"></cm-error>
+    <div v-else class="rank--toplist">
+      <div
+        v-for="item in portal.toplist"
+        :key="'tl_' + item.id"
+        :class="['rank--toplist-item', portal.selectedRankId === item.id ? 'active' : '']"
+        @click="selectRank(item.id)"
+      >
+        <cm-skeleton
+          width="100%"
+          :height="'120px'"
+          :imageUrl="item.coverImgUrl || ''"
+          :borderRadius="'6px'"
+        ></cm-skeleton>
+        <p class="rank--toplist-name" :title="item.name || ''">{{ item.name || '' }}</p>
+        <p class="rank--toplist-freq">{{ item.updateFrequency || '' }}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 榜单详情 top_list -->
+  <section class="rank--section">
+    <h3 class="rank--heading">榜单详情</h3>
+    <cm-error v-if="!portal.rankTrackList.length" :title="'暂无榜单歌曲'"></cm-error>
+    <ul v-else class="rank--track-list">
+      <li v-for="(track, index) in portal.rankTrackList" :key="'tr_' + index" class="rank--track-item">
+        <span class="cell-index">{{ index + 1 }}</span>
+        <span class="cell-name" :title="track.name || ''" @click="portal.linkToSong(track.id)">{{ track.name || '' }}</span>
+        <span class="cell-artists" :title="formatTrackArtists(track)">{{ formatTrackArtists(track) }}</span>
+        <span class="cell-album" :title="track.al?.name || ''">{{ track.al?.name || '' }}</span>
+      </li>
+    </ul>
+  </section>
+
+  <!-- 精品歌单 top_playlist_highquality -->
+  <section class="rank--section">
+    <h3 class="rank--heading">精品歌单</h3>
+    <cm-error v-if="!portal.highqualityList.length" :title="'暂无精品歌单'"></cm-error>
+    <div v-else class="rank--grid flex-row-justify-start flex-wrap">
+      <cm-playlist-card
+        v-for="item in portal.highqualityList"
+        :key="'hq_' + item.id"
+        :title="item.name || ''"
+        :id="item.id || 0"
+        :coverImageUrl="item.coverImgUrl || ''"
+        :playCount="item.playCount || 0"
+      ></cm-playlist-card>
+    </div>
+  </section>
+
+  <!-- 新歌速递 top_song -->
+  <section class="rank--section">
+    <h3 class="rank--heading">新歌速递</h3>
+    <cm-error v-if="!portal.topSongList.length" :title="'暂无新歌'"></cm-error>
+    <ul v-else class="rank--track-list">
+      <li v-for="(song, index) in portal.topSongList" :key="'ts_' + index" class="rank--track-item">
+        <span class="cell-index">{{ index + 1 }}</span>
+        <span class="cell-name" :title="song.name || ''" @click="portal.linkToSong(song.id)">{{ song.name || '' }}</span>
+        <span class="cell-artists" :title="formatSongArtists(song)">{{ formatSongArtists(song) }}</span>
+        <span class="cell-album" :title="song.album?.name || ''">{{ song.album?.name || '' }}</span>
+      </li>
+    </ul>
+  </section>
+
+  <!-- MV 排行榜 top_mv -->
+  <section class="rank--section">
+    <h3 class="rank--heading">MV 排行榜</h3>
+    <cm-error v-if="!portal.topMvList.length" :title="'暂无 MV'"></cm-error>
+    <div v-else class="rank--mv-grid">
+      <div
+        v-for="(mv, index) in portal.topMvList"
+        :key="'mv_' + index"
+        class="rank--mv-item"
+        @click="portal.linkToMv(mv.id)"
+      >
+        <cm-skeleton width="100%" :height="'140px'" :imageUrl="mv.cover || ''" :borderRadius="'6px'"></cm-skeleton>
+        <p class="rank--mv-name" :title="mv.name || ''">{{ mv.name || '' }}</p>
+        <p class="rank--mv-artist" :title="formatMvArtists(mv)">{{ formatMvArtists(mv) }}</p>
+      </div>
+    </div>
+  </section>
+</div>

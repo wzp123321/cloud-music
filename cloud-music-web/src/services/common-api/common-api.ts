@@ -48,7 +48,7 @@ export interface Common_IMusic {
 /**
  * 专辑
  */
-export interface Common_IAblumVO {
+export interface Common_IAlbumVO {
   title: string;
   publicTime: number;
   artist: string;

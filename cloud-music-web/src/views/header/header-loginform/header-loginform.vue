@@ -13,8 +13,13 @@
         <li v-for="(item, index) in typeOptions" :key="'type_' + index" @click="loginService.setTab(item.value)"></li>
       </ul>
 
-      <img class="hl-bg" src="../../../assets/images/login/login_phone.png" alt="" />
-      <el-form :model="loginService.form" @submit.native.prevent>
+      <img
+        v-if="loginService.type !== ELOGINTYPE.二维码"
+        class="hl-bg"
+        src="../../../assets/images/login/login_phone.png"
+        alt=""
+      />
+      <el-form v-if="loginService.type !== ELOGINTYPE.二维码" :model="loginService.form" @submit.native.prevent>
         <el-form-item class="mb30">
           <input
             :maxlength="loginService.type === ELOGINTYPE.手机 ? 11 : 30"
@@ -34,6 +39,15 @@
         <el-form-item class="mb8"> <button primary @click="loginService.submit">登录</button></el-form-item>
         <p>前往注册</p>
       </el-form>
+
+      <div v-else class="hl-qr">
+        <div class="hl-qr-img">
+          <img v-if="loginService.qrImg" :src="loginService.qrImg" alt="登录二维码" />
+          <el-button v-else link type="primary" @click="loginService.refreshQr()">点击刷新</el-button>
+        </div>
+        <p class="hl-qr-tip">{{ loginService.qrTip }}</p>
+        <el-button text type="primary" @click="loginService.refreshQr()">刷新二维码</el-button>
+      </div>
     </div>
   </el-dialog>
 </template>
@@ -126,6 +140,40 @@ const typeOptions = computed(() => {
         line-height: 40px;
 
         text-align: center;
+      }
+    }
+
+    .hl-qr {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding-top: 40px;
+
+      .hl-qr-img {
+        width: 200px;
+        height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--color-text-border, #eee);
+        border-radius: 4px;
+        overflow: hidden;
+
+        img {
+          width: 100%;
+          height: 100%;
+        }
+      }
+
+      .hl-qr-tip {
+        margin-top: 16px;
+        font-size: 13px;
+        color: #666;
+      }
+
+      .el-button {
+        margin-top: 12px;
       }
     }
   }

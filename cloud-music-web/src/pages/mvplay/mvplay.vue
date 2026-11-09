@@ -22,6 +22,8 @@
         v-for="(item, index) in commentRes?.hotComments"
         :key="'comment-' + index"
         :commentVO="item"
+        type="mv"
+        :id="mvDetail?.id"
       ></cm-comment>
       <div class="mp-comment-header mt60">
         <h5>最新评论</h5>
@@ -31,8 +33,13 @@
         v-for="(item, index) in commentRes?.comments"
         :key="'comment-' + index"
         :commentVO="item"
+        type="mv"
+        :id="mvDetail?.id"
       ></cm-comment>
     </div>
+
+    <!-- 相似推荐：simi_mv -->
+    <cm-simi type="mv" :id="mvDetail?.id"></cm-simi>
   </div>
 </template>
 

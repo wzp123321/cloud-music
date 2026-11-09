@@ -2,16 +2,6 @@ import { getRequest } from '@/services/request';
 
 const musicService = {
   /**
-   * 批量获取歌曲播放地址
-   * @param params
-   * @returns
-   */
-  async getSongUrlByIds(params: { id: string }) {
-    const url = '/song/url';
-    const res = await getRequest(url, params);
-    return res;
-  },
-  /**
    * 获取歌词
    * @param params
    * @returns

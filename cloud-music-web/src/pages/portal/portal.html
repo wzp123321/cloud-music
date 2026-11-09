@@ -11,10 +11,17 @@
     </el-carousel-item>
   </el-carousel>
 
+  <!-- 金刚区 -->
+  <portal-dragon-ball></portal-dragon-ball>
+
+  <!-- 首页区块瀑布流 -->
+  <portal-block-page></portal-block-page>
+
   <!-- 推荐歌单 -->
   <cm-navbar
     :title="'推荐歌单'"
     :navs="portal.recommendPlayListNavs"
+    :loadMoreUrl="'/playlist'"
     v-model:selectedCode="portal.selectedRecommendPlayListType"
     @change="portal.queryPlayListByType"
   ></cm-navbar>

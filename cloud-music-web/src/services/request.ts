@@ -15,17 +15,23 @@ const axiosInstance = () => {
 const publicReq = async (params: { [key: string]: any }) => {
   const { url, method, param, options } = params;
   const instance = axiosInstance();
+  const isForm = typeof FormData !== 'undefined' && param instanceof FormData;
+  // 合并外部传入的 headers；FormData 场景交由 axios 自动设置 multipart boundary
+  const headers = isForm
+    ? { ...(options?.headers || {}) }
+    : {
+        ...(options?.headers || {}),
+        'Content-Type':
+          Object.prototype.toString.call(param) === '[object String]'
+            ? 'application/json; charset=utf-8'
+            : 'application/json',
+      };
   return await instance({
     url,
     method,
     // 在请求头里面添加token 如果没有则为空字符串
     ...options,
-    headers: {
-      'Content-Type':
-        Object.prototype.toString.call(param) === '[object String]'
-          ? 'application/json; charset=utf-8'
-          : 'application/json',
-    },
+    headers,
     [method === 'post' ? 'data' : 'params']: param,
   }).then((res: AxiosResponse) => {
     if (res) {
@@ -60,6 +66,20 @@ export async function getRequest(url: string, param?: { [key: string]: any }) {
       url,
       method: 'get',
       param,
+    });
+    return response;
+  } catch (err) {
+    return Promise.reject(err);
+  }
+}
+
+// POST form request (multipart/form-data，用于文件上传场景如歌单封面)
+export async function postFormRequest(url: string, formData: FormData) {
+  try {
+    const response = await req({
+      url,
+      method: 'post',
+      param: formData,
     });
     return response;
   } catch (err) {

@@ -11,6 +11,8 @@ import { ElCarousel, ElCarouselItem } from 'element-plus';
 import portal from './services/portal.service';
 
 import RankDetail from './portal-rank-detail/portal-rank-detail.vue';
+import PortalDragonBall from './portal-dragon-ball/portal-dragon-ball.vue';
+import PortalBlockPage from './portal-block-page/portal-block-page.vue';
 
 export default defineComponent({
   name: 'Portal',
@@ -18,6 +20,8 @@ export default defineComponent({
     'el-carousel': ElCarousel,
     'el-carousel-item': ElCarouselItem,
     'port-rank-detail': RankDetail,
+    'portal-dragon-ball': PortalDragonBall,
+    'portal-block-page': PortalBlockPage,
   },
   setup() {
     //初始化

@@ -7,6 +7,7 @@
  */
 import { defineComponent, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import { FGetQueryParam } from '@/core/token';
 
 import artistDetail from './services/artist-detail.service';
 
@@ -14,6 +15,8 @@ export default defineComponent({
   name: 'ArtistDetail',
   setup() {
     artistDetail.init();
+
+    const artistId = Number(FGetQueryParam('id') ?? 0);
 
     onMounted(() => {
       const pageEle = document.getElementsByClassName('home');
@@ -27,6 +30,7 @@ export default defineComponent({
 
     return {
       artistDetail,
+      artistId,
     };
   },
 });

@@ -52,5 +52,10 @@
         </tr>
       </tbody>
     </table>
+
+    <!-- 评论区：comment_album，支持点赞/热评/楼层/发评 -->
+    <cm-comment type="album" :id="resourceId"></cm-comment>
+    <!-- 相似推荐：simi_song（取专辑内歌曲） -->
+    <cm-simi type="song" :id="albumDetail?.songs?.[0]?.id" title="相似歌曲"></cm-simi>
   </div>
 </div>

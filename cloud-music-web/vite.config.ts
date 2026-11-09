@@ -50,10 +50,9 @@ export default ({ mode, command }) => {
         },
         input: {
           index: resolve(__dirname, './index.html'),
-          admin: resolve(__dirname, './pConfigurationPage.html'),
         },
       },
-      minify: 'terser',
+      minify: 'esbuild',
       terserOptions: {
         compress: {
           drop_console: command === 'production',

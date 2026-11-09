@@ -25,6 +25,12 @@
         <button><i class="iconfont icon-fenxiang"></i><span>分享</span></button>
         <button><i class="iconfont icon-pinglun"></i><span>评论</span></button>
       </section>
+
+      <!-- 评论区：comment_music -->
+      <cm-comment type="music" :id="musicDetail?.id"></cm-comment>
+      <!-- 相似推荐：simi_song / simi_user -->
+      <cm-simi type="song" :id="musicDetail?.id"></cm-simi>
+      <cm-simi type="user" :id="musicDetail?.id"></cm-simi>
     </div>
   </div>
 </template>

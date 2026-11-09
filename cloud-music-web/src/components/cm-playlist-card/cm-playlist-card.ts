@@ -6,7 +6,7 @@
  * @Last Modified time: 2022-06-12 20:43:33
  */
 import { useRouter } from 'vue-router';
-import { defineComponent } from 'vue';
+import { defineComponent, toRef } from 'vue';
 
 export default defineComponent({
   name: 'CMPlayListCard',
@@ -27,19 +27,26 @@ export default defineComponent({
       type: Number,
       default: 0,
     },
+    // 扩展：创作者名称（分类/精品浏览展示）
+    creator: {
+      type: String,
+      default: '',
+    },
+    // 扩展：分类/标签角标
+    tag: {
+      type: String,
+      default: '',
+    },
   },
   setup(props) {
     const router = useRouter();
-    // const coverImageUrl = toRef(props, 'coverImageUrl');
-    // const title = toRef(props, 'title');
-    // const playCount = toRef(props, 'playCount');
-    // const id = toRef(props, 'id');
-    // return {
-    //   coverImageUrl,
-    //   title,
-    //   id,
-    //   playCount,
-    // };
+    const coverImageUrl = toRef(props, 'coverImageUrl');
+    const title = toRef(props, 'title');
+    const playCount = toRef(props, 'playCount');
+    const id = toRef(props, 'id');
+    const creator = toRef(props, 'creator');
+    const tag = toRef(props, 'tag');
+
     const linkToDetailPage = (id: string) => {
       router.push({
         path: '/playlist_detail',
@@ -50,6 +57,12 @@ export default defineComponent({
     };
 
     return {
+      coverImageUrl,
+      title,
+      id,
+      playCount,
+      creator,
+      tag,
       linkToDetailPage,
     };
   },

@@ -24,6 +24,7 @@ import { FGetCookie, FSetCookie } from '@/core/token';
 import message from '@/utils/message';
 
 import { postRequest } from '@/services/request';
+import UserService from '@/services/user.service';
 
 enum EPath {
   退出登录 = '/logout',
@@ -65,6 +66,47 @@ export default defineComponent({
         },
       });
       header.keyword = '';
+      header.searchFocus = false;
+      header.clearSuggest();
+    };
+
+    /** 聚焦搜索框：加载热搜榜 */
+    const onSearchFocus = () => {
+      header.searchFocus = true;
+      if (!header.hotList.length) {
+        header.loadHot();
+      }
+    };
+
+    /** 选择热搜/建议词，跳转搜索结果页 */
+    const onSelectKeyword = (keyword: string) => {
+      header.searchFocus = false;
+      header.clearSuggest();
+      header.keyword = '';
+      router.replace({
+        path: '/search',
+        query: {
+          keyword,
+        },
+      });
+    };
+
+    /** 建议类型文案 */
+    const suggestTypeText = (type: string) => {
+      switch (type) {
+        case 'song':
+          return '单曲';
+        case 'artist':
+          return '歌手';
+        case 'album':
+          return '专辑';
+        case 'playlist':
+          return '歌单';
+        case 'mv':
+          return 'MV';
+        default:
+          return '';
+      }
     };
 
     const handleLoginDialogShow = () => {
@@ -118,8 +160,25 @@ export default defineComponent({
 
       if (FGetCookie('cloud-userInfo')) {
         userInfo.value = JSON.parse(FGetCookie('cloud-userInfo') as string);
+        // 启动恢复会话：用 login_status 刷新最新登录态
+        restoreSession();
       }
     });
+
+    const restoreSession = async () => {
+      try {
+        // 先尝试刷新登录态，再查询最新状态（login_refresh -> login_status）
+        await UserService.loginRefresh();
+        const res = await UserService.loginStatus();
+        if (res?.code === 200 && res?.data?.profile) {
+          const profile = res.data.profile;
+          userInfo.value = { profile } as any;
+          FSetCookie('cloud-userInfo', JSON.stringify({ profile }));
+        }
+      } catch {
+        // 会话失效则保持本地缓存，不阻断页面
+      }
+    };
 
     onUnmounted(() => {
       destroy$.complete();
@@ -131,6 +190,9 @@ export default defineComponent({
       userInfo,
 
       handleSearch,
+      onSearchFocus,
+      onSelectKeyword,
+      suggestTypeText,
       onLinkTo,
       linkToPortal,
       handleLoginDialogShow,
