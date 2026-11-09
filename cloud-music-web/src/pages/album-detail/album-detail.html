@@ -15,6 +15,23 @@
       <label>分享：</label>
       <span>{{ albumDetail?.info?.info?.shareCount }}</span>
     </div>
+    <!-- 专辑动态：album_detail_dynamic；订阅：album_sub -->
+    <div class="album-detail--dynamic mt12">
+      <span>动态评论 {{ albumDetail.dynamic.commentCount ?? 0 }}</span>
+      <span>点赞 {{ albumDetail.dynamic.likedCount ?? 0 }}</span>
+      <span>分享 {{ albumDetail.dynamic.shareCount ?? 0 }}</span>
+      <span>收藏 {{ albumDetail.dynamic.subCount ?? 0 }}</span>
+      <button
+        class="album-detail--sub-btn"
+        :class="albumDetail.dynamic.isSub ? 'subed' : ''"
+        :disabled="albumDetail.subLoading"
+        @click="albumDetail.toggleSub()"
+      >
+        {{ albumDetail.dynamic.isSub ? '已订阅' : '订阅专辑' }}
+      </button>
+      <span class="album-detail--tip" v-if="albumDetail.actionTip">{{ albumDetail.actionTip }}</span>
+    </div>
+
     <button radius primary style="width: 180px" class="mt12">
       <i class="iconfont icon-24gf-play mr6"></i>播放全部歌曲
     </button>
@@ -52,6 +69,24 @@
         </tr>
       </tbody>
     </table>
+
+    <!-- 已收藏专辑：album_sublist（需登录，未登录降级提示） -->
+    <div class="album-detail--sublist mt36">
+      <h5 class="mb16">我收藏的专辑</h5>
+      <p v-if="albumDetail.sublistNeedLogin" class="album-detail--tip">登录后查看已收藏专辑</p>
+      <cm-error v-else-if="!albumDetail.subAlbums.length" :title="'暂无收藏专辑'"></cm-error>
+      <div v-else class="album-detail--sublist-grid">
+        <div
+          v-for="(item, index) in albumDetail.subAlbums"
+          :key="'sub_' + index"
+          class="album-detail--sublist-item"
+          @click="linkToAlbum(item.id)"
+        >
+          <img :src="item.picUrl" alt="" />
+          <p :title="item.name">{{ item.name }}</p>
+        </div>
+      </div>
+    </div>
 
     <!-- 评论区：comment_album，支持点赞/热评/楼层/发评 -->
     <cm-comment type="album" :id="resourceId"></cm-comment>

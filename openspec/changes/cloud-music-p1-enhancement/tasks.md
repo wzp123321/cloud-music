@@ -2,11 +2,11 @@
 
 ## 1. 专辑/歌手/MV 增强（content-detail-enhancement）
 
-- [ ] 1.1 接入 `album_new`/`album_newest`/`album_list`/`album_list_style`/`album_songsaleboard`，新增新碟/榜单/风格浏览，验证专辑列表展示
-- [ ] 1.2 接入 `album_detail_dynamic`/`album_sub`/`album_sublist`，在专辑详情页展示动态数据并支持订阅，验证订阅状态
-- [ ] 1.3 接入 `artist_list`/`artist_top_song`/`artist_songs`/`artist_new_song`/`artist_new_mv`/`artist_video`，扩展歌手页热门歌曲/视频，验证渲染
-- [ ] 1.4 接入 `artist_fans`/`artist_follow_count`/`artist_sub`/`artist_sublist`，支持歌手订阅与粉丝数展示，验证订阅
-- [ ] 1.5 接入 `mv_all`/`mv_exclusive_rcmd`/`mv_first`/`mv_detail_info`/`mv_sub`/`mv_sublist`，扩展 MV 浏览与订阅，验证列表
+- [x] 1.1 接入 `album_new`/`album_newest`/`album_list`/`album_list_style`/`album_songsaleboard`，新增新碟/榜单/风格浏览，验证专辑列表展示
+- [x] 1.2 接入 `album_detail_dynamic`/`album_sub`/`album_sublist`，在专辑详情页展示动态数据并支持订阅，验证订阅状态
+- [x] 1.3 接入 `artist_list`/`artist_top_song`/`artist_songs`/`artist_new_song`/`artist_new_mv`/`artist_video`，扩展歌手页热门歌曲/视频，验证渲染
+- [x] 1.4 接入 `artist_fans`/`artist_follow_count`/`artist_sub`/`artist_sublist`，支持歌手订阅与粉丝数展示，验证订阅
+- [x] 1.5 接入 `mv_all`/`mv_exclusive_rcmd`/`mv_first`/`mv_detail_info`/`mv_sub`/`mv_sublist`，扩展 MV 浏览与订阅，验证列表
 
 ## 2. 个性化发现与风格分类（discovery-personalized）
 
@@ -50,3 +50,69 @@
 
 - 评审通过后执行 `openspec archive` 归档本 change。
 - 归档后开启 `cloud-music-p2-longtail`（电台/视频/云贝/会员/音乐人等增值长尾）。
+
+## 接入前置约束（编码前必读，优先级高于上方任务罗列顺序）
+
+依据 `design.md` 的「运行时基线」。完成判定见 C 节。
+
+### A. 依赖链（先列表后详情）
+
+| 链 | 入口（提供参数） | 详情（消费参数） |
+|---|---|---|
+| 专辑 | `album_new` / `album_list` / `album_list_style` | `album_detail_dynamic` ← `albums[].id` |
+| 歌手 | `artist_list` / `toplist_artist` | `artist_top_song` / `artist_songs` / `artist_fans` / `artist_video` ← `artists[].id` |
+| 风格 | `style_list` / `style_preference` | `style_album` / `style_artist` / `style_playlist` / `style_song` / `style_detail` ← `tagId` |
+| MV | `mv_all` / `mv_first` / `mv_exclusive_rcmd` | `mv_detail_info` ← `mvid` |
+| 歌单 | `sheet_list` | `sheet_preview` ← `id` |
+
+以上 14 个详情型接口实测「裸 GET 400/502，带真实参数 200」；没有入口就没有参数来源。
+
+### B. 需登录 / 写操作 / 例外路由 / 失效
+
+- **需登录**（本环境只静态验证，UI 做未登录降级）：`artist_new_song`、`artist_new_mv`、`hot_topic`，以及 4.x / 6.x 的消息与用户资产类。
+- **写操作**（禁止匿名探测，需登录态验收）：`album_sub`、`artist_sub`、`mv_sub` 及 `*_sublist`、`send_*`、`event_del`/`event_forward`、`like`、`hug_comment`、`playlist_*_update`、`playlist_order_update`、`playlist_privacy`、`fm_trash`。
+- **例外路由（必须写下划线）**：`personal_fm` → `/personal_fm`、`fm_trash` → `/fm_trash`、`daily_signin` → `/daily_signin`。按常规「下划线转斜杠」写会 404。
+- **失效不接**：`/yunbei/info`（上游 404）；`/top/list`（上游 400，P0 遗留，本 change 不修）。
+
+### C. 完成判定
+
+每个任务除「接口已封装」外还须满足：① 有上游参数来源；② 有页面/组件真实调用点；③ 匿名可用者经 `10130` 实测 `code:200`。三者缺一不算完成，不得勾选。
+
+## 第一批（1.1~1.5）验收记录（2026-11-09）
+
+依据 C 节完成判定逐项核对：24 个接口全部具备上游参数来源与页面真实调用点，匿名可用者均经 server `10130` 实测 `code:200`。
+
+### 匿名接口实测（`code:200`）
+
+| 接口 | URL | 参数来源 | UI 调用点 |
+|---|---|---|---|
+| `album_new` | `/album/new` | 地区筛选 | `/album` 全部新碟 |
+| `album_newest` | `/album/newest` | 无 | `/album` 最新专辑 |
+| `album_list` | `/album/list` | 地区筛选 | `/album` 数字专辑 |
+| `album_list_style` | `/album/list/style` | 语种筛选 | `/album` 语种风格馆 |
+| `album_songsaleboard` | `/album/songsaleboard` | 榜单周期 | `/album` 专辑销量榜 |
+| `album_detail_dynamic` | `/album/detail/dynamic` | 新碟列表 `albums[].id` | `/album_detail` 动态数据 |
+| `artist_list` | `/artist/list` | 分类/地区筛选 | `/artists` 歌手列表 |
+| `artist_top_song` | `/artist/top/song` | `artists[].id` | `/artist_detail` 热门 50 首 |
+| `artist_songs` | `/artist/songs` | `artists[].id`、排序 | `/artist_detail` 全部歌曲 |
+| `artist_video` | `/artist/video` | `artists[].id` | `/artist_detail` 视频 tab |
+| `artist_fans` | `/artist/fans` | `artists[].id` | `/artist_detail` 粉丝区 |
+| `artist_follow_count` | `/artist/follow/count` | `artists[].id` | `/artist_detail` 粉丝数与关注态 |
+| `mv_all` | `/mv/all` | 地区/排序筛选 | `/mv` 全部 MV |
+| `mv_exclusive_rcmd` | `/mv/exclusive/rcmd` | 无 | `/mv` 网易出品 |
+| `mv_first` | `/mv/first` | 无 | `/mv` 最新 MV |
+| `mv_detail_info` | `/mv/detail/info` | MV 列表 `data[].id` | `/mvplay` 互动数据 |
+
+### 需登录只读（路由已注册，匿名返回 301，UI 未登录降级）
+
+`album_sublist`、`artist_sublist`、`mv_sublist`、`artist_new_song`、`artist_new_mv`。
+
+### 写操作（禁止匿名探测，需登录态验收）
+
+`album_sub`（`/album_detail` 订阅按钮）、`artist_sub`（`/artist_detail` 关注按钮）、`mv_sub`（`/mvplay` 收藏按钮）。三者均有二次状态刷新：成功后重新拉取动态/粉丝数/收藏列表。
+
+### 构建与静态核对
+
+- `npm run build`（`vue-tsc --noEmit && vite build`）退出码 0，新增 `album-discovery`、`mv`、`content-enhance.service` chunk 均已产出。
+- 静态核对：服务层 24 个接口函数均有 `contentEnhanceService.*` 页面调用点，缺失 0。
+- 导航：`/album`、`/mv` 已注册；头部 `/singer` 死链修正为 `/artists`。

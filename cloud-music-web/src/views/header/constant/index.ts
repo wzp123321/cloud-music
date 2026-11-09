@@ -4,12 +4,16 @@ export const menus = [
     url: '/',
   },
   {
+    name: '新碟',
+    url: '/album',
+  },
+  {
     name: '排行榜',
     url: '/rank',
   },
   {
     name: '歌手',
-    url: '/singer',
+    url: '/artists',
   },
   {
     name: 'MV',

@@ -10,6 +10,14 @@
       <div class="mp-data">
         <i class="iconfont icon-24gf-play"></i>
         <span>播放量：{{ mvDetail?.playCount ?? 0 }}</span>
+        <!-- MV 互动数据：mv_detail_info；收藏：mv_sub -->
+        <span class="mp-data--stat">点赞 {{ mvStat.likedCount ?? 0 }}</span>
+        <span class="mp-data--stat">评论 {{ mvStat.commentCount ?? 0 }}</span>
+        <span class="mp-data--stat">分享 {{ mvStat.shareCount ?? 0 }}</span>
+        <button class="mp-data--sub-btn" :class="isSubed ? 'subed' : ''" :disabled="subLoading" @click="toggleMvSub">
+          {{ isSubed ? '已收藏' : '收藏 MV' }}
+        </button>
+        <span class="mp-data--tip" v-if="subTip">{{ subTip }}</span>
       </div>
     </div>
 
@@ -48,11 +56,21 @@ import { onMounted, onUnmounted, ref } from 'vue';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
+import { FGetQueryParam } from '@/core/token';
 import MvPlayerService from './mvplay.service';
 import { MP_IMvDetail, MP_IMVCommentRes } from './mvplay.api';
+import contentEnhanceService, { hasLogin } from '@/services/content-enhance.service';
+import { MvDetailInfoRes } from '@/services/content-enhance.api';
 
 const mvPlayer = new MvPlayerService();
 const destroy$ = new Subject<void>();
+
+/** 参数来源：mvid ← MV 列表 data[].id 或 /mvplay?mvid= */
+const mvid = Number(FGetQueryParam('mvid') || 0);
+const mvStat = ref<MvDetailInfoRes>({});
+const isSubed = ref<boolean>(false);
+const subLoading = ref<boolean>(false);
+const subTip = ref<string>('');
 
 const mvDetail = ref<MP_IMvDetail>({
   artistId: 0,
@@ -85,7 +103,57 @@ const commentRes = ref<MP_IMVCommentRes>({
   hotComments: [],
 });
 
+/** MV 互动数据：mv_detail_info */
+const loadMvStat = async () => {
+  if (!mvid) return;
+  try {
+    const res = await contentEnhanceService.getMvDetailInfo({ mvid });
+    if (res?.code === 200) mvStat.value = res;
+  } catch (error) {
+    mvStat.value = {};
+  }
+};
+
+/** 收藏状态：mv_sublist（需登录，未登录时不请求） */
+const loadSubState = async () => {
+  if (!mvid || !hasLogin()) return;
+  try {
+    const res = await contentEnhanceService.getMvSublist({ limit: 100 });
+    isSubed.value = (res?.data || []).some((item: any) => Number(item.id || item.mvid) === mvid);
+  } catch (error) {
+    isSubed.value = false;
+  }
+};
+
+/** 收藏/取消收藏 MV：mv_sub（需登录，成功后刷新收藏状态） */
+const toggleMvSub = async () => {
+  if (!hasLogin()) {
+    subTip.value = '登录后可收藏 MV';
+    return;
+  }
+  if (!mvid || subLoading.value) return;
+  subLoading.value = true;
+  subTip.value = '';
+  const t = isSubed.value ? 0 : 1;
+  try {
+    const res = await contentEnhanceService.setMvSub({ mvid, t: t as 1 | 0 });
+    if (res?.code === 200) {
+      isSubed.value = t === 1;
+      subTip.value = t === 1 ? '已收藏该 MV' : '已取消收藏';
+      await loadSubState();
+    } else {
+      subTip.value = res?.message || '操作未成功，请重试';
+    }
+  } catch (error) {
+    subTip.value = '收藏失败，请检查登录态';
+  } finally {
+    subLoading.value = false;
+  }
+};
+
 onMounted(() => {
+  loadMvStat();
+  loadSubState();
   mvPlayer.mvDetailResult$.pipe(takeUntil(destroy$)).subscribe((v) => {
     mvDetail.value = v;
   });
@@ -155,6 +223,38 @@ onUnmounted(() => {
       .iconfont {
         color: hsla(0, 0%, 100%, 0.6);
         font-size: 14px;
+      }
+
+      .mp-data--stat {
+        margin-left: 16px;
+      }
+
+      .mp-data--sub-btn {
+        margin-left: 20px;
+        padding: 5px 16px;
+        border: 1px solid var(--color-primary, #c20c0c);
+        border-radius: 16px;
+        background: var(--color-primary, #c20c0c);
+        color: #fff;
+        font-size: 13px;
+        cursor: pointer;
+
+        &.subed {
+          background: transparent;
+          color: #fff;
+          border-color: hsla(0, 0%, 100%, 0.5);
+        }
+
+        &:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+      }
+
+      .mp-data--tip {
+        margin-left: 10px;
+        font-size: 12px;
+        color: hsla(0, 0%, 100%, 0.5);
       }
     }
   }

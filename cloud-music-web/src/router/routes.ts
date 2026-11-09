@@ -16,6 +16,14 @@ const routes: RouteRecordRaw[] = [
     },
     component: () => import('@/pages/daily-recommend/daily-recommend.vue'),
   },
+  // 新碟与数字专辑（P1 content-detail-enhancement）
+  {
+    path: '/album',
+    meta: {
+      name: '新碟',
+    },
+    component: () => import('@/pages/album-discovery/album-discovery.vue'),
+  },
   // 排行榜（含榜单详情）
   {
     path: '/rank',
@@ -114,6 +122,15 @@ const routes: RouteRecordRaw[] = [
       name: '用户中心',
     },
     component: () => import('@/pages/user/user.vue'),
+  },
+
+  // MV 列表（P1 content-detail-enhancement）
+  {
+    path: '/mv',
+    meta: {
+      name: 'MV',
+    },
+    component: () => import('@/pages/mv/mv.vue'),
   },
 
   // mv

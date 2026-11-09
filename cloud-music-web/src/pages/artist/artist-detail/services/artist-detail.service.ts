@@ -11,6 +11,12 @@ import artistDetailService from './ad.service';
 import { ArtistVO, AlbumVO, MvVO, DescRes } from './artist-detail-api';
 import { Common_IMusic } from '@/services/common-api/common-api';
 import { ref } from 'vue';
+import contentEnhanceService, { hasLogin } from '@/services/content-enhance.service';
+import {
+  ArtistFollowCountRes,
+  ContentSongItem,
+  ContentVideoItem,
+} from '@/services/content-enhance.api';
 
 const navs = [
   {
@@ -28,6 +34,10 @@ const navs = [
   {
     code: '3',
     name: '简介',
+  },
+  {
+    code: '4',
+    name: '视频',
   },
 ];
 
@@ -49,6 +59,15 @@ class ArtistDetail {
     introduction: [],
     topicData: [],
   });
+  private _followCount = ref<ArtistFollowCountRes>({});
+  private _fans = ref<{ userId?: number; nickname?: string; avatarUrl?: string }[]>([]);
+  private _topSongs = ref<ContentSongItem[]>([]);
+  private _allSongs = ref<ContentSongItem[]>([]);
+  private _songSource = ref<'top' | 'all'>('top');
+  private _songOrder = ref<'hot' | 'time'>('hot');
+  private _videos = ref<ContentVideoItem[]>([]);
+  private _subLoading = ref<boolean>(false);
+  private _actionTip = ref<string>('');
   public readonly navs = navs;
   public readonly pageSize = 20;
   //#endregion
@@ -86,6 +105,33 @@ class ArtistDetail {
   public get desc(): DescRes {
     return this._desc.value;
   }
+  public get followCount(): ArtistFollowCountRes {
+    return this._followCount.value;
+  }
+  public get fans(): { userId?: number; nickname?: string; avatarUrl?: string }[] {
+    return this._fans.value;
+  }
+  public get topSongs(): ContentSongItem[] {
+    return this._topSongs.value;
+  }
+  public get allSongs(): ContentSongItem[] {
+    return this._allSongs.value;
+  }
+  public get songSource(): 'top' | 'all' {
+    return this._songSource.value;
+  }
+  public get songOrder(): 'hot' | 'time' {
+    return this._songOrder.value;
+  }
+  public get videos(): ContentVideoItem[] {
+    return this._videos.value;
+  }
+  public get subLoading(): boolean {
+    return this._subLoading.value;
+  }
+  public get actionTip(): string {
+    return this._actionTip.value;
+  }
   //#endregion
   //#region
   async init() {
@@ -115,6 +161,10 @@ class ArtistDetail {
     } finally {
       this._loading.value = false;
     }
+    // 歌手增强：粉丝数、粉丝列表、热门 50 首（参数 id ← /artist_detail?id=，上游为歌手列表）
+    this.queryFollowCount();
+    this.queryFans();
+    this.queryTopSongs();
   }
   //#endregion
   //#region
@@ -128,6 +178,9 @@ class ArtistDetail {
         break;
       case '3':
         this.queryArtistDesc();
+        break;
+      case '4':
+        this.queryVideos();
         break;
     }
   };
@@ -219,6 +272,108 @@ class ArtistDetail {
     } finally {
       this._itemLoading.value = false;
     }
+  }
+  //#endregion
+  //#region P1 歌手增强（1.3 / 1.4）
+  /** 粉丝数与关注状态：artist_follow_count */
+  async queryFollowCount() {
+    if (!this._id) return;
+    try {
+      const res = await contentEnhanceService.getArtistFollowCount({ id: this._id });
+      if (res?.code === 200) this._followCount.value = res;
+    } catch (error) {
+      this._followCount.value = {};
+    }
+  }
+
+  /** 粉丝列表：artist_fans */
+  async queryFans() {
+    if (!this._id) return;
+    try {
+      const res = await contentEnhanceService.getArtistFans({ id: this._id, limit: 10 });
+      this._fans.value = (res?.data || []).map((item) => item.userProfile || {});
+    } catch (error) {
+      this._fans.value = [];
+    }
+  }
+
+  /** 歌手热门 50 首：artist_top_song */
+  async queryTopSongs() {
+    if (!this._id) return;
+    try {
+      const res = await contentEnhanceService.getArtistTopSong({ id: this._id });
+      this._topSongs.value = res?.songs || [];
+    } catch (error) {
+      this._topSongs.value = [];
+    }
+  }
+
+  /** 歌手全部歌曲：artist_songs，order hot/time */
+  async queryAllSongs(order: 'hot' | 'time' = 'hot') {
+    if (!this._id) return;
+    this._songOrder.value = order;
+    try {
+      const res = await contentEnhanceService.getArtistSongs({ id: this._id, order, limit: 30 });
+      this._allSongs.value = res?.songs || [];
+    } catch (error) {
+      this._allSongs.value = [];
+    }
+  }
+
+  /** 歌手相关视频：artist_video */
+  async queryVideos() {
+    if (!this._id) return;
+    this._itemLoading.value = true;
+    try {
+      const res = await contentEnhanceService.getArtistVideo({ id: this._id, size: 10 });
+      this._videos.value = res?.data?.records || res?.data?.feeds || [];
+    } catch (error) {
+      this._videos.value = [];
+    } finally {
+      this._itemLoading.value = false;
+    }
+  }
+
+  /** 单曲 tab 数据源切换：热门 50 / 全部歌曲 */
+  switchSongSource(source: 'top' | 'all') {
+    this._songSource.value = source;
+    if (source === 'all' && !this._allSongs.value.length) {
+      this.queryAllSongs(this._songOrder.value);
+    }
+  }
+
+  switchSongOrder(order: 'hot' | 'time') {
+    this.queryAllSongs(order);
+  }
+
+  /** 关注/取消关注歌手：artist_sub（需登录，成功后刷新粉丝数与状态） */
+  async toggleSub() {
+    if (!hasLogin()) {
+      this._actionTip.value = '登录后可关注歌手';
+      return;
+    }
+    if (!this._id || this._subLoading.value) return;
+    const followed = this._followCount.value?.data?.isFollow;
+    const t = followed ? 0 : 1;
+    this._subLoading.value = true;
+    this._actionTip.value = '';
+    try {
+      const res = await contentEnhanceService.setArtistSub({ id: this._id, t: t as 1 | 0 });
+      if (res?.code === 200) {
+        this._actionTip.value = t === 1 ? '已关注该歌手' : '已取消关注';
+        await this.queryFollowCount();
+      } else {
+        this._actionTip.value = res?.message || '操作未成功，请重试';
+      }
+    } catch (error) {
+      this._actionTip.value = '关注失败，请检查登录态';
+    } finally {
+      this._subLoading.value = false;
+    }
+  }
+
+  formatSongArtists(song: ContentSongItem): string {
+    return (song.ar || song.artists || []).map((artist) => artist.name || '').join(' / ');
   }
   //#endregion
 }

@@ -51,3 +51,30 @@
 
 - 评审通过后执行 `openspec archive` 归档本 change。
 - 至此 server 端 309 接口在前端规划层面全部有归属（P0+P1+P2）。
+
+## 接入前置约束（编码前必读，优先级高于上方任务罗列顺序）
+
+依据 `design.md` 的「运行时基线」。完成判定见 C 节。
+
+### A. 依赖链（先列表后详情）
+
+| 链 | 入口（提供参数） | 详情（消费参数） |
+|---|---|---|
+| 电台 | `dj_catelist` / `dj_recommend` / `dj_hot` / `dj_toplist*` | `dj_detail` / `dj_program` ← `rid`；`dj_program_detail` ← `programs[].id`；`dj_radio_hot` ← `cateId` |
+| 视频 | `video_group_list` / `video_timeline_*` | `video_detail` ← 视频 id；`video_detail_info` ← `vid`；`video_url` ← `id` |
+| UGC | `ugc_artist_search` ← `keyword` | `ugc_*_get` ← `id` |
+| 云盘 | `cloud_match`（需登录） | `cloud`（上传，FormData + 登录） |
+
+以上详情型实测「裸 GET 400/502，带真实参数 200」；没有入口就没有参数来源。
+
+### B. 需登录 / 写操作 / 例外路由 / 失效
+
+- **需登录**（只静态验证，UI 做未登录降级）：`yunbei*`、`vip_*`、`musician_*`、`fanscenter_*`、`listentogether_status`、`voicelist_*`、`voice_detail`、`digitalAlbum_purchased`、`msg_*`、`ugc_detail`、`ugc_user_devote`、`video_timeline_*`、`calendar` 等。
+- **写操作 / 账号动作（禁止匿名探测、禁止无账号触发）**：`dj_sub`、`video_sub`、`voice_upload`、`cloud`、`listentogether_room_create`/`end`/`*_command`/`heatbeat`、`yunbei_sign`/`task_finish`/`rcmd_song`、`musician_sign`、`daily_signin`、`captcha_sent`/`captcha_verify`、`register_*`、`rebind`、`activate_init_profile`、`digitalAlbum_ordering`、`weblog`。
+- **例外路由（必须写下划线）**：`daily_signin` → `/daily_signin`（本 change 7.2 涉及）；另有 `personal_fm`、`fm_trash` 属 P1。按常规「下划线转斜杠」写会 404。
+- **失效不接**：`/yunbei/info`（上游 404）。`/top/list`（上游 400）为 P0 遗留，本 change 不修。
+- **待核不进主路径**：`digitalAlbum_detail`/`sales`（需有效 id）、`topic_detail*`（需 `actid`）、`video_detail`（需视频 id）、`pl_count`、`aidj_content_rcmd`。
+
+### C. 完成判定
+
+每个任务除「接口已封装」外还须满足：① 有上游参数来源；② 有页面/组件真实调用点；③ 匿名可用者经 `10130` 实测 `code:200`；④ 写操作有明确用户操作与二次确认。四者缺一不算完成，不得勾选。
