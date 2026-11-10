@@ -1,12 +1,12 @@
 import { defineStore } from 'pinia';
 import { computed, nextTick, ref, shallowRef } from 'vue';
-import { Common_IMusic } from '@/apis/common-api/common-api';
+import { Common_IMusic } from '@/apis/common/index.api';
 import { PL_IPlayVO } from '@/views/home/components/play-list/play-list.api';
 import musicService from '@/views/home/components/play-controller/pc.service';
 import message from '@/utils/message';
 import { usePlaylistStore } from './playlist';
 import { useLyricStore } from './lyric';
-import { EMPTY_MUSIC, PLAY_TYPE, PLAY_TYPES, PLAY_TYPE_KEYS } from './constants';
+import { EMPTY_MUSIC, PLAY_TYPE, PLAY_TYPES, PLAY_TYPE_KEYS } from '@/constant';
 
 /** 旧版本把当前索引以纯数字字符串写在这个 key 下 */
 const INDEX_STORAGE_KEY = 'cloud-play-index';

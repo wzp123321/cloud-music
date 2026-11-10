@@ -3,7 +3,7 @@ import { computed, reactive, ref } from 'vue';
 import { FGetQueryParam } from '@/core/token';
 import { PD_IPlaylistDetail } from './playlist-detail.api';
 import { MP_IMVCommentRes } from '../../mvplay/mvplay.api';
-import { Common_IMusic } from '../../../apis/common-api/common-api';
+import { Common_IMusic } from '../../../apis/common/index.api';
 import { getRequest } from '../../../apis/request';
 import CommonService from '../../../apis/common.service';
 import {

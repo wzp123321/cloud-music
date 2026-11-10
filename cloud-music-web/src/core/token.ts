@@ -1,4 +1,4 @@
-import { IResTemplate } from '@/apis/common-api/common-api';
+import { IResTemplate } from '@/apis/common/index.api';
 
 /**
  * 获取地址参数项

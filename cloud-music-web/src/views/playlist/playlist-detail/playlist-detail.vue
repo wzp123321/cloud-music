@@ -99,7 +99,7 @@
 import { ref, watch } from 'vue';
 import { usePlayListDetail } from './playlist-detail.service';
 import { PD_IPlaylistDetail } from './playlist-detail.api';
-import { Common_IMusic } from '../../../apis/common-api/common-api';
+import { Common_IMusic } from '../../../apis/common/index.api';
 import { MP_IMVCommentRes } from '../../mvplay/mvplay.api';
 import message from '@/utils/message';
 import PlaylistFormDialog from '../components/playlist-form-dialog.vue';

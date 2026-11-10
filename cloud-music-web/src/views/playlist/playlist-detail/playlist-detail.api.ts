@@ -1,4 +1,4 @@
-import { Common_IUserVO } from '../../../apis/common-api/user-api';
+import { Common_IUserVO } from '../../../apis/common/user.api';
 import { AD_IMusicVO } from '../../artist/artist-detail/services/artist-detail-api';
 
 export interface PD_IPlaylistDetail {

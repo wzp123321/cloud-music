@@ -30,7 +30,7 @@
 import { defineComponent, PropType } from 'vue';
 import { useRouter } from 'vue-router';
 
-import { ICodeName } from '@/apis/common-api/common-api';
+import { ICodeName } from '@/apis/common/index.api';
 
 export default defineComponent({
   name: 'CmNavBar',

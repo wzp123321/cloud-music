@@ -1,4 +1,4 @@
-import { ICodeName } from '@/apis/common-api/common-api';
+import { ICodeName } from '@/apis/common/index.api';
 
 // 推荐歌单
 export const recommendPlayListNavs: ICodeName<string>[] = [

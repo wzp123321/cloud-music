@@ -9,7 +9,7 @@ import { FGetQueryParam } from '@/core/token';
 import artistDetailService from './ad.service';
 
 import { ArtistVO, AlbumVO, MvVO, DescRes } from './artist-detail-api';
-import { Common_IMusic } from '@/apis/common-api/common-api';
+import { Common_IMusic } from '@/apis/common/index.api';
 import { ref, reactive, type Ref } from 'vue';
 import contentEnhanceService, { hasLogin } from '@/apis/content-enhance.service';
 import {

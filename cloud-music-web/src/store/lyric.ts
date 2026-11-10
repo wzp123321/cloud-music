@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
-import { LyricLine } from './constants';
+import { LyricLine } from '@/constant';
 
 /** 去掉时间片段的前导 0 后转数字，如 '03' → 3 */
 const parseTimePart = (part?: string): number => {

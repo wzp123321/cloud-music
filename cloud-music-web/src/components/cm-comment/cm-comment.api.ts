@@ -1,4 +1,4 @@
-import { Common_IUserVO } from '../../apis/common-api/user-api';
+import { Common_IUserVO } from '../../apis/common/user.api';
 import { getRequest, postRequest } from '../../apis/request';
 
 /**

@@ -1,4 +1,4 @@
-import { Common_IMusic } from '@/apis/common-api/common-api';
+import { Common_IMusic } from '@/apis/common/index.api';
 
 /** 播放模式（值同时作为 UI 标题） */
 export enum PLAY_TYPE {
