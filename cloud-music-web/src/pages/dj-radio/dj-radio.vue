@@ -1,11 +1,11 @@
 <template>
   <div class="dj-radio">
-    <cm-navbar :title="'电台 · 分类 · 节目 · 榜单'" :hasLoadMore="false"></cm-navbar>
+    <cm-navbar :title="'电台 · 分类 · 节目 · 榜单'" :has-load-more="false"></cm-navbar>
 
-    <div class="dj-radio--loginbar" v-if="!hasLogin">
+    <div v-if="!hasLogin" class="dj-radio--loginbar">
       当前未登录：<code>dj_sub</code> 订阅写操作与 <code>dj_sublist</code> 订阅列表已降级（不发请求）；其余匿名只读接口可正常加载
     </div>
-    <div class="dj-radio--toast" v-if="toast" @click="toast = ''">{{ toast }}（点击关闭）</div>
+    <div v-if="toast" class="dj-radio--toast" @click="toast = ''">{{ toast }}（点击关闭）</div>
 
     <div class="dj-radio--tabs">
       <button
@@ -52,8 +52,8 @@
             <span v-else-if="b.kind === 'write' || b.kind === 'upload'" class="dj-radio--badge dj-radio--badge--write">写操作</span>
             <span v-else-if="b.kind === 'loginRead'" class="dj-radio--badge dj-radio--badge--login">需登录只读</span>
           </h3>
-          <p class="dj-radio--note" v-if="b.note">{{ b.note }}</p>
-          <p class="dj-radio--degrade" v-if="(b.kind === 'loginRead' || b.kind === 'write' || b.kind === 'upload') && !hasLogin">
+          <p v-if="b.note" class="dj-radio--note">{{ b.note }}</p>
+          <p v-if="(b.kind === 'loginRead' || b.kind === 'write' || b.kind === 'upload') && !hasLogin" class="dj-radio--degrade">
             登录后可用（已降级，不发请求）
           </p>
           <div class="dj-radio--block-actions">
@@ -61,8 +61,8 @@
               {{ b.inputLabel || b.inputKey }}
               <input
                 :value="params[b.inputKey || '']"
-                @input="onParamInput(b.inputKey, $event)"
                 :placeholder="b.inputHint || '点选上游列表自动填入，或手填'"
+                @input="onParamInput(b.inputKey, $event)"
               />
             </label>
             <label v-if="b.kind === 'upload'" class="dj-radio--inline-label">
@@ -76,9 +76,9 @@
               {{ b.buttonText || '加载' }}
             </button>
             <span class="dj-radio--count">{{ results[b.module]?.length || 0 }} 条</span>
-            <span class="dj-radio--emit" v-if="b.emit">点选列表项 → 填入 {{ b.emit }}</span>
+            <span v-if="b.emit" class="dj-radio--emit">点选列表项 → 填入 {{ b.emit }}</span>
           </div>
-          <div class="dj-radio--list" v-if="results[b.module] && results[b.module].length">
+          <div v-if="results[b.module] && results[b.module].length" class="dj-radio--list">
             <div
               v-for="(item, idx) in results[b.module]"
               :key="b.module + '_' + idx"
@@ -88,13 +88,13 @@
             >
               <span class="dj-radio--item-title">{{ item.title }}</span>
               <span class="dj-radio--item-sub">{{ item.subtitle }}</span>
-              <span class="dj-radio--item-id" v-if="item.id">#{{ item.id }}</span>
+              <span v-if="item.id" class="dj-radio--item-id">#{{ item.id }}</span>
             </div>
           </div>
-          <p class="dj-radio--empty" v-else>暂无数据或接口返回为空</p>
+          <p v-else class="dj-radio--empty">暂无数据或接口返回为空</p>
         </section>
       </div>
-      <div class="dj-radio--result" v-if="writeResult">{{ writeResult }}</div>
+      <div v-if="writeResult" class="dj-radio--result">{{ writeResult }}</div>
     </div>
   </div>
 </template>
@@ -328,7 +328,7 @@ const runBlock = async (b: Block) => {
     } else {
       toast.value = `${b.name} 已加载 ${results[b.module].length} 条`;
     }
-  } catch (error) {
+  } catch {
     results[b.module] = [];
     if (b.kind === 'write' || b.kind === 'upload') writeResult.value = `${b.name} 请求失败，已按空值处理`;
     else toast.value = `${b.name} 请求失败，已返回空值`;

@@ -1,11 +1,11 @@
 <template>
   <div class="feed">
-    <cm-navbar :title="'动态流 · 话题 · 相关推荐'" :hasLoadMore="false"></cm-navbar>
+    <cm-navbar :title="'动态流 · 话题 · 相关推荐'" :has-load-more="false"></cm-navbar>
 
-    <div class="feed--loginbar" v-if="!hasLogin">
+    <div v-if="!hasLogin" class="feed--loginbar">
       当前未登录：<code>event</code> / <code>topic_sublist</code> 已降级，<code>event_del</code> / <code>event_forward</code> 写操作不可用
     </div>
-    <div class="feed--toast" v-if="toast" @click="clearToast">{{ toast }}（点击关闭）</div>
+    <div v-if="toast" class="feed--toast" @click="clearToast">{{ toast }}（点击关闭）</div>
 
     <div class="feed--tabs">
       <button
@@ -27,12 +27,12 @@
       <div class="feed--grid">
         <section class="feed--block feed--block--wide">
           <h3 class="feed--block-title"><code class="feed--module">event</code> 动态列表（需登录）</h3>
-          <p class="feed--degrade" v-if="!hasLogin">登录后可用（已降级，不发请求）</p>
+          <p v-if="!hasLogin" class="feed--degrade">登录后可用（已降级，不发请求）</p>
           <div class="feed--block-actions">
             <button class="feed--btn" @click="loadEvent">加载动态</button>
             <span class="feed--count">{{ eventList.length }} 条</span>
           </div>
-          <div class="feed--list" v-if="eventList.length">
+          <div v-if="eventList.length" class="feed--list">
             <div
               v-for="(item, idx) in eventList"
               :key="'event_' + idx"
@@ -41,10 +41,10 @@
             >
               <span class="feed--item-title">{{ item.title }}</span>
               <span class="feed--item-sub">{{ item.subtitle }}</span>
-              <span class="feed--item-id" v-if="item.id">#{{ item.id }}</span>
+              <span v-if="item.id" class="feed--item-id">#{{ item.id }}</span>
             </div>
           </div>
-          <p class="feed--empty" v-else>暂无动态数据或接口返回为空</p>
+          <p v-else class="feed--empty">暂无动态数据或接口返回为空</p>
         </section>
 
         <section class="feed--block">
@@ -66,7 +66,7 @@
         </section>
       </div>
 
-      <div class="feed--result" v-if="writeResult">{{ writeResult }}</div>
+      <div v-if="writeResult" class="feed--result">{{ writeResult }}</div>
     </div>
 
     <!-- ==================== 5.2 话题 ==================== -->
@@ -83,7 +83,7 @@
             <button class="feed--btn" @click="loadHotTopic">加载热门话题</button>
             <span class="feed--count">{{ hotTopicList.length }} 条</span>
           </div>
-          <div class="feed--list" v-if="hotTopicList.length">
+          <div v-if="hotTopicList.length" class="feed--list">
             <div
               v-for="(item, idx) in hotTopicList"
               :key="'hot_' + idx"
@@ -92,10 +92,10 @@
             >
               <span class="feed--item-title">{{ item.title }}</span>
               <span class="feed--item-sub">{{ item.subtitle }}</span>
-              <span class="feed--item-id" v-if="item.id">#{{ item.id }}</span>
+              <span v-if="item.id" class="feed--item-id">#{{ item.id }}</span>
             </div>
           </div>
-          <p class="feed--empty" v-else>暂无热门话题或接口返回为空</p>
+          <p v-else class="feed--empty">暂无热门话题或接口返回为空</p>
         </section>
 
         <section class="feed--block">
@@ -106,13 +106,13 @@
             <label>actid<input v-model="topicActid" placeholder="点选热门话题自动填入，或手填" /></label>
             <button class="feed--btn" @click="loadTopicDetail">查看话题详情</button>
           </div>
-          <div class="feed--list" v-if="topicDetailList.length">
+          <div v-if="topicDetailList.length" class="feed--list">
             <div v-for="(item, idx) in topicDetailList" :key="'td_' + idx" class="feed--item">
               <span class="feed--item-title">{{ item.title }}</span>
               <span class="feed--item-sub">{{ item.subtitle }}</span>
             </div>
           </div>
-          <p class="feed--empty" v-else>暂无话题详情</p>
+          <p v-else class="feed--empty">暂无话题详情</p>
         </section>
 
         <section class="feed--block">
@@ -123,23 +123,23 @@
             <label>actid<input v-model="topicActid" placeholder="与话题详情共享 actid" /></label>
             <button class="feed--btn" @click="loadTopicHotEvent">查看话题热门动态</button>
           </div>
-          <div class="feed--list" v-if="topicHotList.length">
+          <div v-if="topicHotList.length" class="feed--list">
             <div v-for="(item, idx) in topicHotList" :key="'th_' + idx" class="feed--item">
               <span class="feed--item-title">{{ item.title }}</span>
               <span class="feed--item-sub">{{ item.subtitle }}</span>
             </div>
           </div>
-          <p class="feed--empty" v-else>暂无话题热门动态</p>
+          <p v-else class="feed--empty">暂无话题热门动态</p>
         </section>
 
         <section class="feed--block feed--block--wide">
           <h3 class="feed--block-title"><code class="feed--module">topic_sublist</code> 已订阅话题（需登录）</h3>
-          <p class="feed--degrade" v-if="!hasLogin">登录后可用（已降级，不发请求）</p>
+          <p v-if="!hasLogin" class="feed--degrade">登录后可用（已降级，不发请求）</p>
           <div class="feed--block-actions">
             <button class="feed--btn" @click="loadTopicSublist">加载已订阅话题</button>
             <span class="feed--count">{{ topicSubList.length }} 条</span>
           </div>
-          <div class="feed--list" v-if="topicSubList.length">
+          <div v-if="topicSubList.length" class="feed--list">
             <div
               v-for="(item, idx) in topicSubList"
               :key="'sub_' + idx"
@@ -150,7 +150,7 @@
               <span class="feed--item-sub">{{ item.subtitle }}</span>
             </div>
           </div>
-          <p class="feed--empty" v-else>暂无订阅话题或接口返回为空</p>
+          <p v-else class="feed--empty">暂无订阅话题或接口返回为空</p>
         </section>
       </div>
     </div>
@@ -166,13 +166,13 @@
             <label>资源 id<input v-model="relatedVideoId" placeholder="视频 / 资源 id" /></label>
             <button class="feed--btn" @click="loadRelatedAllvideo">查看相关视频</button>
           </div>
-          <div class="feed--list" v-if="relatedVideoList.length">
+          <div v-if="relatedVideoList.length" class="feed--list">
             <div v-for="(item, idx) in relatedVideoList" :key="'rv_' + idx" class="feed--item">
               <span class="feed--item-title">{{ item.title }}</span>
               <span class="feed--item-sub">{{ item.subtitle }}</span>
             </div>
           </div>
-          <p class="feed--empty" v-else>暂无相关视频</p>
+          <p v-else class="feed--empty">暂无相关视频</p>
         </section>
 
         <section class="feed--block">
@@ -181,13 +181,13 @@
             <label>歌单 id<input v-model="relatedPlaylistId" placeholder="歌单 id" /></label>
             <button class="feed--btn" @click="loadRelatedPlaylist">查看相关歌单</button>
           </div>
-          <div class="feed--list" v-if="relatedPlaylistList.length">
+          <div v-if="relatedPlaylistList.length" class="feed--list">
             <div v-for="(item, idx) in relatedPlaylistList" :key="'rp_' + idx" class="feed--item">
               <span class="feed--item-title">{{ item.title }}</span>
               <span class="feed--item-sub">{{ item.subtitle }}</span>
             </div>
           </div>
-          <p class="feed--empty" v-else>暂无相关歌单</p>
+          <p v-else class="feed--empty">暂无相关歌单</p>
         </section>
       </div>
     </div>
@@ -324,7 +324,7 @@ const runWrite = async (label: string, fn: () => Promise<any>) => {
     const res = await fn();
     const obj = extractObj(res);
     writeResult.value = `${label} 已提交｜code=${obj.code ?? res?.code ?? '—'}｜${obj.message ?? res?.message ?? '无附加信息'}`;
-  } catch (error) {
+  } catch {
     writeResult.value = `${label} 请求失败，已按空值处理`;
   }
 };
@@ -336,7 +336,7 @@ const loadEvent = async () => {
     const res = await feedService.getEvent({ limit: 30 });
     eventList.value = toList(res);
     toast.value = `动态已加载 ${eventList.value.length} 条`;
-  } catch (error) {
+  } catch {
     eventList.value = [];
     toast.value = '接口请求失败，已返回空值';
   }
@@ -365,7 +365,7 @@ const loadHotTopic = async () => {
     const res = await feedService.getHotTopic({ limit: 30 });
     hotTopicList.value = toList(res);
     toast.value = `热门话题已加载 ${hotTopicList.value.length} 条`;
-  } catch (error) {
+  } catch {
     hotTopicList.value = [];
     toast.value = '接口请求失败，已返回空值';
   }
@@ -385,7 +385,7 @@ const loadTopicDetail = async () => {
     const res = await feedService.getTopicDetail({ actid: topicActid.value });
     topicDetailList.value = toList(res);
     toast.value = `话题详情已加载 ${topicDetailList.value.length} 条`;
-  } catch (error) {
+  } catch {
     topicDetailList.value = [];
     toast.value = '接口请求失败，已返回空值';
   }
@@ -397,7 +397,7 @@ const loadTopicHotEvent = async () => {
     const res = await feedService.getTopicDetailEventHot({ actid: topicActid.value });
     topicHotList.value = toList(res);
     toast.value = `话题热门动态已加载 ${topicHotList.value.length} 条`;
-  } catch (error) {
+  } catch {
     topicHotList.value = [];
     toast.value = '接口请求失败，已返回空值';
   }
@@ -410,7 +410,7 @@ const loadTopicSublist = async () => {
     const res = await feedService.getTopicSublist({ limit: 30 });
     topicSubList.value = toList(res);
     toast.value = `已订阅话题已加载 ${topicSubList.value.length} 条`;
-  } catch (error) {
+  } catch {
     topicSubList.value = [];
     toast.value = '接口请求失败，已返回空值';
   }
@@ -422,7 +422,7 @@ const loadRelatedAllvideo = async () => {
     const res = await feedService.getRelatedAllvideo({ id: relatedVideoId.value });
     relatedVideoList.value = toList(res);
     toast.value = `相关视频已加载 ${relatedVideoList.value.length} 条`;
-  } catch (error) {
+  } catch {
     relatedVideoList.value = [];
     toast.value = '接口请求失败，已返回空值';
   }
@@ -434,7 +434,7 @@ const loadRelatedPlaylist = async () => {
     const res = await feedService.getRelatedPlaylist({ id: relatedPlaylistId.value });
     relatedPlaylistList.value = toList(res);
     toast.value = `相关歌单已加载 ${relatedPlaylistList.value.length} 条`;
-  } catch (error) {
+  } catch {
     relatedPlaylistList.value = [];
     toast.value = '接口请求失败，已返回空值';
   }

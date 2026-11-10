@@ -1,6 +1,6 @@
 <template>
   <div class="album-discovery">
-    <cm-navbar :title="'新碟与数字专辑'" :hasLoadMore="false"></cm-navbar>
+    <cm-navbar :title="'新碟与数字专辑'" :has-load-more="false"></cm-navbar>
 
     <div class="album-discovery--tabs">
       <button
@@ -13,7 +13,7 @@
       </button>
     </div>
 
-    <div class="album-discovery--filters" v-if="showAreaFilter || activeTab === 'saleboard'">
+    <div v-if="showAreaFilter || activeTab === 'saleboard'" class="album-discovery--filters">
       <template v-if="showAreaFilter">
         <span class="album-discovery--filter-label">地区</span>
         <button
@@ -38,7 +38,7 @@
       </template>
     </div>
 
-    <div class="album-discovery--status" v-if="loading">加载中…</div>
+    <div v-if="loading" class="album-discovery--status">加载中…</div>
     <cm-error v-else-if="!albumList.length" :title="'暂无专辑数据'"></cm-error>
     <div v-else class="album-discovery--grid">
       <div
@@ -47,8 +47,8 @@
         class="album-discovery--card"
         @click="linkToAlbum(item.id)"
       >
-        <div class="album-discovery--rank" v-if="item.rank">{{ item.rank }}</div>
-        <cm-skeleton width="100%" :height="'180px'" :imageUrl="item.cover" :borderRadius="'6px'"></cm-skeleton>
+        <div v-if="item.rank" class="album-discovery--rank">{{ item.rank }}</div>
+        <cm-skeleton width="100%" :height="'180px'" :image-url="item.cover" :border-radius="'6px'"></cm-skeleton>
         <p class="album-discovery--name" :title="item.title">{{ item.title }}</p>
         <p class="album-discovery--sub" :title="item.subtitle">{{ item.subtitle }}</p>
       </div>
@@ -160,7 +160,7 @@ const loadAlbums = async () => {
       }
     }
     albumList.value = raw.map((item) => toCard(item, activeTab.value)).filter((item) => item.id > 0);
-  } catch (error) {
+  } catch {
     albumList.value = [];
   } finally {
     loading.value = false;

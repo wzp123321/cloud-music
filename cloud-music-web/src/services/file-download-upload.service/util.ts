@@ -48,7 +48,9 @@ export function FDownLoadHandler(url: string, name?: string): Promise<void> {
     if (url) {
       const element = document.createElement('a');
       element.href = url;
-      name && (element.download = name);
+      if (name) {
+        element.download = name;
+      }
       element.click();
       resolve();
       element.remove();
@@ -113,7 +115,9 @@ export function FUploadHandler(accept?: string): Promise<File> {
   return new Promise((resolve, reject) => {
     const element = document.createElement('input');
     element.type = 'file';
-    accept && (element.accept = accept);
+    if (accept) {
+      element.accept = accept;
+    }
     element.click();
     element.onchange = () => {
       const file = element.files?.[0];

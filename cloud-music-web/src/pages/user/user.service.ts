@@ -1,6 +1,5 @@
-/* eslint-disable */
+ 
 import { ref } from 'vue';
-import { BehaviorSubject, Observable } from 'rxjs';
 
 import { FGetCookie, FGetQueryParam } from '@/core/token';
 import UserService from '@/services/user.service';
@@ -17,17 +16,16 @@ import {
 
 const emptyDetail: UC_IUserDetail = { profile: {} as any };
 
-class UserCenterService {
-  public uid = 0;
+// 创建用户中心共享状态：响应式数据统一用 ref，行为统一为 const 箭头函数
+const create = () => {
+  // 当前查看的用户 uid
+  const uidRef = ref<number>(0);
 
-  //#region 可观察状态
-  private _userDetail$ = new BehaviorSubject<UC_IUserDetail>(emptyDetail);
-  private _playlists$ = new BehaviorSubject<UC_IPlaylist[]>([]);
-  private _level$ = new BehaviorSubject<UC_IUserLevel>({
-    level: 0,
-    progress: 0,
-  });
-  private _subcount$ = new BehaviorSubject<UC_IUserSubcount>({
+  //#region 可观察状态（$ 字段对外保持为 Ref，供组件 watch 订阅）
+  const _userDetail = ref<UC_IUserDetail>(emptyDetail);
+  const _playlists = ref<UC_IPlaylist[]>([]);
+  const _level = ref<UC_IUserLevel>({ level: 0, progress: 0 });
+  const _subcount = ref<UC_IUserSubcount>({
     programCount: 0,
     djRadioCount: 0,
     mvCount: 0,
@@ -37,184 +35,182 @@ class UserCenterService {
     createdPlaylistCount: 0,
     subPlaylistCount: 0,
   });
-  private _record$ = new BehaviorSubject<UC_IRecord>({ allData: [], weekData: [] });
-  private _event$ = new BehaviorSubject<UC_IEvent[]>([]);
-  private _cloud$ = new BehaviorSubject<{ list: UC_ICloudItem[]; count: number }>({
-    list: [],
-    count: 0,
-  });
-  private _follows$ = new BehaviorSubject<UC_IFollowUser[]>([]);
-  private _followeds$ = new BehaviorSubject<UC_IFollowUser[]>([]);
-
-  public get userDetail$() {
-    return this._userDetail$ as unknown as Observable<UC_IUserDetail>;
-  }
-  public get playlists$() {
-    return this._playlists$ as unknown as Observable<UC_IPlaylist[]>;
-  }
-  public get level$() {
-    return this._level$ as unknown as Observable<UC_IUserLevel>;
-  }
-  public get subcount$() {
-    return this._subcount$ as unknown as Observable<UC_IUserSubcount>;
-  }
-  public get record$() {
-    return this._record$ as unknown as Observable<UC_IRecord>;
-  }
-  public get event$() {
-    return this._event$ as unknown as Observable<UC_IEvent[]>;
-  }
-  public get cloud$() {
-    return this._cloud$ as unknown as Observable<{ list: UC_ICloudItem[]; count: number }>;
-  }
-  public get follows$() {
-    return this._follows$ as unknown as Observable<UC_IFollowUser[]>;
-  }
-  public get followeds$() {
-    return this._followeds$ as unknown as Observable<UC_IFollowUser[]>;
-  }
+  const _record = ref<UC_IRecord>({ allData: [], weekData: [] });
+  const _event = ref<UC_IEvent[]>([]);
+  const _cloud = ref<{ list: UC_ICloudItem[]; count: number }>({ list: [], count: 0 });
+  const _follows = ref<UC_IFollowUser[]>([]);
+  const _followeds = ref<UC_IFollowUser[]>([]);
   //#endregion
 
   //#region 基础状态
-  private _loading = ref<boolean>(true);
-  private _recordType = ref<number>(1); // 0 全部 / 1 最近一周
-  private _eventMore = ref<boolean>(false);
-  private _followLoaded = ref<boolean>(false);
-
-  public get loading(): boolean {
-    return this._loading.value;
-  }
-  public get recordType(): number {
-    return this._recordType.value;
-  }
-  public set recordType(value: number) {
-    this._recordType.value = value;
-  }
-  public get eventMore(): boolean {
-    return this._eventMore.value;
-  }
-  public get followLoaded(): boolean {
-    return this._followLoaded.value;
-  }
-  public get followsValue(): UC_IFollowUser[] {
-    return this._follows$.value;
-  }
-  public get followedsValue(): UC_IFollowUser[] {
-    return this._followeds$.value;
-  }
+  const _loading = ref<boolean>(true);
+  const _recordType = ref<number>(1); // 0 全部 / 1 最近一周
+  const _eventMore = ref<boolean>(false);
+  const _followLoaded = ref<boolean>(false);
   //#endregion
 
-  constructor() {
-    this.init();
-  }
+  // 并行拉取资料/歌单/等级/统计/听歌排行，失败时保持空态由页面展示
+  const loadAll = async () => {
+    if (!uidRef.value) {
+      _loading.value = false;
+      return;
+    }
+    _loading.value = true;
+    try {
+      const [detail, playlists, level, subcount, record] = await Promise.all([
+        UserService.getUserDetail(uidRef.value),
+        UserService.getUserPlaylists(uidRef.value),
+        UserService.getUserLevel(),
+        UserService.getUserSubcount(),
+        UserService.getUserRecord(uidRef.value, _recordType.value),
+      ]);
+      _userDetail.value = detail;
+      _playlists.value = playlists;
+      _level.value = level;
+      _subcount.value = subcount;
+      _record.value = record;
+    } catch {
+      // 接口失败时保持空态，由页面展示
+    } finally {
+      _loading.value = false;
+    }
+  };
 
-  init() {
+  // 读取路由 uid，未指定时使用 cookie 中的当前登录用户，并触发全量加载
+  const init = () => {
     const qid = FGetQueryParam('uid');
     if (qid) {
-      this.uid = Number(qid);
+      uidRef.value = Number(qid);
     } else {
-      // 未指定 uid 时，使用当前登录用户
       const cookie = FGetCookie('cloud-userInfo');
       try {
         const profile = cookie ? JSON.parse(cookie)?.profile : undefined;
-        this.uid = profile?.userId ?? 0;
+        uidRef.value = profile?.userId ?? 0;
       } catch {
-        this.uid = 0;
+        uidRef.value = 0;
       }
     }
-    this.loadAll();
-  }
-
-  async loadAll() {
-    if (!this.uid) {
-      this._loading.value = false;
-      return;
-    }
-    this._loading.value = true;
-    try {
-      const [detail, playlists, level, subcount, record] = await Promise.all([
-        UserService.getUserDetail(this.uid),
-        UserService.getUserPlaylists(this.uid),
-        UserService.getUserLevel(),
-        UserService.getUserSubcount(),
-        UserService.getUserRecord(this.uid, this._recordType.value),
-      ]);
-      this._userDetail$.next(detail);
-      this._playlists$.next(playlists);
-      this._level$.next(level);
-      this._subcount$.next(subcount);
-      this._record$.next(record);
-    } catch (error) {
-      // 接口失败时保持空态，由页面展示
-    } finally {
-      this._loading.value = false;
-    }
-  }
+    loadAll();
+  };
 
   /** 切换听歌排行类型并重新加载 */
-  async reloadRecord(type: number) {
-    this._recordType.value = type;
-    if (!this.uid) return;
-    this._record$.next(await UserService.getUserRecord(this.uid, type));
-  }
+  const reloadRecord = async (type: number) => {
+    _recordType.value = type;
+    if (!uidRef.value) return;
+    _record.value = await UserService.getUserRecord(uidRef.value, type);
+  };
 
   /** 加载动态 */
-  async loadEvent() {
-    if (!this.uid) return;
+  const loadEvent = async () => {
+    if (!uidRef.value) return;
     try {
-      const res = await UserService.getUserEvent(this.uid);
-      this._event$.next(res.events ?? []);
-      this._eventMore.value = !!res.more;
+      const res = await UserService.getUserEvent(uidRef.value);
+      _event.value = res.events ?? [];
+      _eventMore.value = !!res.more;
     } catch {
       /* noop */
     }
-  }
+  };
 
   /** 加载云盘 */
-  async loadCloud() {
-    if (!this.uid) return;
+  const loadCloud = async () => {
+    if (!uidRef.value) return;
     try {
       const res = await UserService.getUserCloud();
-      this._cloud$.next({ list: res.list ?? [], count: res.count ?? 0 });
+      _cloud.value = { list: res.list ?? [], count: res.count ?? 0 };
     } catch {
       /* noop */
     }
-  }
+  };
 
   /** 加载关注列表 */
-  async loadFollows() {
-    if (!this.uid) return;
+  const loadFollows = async () => {
+    if (!uidRef.value) return;
     try {
-      const list = await UserService.getUserFollows(this.uid);
-      this._follows$.next(list);
-      this._followLoaded.value = true;
+      const list = await UserService.getUserFollows(uidRef.value);
+      _follows.value = list;
+      _followLoaded.value = true;
     } catch {
       /* noop */
     }
-  }
+  };
 
   /** 加载粉丝列表 */
-  async loadFolloweds() {
-    if (!this.uid) return;
+  const loadFolloweds = async () => {
+    if (!uidRef.value) return;
     try {
-      const list = await UserService.getUserFolloweds(this.uid);
-      this._followeds$.next(list);
-      this._followLoaded.value = true;
+      const list = await UserService.getUserFolloweds(uidRef.value);
+      _followeds.value = list;
+      _followLoaded.value = true;
     } catch {
       /* noop */
     }
-  }
+  };
 
   /** 关注 / 取消关注后刷新列表 */
-  async toggleFollow(userId: number, followed: boolean) {
+  const toggleFollow = async (userId: number, followed: boolean) => {
     try {
       await UserService.follow(userId, followed ? 0 : 1);
-      await Promise.all([this.loadFollows(), this.loadFolloweds()]);
+      await Promise.all([loadFollows(), loadFolloweds()]);
     } catch {
       /* noop */
     }
-  }
-}
+  };
 
-const userCenterService = new UserCenterService();
-export default userCenterService;
+  // 首次创建即初始化，等价于原 class 构造函数行为
+  init();
+
+  // 返回普通对象：值字段用 getter 包装为「值」，$ 字段直接放 Ref 不被解包
+  const state = {
+    get uid(): number {
+      return uidRef.value;
+    },
+    set uid(value: number) {
+      uidRef.value = value;
+    },
+    userDetail$: _userDetail,
+    playlists$: _playlists,
+    level$: _level,
+    subcount$: _subcount,
+    record$: _record,
+    event$: _event,
+    cloud$: _cloud,
+    follows$: _follows,
+    followeds$: _followeds,
+    get loading(): boolean {
+      return _loading.value;
+    },
+    get recordType(): number {
+      return _recordType.value;
+    },
+    set recordType(value: number) {
+      _recordType.value = value;
+    },
+    get eventMore(): boolean {
+      return _eventMore.value;
+    },
+    get followLoaded(): boolean {
+      return _followLoaded.value;
+    },
+    get followsValue(): UC_IFollowUser[] {
+      return _follows.value;
+    },
+    get followedsValue(): UC_IFollowUser[] {
+      return _followeds.value;
+    },
+    init,
+    loadAll,
+    reloadRecord,
+    loadEvent,
+    loadCloud,
+    loadFollows,
+    loadFolloweds,
+    toggleFollow,
+  };
+  return state;
+};
+
+// 模块级缓存：保证跨组件共享同一实例
+let shared: ReturnType<typeof create> | null = null;
+export const useUserCenter = () => (shared ??= create());
+

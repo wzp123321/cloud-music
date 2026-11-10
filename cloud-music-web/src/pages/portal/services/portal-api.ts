@@ -12,6 +12,8 @@ export interface BannerVO {
   targetType: number;
   titleColor: string;
   typeTitle: string;
+  // 跳转地址（部分 banner 才有，模板点击时使用）
+  url: string;
 }
 
 /**
@@ -77,7 +79,7 @@ export interface PlayListVO {
   trackCount: number;
   trackNumberUpdateTime: number;
   trackUpdateTime: number;
-  tracks: { name: string }[];
+  tracks: { id: number; name: string; ar?: SingerVO[] }[];
   updateTime: number;
   userId: number;
 }

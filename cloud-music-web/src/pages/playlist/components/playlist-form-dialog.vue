@@ -1,21 +1,21 @@
 <template>
   <el-dialog
-    :title="mode === 'create' ? '新建歌单' : '编辑歌单'"
     v-model="dialogVisible"
+    :title="mode === 'create' ? '新建歌单' : '编辑歌单'"
     width="480px"
     @closed="onClosed"
   >
-    <el-form label-width="80px" v-loading="submitting">
-      <el-form-item label="名称" v-if="mode === 'create' || showName">
+    <el-form v-loading="submitting" label-width="80px">
+      <el-form-item v-if="mode === 'create' || showName" label="名称">
         <el-input v-model="form.name" maxlength="40" show-word-limit placeholder="请输入歌单名称" />
       </el-form-item>
-      <el-form-item label="简介" v-if="mode === 'edit'">
+      <el-form-item v-if="mode === 'edit'" label="简介">
         <el-input v-model="form.desc" type="textarea" :rows="3" maxlength="1000" show-word-limit placeholder="请输入歌单简介" />
       </el-form-item>
-      <el-form-item label="标签" v-if="mode === 'edit'">
+      <el-form-item v-if="mode === 'edit'" label="标签">
         <el-input v-model="form.tags" placeholder="多个标签用逗号分隔，如：流行,华语" />
       </el-form-item>
-      <el-form-item label="隐私" v-if="mode === 'create'">
+      <el-form-item v-if="mode === 'create'" label="隐私">
         <el-radio-group v-model="form.privacy">
           <el-radio :label="0">公开</el-radio>
           <el-radio :label="10">隐私</el-radio>
@@ -100,7 +100,7 @@ const onSubmit = async () => {
       } else {
         message.error('创建失败');
       }
-    } catch (e) {
+    } catch {
       message.error('创建失败，请确认已登录');
     } finally {
       submitting.value = false;
@@ -125,7 +125,7 @@ const onSubmit = async () => {
     message.success('保存成功');
     emit('success');
     dialogVisible.value = false;
-  } catch (e) {
+  } catch {
     message.error('保存失败，请确认已登录');
   } finally {
     submitting.value = false;

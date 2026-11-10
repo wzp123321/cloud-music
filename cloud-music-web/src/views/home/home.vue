@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <Header></Header>
+    <app-header></app-header>
     <div class="container">
       <router-view></router-view>
     </div>
@@ -13,13 +13,13 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-import Header from '../header/header.vue';
+import AppHeader from '../header/header.vue';
 import PlayController from './components/play-controller/play-controller.vue';
 import PlayLIst from './components/play-list/play-list.vue';
 
 export default defineComponent({
   components: {
-    Header,
+    'app-header': AppHeader,
     'play-controller': PlayController,
     'play-list': PlayLIst,
   },

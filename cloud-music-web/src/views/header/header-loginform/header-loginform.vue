@@ -1,7 +1,7 @@
 <template>
   <el-dialog
-    custom-class="header-loginform"
     v-model="loginService.visible"
+    custom-class="header-loginform"
     title="登录"
     :close-on-click-modal="false"
     width="400px"
@@ -19,11 +19,11 @@
         src="../../../assets/images/login/login_phone.png"
         alt=""
       />
-      <el-form v-if="loginService.type !== ELOGINTYPE.二维码" :model="loginService.form" @submit.native.prevent>
+      <el-form v-if="loginService.type !== ELOGINTYPE.二维码" :model="loginService.form" @submit.prevent>
         <el-form-item class="mb30">
           <input
-            :maxlength="loginService.type === ELOGINTYPE.手机 ? 11 : 30"
             v-model="loginService.form.username"
+            :maxlength="loginService.type === ELOGINTYPE.手机 ? 11 : 30"
             :placeholder="loginService.type === ELOGINTYPE.手机 ? '请输入手机号码' : '请输入邮箱'"
           />
         </el-form-item>
@@ -55,7 +55,9 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
 import { ELOGINTYPE } from './header-loginform.api';
-import loginService from './header-loginform.service';
+import { useLogin } from './header-loginform.service';
+
+const loginService = useLogin();
 
 const typeOptions = computed(() => {
   return Object.entries(ELOGINTYPE).map(([k, v]) => {

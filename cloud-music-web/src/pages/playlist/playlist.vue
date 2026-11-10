@@ -1,5 +1,5 @@
 <template>
-  <div class="playlist-browse" v-loading="loading">
+  <div v-loading="loading" class="playlist-browse">
     <div class="pb-header">
       <h3>歌单分类</h3>
       <el-button type="primary" @click="openCreate">新建歌单</el-button>
@@ -23,7 +23,7 @@
       </ul>
     </div>
 
-    <div class="pb-filter" v-if="hqTags.length">
+    <div v-if="hqTags.length" class="pb-filter">
       <span class="pb-filter-label">精品：</span>
       <ul class="pb-chips">
         <li
@@ -38,13 +38,13 @@
     </div>
 
     <!-- 全部分类（catlist） -->
-    <div class="pb-all" v-if="catGroups.length">
+    <div v-if="catGroups.length" class="pb-all">
       <div class="pb-all-head" @click="showAll = !showAll">
         <span>全部分类</span>
         <i :class="['iconfont', showAll ? 'icon-xiangshang' : 'icon-xiangxia']"></i>
       </div>
-      <div class="pb-all-body" v-show="showAll">
-        <div class="pb-cat-group" v-for="(group, gIdx) in catGroups" :key="'catg_' + gIdx">
+      <div v-show="showAll" class="pb-all-body">
+        <div v-for="(group, gIdx) in catGroups" :key="'catg_' + gIdx" class="pb-cat-group">
           <span class="pb-cat-group-name">{{ group.categoryName }}</span>
           <ul class="pb-cat-sub">
             <li
@@ -65,14 +65,14 @@
       <h4>{{ selectedCat }} · 精品歌单</h4>
     </div>
     <cm-loading v-if="listLoading"></cm-loading>
-    <div class="pb-grid" v-else>
+    <div v-else class="pb-grid">
       <cm-playlist-card
         v-for="item in playlists"
+        :id="item.id"
         :key="'pl_' + item.id"
         :title="item.name"
-        :id="item.id"
-        :coverImageUrl="item.coverImgUrl"
-        :playCount="item.playCount"
+        :cover-image-url="item.coverImgUrl"
+        :play-count="item.playCount"
         :creator="item.creator?.nickname"
         :tag="selectedCat === '全部' ? '' : selectedCat"
       ></cm-playlist-card>
@@ -147,7 +147,7 @@ const fetchCatalogue = async () => {
 
     const hqTagsRaw = hqRes?.tags || [];
     hqTags.value = hqTagsRaw.map((t: any) => ({ name: t.name }));
-  } catch (e) {
+  } catch {
     // 分类接口异常不影响精品列表
   } finally {
     loading.value = false;
@@ -164,7 +164,7 @@ const fetchHighquality = async (cat: string) => {
     } else {
       playlists.value = [];
     }
-  } catch (e) {
+  } catch {
     playlists.value = [];
   } finally {
     listLoading.value = false;

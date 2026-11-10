@@ -5,9 +5,9 @@
  * @Last Modified by: zpwan
  * @Last Modified time: 2022-09-27 20:57:32
  */
-import { ref } from 'vue';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { computed, reactive, ref } from 'vue';
 
+import { FGetQueryParam } from '@/core/token';
 import { getRequest } from '@/services/request';
 import {
   getSearchMultimatch,
@@ -20,69 +20,53 @@ enum EPath {
   搜索 = '/search',
 }
 
-export class SearchService {
+const create = () => {
   //#region
-  private _keyword = ref<string>('');
+  // 原 constructor 由调用方传入 keyword；改为无参 hook 后在 create 内自行读取地址栏。
+  const _keyword = ref<string>(FGetQueryParam('keyword') as string);
 
-  private _type = ref<string>(SEARCH_TYPE.单曲);
+  const _type = ref<string>(SEARCH_TYPE.单曲);
 
-  private _songs = ref<Common_IMusic[]>([]);
+  const _songs = ref<Common_IMusic[]>([]);
 
-  private _albums = ref<Common_IAlbumVO[]>([]);
+  const _albums = ref<Common_IAlbumVO[]>([]);
 
-  private _mvs = ref<MvVO[]>([]);
+  const _mvs = ref<MvVO[]>([]);
 
   /** 多重匹配概览（各类型匹配数量入口） */
-  private _multimatch = ref<SEARCH_IMultimatchEntry[]>([]);
+  const _multimatch = ref<SEARCH_IMultimatchEntry[]>([]);
 
-  public get type(): string {
-    return this._type.value;
-  }
+  // type 原为可读写 getter/setter（模板里 v-model 会写入），用可写 computed 保持语义。
+  const type = computed({
+    get: () => _type.value,
+    set: (value: string) => {
+      _type.value = value;
+    },
+  });
 
-  public set type(value: string) {
-    this._type.value = value;
-  }
+  // 普通取值字段：交给 reactive 自动解包，模板里拿到的是值而非 Ref。
+  const songs = computed(() => _songs.value);
+  const albums = computed(() => _albums.value);
+  const mvs = computed(() => _mvs.value);
+  const multimatch = computed(() => _multimatch.value);
+  const keyword = computed(() => _keyword.value);
 
-  public get songs(): Common_IMusic[] {
-    return this._songs.value;
-  }
+  const _loadingResult = ref<boolean>(true);
 
-  public get albums(): Common_IAlbumVO[] {
-    return this._albums.value;
-  }
-
-  public get mvs(): MvVO[] {
-    return this._mvs.value;
-  }
-
-  public get multimatch(): SEARCH_IMultimatchEntry[] {
-    return this._multimatch.value;
-  }
-
-  private readonly _loadingResult$ = new BehaviorSubject<boolean>(true);
-
-  public get loadingResult$() {
-    return this._loadingResult$ as unknown as Observable<boolean>;
-  }
-
-  public get keyword(): string {
-    return this._keyword.value;
-  }
+  // $ 后缀字段保持为 Ref，供组件 watch(svc.loadingResult$, ...) 订阅。
+  const loadingResult$ = computed(() => _loadingResult);
   //#endregion
-  constructor(keyword: string) {
-    this._keyword.value = keyword;
-  }
 
-  async query() {
+  const query = async () => {
     const params = {
-      keywords: this._keyword.value,
-      type: Number(this._type.value),
+      keywords: _keyword.value,
+      type: Number(_type.value),
     };
     try {
       const res = await getRequest(EPath.搜索, params);
-      switch (this._type.value) {
+      switch (_type.value) {
         case SEARCH_TYPE.单曲:
-          this._songs.value = res?.result?.songs?.map((item: any) => {
+          _songs.value = res?.result?.songs?.map((item: any) => {
             return {
               dt: item?.duration,
               url: '',
@@ -95,7 +79,7 @@ export class SearchService {
           });
           break;
         case SEARCH_TYPE.专辑:
-          this._albums.value = res?.result?.albums?.map((item: any) => {
+          _albums.value = res?.result?.albums?.map((item: any) => {
             return {
               title: item?.name ?? '',
               artist:
@@ -111,7 +95,7 @@ export class SearchService {
           });
           break;
         case SEARCH_TYPE.MV:
-          this._mvs.value = res?.result?.mvs?.map((item: MvVO) => {
+          _mvs.value = res?.result?.mvs?.map((item: MvVO) => {
             return {
               artist: item?.artist,
               artistName: item?.artistName,
@@ -126,22 +110,22 @@ export class SearchService {
           });
           break;
       }
-    } catch (error) {
-      this._songs.value = [];
-      this._albums.value = [];
-      this._mvs.value = [];
+    } catch {
+      _songs.value = [];
+      _albums.value = [];
+      _mvs.value = [];
     } finally {
-      this._loadingResult$.next(false);
+      _loadingResult.value = false;
     }
-  }
+  };
 
   /** 多重匹配：拉取各类型匹配数量概览 */
-  async queryMultimatch() {
+  const queryMultimatch = async () => {
     try {
-      const res = await getSearchMultimatch({ keywords: this._keyword.value });
+      const res = await getSearchMultimatch({ keywords: _keyword.value });
       const result = res?.result ?? {};
       const orders = result.orders ?? [];
-      this._multimatch.value = orders
+      _multimatch.value = orders
         .map((key: string) => ({
           key,
           name: multimatchName(key),
@@ -150,14 +134,30 @@ export class SearchService {
         }))
         .filter((v: SEARCH_IMultimatchEntry) => v.count > 0);
     } catch {
-      this._multimatch.value = [];
+      _multimatch.value = [];
     }
-  }
-
-  handleTypeChange = () => {
-    this.query();
   };
-}
+
+  const handleTypeChange = () => {
+    query();
+  };
+
+  return reactive({
+    type,
+    songs,
+    albums,
+    mvs,
+    multimatch,
+    loadingResult$,
+    keyword,
+    query,
+    queryMultimatch,
+    handleTypeChange,
+  });
+};
+
+/** 搜索页面状态：每次调用创建新实例，保证切换关键词后重新读取 URL 参数 */
+export const useSearch = () => create();
 
 /** 多重匹配入口项 */
 export interface SEARCH_IMultimatchEntry {
@@ -179,10 +179,6 @@ const MULTIMATCH_MAP: { [key: string]: { name: string; code: string } } = {
   video: { name: '视频', code: SEARCH_TYPE.视频 },
 };
 
-function multimatchName(key: string): string {
-  return MULTIMATCH_MAP[key]?.name ?? key;
-}
+const multimatchName = (key: string): string => MULTIMATCH_MAP[key]?.name ?? key;
 
-function multimatchCode(key: string): string {
-  return MULTIMATCH_MAP[key]?.code ?? '';
-}
+const multimatchCode = (key: string): string => MULTIMATCH_MAP[key]?.code ?? '';

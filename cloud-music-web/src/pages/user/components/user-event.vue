@@ -1,8 +1,8 @@
 <template>
   <section class="up-event">
     <div class="up-block-title">我的动态</div>
-    <div class="up-event-list" v-if="events.length">
-      <div class="up-event-item" v-for="ev in events" :key="ev.id">
+    <div v-if="events.length" class="up-event-list">
+      <div v-for="ev in events" :key="ev.id" class="up-event-item">
         <el-avatar :size="40" :src="ev.user?.avatarUrl" />
         <div class="up-event-body">
           <div class="up-event-user">{{ ev.user?.nickname }}</div>
@@ -11,19 +11,18 @@
         </div>
       </div>
     </div>
-    <div class="up-empty" v-else>暂无动态</div>
+    <div v-else class="up-empty">暂无动态</div>
   </section>
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-import userCenterService from '../user.service';
+import { ref, onMounted, watch } from 'vue';
+import { useUserCenter } from '../user.service';
 import { UC_IEvent } from '@/services/user.api';
 
+const userCenterService = useUserCenter();
+
 const events = ref<UC_IEvent[]>([]);
-const destroy$ = new Subject<void>();
 
 const formatTime = (t?: number) => {
   if (!t) return '';
@@ -31,10 +30,10 @@ const formatTime = (t?: number) => {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 };
 
+// 订阅动态状态，immediate 保证首屏同步到当前值
+watch(userCenterService.event$, (v) => (events.value = v), { immediate: true });
+
 onMounted(() => {
-  userCenterService.event$.pipe(takeUntil(destroy$)).subscribe((v) => {
-    events.value = v;
-  });
   userCenterService.loadEvent();
 });
 </script>

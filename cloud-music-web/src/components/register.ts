@@ -1,4 +1,4 @@
-const files: any = import.meta.globEager('./**/*.vue');
+const files: Record<string, any> = import.meta.glob('./**/*.vue', { eager: true });
 
 const install = (app: any) => {
   if (files && Object.keys(files)) {

@@ -5,8 +5,8 @@
       <span :class="{ active: tab === 'followeds' }" @click="switchTab('followeds')">粉丝</span>
     </div>
 
-    <div class="up-list" v-if="list.length">
-      <div class="up-item" v-for="u in list" :key="u.userId">
+    <div v-if="list.length" class="up-list">
+      <div v-for="u in list" :key="u.userId" class="up-item">
         <el-avatar :size="48" :src="u.avatarUrl" />
         <div class="up-item-info">
           <div class="up-item-name">{{ u.nickname }}</div>
@@ -23,14 +23,16 @@
         </el-button>
       </div>
     </div>
-    <div class="up-empty" v-else>暂无数据</div>
+    <div v-else class="up-empty">暂无数据</div>
   </section>
 </template>
 
 <script lang="ts" setup>
 import { ref, computed, onMounted } from 'vue';
 import { FGetCookie } from '@/core/token';
-import userCenterService from '../user.service';
+import { useUserCenter } from '../user.service';
+
+const userCenterService = useUserCenter();
 import { UC_IFollowUser } from '@/services/user.api';
 
 const tab = ref<'follows' | 'followeds'>('follows');

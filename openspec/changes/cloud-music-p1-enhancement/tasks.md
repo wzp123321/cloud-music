@@ -57,13 +57,13 @@
 
 ### A. 依赖链（先列表后详情）
 
-| 链 | 入口（提供参数） | 详情（消费参数） |
-|---|---|---|
-| 专辑 | `album_new` / `album_list` / `album_list_style` | `album_detail_dynamic` ← `albums[].id` |
-| 歌手 | `artist_list` / `toplist_artist` | `artist_top_song` / `artist_songs` / `artist_fans` / `artist_video` ← `artists[].id` |
-| 风格 | `style_list` / `style_preference` | `style_album` / `style_artist` / `style_playlist` / `style_song` / `style_detail` ← `tagId` |
-| MV | `mv_all` / `mv_first` / `mv_exclusive_rcmd` | `mv_detail_info` ← `mvid` |
-| 歌单 | `sheet_list` | `sheet_preview` ← `id` |
+| 链   | 入口（提供参数）                                | 详情（消费参数）                                                                            |
+| ---- | ----------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| 专辑 | `album_new` / `album_list` / `album_list_style` | `album_detail_dynamic` ← `albums[].id`                                                      |
+| 歌手 | `artist_list` / `toplist_artist`                | `artist_top_song` / `artist_songs` / `artist_fans` / `artist_video` ← `artists[].id`        |
+| 风格 | `style_list` / `style_preference`               | `style_album` / `style_artist` / `style_playlist` / `style_song` / `style_detail` ← `tagId` |
+| MV   | `mv_all` / `mv_first` / `mv_exclusive_rcmd`     | `mv_detail_info` ← `mvid`                                                                   |
+| 歌单 | `sheet_list`                                    | `sheet_preview` ← `id`                                                                      |
 
 以上 14 个详情型接口实测「裸 GET 400/502，带真实参数 200」；没有入口就没有参数来源。
 
@@ -76,32 +76,32 @@
 
 ### C. 完成判定
 
-每个任务除「接口已封装」外还须满足：① 有上游参数来源；② 有页面/组件真实调用点；③ 匿名可用者经 `10130` 实测 `code:200`。三者缺一不算完成，不得勾选。
+每个任务除「接口已封装」外还须满足：① 有上游参数来源；② 有页面/组件真实调用点；③ 匿名可用者经 `19830` 实测 `code:200`。三者缺一不算完成，不得勾选。
 
 ## 第一批（1.1~1.5）验收记录（2026-11-09）
 
-依据 C 节完成判定逐项核对：24 个接口全部具备上游参数来源与页面真实调用点，匿名可用者均经 server `10130` 实测 `code:200`。
+依据 C 节完成判定逐项核对：24 个接口全部具备上游参数来源与页面真实调用点，匿名可用者均经 server `19830` 实测 `code:200`。
 
 ### 匿名接口实测（`code:200`）
 
-| 接口 | URL | 参数来源 | UI 调用点 |
-|---|---|---|---|
-| `album_new` | `/album/new` | 地区筛选 | `/album` 全部新碟 |
-| `album_newest` | `/album/newest` | 无 | `/album` 最新专辑 |
-| `album_list` | `/album/list` | 地区筛选 | `/album` 数字专辑 |
-| `album_list_style` | `/album/list/style` | 语种筛选 | `/album` 语种风格馆 |
-| `album_songsaleboard` | `/album/songsaleboard` | 榜单周期 | `/album` 专辑销量榜 |
-| `album_detail_dynamic` | `/album/detail/dynamic` | 新碟列表 `albums[].id` | `/album_detail` 动态数据 |
-| `artist_list` | `/artist/list` | 分类/地区筛选 | `/artists` 歌手列表 |
-| `artist_top_song` | `/artist/top/song` | `artists[].id` | `/artist_detail` 热门 50 首 |
-| `artist_songs` | `/artist/songs` | `artists[].id`、排序 | `/artist_detail` 全部歌曲 |
-| `artist_video` | `/artist/video` | `artists[].id` | `/artist_detail` 视频 tab |
-| `artist_fans` | `/artist/fans` | `artists[].id` | `/artist_detail` 粉丝区 |
-| `artist_follow_count` | `/artist/follow/count` | `artists[].id` | `/artist_detail` 粉丝数与关注态 |
-| `mv_all` | `/mv/all` | 地区/排序筛选 | `/mv` 全部 MV |
-| `mv_exclusive_rcmd` | `/mv/exclusive/rcmd` | 无 | `/mv` 网易出品 |
-| `mv_first` | `/mv/first` | 无 | `/mv` 最新 MV |
-| `mv_detail_info` | `/mv/detail/info` | MV 列表 `data[].id` | `/mvplay` 互动数据 |
+| 接口                   | URL                     | 参数来源               | UI 调用点                       |
+| ---------------------- | ----------------------- | ---------------------- | ------------------------------- |
+| `album_new`            | `/album/new`            | 地区筛选               | `/album` 全部新碟               |
+| `album_newest`         | `/album/newest`         | 无                     | `/album` 最新专辑               |
+| `album_list`           | `/album/list`           | 地区筛选               | `/album` 数字专辑               |
+| `album_list_style`     | `/album/list/style`     | 语种筛选               | `/album` 语种风格馆             |
+| `album_songsaleboard`  | `/album/songsaleboard`  | 榜单周期               | `/album` 专辑销量榜             |
+| `album_detail_dynamic` | `/album/detail/dynamic` | 新碟列表 `albums[].id` | `/album_detail` 动态数据        |
+| `artist_list`          | `/artist/list`          | 分类/地区筛选          | `/artists` 歌手列表             |
+| `artist_top_song`      | `/artist/top/song`      | `artists[].id`         | `/artist_detail` 热门 50 首     |
+| `artist_songs`         | `/artist/songs`         | `artists[].id`、排序   | `/artist_detail` 全部歌曲       |
+| `artist_video`         | `/artist/video`         | `artists[].id`         | `/artist_detail` 视频 tab       |
+| `artist_fans`          | `/artist/fans`          | `artists[].id`         | `/artist_detail` 粉丝区         |
+| `artist_follow_count`  | `/artist/follow/count`  | `artists[].id`         | `/artist_detail` 粉丝数与关注态 |
+| `mv_all`               | `/mv/all`               | 地区/排序筛选          | `/mv` 全部 MV                   |
+| `mv_exclusive_rcmd`    | `/mv/exclusive/rcmd`    | 无                     | `/mv` 网易出品                  |
+| `mv_first`             | `/mv/first`             | 无                     | `/mv` 最新 MV                   |
+| `mv_detail_info`       | `/mv/detail/info`       | MV 列表 `data[].id`    | `/mvplay` 互动数据              |
 
 ### 需登录只读（路由已注册，匿名返回 301，UI 未登录降级）
 
@@ -127,26 +127,26 @@ server `module/*.js` 共 **309** 个路由，前端静态引用 **309/309**，�
 
 ### 本批交付
 
-| 页面 | capability | 接口数 |
-|---|---|---|
-| `/discovery` | 个性化发现与风格分类 | 21 |
-| `/play-interaction` | 歌曲互动与播放记录 | 23 |
-| `/message` | 消息私信与分享 | 13 |
-| `/feed` | 动态与话题 | 9 |
-| `/user-supplement` | 用户与歌单补充 | 16 |
-| `/dj-radio` | 电台（P2） | 27 |
-| `/video-podcast` | 视频与播客（P2） | 14 |
-| `/yunbei-vip-musician` | 云贝/会员/音乐人（P2） | 25 |
-| `/ugc-listentogether` | UGC 与一起听（P2） | 15 |
-| `/fanscenter-digitalalbum` | 粉丝中心与数字专辑（P2） | 9 |
-| `/cloud-disk` | 云盘（P2） | 2 |
-| `/account-profile` | 账号资料（P2） | 15 |
-| `/misc-longtail` | 杂项长尾（P2） | 9 |
-| `/route-completion` | 路由补齐 | 2 |
+| 页面                       | capability               | 接口数 |
+| -------------------------- | ------------------------ | ------ |
+| `/discovery`               | 个性化发现与风格分类     | 21     |
+| `/play-interaction`        | 歌曲互动与播放记录       | 23     |
+| `/message`                 | 消息私信与分享           | 13     |
+| `/feed`                    | 动态与话题               | 9      |
+| `/user-supplement`         | 用户与歌单补充           | 16     |
+| `/dj-radio`                | 电台（P2）               | 27     |
+| `/video-podcast`           | 视频与播客（P2）         | 14     |
+| `/yunbei-vip-musician`     | 云贝/会员/音乐人（P2）   | 25     |
+| `/ugc-listentogether`      | UGC 与一起听（P2）       | 15     |
+| `/fanscenter-digitalalbum` | 粉丝中心与数字专辑（P2） | 9      |
+| `/cloud-disk`              | 云盘（P2）               | 2      |
+| `/account-profile`         | 账号资料（P2）           | 15     |
+| `/misc-longtail`           | 杂项长尾（P2）           | 9      |
+| `/route-completion`        | 路由补齐                 | 2      |
 
 新增 14 个页面、`/capabilities` 统一入口，头部导航新增「能力中心」。静态核对：198 个规划 URL 全部落在服务层，服务层函数全部有页面真实调用点（死代码 0），能力中心 22 个入口与路由表零死链。
 
-### 运行时探测（server `10130`）
+### 运行时探测（server `19830`）
 
 对 105 个无副作用只读接口做匿名 GET：`code:200` 38 个、`301` 30 个（需登录）、`302` 2 个（重定向）、`400` 19 个（缺必填参数，不可判失效）、`404` 3 个、`500` 1 个、`502` 10 个（上游超时）、非 JSON 2 个。
 

@@ -1,6 +1,6 @@
 <template>
   <cm-loading v-if="playListDetailService.loading"></cm-loading>
-  <div class="playlist-detail" id="playlist-detail" v-if="!playListDetailService.loading">
+  <div v-if="!playListDetailService.loading" id="playlist-detail" class="playlist-detail">
     <section class="pd-cover">
       <img :src="playListDetail?.coverImgUrl" alt="" />
       <h5>歌单简介</h5>
@@ -12,7 +12,7 @@
         <img :src="playListDetail?.creator?.avatarUrl" alt="" />
         <span>{{ playListDetail?.creator?.nickname }}</span>
       </div>
-      <div class="pd-musiclist-tags mt6 mb24" v-if="playListDetail?.tags?.length">
+      <div v-if="playListDetail?.tags?.length" class="pd-musiclist-tags mt6 mb24">
         <span v-for="(item, index) in playListDetail?.tags" :key="'tag_' + index"> {{ item }}</span>
       </div>
 
@@ -26,7 +26,7 @@
         </el-button>
         <el-button @click="openEdit">编辑</el-button>
         <el-button @click="addVisible = true">添加歌曲</el-button>
-        <span class="pd-stat" v-if="dynamic">
+        <span v-if="dynamic" class="pd-stat">
           <i class="iconfont icon-z"></i> {{ formatStat(dynamic.playCount) }}
           <i class="iconfont icon-jushoucang ml12"></i> {{ formatStat(dynamic.bookCount ?? dynamic.subscribedCount) }}
           <i class="iconfont icon-pinglun ml12"></i> {{ formatStat(dynamic.commentCount) }}
@@ -35,41 +35,41 @@
 
       <!-- 歌曲 -->
       <cm-table
-        :dataSource="musicList"
-        :showRemove="true"
+        :data-source="musicList"
+        :show-remove="true"
         @remove="onRemove"
       ></cm-table>
 
-      <div class="pd-musiclist-header" v-if="commentRes?.hotComments?.length">
+      <div v-if="commentRes?.hotComments?.length" class="pd-musiclist-header">
         <h5>热门评论</h5>
         <span>{{ commentRes?.hotComments?.length }}条</span>
       </div>
       <cm-comment
         v-for="(item, index) in commentRes?.hotComments"
-        :key="'comment-' + index"
-        :commentVO="item"
-        type="playlist"
         :id="playlistId"
+        :key="'comment-' + index"
+        :comment-v-o="item"
+        type="playlist"
       ></cm-comment>
-      <div class="pd-musiclist-header mt60" v-if="commentRes?.comments?.length">
+      <div v-if="commentRes?.comments?.length" class="pd-musiclist-header mt60">
         <h5>最新评论</h5>
         <span>{{ commentRes?.comments?.length }}条</span>
       </div>
       <cm-comment
         v-for="(item, index) in commentRes?.comments"
-        :key="'comment-' + index"
-        :commentVO="item"
-        type="playlist"
         :id="playlistId"
+        :key="'comment-' + index"
+        :comment-v-o="item"
+        type="playlist"
       ></cm-comment>
 
       <!-- 相似推荐：simi_playlist（取歌单内歌曲） -->
-      <cm-simi type="playlist" :id="musicList[0]?.id"></cm-simi>
+      <cm-simi :id="musicList[0]?.id" type="playlist"></cm-simi>
     </section>
   </div>
 
   <!-- 添加歌曲弹窗 -->
-  <el-dialog title="添加歌曲到歌单" v-model="addVisible" width="420px">
+  <el-dialog v-model="addVisible" title="添加歌曲到歌单" width="420px">
     <el-input
       v-model="addSongIds"
       type="textarea"
@@ -86,28 +86,25 @@
   <playlist-form-dialog
     v-model="editVisible"
     mode="edit"
-    :playlistId="playlistId"
+    :playlist-id="playlistId"
     :name="playListDetail?.name"
     :desc="playListDetail?.description"
     :tags="(playListDetail?.tags || []).join(',')"
-    :showName="true"
+    :show-name="true"
     @success="onEdited"
   />
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue';
-import PlayListDetailService from './playlist-detail.service';
+import { ref, watch } from 'vue';
+import { usePlayListDetail } from './playlist-detail.service';
 import { PD_IPlaylistDetail } from './playlist-detail.api';
 import { Common_IMusic } from '../../../services/common-api/common-api';
 import { MP_IMVCommentRes } from '../../mvplay/mvplay.api';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 import message from '@/utils/message';
 import PlaylistFormDialog from '../components/playlist-form-dialog.vue';
 
-const destroy$ = new Subject<void>();
-const playListDetailService = new PlayListDetailService();
+const playListDetailService = usePlayListDetail();
 
 const playlistId = Number(new URLSearchParams(window.location.search).get('id') || '0');
 
@@ -156,16 +153,12 @@ const addSongIds = ref('');
 const adding = ref(false);
 const editVisible = ref(false);
 
-onMounted(() => {
-  playListDetailService.playListResult$.pipe(takeUntil(destroy$)).subscribe((v) => {
-    playListDetail.value = v;
-  });
-
-  playListDetailService.playListCommentResult$.pipe(takeUntil(destroy$)).subscribe((v) => {
-    commentRes.value = v;
-  });
-
-  playListDetailService.playListMusicListResult$.pipe(takeUntil(destroy$)).subscribe((v) => {
+// 订阅歌单详情 / 评论 / 歌曲列表 / 动态，immediate 保证首屏同步到当前值
+watch(playListDetailService.playListResult$, (v) => (playListDetail.value = v), { immediate: true });
+watch(playListDetailService.playListCommentResult$, (v) => (commentRes.value = v), { immediate: true });
+watch(
+  playListDetailService.playListMusicListResult$,
+  (v) => {
     musicList.value = v?.map((item) => {
       return {
         dt: item.dt,
@@ -177,18 +170,16 @@ onMounted(() => {
         id: item.id,
       };
     });
-  });
-
-  playListDetailService.dynamic$.pipe(takeUntil(destroy$)).subscribe((v) => {
-    dynamic.value = v;
-  });
-});
+  },
+  { immediate: true },
+);
+watch(playListDetailService.dynamic$, (v) => (dynamic.value = v), { immediate: true });
 
 const onToggleSubscribe = async () => {
   try {
     await playListDetailService.subscribe(playListDetailService.subscribed ? 2 : 1);
     message.success(playListDetailService.subscribed ? '收藏成功' : '已取消收藏');
-  } catch (e) {
+  } catch {
     message.error('操作失败，请确认已登录');
   }
 };
@@ -197,7 +188,7 @@ const onRemove = async (item: Common_IMusic) => {
   try {
     await playListDetailService.removeTrack(String(item.id));
     message.success('已移除');
-  } catch (e) {
+  } catch {
     message.error('移除失败，请确认已登录');
   }
 };
@@ -214,7 +205,7 @@ const onAddSong = async () => {
     message.success('添加成功');
     addVisible.value = false;
     addSongIds.value = '';
-  } catch (e) {
+  } catch {
     message.error('添加失败，请确认已登录');
   } finally {
     adding.value = false;

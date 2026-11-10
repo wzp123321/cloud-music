@@ -31,9 +31,9 @@ export class FileDownloadService<T> {
     if (!this._is_initial.value) {
       throw new Error('尚未初始化！');
     }
-    const messageInstance = message.loading(`正在${this._type.value}`);
+    message.loading(`正在${this._type.value}`);
     try {
-      const res: Blob = await postRequest(this._url.value, this._params.value, {
+      const res: Blob = await postRequest(this._url.value, this._params.value as any, {
         responseType: 'blob',
       });
       const symbol = Object.getOwnPropertySymbols(res)[0];

@@ -1,6 +1,6 @@
 /**
  * P1 content-detail-enhancement 接口类型
- * 依据 2026-11-09 对 cloud-music-server(10130) 的实测返回结构定义。
+ * 依据 2026-11-09 对 cloud-music-server(19830) 的实测返回结构定义。
  * 上游字段多为可选，统一用宽松类型，避免上游缺字段时渲染报错。
  */
 

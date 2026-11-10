@@ -1,12 +1,12 @@
 <template>
   <div class="yunbei-vip-musician">
-    <cm-navbar :title="'云贝 · 会员成长 · 音乐人中心'" :hasLoadMore="false"></cm-navbar>
+    <cm-navbar :title="'云贝 · 会员成长 · 音乐人中心'" :has-load-more="false"></cm-navbar>
 
-    <div class="yunbei-vip-musician--loginbar" v-if="!hasLogin">
+    <div v-if="!hasLogin" class="yunbei-vip-musician--loginbar">
       当前未登录：本页 <code>yunbei*</code> / <code>vip_*</code> / <code>musician_*</code> 需登录只读接口与 4 个写操作均已降级（不发请求）；
       <code>yunbei_info</code> 已登记失效（上游 404）
     </div>
-    <div class="yunbei-vip-musician--toast" v-if="toast" @click="toast = ''">{{ toast }}（点击关闭）</div>
+    <div v-if="toast" class="yunbei-vip-musician--toast" @click="toast = ''">{{ toast }}（点击关闭）</div>
 
     <div class="yunbei-vip-musician--tabs">
       <button
@@ -49,8 +49,8 @@
             <span v-else-if="b.kind === 'write' || b.kind === 'upload'" class="yunbei-vip-musician--badge yunbei-vip-musician--badge--write">写操作</span>
             <span v-else-if="b.kind === 'loginRead'" class="yunbei-vip-musician--badge yunbei-vip-musician--badge--login">需登录只读</span>
           </h3>
-          <p class="yunbei-vip-musician--note" v-if="b.note">{{ b.note }}</p>
-          <p class="yunbei-vip-musician--degrade" v-if="(b.kind === 'loginRead' || b.kind === 'write' || b.kind === 'upload') && !hasLogin">
+          <p v-if="b.note" class="yunbei-vip-musician--note">{{ b.note }}</p>
+          <p v-if="(b.kind === 'loginRead' || b.kind === 'write' || b.kind === 'upload') && !hasLogin" class="yunbei-vip-musician--degrade">
             登录后可用（已降级，不发请求）
           </p>
           <div class="yunbei-vip-musician--block-actions">
@@ -58,8 +58,8 @@
               {{ b.inputLabel || b.inputKey }}
               <input
                 :value="params[b.inputKey || '']"
-                @input="onParamInput(b.inputKey, $event)"
                 :placeholder="b.inputHint || '点选上游列表自动填入，或手填'"
+                @input="onParamInput(b.inputKey, $event)"
               />
             </label>
             <label v-if="b.kind === 'upload'" class="yunbei-vip-musician--inline-label">
@@ -73,9 +73,9 @@
               {{ b.buttonText || '加载' }}
             </button>
             <span class="yunbei-vip-musician--count">{{ results[b.module]?.length || 0 }} 条</span>
-            <span class="yunbei-vip-musician--emit" v-if="b.emit">点选列表项 → 填入 {{ b.emit }}</span>
+            <span v-if="b.emit" class="yunbei-vip-musician--emit">点选列表项 → 填入 {{ b.emit }}</span>
           </div>
-          <div class="yunbei-vip-musician--list" v-if="results[b.module] && results[b.module].length">
+          <div v-if="results[b.module] && results[b.module].length" class="yunbei-vip-musician--list">
             <div
               v-for="(item, idx) in results[b.module]"
               :key="b.module + '_' + idx"
@@ -85,13 +85,13 @@
             >
               <span class="yunbei-vip-musician--item-title">{{ item.title }}</span>
               <span class="yunbei-vip-musician--item-sub">{{ item.subtitle }}</span>
-              <span class="yunbei-vip-musician--item-id" v-if="item.id">#{{ item.id }}</span>
+              <span v-if="item.id" class="yunbei-vip-musician--item-id">#{{ item.id }}</span>
             </div>
           </div>
-          <p class="yunbei-vip-musician--empty" v-else>暂无数据或接口返回为空</p>
+          <p v-else class="yunbei-vip-musician--empty">暂无数据或接口返回为空</p>
         </section>
       </div>
-      <div class="yunbei-vip-musician--result" v-if="writeResult">{{ writeResult }}</div>
+      <div v-if="writeResult" class="yunbei-vip-musician--result">{{ writeResult }}</div>
     </div>
   </div>
 </template>
@@ -316,7 +316,7 @@ const runBlock = async (b: Block) => {
     } else {
       toast.value = `${b.name} 已加载 ${results[b.module].length} 条`;
     }
-  } catch (error) {
+  } catch {
     results[b.module] = [];
     if (b.kind === 'write' || b.kind === 'upload') writeResult.value = `${b.name} 请求失败，已按空值处理`;
     else toast.value = `${b.name} 请求失败，已返回空值`;

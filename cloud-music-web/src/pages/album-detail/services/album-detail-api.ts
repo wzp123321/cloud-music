@@ -1,11 +1,33 @@
-import { ArtistVO } from '../../artist/artist-detail/services/artist-detail-api';
-import { Common_IMusic } from '../../../services/common-api/common-api';
-
 export interface AlbumRes {
   code: number;
   resourceState: boolean;
-  songs: Common_IMusic[];
+  songs: AlbumSongVO[];
   album: AlbumVO;
+}
+
+/** 专辑作曲/演唱者：接口返回的是扁平对象，不是歌手详情结构 */
+export interface AlbumArtistVO {
+  id: number;
+  name: string;
+  picUrl: string;
+  img1v1Url?: string;
+  alias?: string[];
+}
+
+/** 专辑内单曲：接口原始结构（保留 al / ar 嵌套，供列表渲染与播放使用） */
+export interface AlbumSongVO {
+  id: number;
+  name: string;
+  dt: number;
+  al: {
+    id: number;
+    name: string;
+    picUrl: string;
+  };
+  ar: {
+    id: number;
+    name: string;
+  }[];
 }
 
 export interface AlbumVO {
@@ -15,11 +37,11 @@ export interface AlbumVO {
   companyId: number;
   blurPicUrl: string;
   commentThreadId: string;
-  artists: ArtistVO[];
+  artists: AlbumArtistVO[];
   alias: string[];
   copyrightId: number;
   picId: number;
-  artist: ArtistVO;
+  artist: AlbumArtistVO;
   pic: number;
   picUrl: string;
   publishTime: number;

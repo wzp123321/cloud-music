@@ -39,24 +39,46 @@ export default ({ mode, command }) => {
       assetsDir: 'assets', // 静态资源存放路径
       sourcemap: loadEnv(mode, process.cwd()).VITE_NODE_ENV !== 'production',
       outDir: 'dist/ems-admin',
+      chunkSizeWarningLimit: 1500,
       rollupOptions: {
-        // 打包拆分 -ToDo 超过一定大小再拆分
-        output: {
-          manualChunks(id) {
-            if (id.includes('node_modules')) {
-              return id.toString().split('node_modules/')[1].split('/')[0].toString();
-            }
-          },
-        },
         input: {
           index: resolve(__dirname, './index.html'),
         },
+        output: {
+          // vendor 分包：公共依赖各自成块，利于浏览器长缓存
+          manualChunks(id) {
+            if (!id.includes('node_modules')) {
+              return;
+            }
+            if (id.includes('element-plus') || id.includes('@element-plus')) {
+              return 'element-plus';
+            }
+            if (id.includes('pinia') || id.includes('/vue') || id.includes('vue-') || id.includes('@vue')) {
+              return 'vue-vendor';
+            }
+            if (id.includes('axios')) {
+              return 'axios';
+            }
+            return 'vendor';
+          },
+        },
       },
-      minify: 'esbuild',
+      minify: 'terser',
       terserOptions: {
         compress: {
-          drop_console: command === 'production',
           drop_debugger: command === 'production',
+          // 仅移除 log/info/debug，保留 warn/error 便于线上排查
+          pure_funcs:
+            command === 'production'
+              ? ['console.log', 'console.info', 'console.debug']
+              : [],
+        },
+      },
+    },
+    css: {
+      preprocessorOptions: {
+        less: {
+          javascriptEnabled: true,
         },
       },
     },

@@ -1,22 +1,22 @@
 <template>
-  <div class="my-playlist" v-loading="loading">
+  <div v-loading="loading" class="my-playlist">
     <div class="mp-header">
       <h3>我的收藏</h3>
       <el-button type="primary" @click="openCreate">新建歌单</el-button>
     </div>
 
-    <div class="mp-tip" v-if="!loading && !playlists.length">
+    <div v-if="!loading && !playlists.length" class="mp-tip">
       暂无收藏的歌单，去 <router-link to="/playlist">歌单分类</router-link> 收藏喜欢的歌单吧～
     </div>
 
-    <div class="mp-grid" v-else>
+    <div v-else class="mp-grid">
       <cm-playlist-card
         v-for="item in playlists"
+        :id="item.id"
         :key="'my_' + item.id"
         :title="item.name"
-        :id="item.id"
-        :coverImageUrl="item.coverImgUrl"
-        :playCount="item.playCount"
+        :cover-image-url="item.coverImgUrl"
+        :play-count="item.playCount"
         :creator="item.creator?.nickname"
       ></cm-playlist-card>
     </div>
@@ -48,7 +48,7 @@ const fetchMylike = async () => {
     const res = await getPlaylistMylike({ limit: '30' });
     const list = res?.playlistList || res?.data?.playlistList || [];
     playlists.value = list;
-  } catch (e) {
+  } catch {
     playlists.value = [];
   } finally {
     loading.value = false;

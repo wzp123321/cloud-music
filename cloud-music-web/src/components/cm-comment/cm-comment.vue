@@ -22,70 +22,74 @@
 
     <!-- 评论项：单条模式=外部 v-for 传入的一条；容器模式=组件内部列表 -->
     <div
-      class="cm-comment-item"
       v-for="(item, index) in renderList"
       :key="item?.commentId ?? index"
+      class="cm-comment-item"
     >
       <img :src="item?.user?.avatarUrl" alt="" />
 
       <div class="cm-comment-content">
         <p class="userinfo">
           <span class="name">{{ item?.user?.nickname ?? '' }}</span>
-          <span class="location" v-if="item?.ipLocation?.location">
+          <span v-if="item?.ipLocation?.location" class="location">
             {{ item?.ipLocation?.location }}
           </span>
         </p>
 
+        <!-- 评论内容是服务端富文本（含表情/换行标记），只能按 HTML 渲染 -->
+        <!-- eslint-disable-next-line vue/no-v-html -->
         <p class="content mt4" :title="item?.content" v-html="item?.content"></p>
 
-        <div class="reply mb4" v-if="item?.beReplied?.length">
+        <div v-if="item?.beReplied?.length" class="reply mb4">
           <span class="name">{{
             item?.beReplied?.[0]?.user?.nickname
               ? `${item?.beReplied?.[0]?.user?.nickname}：`
               : ''
           }}</span>
+          <!-- eslint-disable-next-line vue/no-v-html -->
           <span class="text" v-html="item?.beReplied?.[0]?.content"></span>
         </div>
 
         <div class="cmc-actions">
           <span class="publish-time">{{ item?.timeStr }}</span>
-          <span class="cmc-like" v-if="canInteract" :class="{ liked: item?.liked }" @click="onLike(item)">
+          <span v-if="canInteract" class="cmc-like" :class="{ liked: item?.liked }" @click="onLike(item)">
             赞 {{ item?.likedCount ?? 0 }}
           </span>
-          <span class="cmc-op" v-if="canInteract" @click="onToggleFloor(item)">
+          <span v-if="canInteract" class="cmc-op" @click="onToggleFloor(item)">
             {{ floorOpenId === item?.commentId ? '收起楼层' : '查看楼层' }}
           </span>
-          <span class="cmc-op" v-if="canInteract" @click="onToggleHug(item)">
+          <span v-if="canInteract" class="cmc-op" @click="onToggleHug(item)">
             {{ hugOpenId === item?.commentId ? '收起' : '赞过的人' }}
           </span>
         </div>
 
         <!-- 楼层回复 -->
-        <div class="cmc-subpanel" v-if="floorOpenId === item?.commentId">
+        <div v-if="floorOpenId === item?.commentId" class="cmc-subpanel">
           <div
-            class="cmc-subitem"
             v-for="(f, fi) in floorMap[String(item?.commentId)] || []"
             :key="'floor-' + fi"
+            class="cmc-subitem"
           >
             <span class="name">{{ f?.user?.nickname ?? '' }}：</span>
+            <!-- eslint-disable-next-line vue/no-v-html -->
             <span v-html="f?.content"></span>
           </div>
-          <div class="cmc-empty" v-if="!(floorMap[String(item?.commentId)] || []).length">
+          <div v-if="!(floorMap[String(item?.commentId)] || []).length" class="cmc-empty">
             暂无楼层回复
           </div>
         </div>
 
         <!-- 点赞用户 -->
-        <div class="cmc-subpanel" v-if="hugOpenId === item?.commentId">
-          <span class="cmc-hug-names" v-for="(h, hi) in hugList" :key="'hug-' + hi">
+        <div v-if="hugOpenId === item?.commentId" class="cmc-subpanel">
+          <span v-for="(h, hi) in hugList" :key="'hug-' + hi" class="cmc-hug-names">
             {{ h?.user?.nickname ?? h?.nickname ?? '' }}
           </span>
-          <div class="cmc-empty" v-if="!hugList.length">暂无点赞记录</div>
+          <div v-if="!hugList.length" class="cmc-empty">暂无点赞记录</div>
         </div>
       </div>
     </div>
 
-    <div class="cmc-empty" v-if="isContainer && !loading && !renderList.length">
+    <div v-if="isContainer && !loading && !renderList.length" class="cmc-empty">
       还没有评论，来说两句吧
     </div>
   </div>
@@ -209,12 +213,12 @@ async function loadHot() {
   }
 }
 
-function switchTab(t: 'hot' | 'new') {
+const switchTab = (t: 'hot' | 'new') => {
   tab.value = t;
   if (t === 'hot' && !hotList.value.length) {
     loadHot();
   }
-}
+};
 
 /** 发布评论（comment 的 add）并刷新最新列表（comment_new） */
 async function onSubmit() {

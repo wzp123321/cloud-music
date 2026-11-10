@@ -1,13 +1,12 @@
 import { FGetQueryParam } from '@/core/token';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { ref } from 'vue';
+import { computed, reactive, ref } from 'vue';
 
 import CommonService from '../../services/common.service';
 import { MP_IMvDetail, MP_IMVCommentRes } from './mvplay.api';
 
-class MvPlayerService {
+const create = () => {
   //#region
-  private _mvDetailResult$ = new BehaviorSubject<MP_IMvDetail>({
+  const _mvDetailResult = ref<MP_IMvDetail>({
     artistId: 0,
     artistName: '',
     artists: {
@@ -33,75 +32,79 @@ class MvPlayerService {
     subCount: '',
   });
 
-  private _mvUrlResult$ = new BehaviorSubject<string>('');
+  const _mvUrlResult = ref<string>('');
 
-  private _mvCommentResult$ = new BehaviorSubject<MP_IMVCommentRes>({
+  const _mvCommentResult = ref<MP_IMVCommentRes>({
     comments: [],
     hotComments: [],
   });
 
-  public get mvDetailResult$() {
-    return this._mvDetailResult$ as unknown as Observable<MP_IMvDetail>;
-  }
-
-  public get mvUrlResult$() {
-    return this._mvUrlResult$ as unknown as Observable<string>;
-  }
-
-  public get mvCommentResult$() {
-    return this._mvCommentResult$ as unknown as Observable<MP_IMVCommentRes>;
-  }
-  //#region
-  private _mvid = 0;
-
-  private _loading = ref<boolean>(false);
-
-  public get loading(): boolean {
-    return this._loading.value;
-  }
-
+  /**
+   * $ 后缀字段保持为 Ref：computed 包一层后放进 reactive 只解包一层，
+   * 组件里 watch(svc.mvDetailResult$, ...) 等订阅拿到的仍是 Ref。
+   */
+  const mvDetailResult$ = computed(() => _mvDetailResult);
+  const mvUrlResult$ = computed(() => _mvUrlResult);
+  const mvCommentResult$ = computed(() => _mvCommentResult);
   //#endregion
 
-  constructor() {
-    this._mvid = Number(FGetQueryParam('mvid'));
-    this._loading.value = true;
-    const commonService = new CommonService();
-    commonService
-      .getMvDetailById(this._mvid)
-      .then((res) => {
-        this._mvDetailResult$.next(res as MP_IMvDetail);
-      })
-      .catch(() => {
-        this._loading.value = false;
-      });
-    this.queryUrl();
-    this.queryCommentList();
-  }
+  //#region
+  const _mvid = Number(FGetQueryParam('mvid'));
 
-  async queryUrl() {
+  const _loading = ref<boolean>(false);
+
+  // loading 为普通取值字段，经 reactive 解包后模板拿到布尔值。
+  const loading = computed(() => _loading.value);
+  //#endregion
+
+  const queryUrl = async () => {
     try {
       const commonService = new CommonService();
-      const res = await commonService.getMvUrlById(this._mvid);
-      this._mvUrlResult$.next(res?.url);
-    } catch (error) {
-      this._loading.value = false;
+      const res = await commonService.getMvUrlById(_mvid);
+      _mvUrlResult.value = res?.url;
+    } catch {
+      _loading.value = false;
     } finally {
-      this._loading.value = false;
+      _loading.value = false;
     }
-  }
+  };
 
-  async queryCommentList() {
+  const queryCommentList = async () => {
     try {
       const commonService = new CommonService();
-      const res = await commonService.getMvCommentList(this._mvid);
+      const res = await commonService.getMvCommentList(_mvid);
       console.log(res);
-      this._mvCommentResult$.next(res);
-    } catch (error) {
-      this._loading.value = false;
+      _mvCommentResult.value = res;
+    } catch {
+      _loading.value = false;
     } finally {
-      this._loading.value = false;
+      _loading.value = false;
     }
-  }
-}
+  };
 
-export default MvPlayerService;
+  // 等价于原 constructor：进入页面即拉取详情 / 地址 / 评论。
+  _loading.value = true;
+  const commonService = new CommonService();
+  commonService
+    .getMvDetailById(_mvid)
+    .then((res) => {
+      _mvDetailResult.value = res as MP_IMvDetail;
+    })
+    .catch(() => {
+      _loading.value = false;
+    });
+  queryUrl();
+  queryCommentList();
+
+  return reactive({
+    mvDetailResult$,
+    mvUrlResult$,
+    mvCommentResult$,
+    loading,
+    queryUrl,
+    queryCommentList,
+  });
+};
+
+/** MV 播放页状态：每次调用创建新实例，保证切换 mvid 后重新拉数据 */
+export const useMvPlayer = () => create();

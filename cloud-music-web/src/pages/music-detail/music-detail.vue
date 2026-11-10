@@ -1,12 +1,12 @@
 <template>
-  <div class="music-detail" id="music-detail">
+  <div id="music-detail" class="music-detail">
     <section class="md-cover">
       <cm-skeleton
         width="100%"
         :height="'320px'"
-        :imageUrl="musicDetail?.al?.picUrl"
-        sourceType="image"
-        :borderRadius="'none'"
+        :image-url="musicDetail?.al?.picUrl"
+        source-type="image"
+        :border-radius="'none'"
       >
       </cm-skeleton>
       <button primary><i class="iconfont icon-xiazai mr6"></i> 下载这首歌</button>
@@ -27,26 +27,26 @@
       </section>
 
       <!-- 评论区：comment_music -->
-      <cm-comment type="music" :id="musicDetail?.id"></cm-comment>
+      <cm-comment :id="musicDetail?.id" type="music"></cm-comment>
       <!-- 相似推荐：simi_song / simi_user -->
-      <cm-simi type="song" :id="musicDetail?.id"></cm-simi>
-      <cm-simi type="user" :id="musicDetail?.id"></cm-simi>
+      <cm-simi :id="musicDetail?.id" type="song"></cm-simi>
+      <cm-simi :id="musicDetail?.id" type="user"></cm-simi>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, onMounted, onUnmounted } from 'vue';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { ref, watch } from 'vue';
 
 import { AD_IMusicVO } from '../artist/artist-detail/services/artist-detail-api';
-import MusicDetailService from './music-detail.service';
+import { useMusicDetail } from './music-detail.service';
 
 import { formatDate } from '../../core/utils';
+import { useRequest } from '@/composables/useRequest';
 
-const musicDetailService = new MusicDetailService();
-const destroy$ = new Subject<void>();
-musicDetailService.query();
+const musicDetailService = useMusicDetail();
+// 统一经 useRequest 发起请求，loading / error 状态由通用 composable 收敛
+const { run: runQuery } = useRequest(() => musicDetailService.query());
+runQuery();
 
 const musicDetail = ref<AD_IMusicVO>({
   name: '',
@@ -66,16 +66,14 @@ const musicDetail = ref<AD_IMusicVO>({
   publishTime: 0,
 });
 
-onMounted(() => {
-  musicDetailService.musicDetail$.pipe(takeUntil(destroy$)).subscribe((v) => {
+// 订阅歌曲详情状态，immediate 保证首屏同步到当前值
+watch(
+  musicDetailService.musicDetail$,
+  (v) => {
     musicDetail.value = v;
-  });
-});
-
-onUnmounted(() => {
-  destroy$.complete();
-  destroy$.next();
-});
+  },
+  { immediate: true },
+);
 </script>
 <style lang="less" scoped>
 #music-detail {

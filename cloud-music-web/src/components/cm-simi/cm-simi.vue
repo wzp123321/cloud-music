@@ -2,14 +2,14 @@
   <div class="cm-simi">
     <div class="cms-header">
       <h5>{{ title || SIMI_TITLE[type] }}</h5>
-      <span class="cms-more" v-if="loading">加载中...</span>
+      <span v-if="loading" class="cms-more">加载中...</span>
     </div>
 
     <div class="cms-list">
       <div
-        class="cms-item"
         v-for="item in list"
         :key="item.id"
+        class="cms-item"
         @click="onItemClick(item)"
       >
         <img :src="item.cover" alt="" />
@@ -20,7 +20,7 @@
       </div>
     </div>
 
-    <div class="cms-empty" v-if="!loading && !list.length">暂无相关推荐</div>
+    <div v-if="!loading && !list.length" class="cms-empty">暂无相关推荐</div>
   </div>
 </template>
 
@@ -91,11 +91,11 @@ async function load() {
   }
 }
 
-function onItemClick(item: CM_ISimiItem) {
+const onItemClick = (item: CM_ISimiItem) => {
   const route = SIMI_ROUTE[props.type];
   if (!route || !router) return;
   router.push({ path: route.path, query: { [route.key]: String(item.id) } });
-}
+};
 
 onMounted(load);
 watch([() => props.type, () => props.id], load);

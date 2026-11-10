@@ -1,20 +1,42 @@
-/*eslint-disable*/
-import axios, { AxiosResponse } from 'axios';
+import axios, {
+  AxiosInstance,
+  AxiosResponse,
+  InternalAxiosRequestConfig,
+  AxiosError,
+} from 'axios';
 import serviceConfig from '@/config/request';
+import { FGetCookie } from '@/core/token';
 
-// 创建axios实例
-const axiosInstance = () => {
-  const instance = axios.create({
-    baseURL: serviceConfig.BASE_URL,
-    timeout: serviceConfig.TIME_OUT,
+// 统一 axios 单例：全项目共用，拦截器集中管理（token 注入 / 错误归一）
+const instance: AxiosInstance = axios.create({
+  baseURL: serviceConfig.BASE_URL,
+  timeout: serviceConfig.TIME_OUT,
+});
+
+// 请求拦截：自动注入 cookie 中的登录态（cloud-token 存在时）
+instance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
+  const token = FGetCookie('cloud-token');
+  if (token) {
+    config.headers.set('Authorization', token);
+  }
+  return config;
+});
+
+// 响应拦截：统一错误归一，业务层只需关心 resolve 数据 / catch 统一错误
+instance.interceptors.response.use(
+  (response: AxiosResponse) => response,
+  (error: AxiosError) => Promise.reject(error),
+);
+
+// 请求超时辅助函数
+const timeoutfn = (delay: number, url: string) =>
+  new Promise((resolve) => {
+    setTimeout(() => resolve(`请求超时--${url}`), delay);
   });
-  return instance;
-};
 
-// 请求实例
+// 底层请求：处理 FormData / JSON 的 Content-Type，并合并外部 options
 const publicReq = async (params: { [key: string]: any }) => {
   const { url, method, param, options } = params;
-  const instance = axiosInstance();
   const isForm = typeof FormData !== 'undefined' && param instanceof FormData;
   // 合并外部传入的 headers；FormData 场景交由 axios 自动设置 multipart boundary
   const headers = isForm
@@ -26,82 +48,51 @@ const publicReq = async (params: { [key: string]: any }) => {
             ? 'application/json; charset=utf-8'
             : 'application/json',
       };
-  return await instance({
+  return instance({
     url,
     method,
-    // 在请求头里面添加token 如果没有则为空字符串
     ...options,
     headers,
     [method === 'post' ? 'data' : 'params']: param,
-  }).then((res: AxiosResponse) => {
-    if (res) {
-      return res.data;
-    }
-  });
+  }).then((res: AxiosResponse) => (res ? res.data : undefined));
 };
 
-// 请求超时函数
-const timeoutfn = (delay: number, url: string) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(`请求超时--${url}`);
-    }, delay);
-  });
-};
-
-// 单个请求 存在请求超时
-export async function req(params: { [key: string]: any }, delay = serviceConfig.TIME_OUT) {
+// 单个请求（带超时 race）
+export const req = async (params: { [key: string]: any }, delay = serviceConfig.TIME_OUT) => {
   try {
-    const response: any = await Promise.race([timeoutfn(delay, params.url), publicReq(params)]);
-    return response;
+    return await Promise.race([timeoutfn(delay, params.url), publicReq(params)]);
   } catch (error) {
     return Promise.reject(error);
   }
-}
+};
 
 // GET request
-export async function getRequest(url: string, param?: { [key: string]: any }) {
+export const getRequest = async (url: string, param?: { [key: string]: any }) => {
   try {
-    const response = await req({
-      url,
-      method: 'get',
-      param,
-    });
-    return response;
+    return await req({ url, method: 'get', param });
   } catch (err) {
     return Promise.reject(err);
   }
-}
+};
 
 // POST form request (multipart/form-data，用于文件上传场景如歌单封面)
-export async function postFormRequest(url: string, formData: FormData) {
+export const postFormRequest = async (url: string, formData: FormData) => {
   try {
-    const response = await req({
-      url,
-      method: 'post',
-      param: formData,
-    });
-    return response;
+    return await req({ url, method: 'post', param: formData });
   } catch (err) {
     return Promise.reject(err);
   }
-}
+};
 
 // POST request
-export async function postRequest(
+export const postRequest = async (
   url: string,
   param?: { [key: string]: any } | number | string,
   options?: { [key: string]: any },
-) {
+) => {
   try {
-    const response = await req({
-      url,
-      method: 'post',
-      param,
-      options,
-    });
-    return response;
+    return await req({ url, method: 'post', param, options });
   } catch (err) {
     return Promise.reject(err);
   }
-}
+};

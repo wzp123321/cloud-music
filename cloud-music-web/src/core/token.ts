@@ -11,6 +11,7 @@ export function FGetQueryParam(key: string): string | undefined {
   if (match.length > 2) {
     return decodeURIComponent(match[2]);
   }
+  return undefined;
 }
 
 // 存入cookie
@@ -29,6 +30,7 @@ export function FGetCookie(key: string): string | undefined {
   if (match.length > 2) {
     return decodeURIComponent(match[2]);
   }
+  return undefined;
 }
 
 /**

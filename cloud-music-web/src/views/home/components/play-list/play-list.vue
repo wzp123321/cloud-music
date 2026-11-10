@@ -1,5 +1,5 @@
 <template>
-  <div :class="['play-list', playing ? 'playing' : '']" id="play-list">
+  <div id="play-list" :class="['play-list', playing ? 'playing' : '']">
     <!-- 当前播放的音乐封面 -->
     <el-popover
       :teleported="true"
@@ -26,7 +26,7 @@
           </tr>
         </thead>
         <tbody style="height: 200px">
-          <tr v-for="(item, index) in playList.musicList">
+          <tr v-for="(item, index) in playList.musicList" :key="item.id ?? index">
             <td style="width: 40px">{{ index + 0 }}</td>
             <td style="max-width: 100px">{{ item.name }}</td>
             <td>{{ item.artist }}</td>
@@ -38,7 +38,7 @@
           </tr>
         </tbody>
       </table>
-      <div class="common-table__empty flex-column-center-center" v-else>
+      <div v-else class="common-table__empty flex-column-center-center">
         <img src="../../../../assets/images/common/common-data-none.svg" alt="" />
         <p>暂无数据</p>
       </div>
@@ -48,13 +48,14 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue';
-import playListService from './play-list.service';
-import player from '../play-controller/play-controller.service';
+import { usePlaylistStore } from '@/stores/playlist';
+import { usePlayerStore } from '@/stores/player';
 import { PL_IPlayVO } from './play-list.api';
 
-const playList = playListService;
+const playList = usePlaylistStore();
+const player = usePlayerStore();
 const playing = computed(() => {
-  return player?.is_playing;
+  return player.isPlaying;
 });
 
 const handlePlay = (item: PL_IPlayVO) => {

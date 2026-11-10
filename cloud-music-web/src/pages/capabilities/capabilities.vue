@@ -1,6 +1,6 @@
 <template>
   <div class="capabilities">
-    <cm-navbar :title="'能力中心'" :hasLoadMore="false"></cm-navbar>
+    <cm-navbar :title="'能力中心'" :has-load-more="false"></cm-navbar>
     <p class="capabilities--intro">
       前端已接入的全部能力入口。P0 为首页/歌单/用户/搜索/评论，P1 为体验增强，P2 为增值长尾；需登录或写操作的功能在页面内做了降级与二次确认。
     </p>

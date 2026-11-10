@@ -1,6 +1,6 @@
 <template>
-  <div class="mv-player" id="mv-player">
-    <div class="mp-container" v-loading="mvPlayer.loading">
+  <div id="mv-player" class="mv-player">
+    <div v-loading="mvPlayer.loading" class="mp-container">
       <video :src="url" preload="auto" autoplay controls muted></video>
       <div class="mp-info">
         <h5>{{ mvDetail?.name }}</h5>
@@ -17,7 +17,7 @@
         <button class="mp-data--sub-btn" :class="isSubed ? 'subed' : ''" :disabled="subLoading" @click="toggleMvSub">
           {{ isSubed ? '已收藏' : '收藏 MV' }}
         </button>
-        <span class="mp-data--tip" v-if="subTip">{{ subTip }}</span>
+        <span v-if="subTip" class="mp-data--tip">{{ subTip }}</span>
       </div>
     </div>
 
@@ -28,10 +28,10 @@
       </div>
       <cm-comment
         v-for="(item, index) in commentRes?.hotComments"
-        :key="'comment-' + index"
-        :commentVO="item"
-        type="mv"
         :id="mvDetail?.id"
+        :key="'comment-' + index"
+        :comment-v-o="item"
+        type="mv"
       ></cm-comment>
       <div class="mp-comment-header mt60">
         <h5>最新评论</h5>
@@ -39,31 +39,31 @@
       </div>
       <cm-comment
         v-for="(item, index) in commentRes?.comments"
-        :key="'comment-' + index"
-        :commentVO="item"
-        type="mv"
         :id="mvDetail?.id"
+        :key="'comment-' + index"
+        :comment-v-o="item"
+        type="mv"
       ></cm-comment>
     </div>
 
     <!-- 相似推荐：simi_mv -->
-    <cm-simi type="mv" :id="mvDetail?.id"></cm-simi>
+    <cm-simi :id="mvDetail?.id" type="mv"></cm-simi>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, onUnmounted, ref } from 'vue';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { onMounted, ref, watch } from 'vue';
 
 import { FGetQueryParam } from '@/core/token';
-import MvPlayerService from './mvplay.service';
+import { useMvPlayer } from './mvplay.service';
 import { MP_IMvDetail, MP_IMVCommentRes } from './mvplay.api';
 import contentEnhanceService, { hasLogin } from '@/services/content-enhance.service';
 import { MvDetailInfoRes } from '@/services/content-enhance.api';
+import { useRequest } from '@/composables/useRequest';
 
-const mvPlayer = new MvPlayerService();
-const destroy$ = new Subject<void>();
+const mvPlayer = useMvPlayer();
+// 互动数据请求统一走 useRequest（箭头体内延迟引用 loadMvStat，无 TDZ 问题）
+const { run: runMvStat } = useRequest(() => loadMvStat());
 
 /** 参数来源：mvid ← MV 列表 data[].id 或 /mvplay?mvid= */
 const mvid = Number(FGetQueryParam('mvid') || 0);
@@ -109,7 +109,7 @@ const loadMvStat = async () => {
   try {
     const res = await contentEnhanceService.getMvDetailInfo({ mvid });
     if (res?.code === 200) mvStat.value = res;
-  } catch (error) {
+  } catch {
     mvStat.value = {};
   }
 };
@@ -120,7 +120,7 @@ const loadSubState = async () => {
   try {
     const res = await contentEnhanceService.getMvSublist({ limit: 100 });
     isSubed.value = (res?.data || []).some((item: any) => Number(item.id || item.mvid) === mvid);
-  } catch (error) {
+  } catch {
     isSubed.value = false;
   }
 };
@@ -144,32 +144,21 @@ const toggleMvSub = async () => {
     } else {
       subTip.value = res?.message || '操作未成功，请重试';
     }
-  } catch (error) {
+  } catch {
     subTip.value = '收藏失败，请检查登录态';
   } finally {
     subLoading.value = false;
   }
 };
 
+// 订阅 MV 详情 / 地址 / 评论状态，immediate 保证首屏同步到当前值
+watch(mvPlayer.mvDetailResult$, (v) => (mvDetail.value = v), { immediate: true });
+watch(mvPlayer.mvUrlResult$, (v) => (url.value = v), { immediate: true });
+watch(mvPlayer.mvCommentResult$, (v) => (commentRes.value = v), { immediate: true });
+
 onMounted(() => {
-  loadMvStat();
+  runMvStat();
   loadSubState();
-  mvPlayer.mvDetailResult$.pipe(takeUntil(destroy$)).subscribe((v) => {
-    mvDetail.value = v;
-  });
-
-  mvPlayer.mvUrlResult$.pipe(takeUntil(destroy$)).subscribe((v) => {
-    url.value = v;
-  });
-
-  mvPlayer.mvCommentResult$.pipe(takeUntil(destroy$)).subscribe((v) => {
-    commentRes.value = v;
-  });
-});
-
-onUnmounted(() => {
-  destroy$.next();
-  destroy$.complete();
 });
 </script>
 

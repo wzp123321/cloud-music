@@ -1,11 +1,11 @@
 <template>
   <div class="message">
-    <cm-navbar :title="'消息中心 · 私信 · 分享'" :hasLoadMore="false"></cm-navbar>
+    <cm-navbar :title="'消息中心 · 私信 · 分享'" :has-load-more="false"></cm-navbar>
 
-    <div class="message--loginbar" v-if="!hasLogin">
+    <div v-if="!hasLogin" class="message--loginbar">
       当前未登录：<code>msg_*</code> 读取型接口已降级，发送 / 评论类写操作不可用（登录后自动生效）
     </div>
-    <div class="message--toast" v-if="toast" @click="clearToast">{{ toast }}（点击关闭）</div>
+    <div v-if="toast" class="message--toast" @click="clearToast">{{ toast }}（点击关闭）</div>
 
     <div class="message--tabs">
       <button
@@ -30,12 +30,12 @@
           <h3 class="message--block-title">
             <code class="message--module">{{ block.module }}</code> {{ block.name }}
           </h3>
-          <p class="message--degrade" v-if="!hasLogin">登录后可用（已降级，不发请求）</p>
+          <p v-if="!hasLogin" class="message--degrade">登录后可用（已降级，不发请求）</p>
           <div class="message--block-actions">
             <button class="message--btn" @click="loadMsg(block.code)">加载{{ block.name }}</button>
             <span class="message--count">{{ msgLists[block.code].length }} 条</span>
           </div>
-          <div class="message--list" v-if="msgLists[block.code].length">
+          <div v-if="msgLists[block.code].length" class="message--list">
             <div
               v-for="(item, idx) in msgLists[block.code]"
               :key="block.code + '_' + idx"
@@ -44,10 +44,10 @@
             >
               <span class="message--item-title">{{ item.title }}</span>
               <span class="message--item-sub">{{ item.subtitle }}</span>
-              <span class="message--item-id" v-if="item.id">#{{ item.id }}</span>
+              <span v-if="item.id" class="message--item-id">#{{ item.id }}</span>
             </div>
           </div>
-          <p class="message--empty" v-else>暂无数据或接口返回为空</p>
+          <p v-else class="message--empty">暂无数据或接口返回为空</p>
         </section>
       </div>
 
@@ -56,19 +56,19 @@
         <h3 class="message--block-title">
           <code class="message--module">msg_private_history</code> 私信历史（uid ← msg_private / msg_recentcontact 点选或手填）
         </h3>
-        <p class="message--degrade" v-if="!hasLogin">登录后可用（已降级，不发请求）</p>
+        <p v-if="!hasLogin" class="message--degrade">登录后可用（已降级，不发请求）</p>
         <div class="message--form">
           <label>对方 uid<input v-model="historyUid" placeholder="点选私信 / 最近联系人自动填入，或手填" /></label>
           <label>条数<input v-model.number="historyLimit" type="number" min="1" /></label>
           <button class="message--btn" @click="loadPrivateHistory">加载私信历史</button>
         </div>
-        <div class="message--list" v-if="historyList.length">
+        <div v-if="historyList.length" class="message--list">
           <div v-for="(item, idx) in historyList" :key="'hist_' + idx" class="message--item">
             <span class="message--item-title">{{ item.title }}</span>
             <span class="message--item-sub">{{ item.subtitle }}</span>
           </div>
         </div>
-        <p class="message--empty" v-else>暂无私信历史</p>
+        <p v-else class="message--empty">暂无私信历史</p>
       </section>
     </div>
 
@@ -134,7 +134,7 @@
         </section>
       </div>
 
-      <div class="message--result" v-if="writeResult">{{ writeResult }}</div>
+      <div v-if="writeResult" class="message--result">{{ writeResult }}</div>
     </div>
 
     <!-- ==================== 4.3 评论补充 ==================== -->
@@ -167,7 +167,7 @@
         </section>
       </div>
 
-      <div class="message--result" v-if="writeResult">{{ writeResult }}</div>
+      <div v-if="writeResult" class="message--result">{{ writeResult }}</div>
     </div>
   </div>
 </template>
@@ -332,7 +332,7 @@ const runWrite = async (label: string, fn: () => Promise<any>) => {
     const res = await fn();
     const obj = extractObj(res);
     writeResult.value = `${label} 已提交｜code=${obj.code ?? res?.code ?? '—'}｜${obj.message ?? res?.message ?? '无附加信息'}`;
-  } catch (error) {
+  } catch {
     writeResult.value = `${label} 请求失败，已按空值处理`;
   }
 };
@@ -363,7 +363,7 @@ const loadMsg = async (code: string) => {
     }
     msgLists[code] = extractList(res).map(toCard);
     toast.value = `${code} 已加载 ${msgLists[code].length} 条`;
-  } catch (error) {
+  } catch {
     msgLists[code] = [];
     toast.value = '接口请求失败，已返回空值';
   }
@@ -381,7 +381,7 @@ const loadPrivateHistory = async () => {
     const res = await messageService.getMsgPrivateHistory({ uid, limit: historyLimit.value || 30 });
     historyList.value = extractList(res).map(toCard);
     toast.value = `私信历史已加载 ${historyList.value.length} 条`;
-  } catch (error) {
+  } catch {
     historyList.value = [];
     toast.value = '接口请求失败，已返回空值';
   }

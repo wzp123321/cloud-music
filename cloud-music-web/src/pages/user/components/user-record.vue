@@ -8,8 +8,8 @@
       </div>
     </div>
 
-    <div class="up-record-list" v-if="list.length">
-      <div class="up-record-item" v-for="(item, index) in list" :key="item.song?.id || index">
+    <div v-if="list.length" class="up-record-list">
+      <div v-for="(item, index) in list" :key="item.song?.id || index" class="up-record-item">
         <span class="up-rank">{{ index + 1 }}</span>
         <img class="up-rec-cover" :src="item.song?.al?.picUrl || item.song?.album?.picUrl" alt="" />
         <div class="up-rec-info">
@@ -19,7 +19,7 @@
         <span class="up-rec-count">播放 {{ item.playCount }}</span>
       </div>
     </div>
-    <div class="up-empty" v-else>暂无听歌记录</div>
+    <div v-else class="up-empty">暂无听歌记录</div>
   </section>
 </template>
 

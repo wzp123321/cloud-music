@@ -26,18 +26,18 @@ class FileUploadService {
     this._total_limit_size.value = totalSize;
   }
 
-  fileImport = (list: File[]) => {
+  // 选择文件并做大小 / 类型校验；校验不通过返回 null
+  fileImport = async (list: File[]): Promise<File | null> => {
     if (!this._is_initial.value) {
       throw new Error('尚未初始化！');
     }
-    return new Promise(async (resolve, reject) => {
-      const file = await FUploadHandler(Object.keys(this._accept.value).join());
-      if (!verifyUpload(list, file, this._single_limit_size.value, this._accept.value, this._total_limit_size.value)) {
-        return;
-      } else {
-        resolve(file);
-      }
-    });
+    const file = await FUploadHandler(Object.keys(this._accept.value).join());
+    if (
+      !verifyUpload(list, file, this._single_limit_size.value, this._accept.value, this._total_limit_size.value)
+    ) {
+      return null;
+    }
+    return file;
   };
 }
 

@@ -1,8 +1,8 @@
 <template>
   <section class="up-cloud">
     <div class="up-block-title">我的云盘（{{ cloud.count || list.length }}）</div>
-    <div class="up-cloud-list" v-if="list.length">
-      <div class="up-cloud-item" v-for="item in list" :key="item.songId">
+    <div v-if="list.length" class="up-cloud-list">
+      <div v-for="item in list" :key="item.songId" class="up-cloud-item">
         <div class="up-cloud-info">
           <div class="up-cloud-name">{{ item.songName }}</div>
           <div class="up-cloud-artist">{{ item.artist }} - {{ item.album }}</div>
@@ -10,31 +10,36 @@
         <span class="up-cloud-size">{{ formatSize(item.fileSize) }}</span>
       </div>
     </div>
-    <div class="up-empty" v-else>云盘暂无文件</div>
+    <div v-else class="up-empty">云盘暂无文件</div>
   </section>
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-import userCenterService from '../user.service';
+import { ref, onMounted, watch } from 'vue';
+import { useUserCenter } from '../user.service';
 import { UC_ICloudItem } from '@/services/user.api';
+
+const userCenterService = useUserCenter();
 
 const list = ref<UC_ICloudItem[]>([]);
 const cloud = ref<{ list: UC_ICloudItem[]; count: number }>({ list: [], count: 0 });
-const destroy$ = new Subject<void>();
 
 const formatSize = (size?: number) => {
   if (!size) return '';
   return size > 1024 * 1024 ? `${(size / 1024 / 1024).toFixed(1)}MB` : `${(size / 1024).toFixed(0)}KB`;
 };
 
-onMounted(() => {
-  userCenterService.cloud$.pipe(takeUntil(destroy$)).subscribe((v) => {
+// 订阅云盘状态，immediate 保证首屏同步到当前值
+watch(
+  userCenterService.cloud$,
+  (v) => {
     cloud.value = v;
     list.value = v.list;
-  });
+  },
+  { immediate: true },
+);
+
+onMounted(() => {
   userCenterService.loadCloud();
 });
 </script>

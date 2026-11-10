@@ -13,6 +13,9 @@ export interface ArtistVO {
     id: number;
     publishTime: number;
     mvSize: number;
+    // 单曲数 / 专辑数：歌手详情页头部统计
+    musicSize: number;
+    albumSize: number;
   };
   hotSongs: AD_IMusicVO[];
 }
@@ -87,6 +90,8 @@ export interface MvVO {
   duration: number;
   id: number;
   imgurl: string;
+  // 16:9 封面（MV 卡片使用）
+  imgurl16v9: string;
   cover?: string;
   name: string;
   playCount: number;

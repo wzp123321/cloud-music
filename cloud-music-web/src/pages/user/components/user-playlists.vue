@@ -4,8 +4,8 @@
       <span>创建的歌单</span>
       <span class="up-count">{{ playlists?.length || 0 }}</span>
     </div>
-    <div class="up-grid" v-if="playlists?.length">
-      <div class="up-card" v-for="item in playlists" :key="item.id" @click="openPlaylist(item.id)">
+    <div v-if="playlists?.length" class="up-grid">
+      <div v-for="item in playlists" :key="item.id" class="up-card" @click="openPlaylist(item.id)">
         <div class="up-cover">
           <img :src="item.coverImgUrl" alt="" />
           <span class="up-playcount">{{ formatPlayCount(item.playCount) }}</span>
@@ -13,7 +13,7 @@
         <div class="up-card-name" :title="item.name">{{ item.name }}</div>
       </div>
     </div>
-    <div class="up-empty" v-else>暂无歌单</div>
+    <div v-else class="up-empty">暂无歌单</div>
   </section>
 </template>
 

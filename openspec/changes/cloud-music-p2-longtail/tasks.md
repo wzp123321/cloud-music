@@ -58,12 +58,12 @@
 
 ### A. 依赖链（先列表后详情）
 
-| 链 | 入口（提供参数） | 详情（消费参数） |
-|---|---|---|
+| 链   | 入口（提供参数）                                          | 详情（消费参数）                                                                                     |
+| ---- | --------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
 | 电台 | `dj_catelist` / `dj_recommend` / `dj_hot` / `dj_toplist*` | `dj_detail` / `dj_program` ← `rid`；`dj_program_detail` ← `programs[].id`；`dj_radio_hot` ← `cateId` |
-| 视频 | `video_group_list` / `video_timeline_*` | `video_detail` ← 视频 id；`video_detail_info` ← `vid`；`video_url` ← `id` |
-| UGC | `ugc_artist_search` ← `keyword` | `ugc_*_get` ← `id` |
-| 云盘 | `cloud_match`（需登录） | `cloud`（上传，FormData + 登录） |
+| 视频 | `video_group_list` / `video_timeline_*`                   | `video_detail` ← 视频 id；`video_detail_info` ← `vid`；`video_url` ← `id`                            |
+| UGC  | `ugc_artist_search` ← `keyword`                           | `ugc_*_get` ← `id`                                                                                   |
+| 云盘 | `cloud_match`（需登录）                                   | `cloud`（上传，FormData + 登录）                                                                     |
 
 以上详情型实测「裸 GET 400/502，带真实参数 200」；没有入口就没有参数来源。
 
@@ -77,7 +77,7 @@
 
 ### C. 完成判定
 
-每个任务除「接口已封装」外还须满足：① 有上游参数来源；② 有页面/组件真实调用点；③ 匿名可用者经 `10130` 实测 `code:200`；④ 写操作有明确用户操作与二次确认。四者缺一不算完成，不得勾选。
+每个任务除「接口已封装」外还须满足：① 有上游参数来源；② 有页面/组件真实调用点；③ 匿名可用者经 `19830` 实测 `code:200`；④ 写操作有明确用户操作与二次确认。四者缺一不算完成，不得勾选。
 
 ## 全批次验收记录（2026-11-10）
 
@@ -87,16 +87,16 @@
 
 8 个 capability、20 个任务全部落地，共 8 个页面、116 个接口：
 
-| 页面 | capability | 接口数 |
-|---|---|---|
-| `/dj-radio` | 电台 | 27 |
-| `/video-podcast` | 视频与播客 | 14 |
-| `/yunbei-vip-musician` | 云贝/会员/音乐人 | 25 |
-| `/ugc-listentogether` | UGC 与一起听 | 15 |
-| `/fanscenter-digitalalbum` | 粉丝中心与数字专辑 | 9 |
-| `/cloud-disk` | 云盘 | 2 |
-| `/account-profile` | 账号资料 | 15 |
-| `/misc-longtail` | 杂项长尾 | 9 |
+| 页面                       | capability         | 接口数 |
+| -------------------------- | ------------------ | ------ |
+| `/dj-radio`                | 电台               | 27     |
+| `/video-podcast`           | 视频与播客         | 14     |
+| `/yunbei-vip-musician`     | 云贝/会员/音乐人   | 25     |
+| `/ugc-listentogether`      | UGC 与一起听       | 15     |
+| `/fanscenter-digitalalbum` | 粉丝中心与数字专辑 | 9      |
+| `/cloud-disk`              | 云盘               | 2      |
+| `/account-profile`         | 账号资料           | 15     |
+| `/misc-longtail`           | 杂项长尾           | 9      |
 
 全部接口都有上游参数来源与页面真实调用点；服务层函数死代码 0。附 `/route-completion` 补齐 `album_detail` / `artist_detail` 后，server 309 个路由实现 **309/309** 静态覆盖。
 

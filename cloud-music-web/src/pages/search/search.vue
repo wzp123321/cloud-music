@@ -1,7 +1,7 @@
 <template>
-  <div class="search" v-loading="isLoading">
+  <div v-loading="isLoading" class="search">
     <!-- 多重匹配概览：各类型匹配数量入口 -->
-    <div class="search-multimatch" v-if="search.multimatch.length">
+    <div v-if="search.multimatch.length" class="search-multimatch">
       <span class="mm-label">多重匹配</span>
       <span
         v-for="(item, index) in search.multimatch"
@@ -15,56 +15,52 @@
       </span>
     </div>
     <cm-navbar
+      v-model:selected-code="search.type"
       :title="'搜索结果'"
       :navs="navs"
-      v-model:selectedCode="search.type"
-      :hasLoadMore="false"
+      :has-load-more="false"
       @change="search.handleTypeChange"
     >
     </cm-navbar>
     <!-- 单曲 -->
-    <cm-table v-if="search.type === SEARCH_TYPE.单曲" :dataSource="search.songs"></cm-table>
+    <cm-table v-if="search.type === SEARCH_TYPE.单曲" :data-source="search.songs"></cm-table>
     <!-- 专辑 -->
-    <div class="search-album" v-if="search.type === SEARCH_TYPE.专辑">
+    <div v-if="search.type === SEARCH_TYPE.专辑" class="search-album">
       <cm-album-card
         v-for="(item, index) in search.albums"
+        :id="item.id"
         :key="'album_' + index"
         :title="item.title"
-        :publicTime="item.publicTime"
-        :coverImageUrl="item.coverImageUrl"
-        :id="item.id"
+        :public-time="item.publicTime"
+        :cover-image-url="item.coverImageUrl"
       ></cm-album-card>
     </div>
     <!-- mv -->
-    <div class="search-album" v-if="search.type === SEARCH_TYPE.MV">
+    <div v-if="search.type === SEARCH_TYPE.MV" class="search-album">
       <cm-mv-card
         v-for="(item, index) in search.mvs"
-        :key="'mv_' + index"
-        :coverImageUrl="item.imgurl"
-        :title="item.name"
-        :duration="String(item.duration)"
-        :playCount="item.playCount"
-        :publishTime="item.publishTime"
         :id="item.id"
+        :key="'mv_' + index"
+        :cover-image-url="item.imgurl"
+        :title="item.name"
+        :duration="Number(item.duration)"
+        :play-count="item.playCount"
+        :publish-time="item.publishTime"
       ></cm-mv-card>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
-import { onMounted, onUnmounted, ref, computed, watch } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { FGetQueryParam } from '@/core/token';
-import { SearchService, SEARCH_IMultimatchEntry } from './search.service';
+import { useSearch, SEARCH_IMultimatchEntry } from './search.service';
 
 import { SEARCH_TYPE } from './search.api';
-
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-const destroy$ = new Subject<void>();
 
 const keyword = computed(() => {
   return FGetQueryParam('keyword') as string;
 });
-const search = new SearchService(keyword.value);
+const search = useSearch();
 
 search.query();
 search.queryMultimatch();
@@ -73,7 +69,7 @@ const isLoading = ref<boolean>(false);
 const navs = computed(() => {
   return Object.keys(SEARCH_TYPE).map((v) => {
     return {
-      code: SEARCH_TYPE[v],
+      code: SEARCH_TYPE[v as keyof typeof SEARCH_TYPE],
       name: v,
     };
   });
@@ -95,16 +91,14 @@ watch(
   },
 );
 
-onMounted(() => {
-  search.loadingResult$.pipe(takeUntil(destroy$)).subscribe((v) => {
+// 订阅搜索 loading 状态，immediate 保证首屏同步到当前值
+watch(
+  search.loadingResult$,
+  (v) => {
     isLoading.value = v ?? false;
-  });
-});
-
-onUnmounted(() => {
-  destroy$.next();
-  destroy$.complete();
-});
+  },
+  { immediate: true },
+);
 </script>
 <style lang="less" scoped>
 .search {

@@ -1,11 +1,11 @@
 <template>
   <div class="route-completion">
-    <cm-navbar :title="'路由补齐：专辑与歌手详情'" :hasLoadMore="false"></cm-navbar>
+    <cm-navbar :title="'路由补齐：专辑与歌手详情'" :has-load-more="false"></cm-navbar>
 
     <p class="route-completion--intro">
-      server 侧 309 个接口中最后两个独立详情接口。两者与详情页已用的 <code>/album</code>、<code>/artists</code> 不是同一上游：
-      <code>/album/detail</code> 是数字专辑详情（需数字专辑 id），<code>/artist/detail</code> 返回歌手头部信息。
-      左侧列表由上游接口提供 id，点击后按该 id 请求详情。
+      server 侧 309 个接口中最后两个独立详情接口。两者与详情页已用的 <code>/album</code>、<code>/artists</code>
+      不是同一上游： <code>/album/detail</code> 是数字专辑详情（需数字专辑 id），<code>/artist/detail</code>
+      返回歌手头部信息。 左侧列表由上游接口提供 id，点击后按该 id 请求详情。
     </p>
 
     <div class="route-completion--tabs">
@@ -21,9 +21,11 @@
 
     <div class="route-completion--layout">
       <section class="route-completion--panel">
-        <h4 class="route-completion--heading">上游列表 · {{ activeTab === 'album' ? '/album/list' : '/artist/list' }}</h4>
-        <p class="route-completion--status" v-if="loadingList">加载中…</p>
-        <p class="route-completion--status" v-else-if="!sourceList.length">暂无上游数据</p>
+        <h4 class="route-completion--heading">
+          上游列表 · {{ activeTab === 'album' ? '/album/list' : '/artist/list' }}
+        </h4>
+        <p v-if="loadingList" class="route-completion--status">加载中…</p>
+        <p v-else-if="!sourceList.length" class="route-completion--status">暂无上游数据</p>
         <div v-else class="route-completion--source-list">
           <div
             v-for="item in sourceList"
@@ -41,7 +43,7 @@
         <h4 class="route-completion--heading">
           详情响应 · {{ activeTab === 'album' ? 'album_detail（/album/detail）' : 'artist_detail（/artist/detail）' }}
         </h4>
-        <p class="route-completion--status" v-if="loadingDetail">请求中…</p>
+        <p v-if="loadingDetail" class="route-completion--status">请求中…</p>
         <pre v-else class="route-completion--detail">{{ detailText }}</pre>
       </section>
     </div>
@@ -94,8 +96,8 @@ const loadSourceList = async () => {
         .filter((item) => item.id != null)
         .map((item) => ({ id: item.id, name: item.name || '未命名歌手' }));
     }
-  } catch (error) {
-    detailText.value = '上游列表请求失败，请检查 server 10130 是否在线。';
+  } catch {
+    detailText.value = '上游列表请求失败，请检查 server 19830 是否在线。';
   } finally {
     loadingList.value = false;
   }
@@ -110,7 +112,7 @@ const queryDetail = async (item: SourceItem) => {
         ? await contentEnhanceService.getAlbumDetailExtra({ id: item.id })
         : await contentEnhanceService.getArtistDetailExtra({ id: item.id });
     detailText.value = JSON.stringify(res, null, 2).slice(0, 4000);
-  } catch (error) {
+  } catch {
     detailText.value = '详情请求失败，请确认该 id 是否为有效资源。';
   } finally {
     loadingDetail.value = false;

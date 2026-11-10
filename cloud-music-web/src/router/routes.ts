@@ -40,13 +40,6 @@ const routes: RouteRecordRaw[] = [
     },
     component: () => import('@/pages/rank/rank.vue'),
   },
-  {
-    path: '/demo',
-    meta: {
-      name: 'demo',
-    },
-    component: () => import('@/views/demo.vue'),
-  },
   // 歌单详情
   {
     path: '/playlist_detail',

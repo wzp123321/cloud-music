@@ -1,6 +1,6 @@
 <template>
-  <div class="artist" id="artist">
-    <cm-navbar :title="'歌手'" :hasLoadMore="false"></cm-navbar>
+  <div id="artist" class="artist">
+    <cm-navbar :title="'歌手'" :has-load-more="false"></cm-navbar>
 
     <div class="artist--filters">
       <span class="artist--filter-label">分类</span>
@@ -25,7 +25,7 @@
 
     <section class="artist--section">
       <h3 class="artist--heading">歌手列表</h3>
-      <div class="artist--status" v-if="loading">加载中…</div>
+      <div v-if="loading" class="artist--status">加载中…</div>
       <cm-error v-else-if="!artistList.length" :title="'暂无歌手数据'"></cm-error>
       <div v-else class="artist--grid">
         <div
@@ -37,8 +37,8 @@
           <cm-skeleton
             width="100%"
             :height="'160px'"
-            :imageUrl="item.img1v1Url || item.picUrl || ''"
-            :borderRadius="'50%'"
+            :image-url="item.img1v1Url || item.picUrl || ''"
+            :border-radius="'50%'"
           ></cm-skeleton>
           <p class="artist--name" :title="item.name">{{ item.name }}</p>
           <p class="artist--sub">单曲 {{ item.musicSize ?? 0 }} · 专辑 {{ item.albumSize ?? 0 }}</p>
@@ -131,7 +131,7 @@ const loadArtists = async () => {
       limit: 30,
     });
     artistList.value = res?.artists || [];
-  } catch (error) {
+  } catch {
     artistList.value = [];
   } finally {
     loading.value = false;

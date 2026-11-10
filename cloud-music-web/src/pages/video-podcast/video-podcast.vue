@@ -1,12 +1,12 @@
 <template>
   <div class="video-podcast">
-    <cm-navbar :title="'视频 · 播客 · 信息流 · 上传'" :hasLoadMore="false"></cm-navbar>
+    <cm-navbar :title="'视频 · 播客 · 信息流 · 上传'" :has-load-more="false"></cm-navbar>
 
-    <div class="video-podcast--loginbar" v-if="!hasLogin">
+    <div v-if="!hasLogin" class="video-podcast--loginbar">
       当前未登录：<code>video_timeline_*</code>、<code>voicelist_*</code>、<code>voice_detail</code> 等需登录只读接口已降级（不发请求）；
       <code>video_sub</code> / <code>voice_upload</code> 写操作不可用
     </div>
-    <div class="video-podcast--toast" v-if="toast" @click="toast = ''">{{ toast }}（点击关闭）</div>
+    <div v-if="toast" class="video-podcast--toast" @click="toast = ''">{{ toast }}（点击关闭）</div>
 
     <div class="video-podcast--tabs">
       <button
@@ -53,8 +53,8 @@
             <span v-else-if="b.kind === 'write' || b.kind === 'upload'" class="video-podcast--badge video-podcast--badge--write">写操作</span>
             <span v-else-if="b.kind === 'loginRead'" class="video-podcast--badge video-podcast--badge--login">需登录只读</span>
           </h3>
-          <p class="video-podcast--note" v-if="b.note">{{ b.note }}</p>
-          <p class="video-podcast--degrade" v-if="(b.kind === 'loginRead' || b.kind === 'write' || b.kind === 'upload') && !hasLogin">
+          <p v-if="b.note" class="video-podcast--note">{{ b.note }}</p>
+          <p v-if="(b.kind === 'loginRead' || b.kind === 'write' || b.kind === 'upload') && !hasLogin" class="video-podcast--degrade">
             登录后可用（已降级，不发请求）
           </p>
           <div class="video-podcast--block-actions">
@@ -62,8 +62,8 @@
               {{ b.inputLabel || b.inputKey }}
               <input
                 :value="params[b.inputKey || '']"
-                @input="onParamInput(b.inputKey, $event)"
                 :placeholder="b.inputHint || '点选上游列表自动填入，或手填'"
+                @input="onParamInput(b.inputKey, $event)"
               />
             </label>
             <label v-if="b.kind === 'upload'" class="video-podcast--inline-label">
@@ -77,9 +77,9 @@
               {{ b.buttonText || '加载' }}
             </button>
             <span class="video-podcast--count">{{ results[b.module]?.length || 0 }} 条</span>
-            <span class="video-podcast--emit" v-if="b.emit">点选列表项 → 填入 {{ b.emit }}</span>
+            <span v-if="b.emit" class="video-podcast--emit">点选列表项 → 填入 {{ b.emit }}</span>
           </div>
-          <div class="video-podcast--list" v-if="results[b.module] && results[b.module].length">
+          <div v-if="results[b.module] && results[b.module].length" class="video-podcast--list">
             <div
               v-for="(item, idx) in results[b.module]"
               :key="b.module + '_' + idx"
@@ -89,13 +89,13 @@
             >
               <span class="video-podcast--item-title">{{ item.title }}</span>
               <span class="video-podcast--item-sub">{{ item.subtitle }}</span>
-              <span class="video-podcast--item-id" v-if="item.id">#{{ item.id }}</span>
+              <span v-if="item.id" class="video-podcast--item-id">#{{ item.id }}</span>
             </div>
           </div>
-          <p class="video-podcast--empty" v-else>暂无数据或接口返回为空</p>
+          <p v-else class="video-podcast--empty">暂无数据或接口返回为空</p>
         </section>
       </div>
-      <div class="video-podcast--result" v-if="writeResult">{{ writeResult }}</div>
+      <div v-if="writeResult" class="video-podcast--result">{{ writeResult }}</div>
     </div>
   </div>
 </template>
@@ -327,7 +327,7 @@ const runBlock = async (b: Block) => {
     } else {
       toast.value = `${b.name} 已加载 ${results[b.module].length} 条`;
     }
-  } catch (error) {
+  } catch {
     results[b.module] = [];
     if (b.kind === 'write' || b.kind === 'upload') writeResult.value = `${b.name} 请求失败，已按空值处理`;
     else toast.value = `${b.name} 请求失败，已返回空值`;

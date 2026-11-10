@@ -1,4 +1,3 @@
-import store from '@/store/index';
 import axios from 'axios';
 import ServiceConfig from '../config/request';
 
@@ -6,7 +5,6 @@ import ServiceConfig from '../config/request';
 let timeStamp: any;
 // components
 import message from '@/utils/message';
-import dayjs from 'dayjs';
 
 /**
  * defer函数
@@ -60,7 +58,7 @@ export const downloadBlobFile = (data: any, name: string, type: string, cb?: () 
     if (typeof cb === 'function') {
       cb();
     }
-  } catch (error) {
+  } catch {
     if (typeof cb === 'function') {
       cb();
     }
@@ -78,13 +76,13 @@ export const downloadBlobFile = (data: any, name: string, type: string, cb?: () 
 export const getFileStreamDownload = async <T>(
   params: T,
   reqUrl: string,
-  type = '导出' || '下载',
+  type: '导出' | '下载' = '导出',
   cbFn?: () => void,
   failCb?: () => void,
 ) => {
   try {
     message.loading(`正在${type}`);
-    const tenantCode = store.getters.tenantCode ? store.getters.tenantCode : '';
+    const tenantCode = '';
     const res: any = await axios({
       url: `${ServiceConfig.BASE_URL}${reqUrl}`,
       method: 'post',
@@ -112,7 +110,7 @@ export const getFileStreamDownload = async <T>(
       }
       message.error(`${type}失败！`);
     }
-  } catch (error) {
+  } catch {
     if (typeof failCb === 'function') {
       failCb();
     }
@@ -131,8 +129,8 @@ export const getCurrentDomain = () => {
 
 // 打开新网页
 export const openBlankUrl = (path: string) => {
-  const tenantCode = store.getters.tenantCode || '';
-  const username = store.getters.username || '';
+  const tenantCode = '';
+  const username = '';
   const prefixUrl = getCurrentDomain();
   const url = `${prefixUrl}/imsManage${path}?tenantCode=${tenantCode}&username=${username}`;
   window.open(url, '_blank');

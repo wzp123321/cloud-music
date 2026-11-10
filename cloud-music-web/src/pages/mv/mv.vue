@@ -1,6 +1,6 @@
 <template>
   <div class="mv-discovery">
-    <cm-navbar :title="'MV'" :hasLoadMore="false"></cm-navbar>
+    <cm-navbar :title="'MV'" :has-load-more="false"></cm-navbar>
 
     <div class="mv-discovery--tabs">
       <button
@@ -13,7 +13,7 @@
       </button>
     </div>
 
-    <div class="mv-discovery--filters" v-if="activeTab === 'all'">
+    <div v-if="activeTab === 'all'" class="mv-discovery--filters">
       <span class="mv-discovery--filter-label">地区</span>
       <button
         v-for="area in areaOptions"
@@ -35,7 +35,7 @@
     </div>
 
     <section class="mv-discovery--section">
-      <div class="mv-discovery--status" v-if="loading">加载中…</div>
+      <div v-if="loading" class="mv-discovery--status">加载中…</div>
       <cm-error v-else-if="!mvList.length" :title="'暂无 MV 数据'"></cm-error>
       <div v-else class="mv-discovery--grid">
         <div
@@ -44,7 +44,7 @@
           class="mv-discovery--card"
           @click="linkToMv(item.id)"
         >
-          <cm-skeleton width="100%" :height="'170px'" :imageUrl="item.cover || ''" :borderRadius="'6px'"></cm-skeleton>
+          <cm-skeleton width="100%" :height="'170px'" :image-url="item.cover || ''" :border-radius="'6px'"></cm-skeleton>
           <p class="mv-discovery--name" :title="item.name">{{ item.name }}</p>
           <p class="mv-discovery--sub">{{ item.artistName || '' }} · 播放 {{ formatPlayCount(item.playCount || 0) }}</p>
         </div>
@@ -63,7 +63,7 @@
           class="mv-discovery--card"
           @click="linkToMv(item.id)"
         >
-          <cm-skeleton width="100%" :height="'170px'" :imageUrl="item.cover || ''" :borderRadius="'6px'"></cm-skeleton>
+          <cm-skeleton width="100%" :height="'170px'" :image-url="item.cover || ''" :border-radius="'6px'"></cm-skeleton>
           <p class="mv-discovery--name" :title="item.name">{{ item.name }}</p>
         </div>
       </div>
@@ -118,7 +118,7 @@ const loadMvList = async () => {
         break;
     }
     mvList.value = res?.data || [];
-  } catch (error) {
+  } catch {
     mvList.value = [];
   } finally {
     loading.value = false;
@@ -131,7 +131,7 @@ const loadSubMvList = async () => {
   try {
     const res = await contentEnhanceService.getMvSublist({ limit: 25 });
     subMvList.value = (res?.data || []) as ContentMvItem[];
-  } catch (error) {
+  } catch {
     subMvList.value = [];
   }
 };
