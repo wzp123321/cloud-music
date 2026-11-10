@@ -1,8 +1,7 @@
-import axios from 'axios';
-import ServiceConfig from '../config/request';
+import { getBlobResponse } from '@/apis/request';
 
 // 节流防抖 时间戳
-let timeStamp: any;
+let timeStamp: ReturnType<typeof setTimeout> | undefined;
 // components
 import message from '@/utils/message';
 
@@ -10,11 +9,11 @@ import message from '@/utils/message';
  * defer函数
  */
 export default class Deffer {
-  public promise: any;
-  public resolve: any;
-  public reject: any;
+  public promise: Promise<unknown>;
+  public resolve!: (value: unknown) => void;
+  public reject!: (reason?: unknown) => void;
   constructor() {
-    this.promise = new Promise((resolve, reject) => {
+    this.promise = new Promise<unknown>((resolve, reject) => {
       this.resolve = resolve;
       this.reject = reject;
     });
@@ -42,7 +41,7 @@ export const formatEmptyValue = (value: string | number, suffix = '') => {
  * 创建blob对象，并利用浏览器打开url进行下载
  * @param data 文件流数据
  */
-export const downloadBlobFile = (data: any, name: string, type: string, cb?: () => void) => {
+export const downloadBlobFile = (data: Blob, name: string, type: string, cb?: () => void) => {
   try {
     // 下载类型
     const blob = new Blob([data], { type: data.type });
@@ -82,17 +81,7 @@ export const getFileStreamDownload = async <T>(
 ) => {
   try {
     message.loading(`正在${type}`);
-    const tenantCode = '';
-    const res: any = await axios({
-      url: `${ServiceConfig.BASE_URL}${reqUrl}`,
-      method: 'post',
-      data: params,
-      headers: {
-        'content-type': 'application/json',
-        tenantCode,
-      },
-      responseType: 'blob',
-    });
+    const res = await getBlobResponse(reqUrl, params);
     if (res && res.status === 200 && res.data && res.headers['content-disposition']) {
       const fileName =
         res.headers && res.headers['content-disposition']
@@ -104,7 +93,6 @@ export const getFileStreamDownload = async <T>(
         }
       });
     } else {
-      console.log(res);
       if (typeof failCb === 'function') {
         failCb();
       }

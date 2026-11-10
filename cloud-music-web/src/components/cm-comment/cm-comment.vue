@@ -38,7 +38,7 @@
 
         <!-- 评论内容是服务端富文本（含表情/换行标记），只能按 HTML 渲染 -->
         <!-- eslint-disable-next-line vue/no-v-html -->
-        <p class="content mt4" :title="item?.content" v-html="item?.content"></p>
+        <p class="content mt4" :title="item?.content" v-html="sanitizeHtml(item?.content)"></p>
 
         <div v-if="item?.beReplied?.length" class="reply mb4">
           <span class="name">{{
@@ -47,7 +47,7 @@
               : ''
           }}</span>
           <!-- eslint-disable-next-line vue/no-v-html -->
-          <span class="text" v-html="item?.beReplied?.[0]?.content"></span>
+          <span class="text" v-html="sanitizeHtml(item?.beReplied?.[0]?.content)"></span>
         </div>
 
         <div class="cmc-actions">
@@ -72,7 +72,7 @@
           >
             <span class="name">{{ f?.user?.nickname ?? '' }}：</span>
             <!-- eslint-disable-next-line vue/no-v-html -->
-            <span v-html="f?.content"></span>
+            <span v-html="sanitizeHtml(f?.content)"></span>
           </div>
           <div v-if="!(floorMap[String(item?.commentId)] || []).length" class="cmc-empty">
             暂无楼层回复
@@ -97,6 +97,7 @@
 
 <script lang="ts" setup>
 import { computed, onMounted, ref, watch, PropType } from 'vue';
+import { sanitizeHtml } from '@/utils/sanitize';
 import {
   CM_ICommentVO,
   CM_CommentType,

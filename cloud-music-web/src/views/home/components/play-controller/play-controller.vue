@@ -36,7 +36,7 @@
         <div v-show="lyric.lrcList?.length" class="lrc-list">
           <!-- 歌词由 LRC 解析后拼 <br>，属本地生成内容 -->
           <!-- eslint-disable-next-line vue/no-v-html -->
-          <p v-html="lyric.showLyc"></p>
+          <p v-html="sanitizeHtml(lyric.showLyc)"></p>
         </div>
       </div>
 
@@ -89,9 +89,10 @@
 import { defineComponent, onMounted, ref } from 'vue';
 import { ElSlider } from 'element-plus';
 
-import { usePlayerStore } from '@/stores/player';
-import { useLyricStore } from '@/stores/lyric';
+import { usePlayerStore } from '@/store/player';
+import { useLyricStore } from '@/store/lyric';
 import { formatDuration } from '@/core/utils';
+import { sanitizeHtml } from '@/utils/sanitize';
 
 export default defineComponent({
   name: 'PlayController',
@@ -121,6 +122,7 @@ export default defineComponent({
       audioElement,
       handleLockorNot,
       formatDuration,
+      sanitizeHtml,
     };
   },
 });

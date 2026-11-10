@@ -5,7 +5,7 @@ import prettier from 'eslint-config-prettier';
 
 export default [
   {
-    ignores: ['dist', 'dist.bak-*', 'node_modules', 'auto-imports.d.ts', 'components.d.ts'],
+    ignores: ['dist', 'dist.bak*', 'node_modules', 'auto-imports.d.ts', 'components.d.ts'],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,
@@ -21,8 +21,9 @@ export default [
   },
   {
     rules: {
-      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+      'no-console': 'error',
       'vue/multi-word-component-names': 'off',
       'vue/no-setup-props-destructure': 'off',
     },

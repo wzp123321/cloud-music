@@ -1,4 +1,4 @@
-import { getRequest } from '@/services/request';
+import { getRequest } from '@/apis/request';
 
 const musicService = {
   /**

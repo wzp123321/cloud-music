@@ -1,4 +1,4 @@
-import { getRequest } from '../../services/request';
+import { getRequest } from '../../apis/request';
 
 /**
  * 相似推荐接口封装（simi_*）

@@ -113,7 +113,7 @@ import { ElMessageBox } from 'element-plus';
 
 import message from '@/utils/message';
 
-import { useUserStore } from '@/stores/user';
+import { useUserStore } from '@/store/user';
 
 export default defineComponent({
   name: 'AppHeader',

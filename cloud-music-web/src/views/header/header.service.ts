@@ -9,7 +9,7 @@ import { ref } from 'vue';
 import { menus as menuTabs } from './constant/index';
 
 import { HTabsVO } from './header-api';
-import { getRequest } from '@/services/request';
+import { getRequest } from '@/apis/request';
 import {
   getSearchHot,
   getSearchHotDetail,
@@ -17,7 +17,7 @@ import {
   SE_IHotItem,
   SE_IHotDetailItem,
   SE_ISuggestItem,
-} from '@/services/search-enhance.api';
+} from '@/apis/search-enhance.api';
 
 // 建议类型映射（模块级纯函数，不依赖实例状态）
 const mapSuggestType = (key: string): SE_ISuggestItem['type'] => {

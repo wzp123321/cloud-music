@@ -1,5 +1,5 @@
-import { Common_IUserVO } from '../../services/common-api/user-api';
-import { getRequest, postRequest } from '../../services/request';
+import { Common_IUserVO } from '../../apis/common-api/user-api';
+import { getRequest, postRequest } from '../../apis/request';
 
 /**
  * 评论互动接口封装（comment-interaction）

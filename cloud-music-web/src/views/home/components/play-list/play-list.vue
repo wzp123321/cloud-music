@@ -48,8 +48,8 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue';
-import { usePlaylistStore } from '@/stores/playlist';
-import { usePlayerStore } from '@/stores/player';
+import { usePlaylistStore } from '@/store/playlist';
+import { usePlayerStore } from '@/store/player';
 import { PL_IPlayVO } from './play-list.api';
 
 const playList = usePlaylistStore();
