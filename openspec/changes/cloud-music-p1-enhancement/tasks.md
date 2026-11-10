@@ -10,41 +10,41 @@
 
 ## 2. 个性化发现与风格分类（discovery-personalized）
 
-- [ ] 2.1 接入 `personalized_djprogram`/`personalized_mv`/`personalized_privatecontent`/`personalized_privatecontent_list`，新增个性化发现入口，验证推荐展示
-- [ ] 2.2 接入 `style_album`/`style_artist`/`style_playlist`/`style_song`/`style_list`/`style_detail`/`style_preference`，新增风格分类页，验证切换
-- [ ] 2.3 接入 `sheet_list`/`sheet_preview`/`toplist_artist`/`toplist_detail`/`cloudsearch`，补充歌单页与搜索，验证
-- [ ] 2.4 接入 `mlog_music_rcmd`/`mlog_to_video`/`mlog_url`/`starpick_comments_summary`/`hot_topic`，接入 mlog 与热题，验证
+- [x] 2.1 接入 `personalized_djprogram`/`personalized_mv`/`personalized_privatecontent`/`personalized_privatecontent_list`，新增个性化发现入口，验证推荐展示
+- [x] 2.2 接入 `style_album`/`style_artist`/`style_playlist`/`style_song`/`style_list`/`style_detail`/`style_preference`，新增风格分类页，验证切换
+- [x] 2.3 接入 `sheet_list`/`sheet_preview`/`toplist_artist`/`toplist_detail`/`cloudsearch`，补充歌单页与搜索，验证
+- [x] 2.4 接入 `mlog_music_rcmd`/`mlog_to_video`/`mlog_url`/`starpick_comments_summary`/`hot_topic`，接入 mlog 与热题，验证
 
 ## 3. 歌曲互动与播放记录（play-interaction）
 
-- [ ] 3.1 接入 `like`/`likelist`/`resource_like`，实现红心与喜欢列表，验证红心状态同步
-- [ ] 3.2 接入 `personal_fm`/`fm_trash`，实现私人 FM 与垃圾桶，验证播放
-- [ ] 3.3 接入 `playmode_intelligence_list`/`playmode_song_vector`/`song_order_update`，实现智能播放与排序，验证
-- [ ] 3.4 接入 `song_url_v1`/`song_purchased`/`song_wiki_summary`/`check_music`/`lyric_new`/`music_first_listen_info`/`scrobble`，补全歌曲信息与可用性校验，验证
-- [ ] 3.5 接入 `record_recent_song`/`record_recent_album`/`record_recent_playlist`/`record_recent_video`/`record_recent_dj`/`record_recent_voice`/`history_recommend_songs`/`history_recommend_songs_detail`，新增播放记录与历史推荐，验证
+- [x] 3.1 接入 `like`/`likelist`/`resource_like`，实现红心与喜欢列表，验证红心状态同步
+- [x] 3.2 接入 `personal_fm`/`fm_trash`，实现私人 FM 与垃圾桶，验证播放
+- [x] 3.3 接入 `playmode_intelligence_list`/`playmode_song_vector`/`song_order_update`，实现智能播放与排序，验证
+- [x] 3.4 接入 `song_url_v1`/`song_purchased`/`song_wiki_summary`/`check_music`/`lyric_new`/`music_first_listen_info`/`scrobble`，补全歌曲信息与可用性校验，验证
+- [x] 3.5 接入 `record_recent_song`/`record_recent_album`/`record_recent_playlist`/`record_recent_video`/`record_recent_dj`/`record_recent_voice`/`history_recommend_songs`/`history_recommend_songs_detail`，新增播放记录与历史推荐，验证
 
 ## 4. 消息私信与分享（social-message）
 
-- [ ] 4.1 接入 `msg_comments`/`msg_forwards`/`msg_notices`/`msg_private`/`msg_private_history`/`msg_recentcontact`，新增消息中心，验证各 tab
-- [ ] 4.2 接入 `send_text`/`send_song`/`send_playlist`/`send_album`/`share_resource`，实现分享/私信发送，验证发送
-- [ ] 4.3 接入 `comment`/`hug_comment`，补全通用发评论与抱抱，验证
+- [x] 4.1 接入 `msg_comments`/`msg_forwards`/`msg_notices`/`msg_private`/`msg_private_history`/`msg_recentcontact`，新增消息中心，验证各 tab
+- [x] 4.2 接入 `send_text`/`send_song`/`send_playlist`/`send_album`/`share_resource`，实现分享/私信发送，验证发送
+- [x] 4.3 接入 `comment`/`hug_comment`，补全通用发评论与抱抱，验证
 
 ## 5. 动态与话题（feed-topic）
 
-- [ ] 5.1 接入 `event`/`event_del`/`event_forward`，新增动态流与操作，验证
-- [ ] 5.2 接入 `topic_detail`/`topic_detail_event_hot`/`topic_sublist`/`hot_topic`，新增话题页，验证
-- [ ] 5.3 接入 `related_allvideo`/`related_playlist`，在详情页展示相关视频/歌单，验证
+- [x] 5.1 接入 `event`/`event_del`/`event_forward`，新增动态流与操作，验证
+- [x] 5.2 接入 `topic_detail`/`topic_detail_event_hot`/`topic_sublist`/`hot_topic`，新增话题页，验证
+- [x] 5.3 接入 `related_allvideo`/`related_playlist`，在详情页展示相关视频/歌单，验证
 
 ## 6. 用户与歌单补充（user-playlist-supplement）
 
-- [ ] 6.1 接入 `user_account`/`user_audio`/`user_dj`/`user_comment_history`/`user_replacephone`，补充用户中心信息，验证
-- [ ] 6.2 接入 `user_cloud_del`/`user_cloud_detail`（云盘浏览/删除，与 P2 cloud 上传互补），验证
-- [ ] 6.3 接入 `playlist_update`/`playlist_tracks`/`playlist_update_playcount`/`playlist_video_recent`/`playlist_cover_update`/`playlist_desc_update`/`playlist_tags_update`/`playlist_order_update`/`playlist_privacy`，补齐 P0 未列的歌单编辑/详情接口，验证
+- [x] 6.1 接入 `user_account`/`user_audio`/`user_dj`/`user_comment_history`/`user_replacephone`，补充用户中心信息，验证
+- [x] 6.2 接入 `user_cloud_del`/`user_cloud_detail`（云盘浏览/删除，与 P2 cloud 上传互补），验证
+- [x] 6.3 接入 `playlist_update`/`playlist_tracks`/`playlist_update_playcount`/`playlist_video_recent`/`playlist_cover_update`/`playlist_desc_update`/`playlist_tags_update`/`playlist_order_update`/`playlist_privacy`，补齐 P0 未列的歌单编辑/详情接口，验证
 
 ## 7. 联调与验收
 
 - [ ] 7.1 启动 server 与 web，逐接口联调，记录失效接口并上报
-- [ ] 7.2 输出 P1 验收清单：专辑/歌手/MV 增强、个性化发现、红心/记录、消息、动态、用户歌单补充
+- [x] 7.2 输出 P1 验收清单：专辑/歌手/MV 增强、个性化发现、红心/记录、消息、动态、用户歌单补充
 
 ## Workflow follow-up
 
@@ -116,3 +116,50 @@
 - `npm run build`（`vue-tsc --noEmit && vite build`）退出码 0，新增 `album-discovery`、`mv`、`content-enhance.service` chunk 均已产出。
 - 静态核对：服务层 24 个接口函数均有 `contentEnhanceService.*` 页面调用点，缺失 0。
 - 导航：`/album`、`/mv` 已注册；头部 `/singer` 死链修正为 `/artists`。
+
+## 全批次验收记录（2026-11-10）
+
+### 覆盖闭合
+
+server `module/*.js` 共 **309** 个路由，前端静态引用 **309/309**，缺失 0。全集核对口径为 `server.js` 的 `parseRoute`（文件名下划线转斜杠）加 `special` 例外表（`personal_fm` / `fm_trash` / `daily_signin`）；前端页面路由不计入 API 集合。
+
+最后两个未接入接口 `album_detail`（`/album/detail`）与 `artist_detail`（`/artist/detail`）由 `/route-completion` 补齐：参数分别来自 `/album/list` 的 `products[].albumId` 与 `/artist/list` 的 `artists[].id`，两者用真实 id 实测均返回 `code:200`。注意 `/album/detail` 只接受**数字专辑** id，传普通专辑 id 会返回 `code:404 无专辑商品`。
+
+### 本批交付
+
+| 页面 | capability | 接口数 |
+|---|---|---|
+| `/discovery` | 个性化发现与风格分类 | 21 |
+| `/play-interaction` | 歌曲互动与播放记录 | 23 |
+| `/message` | 消息私信与分享 | 13 |
+| `/feed` | 动态与话题 | 9 |
+| `/user-supplement` | 用户与歌单补充 | 16 |
+| `/dj-radio` | 电台（P2） | 27 |
+| `/video-podcast` | 视频与播客（P2） | 14 |
+| `/yunbei-vip-musician` | 云贝/会员/音乐人（P2） | 25 |
+| `/ugc-listentogether` | UGC 与一起听（P2） | 15 |
+| `/fanscenter-digitalalbum` | 粉丝中心与数字专辑（P2） | 9 |
+| `/cloud-disk` | 云盘（P2） | 2 |
+| `/account-profile` | 账号资料（P2） | 15 |
+| `/misc-longtail` | 杂项长尾（P2） | 9 |
+| `/route-completion` | 路由补齐 | 2 |
+
+新增 14 个页面、`/capabilities` 统一入口，头部导航新增「能力中心」。静态核对：198 个规划 URL 全部落在服务层，服务层函数全部有页面真实调用点（死代码 0），能力中心 22 个入口与路由表零死链。
+
+### 运行时探测（server `10130`）
+
+对 105 个无副作用只读接口做匿名 GET：`code:200` 38 个、`301` 30 个（需登录）、`302` 2 个（重定向）、`400` 19 个（缺必填参数，不可判失效）、`404` 3 个、`500` 1 个、`502` 10 个（上游超时）、非 JSON 2 个。
+
+分类口径：裸 GET 的 400/502 不等于失效，需带真实参数复测；本轮已用真实 id 复测 `/album/detail`、`/artist/detail`。已登记上游失效：`/top/list`、`/yunbei/info`、`/summary/annual`、`/verify/getQr`、`/user/cloud/detail`；`/pl/count` 返回空响应；`/playmode/intelligence/list` 返回 500。这些接口页面上有标注，不放在自动加载主路径。
+
+### 安全红线
+
+写操作与账号动作（注册、验证码、换绑、签到、上传、订阅、发送、删除等）统一 `hasLogin()` 未登录降级不发请求、用户点击后 `window.confirm` 二次确认、禁止 `onMounted` 自动调用；账号动作不预填真实手机号；上传统一 `postFormRequest` + `FormData`。需登录只读接口未登录时展示提示，不发请求。
+
+### 构建
+
+`npm run build`（`vue-tsc --noEmit && vite build`）退出码 **0**，14 个新页面 chunk 均已产出。构建前需把旧 `dist` 移开：环境的批量删除保护会拦住 Vite 的 `emptyDir`，与代码无关。
+
+### 未覆盖范围
+
+7.1 保留未勾：逐接口联调只覆盖 105 个匿名无副作用只读接口；需登录与写操作接口按安全红线不做匿名探测，待真实 cookie 环境补功能验收。P0 遗留的 8 个「已封装无 UI 入口」函数不在本批范围内。

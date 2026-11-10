@@ -194,6 +194,17 @@ const contentEnhanceService = {
   async getMvSublist(params: { limit?: number; offset?: number } = {}): Promise<MvSublistRes> {
     return await getRequest('/mv/sublist', { limit: params.limit || 25, offset: params.offset || 0 });
   },
+  /**
+   * 数字专辑详情：id ← /album/list 的 products[].albumId（普通专辑 id 会返回 404「无专辑商品」）
+   * 与专辑详情页使用的 /album 是不同的上游接口。
+   */
+  async getAlbumDetailExtra(params: { id: number | string }): Promise<any> {
+    return await getRequest('/album/detail', { id: params.id });
+  },
+  /** 歌手详情补充信息：id ← /artist/list 的 artists[].id 或 /artist_detail?id= */
+  async getArtistDetailExtra(params: { id: number | string }): Promise<any> {
+    return await getRequest('/artist/detail', { id: params.id });
+  },
   //#endregion
 };
 

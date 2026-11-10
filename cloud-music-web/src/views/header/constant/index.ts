@@ -19,4 +19,8 @@ export const menus = [
     name: 'MV',
     url: '/mv',
   },
+  {
+    name: '能力中心',
+    url: '/capabilities',
+  },
 ];

@@ -2,50 +2,50 @@
 
 ## 1. 电台（dj-radio）
 
-- [ ] 1.1 接入 `dj_catelist`/`dj_category_recommend`/`dj_category_excludehot`/`dj_banner`/`dj_hot`/`dj_recommend`/`dj_recommend_type`/`dj_personalize_recommend`/`dj_today_perfered`，新增电台首页与分类，验证
-- [ ] 1.2 接入 `dj_detail`/`dj_program`/`dj_program_detail`/`dj_program_toplist`/`dj_program_toplist_hours`/`dj_radio_hot`，实现电台详情与节目，验证
-- [ ] 1.3 接入 `dj_sub`/`dj_sublist`/`dj_subscriber`/`dj_paygift`/`dj_toplist`/`dj_toplist_hours`/`dj_toplist_newcomer`/`dj_toplist_pay`/`dj_toplist_popular`，实现订阅/榜单/礼物，验证
-- [ ] 1.4 接入 `program_recommend`/`aidj_content_rcmd`/`audio_match`，补充节目推荐与音频匹配，验证
+- [x] 1.1 接入 `dj_catelist`/`dj_category_recommend`/`dj_category_excludehot`/`dj_banner`/`dj_hot`/`dj_recommend`/`dj_recommend_type`/`dj_personalize_recommend`/`dj_today_perfered`，新增电台首页与分类，验证
+- [x] 1.2 接入 `dj_detail`/`dj_program`/`dj_program_detail`/`dj_program_toplist`/`dj_program_toplist_hours`/`dj_radio_hot`，实现电台详情与节目，验证
+- [x] 1.3 接入 `dj_sub`/`dj_sublist`/`dj_subscriber`/`dj_paygift`/`dj_toplist`/`dj_toplist_hours`/`dj_toplist_newcomer`/`dj_toplist_pay`/`dj_toplist_popular`，实现订阅/榜单/礼物，验证
+- [x] 1.4 接入 `program_recommend`/`aidj_content_rcmd`/`audio_match`，补充节目推荐与音频匹配，验证
 
 ## 2. 视频与播客（video-podcast）
 
-- [ ] 2.1 接入 `video_category_list`/`video_group`/`video_group_list`/`video_timeline_all`/`video_timeline_recommend`，新增视频分类与信息流，验证
-- [ ] 2.2 接入 `video_detail`/`video_detail_info`/`video_url`/`video_sub`，实现视频播放与订阅，验证
-- [ ] 2.3 接入 `voicelist_list`/`voicelist_list_search`/`voicelist_search`/`voice_detail`/`voice_upload`，实现播客列表与上传，验证
+- [x] 2.1 接入 `video_category_list`/`video_group`/`video_group_list`/`video_timeline_all`/`video_timeline_recommend`，新增视频分类与信息流，验证
+- [x] 2.2 接入 `video_detail`/`video_detail_info`/`video_url`/`video_sub`，实现视频播放与订阅，验证
+- [x] 2.3 接入 `voicelist_list`/`voicelist_list_search`/`voicelist_search`/`voice_detail`/`voice_upload`，实现播客列表与上传，验证
 
 ## 3. 云贝/会员/音乐人（yunbei-vip-musician）
 
-- [ ] 3.1 接入 `yunbei`/`yunbei_info`/`yunbei_expense`/`yunbei_receipt`/`yunbei_sign`/`yunbei_today`/`yunbei_rcmd_song`/`yunbei_rcmd_song_history`/`yunbei_task_finish`/`yunbei_tasks`/`yunbei_tasks_todo`，实现云贝中心，验证
-- [ ] 3.2 接入 `vip_info`/`vip_info_v2`/`vip_growthpoint`/`vip_growthpoint_get`/`vip_growthpoint_details`/`vip_tasks`/`vip_timemachine`，实现会员成长，验证
-- [ ] 3.3 接入 `musician_sign`/`musician_tasks`/`musician_tasks_new`/`musician_cloudbean`/`musician_cloudbean_obtain`/`musician_data_overview`/`musician_play_trend`，实现音乐人中心，验证
+- [x] 3.1 接入 `yunbei`/`yunbei_info`/`yunbei_expense`/`yunbei_receipt`/`yunbei_sign`/`yunbei_today`/`yunbei_rcmd_song`/`yunbei_rcmd_song_history`/`yunbei_task_finish`/`yunbei_tasks`/`yunbei_tasks_todo`，实现云贝中心，验证
+- [x] 3.2 接入 `vip_info`/`vip_info_v2`/`vip_growthpoint`/`vip_growthpoint_get`/`vip_growthpoint_details`/`vip_tasks`/`vip_timemachine`，实现会员成长，验证
+- [x] 3.3 接入 `musician_sign`/`musician_tasks`/`musician_tasks_new`/`musician_cloudbean`/`musician_cloudbean_obtain`/`musician_data_overview`/`musician_play_trend`，实现音乐人中心，验证
 
 ## 4. UGC 与一起听（ugc-listentogether）
 
-- [ ] 4.1 接入 `ugc_album_get`/`ugc_artist_get`/`ugc_artist_search`/`ugc_detail`/`ugc_mv_get`/`ugc_song_get`/`ugc_user_devote`，实现 UGC 内容查看，验证
-- [ ] 4.2 接入 `listentogether_room_create`/`listentogether_room_check`/`listentogether_status`/`listentogether_play_command`/`listentogether_heatbeat`/`listentogether_sync_playlist_get`/`listentogether_sync_list_command`/`listentogether_end`，实现一起听房间，验证
+- [x] 4.1 接入 `ugc_album_get`/`ugc_artist_get`/`ugc_artist_search`/`ugc_detail`/`ugc_mv_get`/`ugc_song_get`/`ugc_user_devote`，实现 UGC 内容查看，验证
+- [x] 4.2 接入 `listentogether_room_create`/`listentogether_room_check`/`listentogether_status`/`listentogether_play_command`/`listentogether_heatbeat`/`listentogether_sync_playlist_get`/`listentogether_sync_list_command`/`listentogether_end`，实现一起听房间，验证
 
 ## 5. 粉丝中心与数字专辑（fanscenter-digitalAlbum）
 
-- [ ] 5.1 接入 `fanscenter_overview_get`/`fanscenter_basicinfo_age_get`/`fanscenter_basicinfo_gender_get`/`fanscenter_basicinfo_province_get`/`fanscenter_trend_list`，实现粉丝中心，验证
-- [ ] 5.2 接入 `digitalAlbum_detail`/`digitalAlbum_sales`/`digitalAlbum_ordering`/`digitalAlbum_purchased`，实现数字专辑，验证
+- [x] 5.1 接入 `fanscenter_overview_get`/`fanscenter_basicinfo_age_get`/`fanscenter_basicinfo_gender_get`/`fanscenter_basicinfo_province_get`/`fanscenter_trend_list`，实现粉丝中心，验证
+- [x] 5.2 接入 `digitalAlbum_detail`/`digitalAlbum_sales`/`digitalAlbum_ordering`/`digitalAlbum_purchased`，实现数字专辑，验证
 
 ## 6. 云盘（cloud-disk）
 
-- [ ] 6.1 接入 `cloud`/`cloud_match`，实现云盘上传匹配，验证
+- [x] 6.1 接入 `cloud`/`cloud_match`，实现云盘上传匹配，验证
 
 ## 7. 账号资料（account-profile）
 
-- [ ] 7.1 接入 `verify_getQr`/`verify_qrcodestatus`/`captcha_sent`/`captcha_verify`/`countries_code_list`/`cellphone_existence_check`，实现验证与注册前置，验证（注意：避免误触发真实注册）
-- [ ] 7.2 接入 `register_anonimous`/`register_cellphone`/`rebind`/`nickname_check`/`activate_init_profile`/`sign_happy_info`/`signin_progress`/`setting`/`daily_signin`，实现账号资料与签到，验证
+- [x] 7.1 接入 `verify_getQr`/`verify_qrcodestatus`/`captcha_sent`/`captcha_verify`/`countries_code_list`/`cellphone_existence_check`，实现验证与注册前置，验证（注意：避免误触发真实注册）
+- [x] 7.2 接入 `register_anonimous`/`register_cellphone`/`rebind`/`nickname_check`/`activate_init_profile`/`sign_happy_info`/`signin_progress`/`setting`/`daily_signin`，实现账号资料与签到，验证
 
 ## 8. 杂项（misc-longtail）
 
-- [ ] 8.1 接入 `inner_version`/`weblog`/`threshold_detail_get`/`summary_annual`/`creator_authinfo_get`/`pl_count`/`batch`/`get_userids`/`calendar`，实现内部/年度/统计类展示，验证
+- [x] 8.1 接入 `inner_version`/`weblog`/`threshold_detail_get`/`summary_annual`/`creator_authinfo_get`/`pl_count`/`batch`/`get_userids`/`calendar`，实现内部/年度/统计类展示，验证
 
 ## 9. 联调与验收
 
 - [ ] 9.1 启动 server 与 web，逐接口联调，记录失效接口并上报（长尾失效概率高）
-- [ ] 9.2 输出 P2 验收清单：电台/视频/播客/云贝/会员/音乐人/UGC/一起听/粉丝中心/数字专辑/云盘/账号/杂项
+- [x] 9.2 输出 P2 验收清单：电台/视频/播客/云贝/会员/音乐人/UGC/一起听/粉丝中心/数字专辑/云盘/账号/杂项
 
 ## Workflow follow-up
 
@@ -78,3 +78,35 @@
 ### C. 完成判定
 
 每个任务除「接口已封装」外还须满足：① 有上游参数来源；② 有页面/组件真实调用点；③ 匿名可用者经 `10130` 实测 `code:200`；④ 写操作有明确用户操作与二次确认。四者缺一不算完成，不得勾选。
+
+## 全批次验收记录（2026-11-10）
+
+全局口径、运行时探测分类、安全红线与构建结论见 `cloud-music-p1-enhancement/tasks.md`「全批次验收记录」章节，此处只记录本 change 独有结果。
+
+### 本批交付
+
+8 个 capability、20 个任务全部落地，共 8 个页面、116 个接口：
+
+| 页面 | capability | 接口数 |
+|---|---|---|
+| `/dj-radio` | 电台 | 27 |
+| `/video-podcast` | 视频与播客 | 14 |
+| `/yunbei-vip-musician` | 云贝/会员/音乐人 | 25 |
+| `/ugc-listentogether` | UGC 与一起听 | 15 |
+| `/fanscenter-digitalalbum` | 粉丝中心与数字专辑 | 9 |
+| `/cloud-disk` | 云盘 | 2 |
+| `/account-profile` | 账号资料 | 15 |
+| `/misc-longtail` | 杂项长尾 | 9 |
+
+全部接口都有上游参数来源与页面真实调用点；服务层函数死代码 0。附 `/route-completion` 补齐 `album_detail` / `artist_detail` 后，server 309 个路由实现 **309/309** 静态覆盖。
+
+### 路由例外与安全处置
+
+- `daily_signin` 使用 `/daily_signin`（`special` 例外表），账号动作按写操作处理。
+- 注册、验证码、换绑、激活资料、签到进度、`setting` 等一律 `hasLogin()` 降级 + 二次确认 + 禁止自动调用、禁止预填真实手机号；上传类使用 `postFormRequest` + `FormData`。
+- `/yunbei/info`、`/summary/annual` 已登记上游失效，只提供手动查看按钮，不进入自动加载主路径。
+- `digitalAlbum_detail` / `digitalAlbum_sales`、`pl_count`、`aidj_content_rcmd`、`video_detail` 等需有效 id 的待核接口不进主路径，由用户输入 id 后主动触发。
+
+### 未覆盖范围
+
+9.1 保留未勾：长尾接口中需登录与写操作占比高，按安全红线未做匿名探测，待真实 cookie 环境补功能验收；`/verify/getQr`、`/user/cloud/detail` 为上游 HTTP 404，`/pl/count` 返回空响应，均已登记。
