@@ -174,7 +174,7 @@
       <div v-for="(video, index) in artistDetail.videos" :key="'video_' + index" class="artist-detail--video-item">
         <cm-skeleton
           width="100%"
-          :height="'150px'"
+          :height="''"
           :image-url="video.coverUrl || ''"
           :border-radius="'6px'"
         ></cm-skeleton>
@@ -466,12 +466,18 @@ artistDetail.init();
 
 .artist-detail--video-list {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 20px;
 }
 
 .artist-detail--video-item {
   cursor: pointer;
+
+  // 视频封面为 16:9，跟随列宽缩放
+  :deep(.cm-skeleton) {
+    height: auto;
+    aspect-ratio: 16 / 9;
+  }
 }
 
 .artist-detail--video-name {

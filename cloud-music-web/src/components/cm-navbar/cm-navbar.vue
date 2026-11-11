@@ -116,7 +116,7 @@ const router = useRouter();
       bottom: 1px;
       width: 100%;
       height: 6px;
-      background: #ffe443;
+      background: #c20c0c;
       z-index: -1;
     }
   }

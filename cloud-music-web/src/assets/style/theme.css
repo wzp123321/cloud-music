@@ -1,14 +1,23 @@
 :root {
+  /* Element Plus 主色对齐品牌红 */
+  --el-color-primary: #c20c0c !important;
+  --el-color-primary-light-3: #d5453d !important;
+  --el-color-primary-light-5: #e17d78 !important;
+  --el-color-primary-light-7: #edb5b2 !important;
+  --el-color-primary-light-8: #f3cfcd !important;
+  --el-color-primary-light-9: #f9e7e6 !important;
+  --el-color-primary-dark-2: #a20a0a !important;
+
   --color-border25: rgba(0, 0, 0, 0.25);
 
-  /* 基础色 */
+  /* 基础色（品牌主色统一红色系） */
   --color-default: white !important;
-  --color-hover: rgba(230, 247, 255, 1) !important;
-  --color-active: rgba(186, 231, 255, 1) !important;
-  --color-primary: #ffe12c !important;
-  --color-btn-primary: rgba(24, 144, 255, 1) !important;
-  --color-primary-hover: rgba(64, 169, 255, 1) !important;
-  --color-primary-active: rgba(9, 109, 217, 1) !important;
+  --color-hover: rgba(194, 12, 12, 0.06) !important;
+  --color-active: rgba(194, 12, 12, 0.12) !important;
+  --color-primary: #c20c0c !important;
+  --color-btn-primary: #c20c0c !important;
+  --color-primary-hover: rgba(220, 58, 58, 1) !important;
+  --color-primary-active: rgba(162, 10, 10, 1) !important;
   --color-danger: rgba(255, 78, 87, 1) !important;
   --color-danger-hover: rgba(255, 78, 87, 0.15) !important;
   --color-danger-active: rgba(210, 7, 0, 1) !important;
@@ -17,7 +26,7 @@
   --color-error: rgba(255, 78, 87, 1) !important;
   --color-success: rgba(66, 199, 84, 1) !important;
   --color-warning: rgba(255, 173, 38, 1) !important;
-  --color-link: rgba(54, 129, 255, 1) !important;
+  --color-link: #c20c0c !important;
 
   /* 文本色 */
   --color-text: black !important;
@@ -30,7 +39,7 @@
   --color-text-background: rgba(0, 0, 0, 0.04) !important;
 
   /* 边框 */
-  --color-box-focus: rgba(24, 144, 255, 0.2) !important;
+  --color-box-focus: rgba(194, 12, 12, 0.18) !important;
 
   /* 表格 */
   --color-table-header: #fafafa !important;

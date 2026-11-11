@@ -1,7 +1,7 @@
 <template>
-<div class="cm-playlist-card" @click="linkToDetailPage(id)">
+<div class="cm-playlist-card" :style="{ '--card-size': size + 'px' }" @click="linkToDetailPage(id)">
   <div class="cm-playlist-card--cover">
-    <cm-skeleton width="100%" :height="'262px'" :image-url="coverImageUrl" source-type="image"> </cm-skeleton>
+    <cm-skeleton width="100%" :height="size + 'px'" :image-url="coverImageUrl" source-type="image"> </cm-skeleton>
     <span v-if="tag" class="cm-playlist-card--tag">{{ tag }}</span>
   </div>
   <h6 :title="title">{{ title }}</h6>
@@ -52,6 +52,11 @@ defineProps({
       type: String,
       default: '',
     },
+    // 封面边长；首页等信息密度高的场景可传小尺寸，其他页面保持 262px 默认值
+    size: {
+      type: Number,
+      default: 262,
+    },
   });
 const router = useRouter();
     const linkToDetailPage = (id: number) => {
@@ -69,8 +74,8 @@ const router = useRouter();
 
 <style lang="less" scoped>
 .cm-playlist-card {
-  width: 262px;
-  height: 350px;
+  width: var(--card-size, 262px);
+  min-height: calc(var(--card-size, 262px) + 88px);
   overflow: hidden;
   margin-bottom: 24px;
 
@@ -88,8 +93,8 @@ const router = useRouter();
 
   &--cover {
     position: relative;
-    width: 262px;
-    height: 262px;
+    width: var(--card-size, 262px);
+    height: var(--card-size, 262px);
     transition: all 0.75s;
     overflow: hidden;
 

@@ -1,7 +1,7 @@
 <template>
 <div class="cm-mv-card" @click="linkToMvPlay">
   <div class="cm-mv-card--cover">
-    <cm-skeleton width="100%" :height="'210px'" :image-url="coverImageUrl" source-type="image"> </cm-skeleton>
+    <cm-skeleton width="100%" :height="''" :image-url="coverImageUrl" source-type="image"> </cm-skeleton>
     <div class="duration flex-row-justify-center">
       <span><i class="iconfont icon-z mr2"></i>{{ formatPlayCount(playCount) }}</span>
       <span>{{ formatDuration(duration) }}</span>
@@ -94,7 +94,8 @@ const router = useRouter();
   &--cover {
     position: relative;
     width: 320px;
-    height: 210px;
+    height: auto;
+    aspect-ratio: 16 / 9;
     transition: all 0.75s;
     overflow: hidden;
     border: 1px solid var(--color-text-background);

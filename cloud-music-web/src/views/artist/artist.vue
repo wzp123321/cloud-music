@@ -36,7 +36,7 @@
         >
           <cm-skeleton
             width="100%"
-            :height="'160px'"
+            :height="''"
             :image-url="item.img1v1Url || item.picUrl || ''"
             :border-radius="'50%'"
           ></cm-skeleton>
@@ -248,7 +248,7 @@ onMounted(() => {
 
   &--grid {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(6, minmax(0, 1fr));
     gap: 24px;
     margin-top: 20px;
   }
@@ -256,6 +256,12 @@ onMounted(() => {
   &--card {
     cursor: pointer;
     text-align: center;
+
+    // 歌手头像为正方形，跟随列宽缩放
+    :deep(.cm-skeleton) {
+      height: auto;
+      aspect-ratio: 1;
+    }
 
     &:hover .artist--name {
       color: var(--color-primary, #c20c0c);

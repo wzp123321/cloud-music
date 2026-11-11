@@ -103,6 +103,9 @@ const create = () => {
       });
       if (res?.code !== 200) {
         message.error(res?.message);
+      } else {
+        message.success('登录成功');
+        onLoginSuccess(res?.profile);
       }
     } catch {
       message.error('服务器异常');

@@ -48,7 +48,7 @@
         @click="linkToAlbum(item.id)"
       >
         <div v-if="item.rank" class="album-discovery--rank">{{ item.rank }}</div>
-        <cm-skeleton width="100%" :height="'180px'" :image-url="item.cover" :border-radius="'6px'"></cm-skeleton>
+        <cm-skeleton width="100%" :height="''" :image-url="item.cover" :border-radius="'6px'"></cm-skeleton>
         <p class="album-discovery--name" :title="item.title">{{ item.title }}</p>
         <p class="album-discovery--sub" :title="item.subtitle">{{ item.subtitle }}</p>
       </div>
@@ -221,8 +221,8 @@ onMounted(() => {
     cursor: pointer;
 
     &.active {
-      border-color: var(--color-primary, #c20c0c);
-      color: var(--color-primary, #c20c0c);
+      border-color: #c20c0c;
+      color: #c20c0c;
       background: rgba(194, 12, 12, 0.06);
     }
   }
@@ -255,7 +255,7 @@ onMounted(() => {
 
     &.active {
       color: #fff;
-      background: var(--color-primary, #c20c0c);
+      background: #c20c0c;
     }
   }
 
@@ -267,7 +267,7 @@ onMounted(() => {
 
   &--grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 24px;
     margin-top: 20px;
   }
@@ -276,6 +276,12 @@ onMounted(() => {
     position: relative;
     cursor: pointer;
     transition: transform 0.2s;
+
+    // 封面为正方形，跟随列宽缩放而不是写死高度
+    :deep(.cm-skeleton) {
+      height: auto;
+      aspect-ratio: 1;
+    }
 
     &:hover {
       transform: translateY(-4px);

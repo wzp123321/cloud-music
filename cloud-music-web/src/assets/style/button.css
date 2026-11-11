@@ -23,9 +23,15 @@ button[radius]{
 
 /* 普通按钮-主要 */
 button[primary] {
-  color: var(--color-text-primary);
+  color: var(--color-default);
   background-color: var(--color-primary);
   border-color: var(--color-primary);
+}
+
+button[primary]:enabled:hover {
+  color: var(--color-default);
+  background-color: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
 }
 
 

@@ -44,7 +44,7 @@
       >
         <cm-skeleton
           width="100%"
-          :height="'110px'"
+          :height="''"
           :image-url="card.cover || ''"
           :border-radius="'6px'"
         ></cm-skeleton>
@@ -238,7 +238,7 @@ const onFileChange = (event: Event) => {
 
   &--grid {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(6, minmax(0, 1fr));
     gap: 18px;
     margin-top: 16px;
   }
@@ -246,6 +246,12 @@ const onFileChange = (event: Event) => {
   &--card {
     cursor: pointer;
     transition: transform 0.2s;
+
+    // 封面为正方形，跟随列宽缩放
+    :deep(.cm-skeleton) {
+      height: auto;
+      aspect-ratio: 1;
+    }
 
     &:hover {
       transform: translateY(-4px);

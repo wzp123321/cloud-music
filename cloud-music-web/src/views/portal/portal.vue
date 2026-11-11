@@ -26,42 +26,51 @@
     :load-more-url="'/playlist'"
     @change="portal.queryPlayListByType"
   ></cm-navbar>
-  <div class="mt16 flex-wrap flex-row-justify-start">
+  <div class="portal-playlist-grid mt16">
     <cm-playlist-card
-      v-for="(item, index) in portal.playList"
+      v-for="(item, index) in portal.playList.slice(0, 5)"
       :id="item.id"
       :key="'playlist_'+ index"
       :title="item.name"
       :cover-image-url="item.coverImgUrl"
       :play-count="item.playCount"
+      :size="220"
     ></cm-playlist-card>
   </div>
 
-  <!-- 新碟上架 -->
-  <cm-navbar :title="'新碟上架'" :has-load-more="false"></cm-navbar>
-  <div class="portal-rank mt16 mb48">
-    <port-rank-detail :playlist-v-o="portal.hotMusicRankVO"></port-rank-detail>
-    <port-rank-detail :playlist-v-o="portal.newMusicRankVO"></port-rank-detail>
-    <port-rank-detail :playlist-v-o="portal.surgeRankVO"></port-rank-detail>
-    <port-rank-detail :playlist-v-o="portal.eaMusicRankVO"></port-rank-detail>
-    <port-rank-detail :playlist-v-o="portal.krjpMusicRankVO"></port-rank-detail>
+  <!-- 次要板块默认收起，避免首屏过长 -->
+  <div class="portal-secondary-toggle">
+    <button type="button" @click="showSecondary = !showSecondary">
+      {{ showSecondary ? '收起榜单与热门歌手' : '展开榜单与热门歌手' }}
+    </button>
   </div>
+  <template v-if="showSecondary">
+    <!-- 榜单 -->
+    <cm-navbar :title="'新碟上架'" :has-load-more="false"></cm-navbar>
+    <div class="portal-rank mt16 mb48">
+      <port-rank-detail :playlist-v-o="portal.hotMusicRankVO"></port-rank-detail>
+      <port-rank-detail :playlist-v-o="portal.newMusicRankVO"></port-rank-detail>
+      <port-rank-detail :playlist-v-o="portal.surgeRankVO"></port-rank-detail>
+      <port-rank-detail :playlist-v-o="portal.eaMusicRankVO"></port-rank-detail>
+      <port-rank-detail :playlist-v-o="portal.krjpMusicRankVO"></port-rank-detail>
+    </div>
 
-  <!-- 新碟上架 -->
-  <cm-navbar :title="'热门歌手'" :has-load-more="false"></cm-navbar>
-  <ul class="portal-hot-artists mt24">
-    <li
-      v-for="(item, index) in portal.hotSingerList"
-      :key="'artist_'+ index"
-      class="flex-column"
-      @click="portal.linkToAritstDetail(item.id)"
-    >
-      <cm-skeleton width="100%" :height="'182px'" :image-url="item?.img1v1Url" source-type="image" :border-radius="'50%'">
-      </cm-skeleton>
-      <p class="artist mt17" :title="item?.name">{{ item?.name }}</p>
-      <p class="count mt6">{{ item?.musicSize }}首歌</p>
-    </li>
-  </ul>
+    <!-- 热门歌手 -->
+    <cm-navbar :title="'热门歌手'" :has-load-more="false"></cm-navbar>
+    <ul class="portal-hot-artists mt24">
+      <li
+        v-for="(item, index) in portal.hotSingerList.slice(0, 5)"
+        :key="'artist_'+ index"
+        class="flex-column"
+        @click="portal.linkToAritstDetail(item.id)"
+      >
+        <cm-skeleton width="100%" :height="'182px'" :image-url="item?.img1v1Url" source-type="image" :border-radius="'50%'">
+        </cm-skeleton>
+        <p class="artist mt17" :title="item?.name">{{ item?.name }}</p>
+        <p class="count mt6">{{ item?.musicSize }}首歌</p>
+      </li>
+    </ul>
+  </template>
 </div>
 
 </template>
@@ -75,7 +84,7 @@
  * @Last Modified by: zpwan
  * @Last Modified time: 2022-06-25 16:06:44
  */
-import {  onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 import { ElCarousel, ElCarouselItem } from 'element-plus';
 
 import { usePortal } from './hooks/usePortal';
@@ -86,6 +95,7 @@ import PortalBlockPage from './portal-block-page/portal-block-page.vue';
 
 const portal = usePortal();
 defineOptions({ name: 'Portal' });
+const showSecondary = ref<boolean>(false);
 //初始化
     onMounted(() => {
       portal.init();
@@ -109,19 +119,50 @@ defineOptions({ name: 'Portal' });
     }
   }
 
+  // 整组居中，卡片数量变化时左右留白始终对称
+  &-playlist-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0 18px;
+  }
+
+  &-secondary-toggle {
+    display: flex;
+    justify-content: center;
+    padding: 8px 0 20px;
+
+    button {
+      padding: 8px 28px;
+      border: 1px solid #e0e0e0;
+      border-radius: 20px;
+      background: #fff;
+      color: #666;
+      font-size: 14px;
+      cursor: pointer;
+      transition: color 233ms, border-color 233ms;
+
+      &:hover {
+        color: #333;
+        border-color: #bbb;
+      }
+    }
+  }
+
   &-rank {
     display: grid;
     grid-template-columns: repeat(5, 264px);
     grid-template-rows: repeat(1, 620px);
+    justify-content: center;
     gap: 20px;
     background-color: rgba(247, 247, 247, 1);
   }
 
   &-hot-artists {
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
-    gap: 24px 100px;
+    display: grid;
+    grid-template-columns: repeat(5, 182px);
+    justify-content: center;
+    gap: 24px 64px;
 
     li {
       width: 182px;

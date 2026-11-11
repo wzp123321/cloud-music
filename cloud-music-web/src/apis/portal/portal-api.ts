@@ -200,9 +200,8 @@ export interface DragonBallItem {
  */
 export interface DragonBallRes {
   code?: number;
-  data?: {
-    ballList?: DragonBallItem[];
-  };
+  // 上游两种形态：data 直接是数组，或 data 包一层 ballList
+  data?: DragonBallItem[] | { ballList?: DragonBallItem[] };
   ballList?: DragonBallItem[];
 }
 //#endregion

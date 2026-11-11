@@ -44,7 +44,7 @@
           class="mv-discovery--card"
           @click="linkToMv(item.id)"
         >
-          <cm-skeleton width="100%" :height="'170px'" :image-url="item.cover || ''" :border-radius="'6px'"></cm-skeleton>
+          <cm-skeleton width="100%" :height="''" :image-url="item.cover || ''" :border-radius="'6px'"></cm-skeleton>
           <p class="mv-discovery--name" :title="item.name">{{ item.name }}</p>
           <p class="mv-discovery--sub">{{ item.artistName || '' }} · 播放 {{ formatPlayCount(item.playCount || 0) }}</p>
         </div>
@@ -63,7 +63,7 @@
           class="mv-discovery--card"
           @click="linkToMv(item.id)"
         >
-          <cm-skeleton width="100%" :height="'170px'" :image-url="item.cover || ''" :border-radius="'6px'"></cm-skeleton>
+          <cm-skeleton width="100%" :height="''" :image-url="item.cover || ''" :border-radius="'6px'"></cm-skeleton>
           <p class="mv-discovery--name" :title="item.name">{{ item.name }}</p>
         </div>
       </div>
@@ -248,7 +248,7 @@ onMounted(() => {
 
   &--grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 24px;
     margin-top: 20px;
   }
@@ -256,6 +256,12 @@ onMounted(() => {
   &--card {
     cursor: pointer;
     transition: transform 0.2s;
+
+    // MV 封面为 16:9，跟随列宽缩放
+    :deep(.cm-skeleton) {
+      height: auto;
+      aspect-ratio: 16 / 9;
+    }
 
     &:hover {
       transform: translateY(-4px);

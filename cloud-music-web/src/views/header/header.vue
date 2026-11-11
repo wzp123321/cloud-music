@@ -269,13 +269,13 @@ const route = useRoute();
       }
 
       li:not(.active):hover {
-        background-color: #ffed85;
+        background-color: rgba(194, 12, 12, 0.08);
         transition: all 233ms;
       }
 
       li.active {
-        background-color: #ffe443;
-        color: var(--color-text-title);
+        background-color: #c20c0c;
+        color: #fff;
         font-weight: 600;
       }
     }
@@ -301,7 +301,7 @@ const route = useRoute();
 
         &:focus {
           background: #fff;
-          border-color: #ffe443;
+          border-color: rgba(194, 12, 12, 0.45);
         }
       }
 

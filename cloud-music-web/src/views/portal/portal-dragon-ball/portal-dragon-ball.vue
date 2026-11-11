@@ -1,15 +1,15 @@
 <template>
 <div class="portal-dragon-ball">
-  <ul class="flex-row-justify-start flex-wrap">
+  <ul>
     <li
       v-for="(item, index) in balls()"
       :key="'dragon_' + index"
-      class="portal-dragon-ball--item flex-column flex-row-justify-center"
+      class="portal-dragon-ball--item"
       @click="linkTo(item)"
     >
       <cm-skeleton
         width="100%"
-        :height="'88px'"
+        :height="'68px'"
         :image-url="item.iconUrl"
         source-type="image"
         :border-radius="'50%'"
@@ -30,6 +30,7 @@
 import {  toRef } from 'vue';
 import { useRouter } from 'vue-router';
 
+import message from '@/utils/message';
 import { usePortal } from '../hooks/usePortal';
 import { DragonBallItem } from '../../../apis/portal/portal-api';
 
@@ -43,6 +44,15 @@ const FALLBACK_BALLS: DragonBallItem[] = [
   { id: 'artists', name: '歌手', actionType: 'artists' },
   { id: 'new', name: '最新音乐', actionType: 'new' },
 ];
+
+// 上游金刚区只给 orpheus:// scheme，站内按语义就近映射到已有页面
+const NAME_ROUTES: Record<string, string> = {
+  私人FM: '/play-interaction',
+  有声书: '/dj-radio',
+  数字专辑: '/album',
+  关注新歌: '/feed',
+  收藏家: '/user',
+};
 defineOptions({ name: 'PortalDragonBall' });
 const router = useRouter();
     const dragonBallList = toRef(portal, 'dragonBallList');
@@ -52,35 +62,57 @@ const router = useRouter();
       return api && api.length ? api : FALLBACK_BALLS;
     };
 
-    // 根据入口语义跳转到对应页面
+    // 先按 actionType、再按名称映射、最后按中文关键词；都不命中只提示，不跳错页
     const linkTo = (item: DragonBallItem) => {
       const type = (item.actionType || '').toString();
       const name = (item.name || '').toString();
       const keyword = type || name;
-      if (keyword.includes('daily') || name.includes('每日') || name.includes('推荐')) {
+
+      if (keyword.includes('daily')) {
         portal.linkToDailyRecommend();
         return;
       }
-      if (keyword.includes('rank') || name.includes('榜')) {
+      if (keyword.includes('rank')) {
         portal.linkToRank();
         return;
       }
-      if (keyword.includes('artist') || name.includes('歌手')) {
+      if (keyword.includes('artist')) {
         router.push({ path: '/artists' });
         return;
       }
-      if (keyword.includes('playlist') || name.includes('歌单')) {
+      if (keyword.includes('playlist')) {
         router.push({ path: '/playlist' });
         return;
       }
-      if (keyword.includes('new') || name.includes('新')) {
+      if (keyword.includes('new')) {
         portal.linkToRank();
         return;
       }
-      // 兜底：有可识别 id 的歌单/专辑跳转
-      if (item.id != null) {
-        portal.linkToPlaylist(item.id);
+
+      const mapped = NAME_ROUTES[name];
+      if (mapped) {
+        router.push({ path: mapped });
+        return;
       }
+
+      if (name.includes('每日') || name.includes('推荐')) {
+        portal.linkToDailyRecommend();
+        return;
+      }
+      if (name.includes('榜')) {
+        portal.linkToRank();
+        return;
+      }
+      if (name.includes('歌手')) {
+        router.push({ path: '/artists' });
+        return;
+      }
+      if (name.includes('歌单')) {
+        router.push({ path: '/playlist' });
+        return;
+      }
+
+      message.info(`「${name || '该入口'}」暂未开放`);
     };
 
     ;
@@ -88,19 +120,25 @@ const router = useRouter();
 
 <style lang="less" scoped>
 .portal-dragon-ball {
-  margin-top: 24px;
+  margin-top: 16px;
   background-color: var(--color-default);
   border-radius: 8px;
 
+  // flex + center：入口数量变化时整组始终居中，不会把剩余空间堆在右侧
   ul {
     display: flex;
     flex-wrap: wrap;
-    gap: 24px 40px;
-    padding: 20px 8px;
+    justify-content: center;
+    gap: 16px 28px;
+    padding: 16px 8px;
   }
 
   &--item {
-    width: 88px;
+    display: flex;
+    flex: 0 0 68px;
+    flex-direction: column;
+    align-items: center;
+    width: 68px;
     text-align: center;
     cursor: pointer;
     transition: transform 233ms;
@@ -110,7 +148,8 @@ const router = useRouter();
     }
 
     .name {
-      font-size: 14px;
+      max-width: 100%;
+      font-size: 13px;
       color: #333;
       white-space: nowrap;
       overflow: hidden;

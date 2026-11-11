@@ -3,21 +3,21 @@
   <cm-error v-if="blockPageError" :text="'区块瀑布流暂时不可用'"></cm-error>
   <template v-else>
     <section
-      v-for="(block, bIndex) in blockPageList"
+      v-for="(block, bIndex) in visibleBlocks"
       :key="'block_' + bIndex"
-      class="portal-block-page--section mb32"
+      class="portal-block-page--section"
     >
       <cm-navbar v-if="blockTitle(block)" :title="blockTitle(block)" :has-load-more="false"></cm-navbar>
-      <div class="portal-block-page--row flex-row-justify-start flex-wrap">
+      <div class="portal-block-page--row">
         <div
-          v-for="(res, rIndex) in collectResources(block)"
+          v-for="(res, rIndex) in visibleResources(block)"
           :key="'res_' + bIndex + '_' + rIndex"
           class="portal-block-page--card"
           @click="linkToResource(res)"
         >
           <cm-skeleton
             width="100%"
-            :height="'180px'"
+            :height="'150px'"
             :image-url="resImage(res)"
             source-type="image"
             :border-radius="'6px'"
@@ -26,6 +26,11 @@
         </div>
       </div>
     </section>
+    <div v-if="hasMore" class="portal-block-page--more">
+      <button type="button" class="portal-block-page--more-btn" @click="expanded = !expanded">
+        {{ expanded ? '收起推荐区块' : `展开全部 ${populatedBlocks.length} 个推荐区块` }}
+      </button>
+    </div>
   </template>
 </div>
 
@@ -37,7 +42,7 @@
  * @Description: 首页区块瀑布流（homepage_block_page）
  * @Author: home-recommendation
  */
-import {  toRef } from 'vue';
+import { toRef, ref, computed } from 'vue';
 
 import { usePortal } from '../hooks/usePortal';
 import { HomepageBlock, HomepageBlockResource } from '../../../apis/portal/portal-api';
@@ -52,6 +57,22 @@ const blockPageList = toRef(portal, 'blockPageList');
       const fromCreatives = (block.creatives || []).flatMap((c) => c.resources || []);
       return [...fromCreatives, ...(block.resources || [])];
     };
+
+    // 首屏只展开 3 个有内容的区块、每区块 5 张卡，其余由用户主动展开
+    const VISIBLE_BLOCK_COUNT = 3;
+    const MAX_CARDS_PER_BLOCK = 5;
+    const expanded = ref<boolean>(false);
+    // 上游会返回无资源的空区块，渲染出来只会留下一段空白
+    const populatedBlocks = computed<HomepageBlock[]>(() =>
+      blockPageList.value.filter((block) => collectResources(block).length > 0),
+    );
+    const hasMore = computed(() => populatedBlocks.value.length > VISIBLE_BLOCK_COUNT);
+    const visibleBlocks = computed<HomepageBlock[]>(() =>
+      expanded.value ? populatedBlocks.value : populatedBlocks.value.slice(0, VISIBLE_BLOCK_COUNT),
+    );
+
+    const visibleResources = (block: HomepageBlock): HomepageBlockResource[] =>
+      collectResources(block).slice(0, MAX_CARDS_PER_BLOCK);
 
     const blockTitle = (block: HomepageBlock): string => {
       return block?.uiElement?.title?.title || '';
@@ -95,24 +116,28 @@ const blockPageList = toRef(portal, 'blockPageList');
 
 <style lang="less" scoped>
 .portal-block-page {
-  margin-top: 24px;
+  margin-top: 16px;
   background-color: var(--color-default);
   border-radius: 8px;
   padding: 8px;
 
   &--section {
-    padding: 12px 0;
+    padding: 8px 0;
+    margin-bottom: 20px;
   }
 
+  // flex + center：每区块卡片数不足时整组依然居中
   &--row {
     display: flex;
     flex-wrap: wrap;
-    gap: 24px;
-    margin-top: 16px;
+    justify-content: center;
+    gap: 18px;
+    margin-top: 12px;
   }
 
   &--card {
-    width: 180px;
+    flex: 0 0 150px;
+    width: 150px;
     cursor: pointer;
     transition: transform 233ms;
 
@@ -121,11 +146,33 @@ const blockPageList = toRef(portal, 'blockPageList');
     }
 
     .title {
-      font-size: 14px;
+      font-size: 13px;
       color: #333;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+    }
+  }
+
+  &--more {
+    display: flex;
+    justify-content: center;
+    padding: 8px 0 16px;
+  }
+
+  &--more-btn {
+    padding: 8px 28px;
+    border: 1px solid #e0e0e0;
+    border-radius: 20px;
+    background: #fff;
+    color: #666;
+    font-size: 14px;
+    cursor: pointer;
+    transition: color 233ms, border-color 233ms;
+
+    &:hover {
+      color: #333;
+      border-color: #bbb;
     }
   }
 }

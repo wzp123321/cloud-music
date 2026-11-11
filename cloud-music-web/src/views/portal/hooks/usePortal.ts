@@ -70,27 +70,17 @@ const create = () => {
   const topMvList = ref<TopMvItem[]>([]); // MV 排行榜
   //#endregion
 
-  //#region 初始化：聚合首页全部取数入口
+  //#region 初始化：只取首页首屏真正渲染的 6 类数据
+  // 个性化推荐 / 榜单等状态由各自页面 onMounted 自行取数（daily-recommend、rank 等），
+  // 不在首页预热，省掉 12 个与首屏无关的请求
   const init = () => {
     loading.value = true;
     queryBannerLsit();
     queryPlayListByType();
     queryHotSinger();
     getSomeRankList();
-    // 首页推荐流
     queryBlockPage();
     queryDragonBall();
-    queryPersonalized();
-    queryNewSong();
-    queryDjProgram();
-    queryPersonalizedMv();
-    queryPrivateContent();
-    queryRecommendResource();
-    queryRecommendSongs();
-    queryToplist();
-    queryTopPlaylistHighquality();
-    queryTopSong();
-    queryTopMv();
   };
   //#endregion
   //#region
@@ -237,7 +227,9 @@ const create = () => {
   const queryDragonBall = async () => {
     try {
       const res = await portalService.getHomepageDragonBall();
-      const list = res?.data?.ballList || res?.ballList || [];
+      // 上游既可能把数组直接放在 data，也可能包一层 ballList
+      const data = res?.data;
+      const list = Array.isArray(data) ? data : (data?.ballList ?? res?.ballList ?? []);
       dragonBallList.value = list;
     } catch {
       dragonBallList.value = [];

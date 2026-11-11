@@ -104,7 +104,7 @@ const linkTo = (path: string) => {
 
   &--grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 16px;
     margin-top: 16px;
   }

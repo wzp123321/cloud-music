@@ -140,15 +140,16 @@ watch(
       }
 
       &:hover {
-        background: rgba(255, 228, 67, 0.4);
+        background: rgba(194, 12, 12, 0.08);
       }
 
       &.active {
-        background: #ffe443;
+        background: var(--color-primary);
+        color: #fff;
         font-weight: 600;
 
         em {
-          color: var(--color-text-title);
+          color: rgba(255, 255, 255, 0.8);
         }
       }
     }

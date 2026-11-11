@@ -15,7 +15,7 @@
       >
         <cm-skeleton
           width="100%"
-          :height="'120px'"
+          :height="''"
           :image-url="item.coverImgUrl || ''"
           :border-radius="'6px'"
         ></cm-skeleton>
@@ -80,7 +80,7 @@
         class="rank--mv-item"
         @click="portal.linkToMv(mv.id)"
       >
-        <cm-skeleton width="100%" :height="'140px'" :image-url="mv.cover || ''" :border-radius="'6px'"></cm-skeleton>
+        <cm-skeleton width="100%" :height="''" :image-url="mv.cover || ''" :border-radius="'6px'"></cm-skeleton>
         <p class="rank--mv-name" :title="mv.name || ''">{{ mv.name || '' }}</p>
         <p class="rank--mv-artist" :title="formatMvArtists(mv)">{{ formatMvArtists(mv) }}</p>
       </div>
@@ -161,7 +161,7 @@ const route = useRoute();
 
   &--toplist {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 20px;
     margin-top: 16px;
   }
@@ -173,12 +173,18 @@ const route = useRoute();
     cursor: pointer;
     transition: all 0.2s;
 
+    // 榜单封面为正方形，跟随列宽缩放
+    :deep(.cm-skeleton) {
+      height: auto;
+      aspect-ratio: 1;
+    }
+
     &:hover {
       background-color: rgba(0, 0, 0, 0.03);
     }
 
     &.active {
-      border-color: var(--color-primary, #c20c0c);
+      border-color: #c20c0c;
       background-color: rgba(194, 12, 12, 0.05);
     }
   }
@@ -263,7 +269,7 @@ const route = useRoute();
 
   &--mv-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 24px;
     margin-top: 16px;
   }
@@ -271,6 +277,12 @@ const route = useRoute();
   &--mv-item {
     cursor: pointer;
     transition: transform 233ms;
+
+    // MV 封面为 16:9，跟随列宽缩放
+    :deep(.cm-skeleton) {
+      height: auto;
+      aspect-ratio: 16 / 9;
+    }
 
     &:hover {
       transform: translateY(-4px);
