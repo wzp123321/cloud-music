@@ -34,7 +34,6 @@
       :title="item.name"
       :cover-image-url="item.coverImgUrl"
       :play-count="item.playCount"
-      :size="220"
     ></cm-playlist-card>
   </div>
 
@@ -46,7 +45,7 @@
   </div>
   <template v-if="showSecondary">
     <!-- 榜单 -->
-    <cm-navbar :title="'新碟上架'" :has-load-more="false"></cm-navbar>
+    <cm-navbar :title="'排行榜'" :has-load-more="false"></cm-navbar>
     <div class="portal-rank mt16 mb48">
       <port-rank-detail :playlist-v-o="portal.hotMusicRankVO"></port-rank-detail>
       <port-rank-detail :playlist-v-o="portal.newMusicRankVO"></port-rank-detail>
@@ -106,7 +105,7 @@ const showSecondary = ref<boolean>(false);
 
 <style lang="less" scoped>
 .portal {
-  width: 1400px;
+  width: 1200px;
   margin: 0 auto;
   height: 100%;
 
@@ -119,12 +118,16 @@ const showSecondary = ref<boolean>(false);
     }
   }
 
-  // 整组居中，卡片数量变化时左右留白始终对称
+  // 与其他板块统一：容器全宽 5 列等分，左右边缘严格对齐
   &-playlist-grid {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0 18px;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 0 20px;
+
+    :deep(.cm-playlist-card) {
+      width: 100%;
+      margin-bottom: 0;
+    }
   }
 
   &-secondary-toggle {
@@ -151,8 +154,7 @@ const showSecondary = ref<boolean>(false);
 
   &-rank {
     display: grid;
-    grid-template-columns: repeat(5, 264px);
-    grid-template-rows: repeat(1, 620px);
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     justify-content: center;
     gap: 20px;
     background-color: rgba(247, 247, 247, 1);

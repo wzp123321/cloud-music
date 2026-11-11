@@ -17,7 +17,7 @@
         >
           <cm-skeleton
             width="100%"
-            :height="'150px'"
+            :height="''"
             :image-url="resImage(res)"
             source-type="image"
             :border-radius="'6px'"
@@ -119,30 +119,29 @@ const blockPageList = toRef(portal, 'blockPageList');
   margin-top: 16px;
   background-color: var(--color-default);
   border-radius: 8px;
-  padding: 8px;
 
   &--section {
-    padding: 8px 0;
-    margin-bottom: 20px;
+    padding: 16px 0;
   }
 
-  // flex + center：每区块卡片数不足时整组依然居中
+  // 与歌单/榜单统一：容器全宽 5 列等分，左右边缘严格对齐
   &--row {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 18px;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 20px;
     margin-top: 12px;
   }
 
   &--card {
-    flex: 0 0 150px;
-    width: 150px;
     cursor: pointer;
     transition: transform 233ms;
 
     &:hover {
       transform: translateY(-4px);
+    }
+
+    :deep(.cm-skeleton) {
+      aspect-ratio: 1 / 1;
     }
 
     .title {

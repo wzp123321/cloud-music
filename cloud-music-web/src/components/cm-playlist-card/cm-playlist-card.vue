@@ -75,7 +75,6 @@ const router = useRouter();
 <style lang="less" scoped>
 .cm-playlist-card {
   width: var(--card-size, 262px);
-  min-height: calc(var(--card-size, 262px) + 88px);
   overflow: hidden;
   margin-bottom: 24px;
 
@@ -93,8 +92,8 @@ const router = useRouter();
 
   &--cover {
     position: relative;
-    width: var(--card-size, 262px);
-    height: var(--card-size, 262px);
+    width: 100%;
+    aspect-ratio: 1 / 1;
     transition: all 0.75s;
     overflow: hidden;
 
