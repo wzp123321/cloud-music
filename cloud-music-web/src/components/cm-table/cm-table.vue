@@ -62,7 +62,7 @@ import { usePlayerStore } from '@/store/player';
 import { usePlaylistStore } from '@/store/playlist';
 
 import { Common_IMusic } from '../../apis/common/index.api';
-import { PL_IPlayVO } from '../../views/home/components/play-list/play-list.api';
+import { PL_IPlayVO } from '../../apis/play-list/index.api';
 import { ElPagination } from 'element-plus';
 import message from '@/utils/message';
 

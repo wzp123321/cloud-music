@@ -16,8 +16,8 @@
 
 <script lang="ts" setup>
 import { ref, onMounted, watch } from 'vue';
-import { useUserCenter } from '../user.service';
-import { UC_ICloudItem } from '@/apis/user.api';
+import { useUserCenter } from '../hooks/useUserCenter';
+import { UC_ICloudItem } from '@/apis/user/user.api';
 
 const userCenterService = useUserCenter();
 

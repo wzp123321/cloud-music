@@ -37,8 +37,8 @@
 <script lang="ts" setup>
 import { ref, watch } from 'vue';
 
-import { AD_IMusicVO } from '../artist/artist-detail/services/artist-detail-api';
-import { useMusicDetail } from './music-detail.service';
+import { AD_IMusicVO } from '../../apis/artist-detail/artist-detail-api';
+import { useMusicDetail } from './hooks/useMusicDetail';
 
 import { formatDate } from '../../core/utils';
 import { useRequest } from '@/hooks/useRequest';

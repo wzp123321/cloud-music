@@ -1,6 +1,6 @@
-import { postRequest } from './request';
-import type { ApiEnvelope } from './types';
-import type { CS_ICommentListRes, CS_IMvDetail, CS_IMvUrl, CS_ISongDetailRes } from './common.models';
+import { postRequest } from '../request';
+import type { ApiEnvelope } from '../types';
+import type { CS_ICommentListRes, CS_IMvDetail, CS_IMvUrl, CS_ISongDetailRes } from '../common.models';
 
 enum EPath {
   查询MV详情 = '/mv/detail',

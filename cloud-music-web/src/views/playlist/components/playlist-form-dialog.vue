@@ -37,7 +37,7 @@ import {
   updatePlaylistName,
   updatePlaylistDesc,
   updatePlaylistTags,
-} from '@/apis/playlist-manage.api';
+} from '@/apis/playlist-manage/index.api';
 
 const props = defineProps<{
   modelValue: boolean;

@@ -62,7 +62,7 @@
 import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
-import contentEnhanceService from '@/apis/content-enhance.service';
+import contentEnhanceService from '@/apis/content-enhance/content-enhance.service';
 
 /** 统一卡片模型：5 个列表接口的字段在这里归一 */
 interface AlbumCardItem {

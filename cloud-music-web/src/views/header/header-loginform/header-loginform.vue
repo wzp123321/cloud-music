@@ -54,8 +54,8 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue';
-import { ELOGINTYPE } from './header-loginform.api';
-import { useLogin } from './header-loginform.service';
+import { ELOGINTYPE } from '../../../apis/header-loginform/index.api';
+import { useLogin } from './hooks/useLogin';
 
 const loginService = useLogin();
 

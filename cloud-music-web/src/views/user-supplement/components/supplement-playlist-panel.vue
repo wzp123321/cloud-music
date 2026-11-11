@@ -181,7 +181,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 
-import userSupplementService from '../user-supplement.service';
+import userSupplementService from '../../../apis/user-supplement/user-supplement.service';
 import {
   extractObj,
   pickPlaylistId,

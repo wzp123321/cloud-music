@@ -91,7 +91,7 @@ import {
   getHighqualityTags,
   getTopPlaylistHighquality,
   PM_IPlaylistVO,
-} from '@/apis/playlist-manage.api';
+} from '@/apis/playlist-manage/index.api';
 import PlaylistFormDialog from './components/playlist-form-dialog.vue';
 
 const loading = ref(false);

@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia';
 import { computed, nextTick, ref, shallowRef } from 'vue';
 import { Common_IMusic } from '@/apis/common/index.api';
-import { PL_IPlayVO } from '@/views/home/components/play-list/play-list.api';
-import musicService from '@/views/home/components/play-controller/pc.service';
+import { PL_IPlayVO } from '@/apis/play-list/index.api';
+import musicService from '@/apis/play-controller/pc.service';
 import message from '@/utils/message';
 import { usePlaylistStore } from './playlist';
 import { useLyricStore } from './lyric';

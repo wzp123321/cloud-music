@@ -1,5 +1,5 @@
-import { Common_IUserVO } from '../../../apis/common/user.api';
-import { AD_IMusicVO } from '../../artist/artist-detail/services/artist-detail-api';
+import { Common_IUserVO } from '../common/user.api';
+import { AD_IMusicVO } from '../artist-detail/artist-detail-api';
 
 export interface PD_IPlaylistDetail {
   backgroundCoverUrl: string;

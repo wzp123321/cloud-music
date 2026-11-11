@@ -98,8 +98,8 @@
 import { defineComponent, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 
-import { usePortal } from '../portal/services/portal.service';
-import { TopListTrack, TopSongItem, TopMvItem } from '../portal/services/portal-api';
+import { usePortal } from '../portal/hooks/usePortal';
+import { TopListTrack, TopSongItem, TopMvItem } from '../../apis/portal/portal-api';
 
 const portal = usePortal();
 

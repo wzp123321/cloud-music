@@ -38,8 +38,8 @@
  */
 import { defineComponent, toRef } from 'vue';
 
-import { usePortal } from '../services/portal.service';
-import { HomepageBlock, HomepageBlockResource } from '../services/portal-api';
+import { usePortal } from '../hooks/usePortal';
+import { HomepageBlock, HomepageBlockResource } from '../../../apis/portal/portal-api';
 
 const portal = usePortal();
 

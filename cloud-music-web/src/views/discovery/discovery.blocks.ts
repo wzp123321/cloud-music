@@ -4,7 +4,7 @@
  */
 import type { ApiBlock } from '@/components/cm-api-block/api-block.types';
 
-import discoveryService from './discovery.service';
+import discoveryService from '../../apis/discovery/discovery.service';
 
 /** 分组 tab：code 与区块的 tab 字段对应 */
 export const tabs: { code: string; name: string }[] = [

@@ -1,10 +1,10 @@
 import { ref, reactive, type Ref } from 'vue';
 import { FGetQueryParam } from '@/core/token';
-import infoService from './services/album-detail-service';
+import infoService from '../../../apis/album-detail/album-detail-service';
 
-import { AlbumVO, AlbumSongVO } from './services/album-detail-api';
-import contentEnhanceService, { hasLogin } from '@/apis/content-enhance.service';
-import { AlbumDetailDynamicRes, ContentAlbumItem } from '@/apis/content-enhance.api';
+import { AlbumVO, AlbumSongVO } from '../../../apis/album-detail/album-detail-api';
+import contentEnhanceService, { hasLogin } from '@/apis/content-enhance/content-enhance.service';
+import { AlbumDetailDynamicRes, ContentAlbumItem } from '@/apis/content-enhance/index.api';
 
 /*
  * @Descrption: 专辑详情服务

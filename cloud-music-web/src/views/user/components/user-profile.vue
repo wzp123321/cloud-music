@@ -24,7 +24,7 @@
 </template>
 
 <script lang="ts" setup>
-import { UC_IUserDetail } from '@/apis/user.api';
+import { UC_IUserDetail } from '@/apis/user/user.api';
 
 defineProps<{
   detail: UC_IUserDetail;

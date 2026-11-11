@@ -4,7 +4,7 @@
  */
 import type { ApiBlock } from '@/components/cm-api-block/api-block.types';
 
-import miscLongtailService from './misc-longtail.service';
+import miscLongtailService from '../../apis/misc-longtail/misc-longtail.service';
 
 /** 分组 tab：code 与区块的 tab 字段对应 */
 export const tabs: { code: string; name: string }[] = [

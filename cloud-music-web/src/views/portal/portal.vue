@@ -77,7 +77,7 @@
 import { defineComponent, onMounted } from 'vue';
 import { ElCarousel, ElCarouselItem } from 'element-plus';
 
-import { usePortal } from './services/portal.service';
+import { usePortal } from './hooks/usePortal';
 
 import RankDetail from './portal-rank-detail/portal-rank-detail.vue';
 import PortalDragonBall from './portal-dragon-ball/portal-dragon-ball.vue';

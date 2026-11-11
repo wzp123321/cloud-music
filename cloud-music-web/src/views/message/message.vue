@@ -175,8 +175,8 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue';
 
-import { hasLogin as checkLogin } from '@/apis/content-enhance.service';
-import messageService from './message.service';
+import { hasLogin as checkLogin } from '@/apis/content-enhance/content-enhance.service';
+import messageService from '../../apis/message/message.service';
 
 interface CardItem {
   id: number;

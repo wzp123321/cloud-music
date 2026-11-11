@@ -1,4 +1,4 @@
-import { getRequest, postRequest, postFormRequest, unwrapData } from './request';
+import { getRequest, postRequest, postFormRequest, unwrapData } from '../request';
 import {
   EUserPath,
   UC_IUserDetail,

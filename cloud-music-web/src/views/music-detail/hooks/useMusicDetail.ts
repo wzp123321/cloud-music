@@ -1,8 +1,8 @@
 import { FGetQueryParam } from '@/core/token';
 import { computed, reactive, ref } from 'vue';
-import musicService from '../../views/home/components/play-controller/pc.service';
+import musicService from '../../../apis/play-controller/pc.service';
 import { getRequest } from '@/apis/request';
-import { AD_IMusicVO } from '../artist/artist-detail/services/artist-detail-api';
+import { AD_IMusicVO } from '../../../apis/artist-detail/artist-detail-api';
 
 enum EPath {
   查询歌曲详情 = '/song/detail',

@@ -4,8 +4,8 @@
  * 路由名 = server module 文件名下划线转斜杠，统一走 request.ts 封装
  * @see cloud-music-server/module/playlist_*.js
  */
-import { getRequest, postRequest, postFormRequest } from './request';
-import type { CS_ISongDetailRes } from './common.models';
+import { getRequest, postRequest, postFormRequest } from '../request';
+import type { CS_ISongDetailRes } from '../common.models';
 
 //#region 类型定义
 /** 歌单基础 VO（与 portal PlayListVO 字段对齐，复用展示） */

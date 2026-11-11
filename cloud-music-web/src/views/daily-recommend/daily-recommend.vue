@@ -81,8 +81,8 @@
  */
 import { defineComponent, onMounted } from 'vue';
 
-import { usePortal } from '../portal/services/portal.service';
-import { RecommendSongItem, PersonalizedNewSongItem } from '../portal/services/portal-api';
+import { usePortal } from '../portal/hooks/usePortal';
+import { RecommendSongItem, PersonalizedNewSongItem } from '../../apis/portal/portal-api';
 
 const portal = usePortal();
 

@@ -1,8 +1,8 @@
 import { FGetQueryParam } from '@/core/token';
 import { computed, reactive, ref } from 'vue';
 
-import CommonService from '../../apis/common.service';
-import { MP_IMvDetail, MP_IMVCommentRes } from './mvplay.api';
+import CommonService from '../../../apis/common/common.service';
+import { MP_IMvDetail, MP_IMVCommentRes } from '../../../apis/mvplay/index.api';
 
 const create = () => {
   //#region

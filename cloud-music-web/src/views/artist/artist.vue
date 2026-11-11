@@ -92,8 +92,8 @@
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
-import contentEnhanceService, { hasLogin as checkLogin } from '@/apis/content-enhance.service';
-import { ContentArtistItem, ContentSongItem, ContentMvItem } from '@/apis/content-enhance.api';
+import contentEnhanceService, { hasLogin as checkLogin } from '@/apis/content-enhance/content-enhance.service';
+import { ContentArtistItem, ContentSongItem, ContentMvItem } from '@/apis/content-enhance/index.api';
 
 const router = useRouter();
 

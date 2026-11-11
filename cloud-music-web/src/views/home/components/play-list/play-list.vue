@@ -50,7 +50,7 @@
 import { computed } from 'vue';
 import { usePlaylistStore } from '@/store/playlist';
 import { usePlayerStore } from '@/store/player';
-import { PL_IPlayVO } from './play-list.api';
+import { PL_IPlayVO } from '../../../../apis/play-list/index.api';
 
 const playList = usePlaylistStore();
 const player = usePlayerStore();

@@ -53,9 +53,9 @@
 <script lang="ts" setup>
 import { ref, computed, watch } from 'vue';
 import { FGetQueryParam } from '@/core/token';
-import { useSearch, SEARCH_IMultimatchEntry } from './search.service';
+import { useSearch, SEARCH_IMultimatchEntry } from './hooks/useSearch';
 
-import { SEARCH_TYPE } from './search.api';
+import { SEARCH_TYPE } from '../../apis/search/index.api';
 
 const keyword = computed(() => {
   return FGetQueryParam('keyword') as string;

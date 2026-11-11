@@ -1,11 +1,11 @@
 import { computed, reactive, ref } from 'vue';
 
 import { FGetQueryParam } from '@/core/token';
-import { PD_IPlaylistDetail } from './playlist-detail.api';
-import { MP_IMVCommentRes } from '../../mvplay/mvplay.api';
-import { Common_IMusic } from '../../../apis/common/index.api';
-import { getRequest } from '../../../apis/request';
-import CommonService from '../../../apis/common.service';
+import { PD_IPlaylistDetail } from '../../../../apis/playlist-detail/index.api';
+import { MP_IMVCommentRes } from '../../../../apis/mvplay/index.api';
+import { Common_IMusic } from '../../../../apis/common/index.api';
+import { getRequest } from '../../../../apis/request';
+import CommonService from '../../../../apis/common/common.service';
 import {
   subscribePlaylist,
   getPlaylistDetailDynamic,
@@ -13,7 +13,7 @@ import {
   deleteTrackFromPlaylist,
   getPlaylistTrackAll,
   PM_IDynamicRes,
-} from '../../../apis/playlist-manage.api';
+} from '../../../../apis/playlist-manage/index.api';
 
 enum EPath {
   查询歌单详情 = '/playlist/detail',

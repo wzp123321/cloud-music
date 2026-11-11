@@ -76,8 +76,8 @@ import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { formatPlayCount } from '@/core/utils';
-import contentEnhanceService, { hasLogin as checkLogin } from '@/apis/content-enhance.service';
-import { ContentMvItem } from '@/apis/content-enhance.api';
+import contentEnhanceService, { hasLogin as checkLogin } from '@/apis/content-enhance/content-enhance.service';
+import { ContentMvItem } from '@/apis/content-enhance/index.api';
 
 type TabCode = 'all' | 'exclusive' | 'first';
 

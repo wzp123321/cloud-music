@@ -102,8 +102,8 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue';
 
-import { hasLogin as checkLogin } from '@/apis/content-enhance.service';
-import djRadioService from './dj-radio.service';
+import { hasLogin as checkLogin } from '@/apis/content-enhance/content-enhance.service';
+import djRadioService from '../../apis/dj-radio/dj-radio.service';
 
 interface CardItem {
   id: number;

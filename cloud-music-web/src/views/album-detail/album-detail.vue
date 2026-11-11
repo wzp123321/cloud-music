@@ -109,7 +109,7 @@
 import { defineComponent, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { FGetQueryParam } from '@/core/token';
-import { useAlbumDetail } from './album-detail.service';
+import { useAlbumDetail } from './hooks/useAlbumDetail';
 
 import { formatDate, formatDuration } from '../../core/utils';
 import { usePlayerStore } from '@/store/player';

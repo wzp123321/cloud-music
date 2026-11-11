@@ -9,7 +9,7 @@
  */
 import { computed, onMounted, reactive, ref } from 'vue';
 
-import { hasLogin as checkLogin } from '@/apis/content-enhance.service';
+import { hasLogin as checkLogin } from '@/apis/content-enhance/content-enhance.service';
 
 import { captureProvided, normalize } from './api-block.util';
 import type { ApiBlock, BlockCard, BlockState } from './api-block.types';

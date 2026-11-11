@@ -25,7 +25,7 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue';
-import { UC_IRecord } from '@/apis/user.api';
+import { UC_IRecord } from '@/apis/user/user.api';
 
 const props = defineProps<{
   record: UC_IRecord;

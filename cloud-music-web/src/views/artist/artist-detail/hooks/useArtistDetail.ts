@@ -6,17 +6,17 @@
  * @Last Modified time: 2022-09-27 20:40:20
  */
 import { FGetQueryParam } from '@/core/token';
-import artistDetailService from './ad.service';
+import artistDetailService from '../../../../apis/artist-detail/ad.service';
 
-import { ArtistVO, AlbumVO, MvVO, DescRes } from './artist-detail-api';
+import { ArtistVO, AlbumVO, MvVO, DescRes } from '../../../../apis/artist-detail/artist-detail-api';
 import { Common_IMusic } from '@/apis/common/index.api';
 import { ref, reactive, type Ref } from 'vue';
-import contentEnhanceService, { hasLogin } from '@/apis/content-enhance.service';
+import contentEnhanceService, { hasLogin } from '@/apis/content-enhance/content-enhance.service';
 import {
   ArtistFollowCountRes,
   ContentSongItem,
   ContentVideoItem,
-} from '@/apis/content-enhance.api';
+} from '@/apis/content-enhance/index.api';
 
 const navs = [
   {

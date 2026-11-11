@@ -6,7 +6,7 @@
  * 详情参数来源：song_* / check_music / lyric_new 的 id ← 歌曲列表或页面输入；
  *   history_recommend_songs_detail 的 id ← history_recommend_songs。
  */
-import playInteractionService from './play-interaction.service';
+import playInteractionService from '../../apis/play-interaction/play-interaction.service';
 import type { ApiBlock } from '@/components/cm-api-block/api-block.types';
 
 /** 分组 tab：code 与区块的 tab 字段对应 */

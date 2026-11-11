@@ -104,9 +104,9 @@ import { defineComponent, ref, watch, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { ElPopover } from 'element-plus';
 
-import { useHeader } from './header.service';
-import { useLogin } from './header-loginform/header-loginform.service';
-import { HL_ILoginUserVO } from './header-loginform/header-loginform.api';
+import { useHeader } from './hooks/useHeader';
+import { useLogin } from './header-loginform/hooks/useLogin';
+import { HL_ILoginUserVO } from '../../apis/header-loginform/index.api';
 
 import LoginForm from './header-loginform/header-loginform.vue';
 import { ElMessageBox } from 'element-plus';

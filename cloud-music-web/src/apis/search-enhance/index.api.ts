@@ -7,7 +7,7 @@
  * @see cloud-music-server/module/search_suggest.js
  * @see cloud-music-server/module/search_multimatch.js
  */
-import { getRequest } from './request';
+import { getRequest } from '../request';
 
 //#region 类型定义
 /** 热搜榜单项（search_hot 返回） */

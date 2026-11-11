@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 
 import { FGetCookie, FGetQueryParam } from '@/core/token';
-import UserService from '@/apis/user.service';
+import UserService from '@/apis/user/user.service';
 import {
   UC_IUserDetail,
   UC_IPlaylist,
@@ -12,7 +12,7 @@ import {
   UC_IEvent,
   UC_ICloudItem,
   UC_IFollowUser,
-} from '@/apis/user.api';
+} from '@/apis/user/user.api';
 
 const emptyDetail: UC_IUserDetail = { profile: {} as any };
 

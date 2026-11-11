@@ -9,7 +9,7 @@
  */
 import type { ApiBlock } from '@/components/cm-api-block/api-block.types';
 
-import accountProfileService from './account-profile.service';
+import accountProfileService from '../../apis/account-profile/account-profile.service';
 
 /** 分组 tab：code 与区块的 tab 字段对应 */
 export const tabs: { code: string; name: string }[] = [

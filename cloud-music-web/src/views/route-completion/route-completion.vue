@@ -53,7 +53,7 @@
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue';
 import { getRequest } from '@/apis/request';
-import contentEnhanceService from '@/apis/content-enhance.service';
+import contentEnhanceService from '@/apis/content-enhance/content-enhance.service';
 
 type TabCode = 'album' | 'artist';
 

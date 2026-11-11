@@ -2,8 +2,8 @@ import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 import { FGetCookie, FSetCookie } from '@/core/token';
 import { postRequest } from '@/apis/request';
-import UserService from '@/apis/user.service';
-import { HL_ILoginUserVO } from '@/views/header/header-loginform/header-loginform.api';
+import UserService from '@/apis/user/user.service';
+import { HL_ILoginUserVO } from '@/apis/header-loginform/index.api';
 
 type UserProfile = NonNullable<HL_ILoginUserVO['profile']>;
 

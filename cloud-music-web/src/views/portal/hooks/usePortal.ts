@@ -29,9 +29,9 @@ import {
   HighqualityItem,
   TopSongItem,
   TopMvItem,
-} from './portal-api';
+} from '../../../apis/portal/portal-api';
 
-import portalService from './portal-request.service';
+import portalService from '../../../apis/portal/portal-request.service';
 
 import { TARGET_TYPE } from '@/config/enum';
 

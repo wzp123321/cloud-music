@@ -52,8 +52,8 @@
 <script lang="ts" setup>
 import { ref, computed, onMounted, watch } from 'vue';
 
-import { useUserCenter } from './user.service';
-import { UC_IUserDetail, UC_IPlaylist, UC_IUserLevel, UC_IUserSubcount, UC_IRecord } from '@/apis/user.api';
+import { useUserCenter } from './hooks/useUserCenter';
+import { UC_IUserDetail, UC_IPlaylist, UC_IUserLevel, UC_IUserSubcount, UC_IRecord } from '@/apis/user/user.api';
 import { FGetCookie } from '@/core/token';
 
 import UserProfile from './components/user-profile.vue';
@@ -121,7 +121,7 @@ const onSaved = () => {
 };
 
 const goLogin = () => {
-  import('@/views/header/header-loginform/header-loginform.service').then((m) => m.useLogin().show());
+  import('@/views/header/header-loginform/hooks/useLogin').then((m) => m.useLogin().show());
 };
 
 // 订阅用户中心各状态，immediate 保证首屏同步到当前值

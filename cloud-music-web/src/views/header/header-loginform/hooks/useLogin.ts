@@ -1,8 +1,8 @@
 import { ref } from 'vue';
 
 import { postRequest } from '@/apis/request';
-import { ELOGINTYPE, EQRSTATUS, Header_ILoginVO, HL_ILoginUserVO } from './header-loginform.api';
-import UserService from '@/apis/user.service';
+import { ELOGINTYPE, EQRSTATUS, Header_ILoginVO, HL_ILoginUserVO } from '../../../../apis/header-loginform/index.api';
+import UserService from '@/apis/user/user.service';
 
 enum EPath {
   手机号码登陆 = '/login/cellphone',

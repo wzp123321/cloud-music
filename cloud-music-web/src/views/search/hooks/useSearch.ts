@@ -12,10 +12,10 @@ import { FGetQueryParam } from '@/core/token';
 import { getRequest } from '@/apis/request';
 import {
   getSearchMultimatch,
-} from '@/apis/search-enhance.api';
+} from '@/apis/search-enhance/index.api';
 import { Common_IMusic, Common_IAlbumVO } from '@/apis/common/index.api';
-import { MvVO } from '../artist/artist-detail/services/artist-detail-api';
-import { SEARCH_TYPE } from './search.api';
+import { MvVO } from '../../../apis/artist-detail/artist-detail-api';
+import { SEARCH_TYPE } from '../../../apis/search/index.api';
 
 enum EPath {
   搜索 = '/search',

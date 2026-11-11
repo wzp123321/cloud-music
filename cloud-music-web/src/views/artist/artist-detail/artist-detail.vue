@@ -218,7 +218,7 @@ import { defineComponent, onMounted } from 'vue';
 import { FGetQueryParam } from '@/core/token';
 import { sanitizeHtml } from '@/utils/sanitize';
 
-import { useArtistDetail } from './services/artist-detail.service';
+import { useArtistDetail } from './hooks/useArtistDetail';
 
 const artistDetail = useArtistDetail();
 

@@ -3,7 +3,7 @@
  */
 import type { ApiBlock } from '@/components/cm-api-block/api-block.types';
 
-import cloudDiskService from './cloud-disk.service';
+import cloudDiskService from '../../apis/cloud-disk/cloud-disk.service';
 
 /** 分组 tab：code 与区块的 tab 字段对应 */
 export const tabs: { code: string; name: string }[] = [

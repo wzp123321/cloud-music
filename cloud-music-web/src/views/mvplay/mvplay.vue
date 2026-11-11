@@ -55,10 +55,10 @@
 import { onMounted, ref, watch } from 'vue';
 
 import { FGetQueryParam } from '@/core/token';
-import { useMvPlayer } from './mvplay.service';
-import { MP_IMvDetail, MP_IMVCommentRes } from './mvplay.api';
-import contentEnhanceService, { hasLogin } from '@/apis/content-enhance.service';
-import { MvDetailInfoRes } from '@/apis/content-enhance.api';
+import { useMvPlayer } from './hooks/useMvPlayer';
+import { MP_IMvDetail, MP_IMVCommentRes } from '../../apis/mvplay/index.api';
+import contentEnhanceService, { hasLogin } from '@/apis/content-enhance/content-enhance.service';
+import { MvDetailInfoRes } from '@/apis/content-enhance/index.api';
 import { useRequest } from '@/hooks/useRequest';
 
 const mvPlayer = useMvPlayer();

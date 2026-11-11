@@ -197,8 +197,8 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 
-import { hasLogin as checkLogin } from '@/apis/content-enhance.service';
-import feedService from './feed.service';
+import { hasLogin as checkLogin } from '@/apis/content-enhance/content-enhance.service';
+import feedService from '../../apis/feed/feed.service';
 
 interface CardItem {
   id: number;

@@ -35,7 +35,7 @@
 import { defineComponent, PropType } from 'vue';
 import { useRouter } from 'vue-router';
 
-import { PlayListVO, SingerVO } from '../services/portal-api';
+import { PlayListVO, SingerVO } from '../../../apis/portal/portal-api';
 
 export default defineComponent({
   name: 'PortalRankDetail',

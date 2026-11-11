@@ -30,10 +30,10 @@
 <script lang="ts" setup>
 import { ref, computed, onMounted } from 'vue';
 import { FGetCookie } from '@/core/token';
-import { useUserCenter } from '../user.service';
+import { useUserCenter } from '../hooks/useUserCenter';
 
 const userCenterService = useUserCenter();
-import { UC_IFollowUser } from '@/apis/user.api';
+import { UC_IFollowUser } from '@/apis/user/user.api';
 
 const tab = ref<'follows' | 'followeds'>('follows');
 const ownerUid = ref<number>(0);

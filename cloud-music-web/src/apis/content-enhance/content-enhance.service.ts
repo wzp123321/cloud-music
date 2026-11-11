@@ -23,7 +23,7 @@ import {
   MvDetailInfoRes,
   MvSublistRes,
   ContentSubRes,
-} from './content-enhance.api';
+} from './index.api';
 
 /**
  * P1 content-detail-enhancement 接口封装。

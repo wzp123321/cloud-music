@@ -97,10 +97,10 @@
 
 <script lang="ts" setup>
 import { ref, watch } from 'vue';
-import { usePlayListDetail } from './playlist-detail.service';
-import { PD_IPlaylistDetail } from './playlist-detail.api';
+import { usePlayListDetail } from './hooks/usePlayListDetail';
+import { PD_IPlaylistDetail } from '../../../apis/playlist-detail/index.api';
 import { Common_IMusic } from '../../../apis/common/index.api';
-import { MP_IMVCommentRes } from '../../mvplay/mvplay.api';
+import { MP_IMVCommentRes } from '../../../apis/mvplay/index.api';
 import message from '@/utils/message';
 import PlaylistFormDialog from '../components/playlist-form-dialog.vue';
 

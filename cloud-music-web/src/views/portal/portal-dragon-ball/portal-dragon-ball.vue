@@ -29,8 +29,8 @@
 import { defineComponent, toRef } from 'vue';
 import { useRouter } from 'vue-router';
 
-import { usePortal } from '../services/portal.service';
-import { DragonBallItem } from '../services/portal-api';
+import { usePortal } from '../hooks/usePortal';
+import { DragonBallItem } from '../../../apis/portal/portal-api';
 
 const portal = usePortal();
 

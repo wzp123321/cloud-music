@@ -46,7 +46,7 @@
 import { ref } from 'vue';
 
 import { FGetCookie } from '@/core/token';
-import { hasLogin as checkLogin } from '@/apis/content-enhance.service';
+import { hasLogin as checkLogin } from '@/apis/content-enhance/content-enhance.service';
 
 import SupplementReadPanel from './components/supplement-read-panel.vue';
 import SupplementCloudPanel from './components/supplement-cloud-panel.vue';

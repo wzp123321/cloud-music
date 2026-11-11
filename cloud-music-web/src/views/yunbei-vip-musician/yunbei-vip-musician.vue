@@ -99,8 +99,8 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue';
 
-import { hasLogin as checkLogin } from '@/apis/content-enhance.service';
-import yunbeiVipMusicianService from './yunbei-vip-musician.service';
+import { hasLogin as checkLogin } from '@/apis/content-enhance/content-enhance.service';
+import yunbeiVipMusicianService from '../../apis/yunbei-vip-musician/yunbei-vip-musician.service';
 
 interface CardItem {
   id: number;

@@ -79,7 +79,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 
-import userSupplementService from '../user-supplement.service';
+import userSupplementService from '../../../apis/user-supplement/user-supplement.service';
 import {
   pickSongId,
   toList,

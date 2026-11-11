@@ -103,8 +103,8 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue';
 
-import { hasLogin as checkLogin } from '@/apis/content-enhance.service';
-import videoPodcastService from './video-podcast.service';
+import { hasLogin as checkLogin } from '@/apis/content-enhance/content-enhance.service';
+import videoPodcastService from '../../apis/video-podcast/video-podcast.service';
 
 interface CardItem {
   id: number;

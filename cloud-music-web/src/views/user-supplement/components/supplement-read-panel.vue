@@ -57,7 +57,7 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue';
 
-import userSupplementService from '../user-supplement.service';
+import userSupplementService from '../../../apis/user-supplement/user-supplement.service';
 import { toList, useSupplementGuard, useWriteRunner, type SupplementCard } from '../use-supplement';
 
 const props = defineProps<{

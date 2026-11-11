@@ -19,7 +19,7 @@
 
 <script lang="ts" setup>
 import { useRouter } from 'vue-router';
-import { UC_IPlaylist } from '@/apis/user.api';
+import { UC_IPlaylist } from '@/apis/user/user.api';
 
 defineProps<{
   playlists: UC_IPlaylist[];

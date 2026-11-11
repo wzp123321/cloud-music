@@ -26,7 +26,7 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue';
-import { UC_IUserLevel, UC_IUserSubcount } from '@/apis/user.api';
+import { UC_IUserLevel, UC_IUserSubcount } from '@/apis/user/user.api';
 
 const props = defineProps<{
   level: UC_IUserLevel;

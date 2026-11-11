@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import { getRequest } from '@/apis/request';
-import { PL_IPlayVO } from '@/views/home/components/play-list/play-list.api';
+import { PL_IPlayVO } from '@/apis/play-list/index.api';
 
 /** 旧版本直接把队列数组写在这个 key 下，必须用自定义 serializer 保持格式兼容 */
 const LIST_STORAGE_KEY = 'cloud-music-list';
