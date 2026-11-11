@@ -18,7 +18,8 @@
 
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+
 /*
  * @Descrption: MV
  * @Author: wanzp
@@ -26,14 +27,12 @@
  * @Last Modified by: mikey.zhaopeng
  * @Last Modified time: 2022-06-12 20:43:33
  */
-import { defineComponent } from 'vue';
+
 
 import { formatPlayCount, formatDuration } from '@/core/utils';
 import { useRouter } from 'vue-router';
-
-export default defineComponent({
-  name: 'CMAMVCard',
-  props: {
+defineOptions({ name: 'CMAMVCard' });
+const props = defineProps({
     coverImageUrl: {
       type: String,
       default: '',
@@ -59,9 +58,8 @@ export default defineComponent({
       type: Number,
       default: 0,
     },
-  },
-  setup(props) {
-    const router = useRouter();
+  });
+const router = useRouter();
     const linkToMvPlay = () => {
       router.push({
         path: '/mvplay',
@@ -72,14 +70,7 @@ export default defineComponent({
     };
 
     // props 在模板中可直接访问，无需再用 toRef 转发一次
-    return {
-      formatPlayCount,
-      formatDuration,
-      linkToMvPlay,
-    };
-  },
-});
-
+    ;
 </script>
 
 <style lang="less" scoped>

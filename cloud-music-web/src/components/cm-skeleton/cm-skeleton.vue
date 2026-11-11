@@ -5,7 +5,8 @@
 
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+
 /*
  * @Descrption: 骨架屏
  * @Author: wanzp
@@ -13,11 +14,9 @@
  * @Last Modified by: mikey.zhaopeng
  * @Last Modified time: 2022-07-10 17:06:43
  */
-import { defineComponent, watch, ref } from 'vue';
-
-export default defineComponent({
-  name: 'CmSkeleton',
-  props: {
+import {  watch, ref } from 'vue';
+defineOptions({ name: 'CmSkeleton' });
+const props = defineProps({
     width: {
       type: String,
       default: '100%',
@@ -34,9 +33,8 @@ export default defineComponent({
       type: String,
       default: '',
     },
-  },
-  setup(props) {
-    const loaded = ref<boolean>(false);
+  });
+const loaded = ref<boolean>(false);
 
     watch(
       () => props.imageUrl,
@@ -56,12 +54,7 @@ export default defineComponent({
     );
 
     // props 在模板中可直接访问，无需再用 toRef 转发一次
-    return {
-      loaded,
-    };
-  },
-});
-
+    ;
 </script>
 
 <style lang="less" scoped>

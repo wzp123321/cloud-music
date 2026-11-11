@@ -74,22 +74,20 @@
 
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+
 /*
  * @Description: 每日推荐页
  * @Author: home-recommendation
  */
-import { defineComponent, onMounted } from 'vue';
+import {  onMounted } from 'vue';
 
 import { usePortal } from '../portal/hooks/usePortal';
 import { RecommendSongItem, PersonalizedNewSongItem } from '../../apis/portal/portal-api';
 
 const portal = usePortal();
-
-export default defineComponent({
-  name: 'DailyRecommend',
-  setup() {
-    // 直接访问该路由时也保证数据可用（不依赖先经过首页 init）
+defineOptions({ name: 'DailyRecommend' });
+// 直接访问该路由时也保证数据可用（不依赖先经过首页 init）
     onMounted(() => {
       portal.queryRecommendSongs();
       portal.queryRecommendResource();
@@ -111,15 +109,7 @@ export default defineComponent({
       portal.dislikeRecommendSong(id);
     };
 
-    return {
-      portal,
-      formatArtists,
-      formatNewSongArtists,
-      handleDislike,
-    };
-  },
-});
-
+    ;
 </script>
 
 <style lang="less" scoped>

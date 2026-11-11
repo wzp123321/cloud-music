@@ -24,7 +24,8 @@
 
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+
 /*
  * @Description: 首页排行榜
  * @Author: zpwan
@@ -32,21 +33,18 @@
  * @Last Modified by: zpwan
  * @Last Modified time: 2022-06-25 15:54:57
  */
-import { defineComponent, PropType } from 'vue';
+import {  PropType } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { PlayListVO, SingerVO } from '../../../apis/portal/portal-api';
-
-export default defineComponent({
-  name: 'PortalRankDetail',
-  props: {
+defineOptions({ name: 'PortalRankDetail' });
+const props = defineProps({
     playlistVO: {
       type: Object as PropType<PlayListVO | null>,
       default: null,
     },
-  },
-  setup(props) {
-    const router = useRouter();
+  });
+const router = useRouter();
 
     const formatSinger = (list?: SingerVO[]) => {
       return list?.map((item) => item.name).join('/') ?? '';
@@ -63,13 +61,7 @@ export default defineComponent({
       });
     };
     // props 在模板中可直接访问，无需再用 toRef 转发一次
-    return {
-      formatSinger,
-      linktToDetail,
-    };
-  },
-});
-
+    ;
 </script>
 
 <style lang="less" scoped>

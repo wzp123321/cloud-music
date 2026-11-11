@@ -31,22 +31,20 @@
 
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+
 /*
  * @Description: 首页区块瀑布流（homepage_block_page）
  * @Author: home-recommendation
  */
-import { defineComponent, toRef } from 'vue';
+import {  toRef } from 'vue';
 
 import { usePortal } from '../hooks/usePortal';
 import { HomepageBlock, HomepageBlockResource } from '../../../apis/portal/portal-api';
 
 const portal = usePortal();
-
-export default defineComponent({
-  name: 'PortalBlockPage',
-  setup() {
-    const blockPageList = toRef(portal, 'blockPageList');
+defineOptions({ name: 'PortalBlockPage' });
+const blockPageList = toRef(portal, 'blockPageList');
     const blockPageError = toRef(portal, 'blockPageError');
 
     // 归集区块内所有资源（兼容 creatives 嵌套与 resources 平铺）
@@ -92,19 +90,7 @@ export default defineComponent({
       }
     };
 
-    return {
-      blockPageList,
-      blockPageError,
-      collectResources,
-      blockTitle,
-      resImage,
-      resTitle,
-      resId,
-      linkToResource,
-    };
-  },
-});
-
+    ;
 </script>
 
 <style lang="less" scoped>

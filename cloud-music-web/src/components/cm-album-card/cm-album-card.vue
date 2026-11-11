@@ -14,7 +14,8 @@
 
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+
 /*
  * @Descrption: 专辑卡片
  * @Author: wanzp
@@ -22,13 +23,11 @@
  * @Last Modified by: mikey.zhaopeng
  * @Last Modified time: 2022-06-12 20:43:33
  */
-import { defineComponent } from 'vue';
+
 
 import { formatDate } from '@/core/utils';
-
-export default defineComponent({
-  name: 'CMAlbumCard',
-  props: {
+defineOptions({ name: 'CMAlbumCard' });
+defineProps({
     coverImageUrl: {
       type: String,
       default: '',
@@ -45,15 +44,8 @@ export default defineComponent({
       type: Number,
       default: 0,
     },
-  },
-  // props 在模板中可直接访问，无需再用 toRef 转发一次
-  setup() {
-    return {
-      formatDate,
-    };
-  },
-});
-
+  });
+;
 </script>
 
 <style lang="less" scoped>

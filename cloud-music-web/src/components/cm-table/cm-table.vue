@@ -45,7 +45,8 @@
 
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+
 /*
  * @Description: 表格
  * @Author: zpwan
@@ -53,7 +54,7 @@
  * @Last Modified by: zpwan
  * @Last Modified time: 2022-09-27 20:33:30
  */
-import { defineComponent, PropType, ref, computed } from 'vue';
+import {  PropType, ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { formatDuration } from '@/core/utils';
@@ -65,13 +66,8 @@ import { Common_IMusic } from '../../apis/common/index.api';
 import { PL_IPlayVO } from '../../apis/play-list/index.api';
 import { ElPagination } from 'element-plus';
 import message from '@/utils/message';
-
-export default defineComponent({
-  name: 'CmTable',
-  components: {
-    'el-pagination': ElPagination,
-  },
-  props: {
+defineOptions({ name: 'CmTable' });
+const props = defineProps({
     dataSource: {
       type: Array as PropType<Common_IMusic[]>,
       default: () => [],
@@ -81,12 +77,9 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
-  },
-
-  emits: ['remove'],
-
-  setup(props, { emit }) {
-    const page = ref<number>(1);
+  });
+const emit = defineEmits(['remove']);
+const page = ref<number>(1);
     const router = useRouter();
     const player = usePlayerStore();
     const playList = usePlaylistStore();
@@ -127,20 +120,7 @@ export default defineComponent({
       emit('remove', item);
     };
 
-    return {
-      page,
-      pageSize,
-      total,
-
-      formatDuration,
-      onPlay,
-      handleAddPlayItem,
-      linkToDetailPage,
-      handleRemove,
-    };
-  },
-});
-
+    ;
 </script>
 
 <style lang="less" scoped>

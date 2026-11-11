@@ -19,7 +19,8 @@
 
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+
 /*
  * @Descrption: nav
  * @Author: mikey.zhaopeng
@@ -27,14 +28,12 @@
  * @Last Modified by: zpwan
  * @Last Modified time: 2022-09-27 20:53:50
  */
-import { defineComponent, PropType } from 'vue';
+import {  PropType } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { ICodeName } from '@/apis/common/index.api';
-
-export default defineComponent({
-  name: 'CmNavBar',
-  props: {
+defineOptions({ name: 'CmNavBar' });
+const props = defineProps({
     // 标题
     title: {
       type: String,
@@ -65,11 +64,9 @@ export default defineComponent({
       type: Number,
       default: 14,
     },
-  },
-  // 选中项双向绑定 + 切换通知
-  emits: ['update:selectedCode', 'change'],
-  setup(props, { emit }) {
-    const router = useRouter();
+  });
+const emit = defineEmits(['update:selectedCode', 'change']);
+const router = useRouter();
 
     // 切换
     const onNavChange = (code: string) => {
@@ -84,13 +81,7 @@ export default defineComponent({
     };
 
     // props 在模板中可直接访问，无需再用 toRef 转发一次
-    return {
-      onNavChange,
-      loadMore,
-    };
-  },
-});
-
+    ;
 </script>
 
 <style lang="less" scoped>

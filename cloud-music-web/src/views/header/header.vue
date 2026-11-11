@@ -92,7 +92,8 @@
 
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+
 /*
  * @Description: 头部
  * @Author: wanzp
@@ -100,7 +101,7 @@
  * @Last Modified by: mikey.zhaopeng
  * @Last Modified time: 2022-09-10 20:52:46
  */
-import { defineComponent, ref, watch, onMounted } from 'vue';
+import {  ref, watch, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { ElPopover } from 'element-plus';
 
@@ -114,15 +115,8 @@ import { ElMessageBox } from 'element-plus';
 import message from '@/utils/message';
 
 import { useUserStore } from '@/store/user';
-
-export default defineComponent({
-  name: 'AppHeader',
-  components: {
-    'login-form': LoginForm,
-    'el-popover': ElPopover,
-  },
-  setup() {
-    const route = useRoute();
+defineOptions({ name: 'AppHeader' });
+const route = useRoute();
     const router = useRouter();
     const userStore = useUserStore();
     const header = useHeader();
@@ -251,22 +245,7 @@ export default defineComponent({
       }
     });
 
-    return {
-      header,
-      userInfo,
-
-      handleSearch,
-      onSearchFocus,
-      onSelectKeyword,
-      suggestTypeText,
-      onLinkTo,
-      linkToPortal,
-      handleLoginDialogShow,
-      handleLoginOut,
-    };
-  },
-});
-
+    ;
 </script>
 
 <style lang="less" scoped>

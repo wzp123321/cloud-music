@@ -98,7 +98,8 @@
 
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+
 /*
  * @Descrption: 专辑详情
  * @Author: wanzp
@@ -106,7 +107,7 @@
  * @Last Modified by: mikey.zhaopeng
  * @Last Modified time: 2022-07-31 15:17:23
  */
-import { defineComponent, onMounted } from 'vue';
+import {  onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { FGetQueryParam } from '@/core/token';
 import { useAlbumDetail } from './hooks/useAlbumDetail';
@@ -115,11 +116,8 @@ import { formatDate, formatDuration } from '../../core/utils';
 import { usePlayerStore } from '@/store/player';
 
 const albumDetail = useAlbumDetail();
-
-export default defineComponent({
-  name: 'AlbumDetail',
-  setup() {
-    const router = useRouter();
+defineOptions({ name: 'AlbumDetail' });
+const router = useRouter();
     const player = usePlayerStore();
 
     onMounted(() => {
@@ -149,17 +147,7 @@ export default defineComponent({
       router.push({ path: '/album_detail', query: { id: String(id) } });
     };
 
-    return {
-      albumDetail,
-      formatDate,
-      formatDuration,
-      resourceId,
-      linkToAlbum,
-      onPlay,
-    };
-  },
-});
-
+    ;
 </script>
 
 <style lang="less" scoped>

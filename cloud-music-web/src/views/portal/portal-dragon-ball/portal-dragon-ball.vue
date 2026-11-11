@@ -21,12 +21,13 @@
 
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+
 /*
  * @Description: 首页金刚区入口
  * @Author: home-recommendation
  */
-import { defineComponent, toRef } from 'vue';
+import {  toRef } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { usePortal } from '../hooks/usePortal';
@@ -42,11 +43,8 @@ const FALLBACK_BALLS: DragonBallItem[] = [
   { id: 'artists', name: '歌手', actionType: 'artists' },
   { id: 'new', name: '最新音乐', actionType: 'new' },
 ];
-
-export default defineComponent({
-  name: 'PortalDragonBall',
-  setup() {
-    const router = useRouter();
+defineOptions({ name: 'PortalDragonBall' });
+const router = useRouter();
     const dragonBallList = toRef(portal, 'dragonBallList');
 
     const balls = () => {
@@ -85,13 +83,7 @@ export default defineComponent({
       }
     };
 
-    return {
-      balls,
-      linkTo,
-    };
-  },
-});
-
+    ;
 </script>
 
 <style lang="less" scoped>

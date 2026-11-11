@@ -90,23 +90,21 @@
 
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+
 /*
  * @Description: 排行榜页（含榜单详情）
  * @Author: home-recommendation
  */
-import { defineComponent, onMounted } from 'vue';
+import {  onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 
 import { usePortal } from '../portal/hooks/usePortal';
 import { TopListTrack, TopSongItem, TopMvItem } from '../../apis/portal/portal-api';
 
 const portal = usePortal();
-
-export default defineComponent({
-  name: 'Rank',
-  setup() {
-    const route = useRoute();
+defineOptions({ name: 'Rank' });
+const route = useRoute();
 
     onMounted(() => {
       portal.queryToplist();
@@ -139,16 +137,7 @@ export default defineComponent({
       return (mv.artists || []).map((artist) => artist.name || '').join(' / ');
     };
 
-    return {
-      portal,
-      selectRank,
-      formatTrackArtists,
-      formatSongArtists,
-      formatMvArtists,
-    };
-  },
-});
-
+    ;
 </script>
 
 <style lang="less" scoped>

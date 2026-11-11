@@ -78,7 +78,8 @@
 
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+
 /*
  * @Description: 底部音乐播放
  * @Author: zpwan
@@ -86,21 +87,15 @@
  * @Last Modified by: mikey.zhaopeng
  * @Last Modified time: 2022-07-17 15:41:48
  */
-import { defineComponent, onMounted, ref } from 'vue';
+import {  onMounted, ref } from 'vue';
 import { ElSlider } from 'element-plus';
 
 import { usePlayerStore } from '@/store/player';
 import { useLyricStore } from '@/store/lyric';
 import { formatDuration } from '@/core/utils';
 import { sanitizeHtml } from '@/utils/sanitize';
-
-export default defineComponent({
-  name: 'PlayController',
-  components: {
-    'el-slider': ElSlider,
-  },
-  setup() {
-    const player = usePlayerStore();
+defineOptions({ name: 'PlayController' });
+const player = usePlayerStore();
     const lyric = useLyricStore();
     const locked = ref<boolean>(true);
     const audioElement = ref<HTMLAudioElement | null>(null);
@@ -115,18 +110,7 @@ export default defineComponent({
       player.bindAudio(audioElement.value);
     });
 
-    return {
-      player,
-      lyric,
-      locked,
-      audioElement,
-      handleLockorNot,
-      formatDuration,
-      sanitizeHtml,
-    };
-  },
-});
-
+    ;
 </script>
 
 <style lang="less" scoped>

@@ -10,20 +10,13 @@
     <play-list></play-list>
   </div>
 </template>
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+
+
 
 import AppHeader from '../header/header.vue';
 import PlayController from './components/play-controller/play-controller.vue';
-import PlayLIst from './components/play-list/play-list.vue';
-
-export default defineComponent({
-  components: {
-    'app-header': AppHeader,
-    'play-controller': PlayController,
-    'play-list': PlayLIst,
-  },
-});
+import PlayList from './components/play-list/play-list.vue';
 </script>
 <style lang="less" scoped>
 .home {

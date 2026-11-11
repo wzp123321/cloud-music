@@ -206,7 +206,8 @@
 
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+
 /*
  * @Descrption: 歌手详情
  * @Author: wanzp
@@ -214,18 +215,15 @@
  * @Last Modified by: zpwan
  * @Last Modified time: 2022-09-27 20:32:34
  */
-import { defineComponent, onMounted } from 'vue';
+import {  onMounted } from 'vue';
 import { FGetQueryParam } from '@/core/token';
 import { sanitizeHtml } from '@/utils/sanitize';
 
 import { useArtistDetail } from './hooks/useArtistDetail';
 
 const artistDetail = useArtistDetail();
-
-export default defineComponent({
-  name: 'ArtistDetail',
-  setup() {
-    artistDetail.init();
+defineOptions({ name: 'ArtistDetail' });
+artistDetail.init();
 
     const artistId = Number(FGetQueryParam('id') ?? 0);
 
@@ -238,14 +236,7 @@ export default defineComponent({
       }
     });
 
-    return {
-      artistDetail,
-      artistId,
-      sanitizeHtml,
-    };
-  },
-});
-
+    ;
 </script>
 
 <style lang="less" scoped>

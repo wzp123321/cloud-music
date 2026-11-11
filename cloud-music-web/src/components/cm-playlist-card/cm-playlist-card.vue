@@ -14,7 +14,8 @@
 
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+
 /*
  * @Descrption: 歌单卡片
  * @Author: wanzp
@@ -23,11 +24,8 @@
  * @Last Modified time: 2022-06-12 20:43:33
  */
 import { useRouter } from 'vue-router';
-import { defineComponent } from 'vue';
-
-export default defineComponent({
-  name: 'CMPlayListCard',
-  props: {
+defineOptions({ name: 'CMPlayListCard' });
+defineProps({
     coverImageUrl: {
       type: String,
       default: '',
@@ -54,9 +52,8 @@ export default defineComponent({
       type: String,
       default: '',
     },
-  },
-  setup() {
-    const router = useRouter();
+  });
+const router = useRouter();
     const linkToDetailPage = (id: number) => {
       router.push({
         path: '/playlist_detail',
@@ -67,12 +64,7 @@ export default defineComponent({
     };
 
     // props 在模板中可直接访问，无需再用 toRef 转发一次
-    return {
-      linkToDetailPage,
-    };
-  },
-});
-
+    ;
 </script>
 
 <style lang="less" scoped>
