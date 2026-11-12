@@ -6,7 +6,7 @@
       <code>user_cloud_detail</code> 与 <code>user_cloud_del</code>；也可手填。
     </p>
 
-    <div class="user-supplement--grid">
+    <div class="user-supplement--grid grid-cols-2">
       <section class="user-supplement--block user-supplement--block--wide">
         <h3 class="user-supplement--block-title">
           上游列表来源 · 我的云盘

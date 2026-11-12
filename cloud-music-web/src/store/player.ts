@@ -61,7 +61,7 @@ export const usePlayerStore = defineStore(
       if (resetFlag) {
         el.currentTime = 0;
       }
-      document.title = currentMusic.value.name || '网抑云Music';
+      document.title = currentMusic.value.name || '云音乐';
       el.play();
       errorList.value = errorList.value.filter((id) => id === currentMusic.value.id);
       isPlaying.value = true;
@@ -163,11 +163,12 @@ export const usePlayerStore = defineStore(
       lyric.syncPanel(playTimestamp.value);
     };
 
-    /** 进度条拖拽结束：把进度写回音频元素 */
+    /** 进度条拖拽结束：按滑块 progress（0~100）换算成秒写回音频元素 */
     const seek = () => {
       dragging.value = false;
-      if (audioEl.value) {
-        audioEl.value.currentTime = playTimestamp.value / 1000;
+      const dt = currentMusic.value.dt || 0;
+      if (audioEl.value && dt) {
+        audioEl.value.currentTime = (progress.value / 100) * (dt / 1000);
       }
     };
 

@@ -50,7 +50,7 @@
         <tr v-for="(item, index) in albumDetail?.songs" :key="'song_' + index">
           <td style="width: 10%" class="sort">
             <span>{{ index + 1 }}</span>
-            <img :src="item?.al?.picUrl" alt="" />
+            <img :src="item?.al?.picUrl" alt="" loading="lazy" />
           </td>
           <td ellipsis style="width: 30%">
             <span class="mname">{{ item.name }}</span>
@@ -76,14 +76,14 @@
       <h5 class="mb16">我收藏的专辑</h5>
       <p v-if="albumDetail.sublistNeedLogin" class="album-detail--tip">登录后查看已收藏专辑</p>
       <cm-error v-else-if="!albumDetail.subAlbums.length" :title="'暂无收藏专辑'"></cm-error>
-      <div v-else class="album-detail--sublist-grid">
+      <div v-else class="album-detail--sublist-grid grid-cols-6">
         <div
           v-for="(item, index) in albumDetail.subAlbums"
           :key="'sub_' + index"
           class="album-detail--sublist-item"
           @click="linkToAlbum(item.id)"
         >
-          <img :src="item.picUrl" alt="" />
+          <img :src="item.picUrl" alt="" loading="lazy" />
           <p :title="item.name">{{ item.name }}</p>
         </div>
       </div>
@@ -275,7 +275,6 @@ const router = useRouter();
 
 .album-detail--sublist-grid {
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 16px;
 }
 

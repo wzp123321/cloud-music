@@ -25,7 +25,7 @@
           {{ playListDetailService.subscribed ? '已收藏' : '收藏' }}
         </el-button>
         <el-button @click="openEdit">编辑</el-button>
-        <el-button @click="addVisible = true">添加歌曲</el-button>
+        <el-button @click="setAddVisible(true)">添加歌曲</el-button>
         <span v-if="dynamic" class="pd-stat">
           <i class="iconfont icon-z"></i> {{ formatStat(dynamic.playCount) }}
           <i class="iconfont icon-jushoucang ml12"></i> {{ formatStat(dynamic.bookCount ?? dynamic.subscribedCount) }}
@@ -77,7 +77,7 @@
       placeholder="请输入歌曲 ID，多个用逗号分隔"
     />
     <template #footer>
-      <el-button @click="addVisible = false">取消</el-button>
+      <el-button @click="setAddVisible(false)">取消</el-button>
       <el-button type="primary" :loading="adding" @click="onAddSong">确定添加</el-button>
     </template>
   </el-dialog>
@@ -96,137 +96,28 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watch } from 'vue';
-import { usePlayListDetail } from './hooks/usePlayListDetail';
-import { PD_IPlaylistDetail } from '../../../apis/playlist-detail/index.api';
-import { Common_IMusic } from '../../../apis/common/index.api';
-import { MP_IMVCommentRes } from '../../../apis/mvplay/index.api';
-import message from '@/utils/message';
 import PlaylistFormDialog from '../components/playlist-form-dialog.vue';
+import { usePlaylistDetailView } from './hooks/usePlaylistDetailView';
 
-const playListDetailService = usePlayListDetail();
-
-const playlistId = Number(new URLSearchParams(window.location.search).get('id') || '0');
-
-const playListDetail = ref<PD_IPlaylistDetail>({
-  backgroundCoverUrl: '',
-  bannedTrackIds: '',
-  cloudTrackCount: '',
-  commentCount: '',
-  commentThreadId: '',
-  copied: false,
-  coverImgId: '',
-  coverImgId_str: '',
-  coverImgUrl: '',
-  createTime: '',
-  description: '',
-  englishTitle: '',
-  gradeStatus: '',
-  highQuality: false,
-  historySharedUsers: '',
-  id: '',
-  name: '',
-  newImported: '',
-  officialPlaylistType: '',
-  opRecommend: '',
-  ordered: '',
-  playCount: '',
-  privacy: '',
-  remixVideo: '',
-  score: '',
-  shareCount: '',
-  tags: [],
-  titleImage: '',
-  titleImageUrl: '',
-  trackCount: '',
-  tracks: [],
-});
-const musicList = ref<Common_IMusic[]>([]);
-const commentRes = ref<MP_IMVCommentRes>({
-  comments: [],
-  hotComments: [],
-});
-const dynamic = ref<any>(null);
-
-const addVisible = ref(false);
-const addSongIds = ref('');
-const adding = ref(false);
-const editVisible = ref(false);
-
-// 订阅歌单详情 / 评论 / 歌曲列表 / 动态，immediate 保证首屏同步到当前值
-watch(playListDetailService.playListResult$, (v) => (playListDetail.value = v), { immediate: true });
-watch(playListDetailService.playListCommentResult$, (v) => (commentRes.value = v), { immediate: true });
-watch(
-  playListDetailService.playListMusicListResult$,
-  (v) => {
-    musicList.value = v?.map((item) => {
-      return {
-        dt: item.dt,
-        url: '',
-        name: item.name,
-        alName: item.alName,
-        artist: item.artist,
-        picUrl: item.picUrl,
-        id: item.id,
-      };
-    });
-  },
-  { immediate: true },
-);
-watch(playListDetailService.dynamic$, (v) => (dynamic.value = v), { immediate: true });
-
-const onToggleSubscribe = async () => {
-  try {
-    await playListDetailService.subscribe(playListDetailService.subscribed ? 2 : 1);
-    message.success(playListDetailService.subscribed ? '收藏成功' : '已取消收藏');
-  } catch {
-    message.error('操作失败，请确认已登录');
-  }
-};
-
-const onRemove = async (item: Common_IMusic) => {
-  try {
-    await playListDetailService.removeTrack(String(item.id));
-    message.success('已移除');
-  } catch {
-    message.error('移除失败，请确认已登录');
-  }
-};
-
-const onAddSong = async () => {
-  const ids = addSongIds.value.trim();
-  if (!ids) {
-    message.error('请输入歌曲 ID');
-    return;
-  }
-  adding.value = true;
-  try {
-    await playListDetailService.addTrack(ids);
-    message.success('添加成功');
-    addVisible.value = false;
-    addSongIds.value = '';
-  } catch {
-    message.error('添加失败，请确认已登录');
-  } finally {
-    adding.value = false;
-  }
-};
-
-const openEdit = () => {
-  editVisible.value = true;
-};
-
-const onEdited = () => {
-  playListDetailService.init();
-};
-
-const formatStat = (val?: number) => {
-  if (val == null) return '0';
-  if (val >= 10000) {
-    return `${(val / 10000).toFixed(1)}万`;
-  }
-  return String(val);
-};
+const {
+  playListDetailService,
+  playlistId,
+  playListDetail,
+  musicList,
+  commentRes,
+  dynamic,
+  addVisible,
+  addSongIds,
+  adding,
+  editVisible,
+  setAddVisible,
+  onToggleSubscribe,
+  onRemove,
+  onAddSong,
+  openEdit,
+  onEdited,
+  formatStat,
+} = usePlaylistDetailView();
 </script>
 
 <style scoped lang="less">

@@ -7,7 +7,7 @@
 
     <section v-for="group in groups" :key="group.title" class="capabilities--section">
       <h3 class="capabilities--heading">{{ group.title }}</h3>
-      <div class="capabilities--grid">
+      <div class="capabilities--grid grid-cols-4">
         <div v-for="item in group.items" :key="item.path" class="capabilities--card" @click="linkTo(item.path)">
           <h5>{{ item.title }}</h5>
           <p class="capabilities--path">{{ item.path }}</p>
@@ -78,7 +78,7 @@ const linkTo = (path: string) => {
 
 <style scoped lang="less">
 .capabilities {
-  width: 1400px;
+  width: 1200px;
   margin: 0 auto;
   padding: 24px 0 48px;
 
@@ -104,7 +104,6 @@ const linkTo = (path: string) => {
 
   &--grid {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 16px;
     margin-top: 16px;
   }

@@ -8,7 +8,7 @@
       class="portal-block-page--section"
     >
       <cm-navbar v-if="blockTitle(block)" :title="blockTitle(block)" :has-load-more="false"></cm-navbar>
-      <div class="portal-block-page--row">
+      <div class="portal-block-page--row grid-cols-5">
         <div
           v-for="(res, rIndex) in visibleResources(block)"
           :key="'res_' + bIndex + '_' + rIndex"
@@ -127,7 +127,6 @@ const blockPageList = toRef(portal, 'blockPageList');
   // 与歌单/榜单统一：容器全宽 5 列等分，左右边缘严格对齐
   &--row {
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 20px;
     margin-top: 12px;
   }

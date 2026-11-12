@@ -132,7 +132,7 @@ onMounted(() => {
 
 <style scoped lang="less">
 .route-completion {
-  width: 1400px;
+  width: 1200px;
   margin: 0 auto;
   padding-bottom: 60px;
 

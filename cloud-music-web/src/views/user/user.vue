@@ -54,7 +54,7 @@ import { ref, computed, onMounted, watch } from 'vue';
 
 import { useUserCenter } from './hooks/useUserCenter';
 import { UC_IUserDetail, UC_IPlaylist, UC_IUserLevel, UC_IUserSubcount, UC_IRecord } from '@/apis/user/user.api';
-import { FGetCookie } from '@/core/token';
+import { useUserStore } from '@/store/user';
 
 import UserProfile from './components/user-profile.vue';
 import UserPlaylists from './components/user-playlists.vue';
@@ -96,13 +96,8 @@ const tabs = [
 ] as const;
 
 const canEdit = computed(() => {
-  const cookie = FGetCookie('cloud-userInfo');
-  try {
-    const id = cookie ? JSON.parse(cookie)?.profile?.userId : undefined;
-    return !!id && id === uid.value;
-  } catch {
-    return false;
-  }
+  const id = useUserStore().profile?.userId;
+  return !!id && id === uid.value;
 });
 
 const goTab = (key: string) => {

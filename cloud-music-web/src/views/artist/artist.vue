@@ -27,7 +27,7 @@
       <h3 class="artist--heading">歌手列表</h3>
       <div v-if="loading" class="artist--status">加载中…</div>
       <cm-error v-else-if="!artistList.length" :title="'暂无歌手数据'"></cm-error>
-      <div v-else class="artist--grid">
+      <div v-else class="artist--grid grid-cols-6">
         <div
           v-for="item in artistList"
           :key="'artist_' + item.id"
@@ -190,7 +190,7 @@ onMounted(() => {
 
 <style scoped lang="less">
 .artist {
-  width: 1400px;
+  width: 1200px;
   margin: 0 auto;
   padding: 24px 0 48px;
 
@@ -248,7 +248,6 @@ onMounted(() => {
 
   &--grid {
     display: grid;
-    grid-template-columns: repeat(6, minmax(0, 1fr));
     gap: 24px;
     margin-top: 20px;
   }

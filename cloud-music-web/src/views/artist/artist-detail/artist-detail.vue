@@ -168,7 +168,7 @@
     <!-- 相关视频：artist_video -->
     <div
       v-show="artistDetail.selectedCode === artistDetail.navs[4].code && !artistDetail.itemLoading && !artistDetail.is_error"
-      class="artist-detail--video-list flex-wrap"
+      class="artist-detail--video-list flex-wrap grid-cols-4"
     >
       <cm-error v-if="!artistDetail.videos.length" :title="'暂无相关视频'"></cm-error>
       <div v-for="(video, index) in artistDetail.videos" :key="'video_' + index" class="artist-detail--video-item">
@@ -192,7 +192,7 @@
     <cm-error v-if="!artistDetail.fans.length" :title="'暂无粉丝数据'"></cm-error>
     <div v-else class="artist-detail--fans">
       <div v-for="(fan, index) in artistDetail.fans" :key="'fan_' + index" class="artist-detail--fan">
-        <img :src="fan.avatarUrl" alt="" />
+        <img :src="fan.avatarUrl" alt="" loading="lazy" />
         <p :title="fan.nickname">{{ fan.nickname }}</p>
       </div>
     </div>
@@ -466,7 +466,6 @@ artistDetail.init();
 
 .artist-detail--video-list {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 20px;
 }
 

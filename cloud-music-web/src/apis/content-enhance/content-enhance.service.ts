@@ -38,9 +38,10 @@ import {
  * - 订阅列表型接口（*_sublist）只需分页参数，需登录态，未登录时页面降级展示
  */
 
-/** 是否已有登录态（用于写操作/需登录接口的 UI 降级） */
+/** 是否已有登录态（用于写操作/需登录接口的 UI 降级）
+ *  登录态以 cloud-token 凭证 cookie 为准（登录时写入、退出时清空），与用户 store 的 isLogin 一致 */
 export function hasLogin(): boolean {
-  return !!FGetCookie('cloud-userInfo');
+  return !!FGetCookie('cloud-token');
 }
 
 const contentEnhanceService = {

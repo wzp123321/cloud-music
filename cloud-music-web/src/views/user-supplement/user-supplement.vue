@@ -45,7 +45,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-import { FGetCookie } from '@/core/token';
+import { useUserStore } from '@/store/user';
 import { hasLogin as checkLogin } from '@/apis/content-enhance/content-enhance.service';
 
 import SupplementReadPanel from './components/supplement-read-panel.vue';
@@ -59,15 +59,8 @@ const tabs = [
   { code: 'c6_3', name: '6.3 歌单编辑（9）' },
 ];
 
-/** 从 cookie 里取当前登录 uid，取不到留空由用户手填 */
-const resolveUid = (): number => {
-  try {
-    const raw = FGetCookie('cloud-userInfo');
-    return raw ? (JSON.parse(raw)?.profile?.userId ?? 0) : 0;
-  } catch {
-    return 0;
-  }
-};
+/** 从登录态取当前登录 uid，取不到留空由用户手填 */
+const resolveUid = (): number => useUserStore().profile?.userId ?? 0;
 
 const hasLogin = ref<boolean>(checkLogin());
 const activeTab = ref<string>('c6_1');

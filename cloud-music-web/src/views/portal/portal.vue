@@ -26,7 +26,7 @@
     :load-more-url="'/playlist'"
     @change="portal.queryPlayListByType"
   ></cm-navbar>
-  <div class="portal-playlist-grid mt16">
+  <div class="portal-playlist-grid grid-cols-5 mt16">
     <cm-playlist-card
       v-for="(item, index) in portal.playList.slice(0, 5)"
       :id="item.id"
@@ -46,7 +46,7 @@
   <template v-if="showSecondary">
     <!-- 榜单 -->
     <cm-navbar :title="'排行榜'" :has-load-more="false"></cm-navbar>
-    <div class="portal-rank mt16 mb48">
+    <div class="portal-rank grid-cols-5 mt16 mb48">
       <port-rank-detail :playlist-v-o="portal.hotMusicRankVO"></port-rank-detail>
       <port-rank-detail :playlist-v-o="portal.newMusicRankVO"></port-rank-detail>
       <port-rank-detail :playlist-v-o="portal.surgeRankVO"></port-rank-detail>
@@ -121,7 +121,6 @@ const showSecondary = ref<boolean>(false);
   // 与其他板块统一：容器全宽 5 列等分，左右边缘严格对齐
   &-playlist-grid {
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 0 20px;
 
     :deep(.cm-playlist-card) {
@@ -154,7 +153,6 @@ const showSecondary = ref<boolean>(false);
 
   &-rank {
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
     justify-content: center;
     gap: 20px;
     background-color: rgba(247, 247, 247, 1);

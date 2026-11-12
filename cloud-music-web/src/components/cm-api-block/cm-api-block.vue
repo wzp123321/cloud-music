@@ -1,6 +1,7 @@
 <template>
   <!-- 单个接口区块：头信息 / 参数输入 / 请求结果 / 原始返回 -->
-  <section class="cm-api-block">
+  <!-- 安全：接口调用台仅在开发环境渲染，避免生产包暴露任意接口调用能力 -->
+  <section v-if="enableApiConsole" class="cm-api-block">
     <header class="cm-api-block--head">
       <span class="cm-api-block--module">{{ block.module }}</span>
       <span class="cm-api-block--title">{{ block.title }}</span>
@@ -35,23 +36,18 @@
     <div v-if="state.loading" class="cm-api-block--loading">加载中…</div>
     <p v-if="state.tip" class="cm-api-block--tip">{{ state.tip }}</p>
 
-    <div v-if="state.cards.length" class="cm-api-block--grid">
-      <div
-        v-for="(card, index) in state.cards"
-        :key="block.module + '_' + index"
-        class="cm-api-block--card"
-        @click="emit('card-click', block, card)"
-      >
-        <cm-skeleton
-          width="100%"
-          :height="''"
-          :image-url="card.cover || ''"
-          :border-radius="'6px'"
-        ></cm-skeleton>
-        <p class="cm-api-block--card-title" :title="card.title">{{ card.title }}</p>
-        <p class="cm-api-block--card-sub">id: {{ card.id }} {{ card.subtitle }}</p>
-      </div>
-    </div>
+    <cm-media-grid
+      v-if="state.cards.length"
+      :items="state.cards"
+      :cols="6"
+      :gap="18"
+      item-key="id"
+      @item-click="onCardClick"
+    >
+      <template #extra="{ item }">
+        <p class="cm-api-block--card-sub">id: {{ item.id }} {{ item.subtitle }}</p>
+      </template>
+    </cm-media-grid>
     <cm-error
       v-else-if="state.loaded && !state.cards.length"
       :title="'请求完成，无列表数据（详见原始返回）'"
@@ -69,6 +65,12 @@ import { computed } from 'vue';
 
 import { pretty } from './api-block.util';
 import { DEFAULT_KIND_LABELS, type ApiBlock, type BlockCard, type BlockState } from './api-block.types';
+
+/** 接口调用台仅开发环境可见（见模板根节点 v-if） */
+const enableApiConsole = import.meta.env.DEV;
+
+/** 卡片点击：把整张卡片透传给父级 card-click */
+const onCardClick = (item: BlockCard) => emit('card-click', props.block, item);
 
 const props = defineProps<{
   /** 接口区块定义 */
@@ -234,37 +236,6 @@ const onFileChange = (event: Event) => {
 
   &--tip {
     color: #6a9955;
-  }
-
-  &--grid {
-    display: grid;
-    grid-template-columns: repeat(6, minmax(0, 1fr));
-    gap: 18px;
-    margin-top: 16px;
-  }
-
-  &--card {
-    cursor: pointer;
-    transition: transform 0.2s;
-
-    // 封面为正方形，跟随列宽缩放
-    :deep(.cm-skeleton) {
-      height: auto;
-      aspect-ratio: 1;
-    }
-
-    &:hover {
-      transform: translateY(-4px);
-    }
-  }
-
-  &--card-title {
-    margin-top: 8px;
-    font-size: 13px;
-    color: #333;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
   }
 
   &--card-sub {

@@ -62,7 +62,7 @@ onMounted(() => {
 
 <style scoped lang="less">
 .my-playlist {
-  width: 1400px;
+  width: 1200px;
   margin: 0 auto;
   padding-top: 40px;
 

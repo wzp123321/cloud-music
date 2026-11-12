@@ -15,12 +15,16 @@ export function FGetQueryParam(key: string): string | undefined {
 }
 
 // 存入cookie
+// 安全加固：补齐 SameSite（防 CSRF 携带），HTTPS 下追加 Secure。
+// 注意：本项目 token 由 JS 读取（注入 Authorization 头），故无法设 HttpOnly。
 export function FSetCookie(key: string, value?: string): void {
   if (!key) {
     return;
   }
 
-  document.cookie = `${key.toLowerCase()}=${encodeURIComponent(value ?? '')};path=/`;
+  // 仅在生产 HTTPS 环境追加 Secure，避免本地 http 开发态写不进 cookie
+  const secure = window.location.protocol === 'https:' ? ';Secure' : '';
+  document.cookie = `${key.toLowerCase()}=${encodeURIComponent(value ?? '')};path=/;SameSite=Lax${secure}`;
 }
 
 // 取cookie

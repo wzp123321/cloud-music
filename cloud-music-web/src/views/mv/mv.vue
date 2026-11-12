@@ -37,7 +37,7 @@
     <section class="mv-discovery--section">
       <div v-if="loading" class="mv-discovery--status">加载中…</div>
       <cm-error v-else-if="!mvList.length" :title="'暂无 MV 数据'"></cm-error>
-      <div v-else class="mv-discovery--grid">
+      <div v-else class="mv-discovery--grid grid-cols-4">
         <div
           v-for="(item, index) in mvList"
           :key="'mv_' + activeTab + '_' + index + '_' + item.id"
@@ -56,7 +56,7 @@
       <h3 class="mv-discovery--heading">我收藏的 MV</h3>
       <p v-if="!hasLogin" class="mv-discovery--tip">登录后查看收藏的 MV</p>
       <cm-error v-else-if="!subMvList.length" :title="'暂无收藏 MV'"></cm-error>
-      <div v-else class="mv-discovery--grid">
+      <div v-else class="mv-discovery--grid grid-cols-4">
         <div
           v-for="(item, index) in subMvList"
           :key="'sub_mv_' + index"
@@ -168,7 +168,7 @@ onMounted(() => {
 
 <style scoped lang="less">
 .mv-discovery {
-  width: 1400px;
+  width: 1200px;
   margin: 0 auto;
   padding: 24px 0 48px;
 
@@ -248,7 +248,6 @@ onMounted(() => {
 
   &--grid {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 24px;
     margin-top: 20px;
   }

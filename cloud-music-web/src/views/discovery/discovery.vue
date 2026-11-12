@@ -66,7 +66,7 @@ const { loggedIn, activeTab, activeBlocks, sel, inputs, states, runBlock, onCard
 
 <style scoped lang="less">
 .discovery {
-  width: 1400px;
+  width: 1200px;
   margin: 0 auto;
   padding: 24px 0 48px;
 

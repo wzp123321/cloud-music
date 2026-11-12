@@ -1,7 +1,8 @@
  
 import { ref } from 'vue';
 
-import { FGetCookie, FGetQueryParam } from '@/core/token';
+import { FGetQueryParam } from '@/core/token';
+import { useUserStore } from '@/store/user';
 import UserService from '@/apis/user/user.service';
 import {
   UC_IUserDetail,
@@ -82,13 +83,7 @@ const create = () => {
     if (qid) {
       uidRef.value = Number(qid);
     } else {
-      const cookie = FGetCookie('cloud-userInfo');
-      try {
-        const profile = cookie ? JSON.parse(cookie)?.profile : undefined;
-        uidRef.value = profile?.userId ?? 0;
-      } catch {
-        uidRef.value = 0;
-      }
+      uidRef.value = useUserStore().profile?.userId ?? 0;
     }
     loadAll();
   };

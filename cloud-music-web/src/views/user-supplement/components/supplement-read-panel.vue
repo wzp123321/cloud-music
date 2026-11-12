@@ -5,7 +5,7 @@
       4 个需登录只读接口按接口分区；<code>user_replacephone</code> 为写操作（未登录不发请求 + 二次确认）。
     </p>
 
-    <div class="user-supplement--grid">
+    <div class="user-supplement--grid grid-cols-2">
       <section v-for="block in readBlocks" :key="block.code" class="user-supplement--block">
         <h3 class="user-supplement--block-title">
           <code class="user-supplement--module">{{ block.module }}</code> {{ block.name }}

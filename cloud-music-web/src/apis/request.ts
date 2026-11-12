@@ -28,11 +28,15 @@ instance.interceptors.response.use(
   (error: AxiosError) => Promise.reject(error),
 );
 
-// 请求超时辅助函数
-const timeoutfn = (delay: number, url: string) =>
-  new Promise((resolve) => {
-    setTimeout(() => resolve(`请求超时--${url}`), delay);
+// 请求超时辅助函数：超时必须 reject，否则调用方会把超时当正常数据 resolve。
+// 返回 cancel 供 race 结束后清掉定时器，避免每个请求都悬挂一个到点才释放的 timer。
+const timeoutfn = (delay: number, url: string) => {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const promise = new Promise<never>((_resolve, reject) => {
+    timer = setTimeout(() => reject(new Error(`请求超时--${url}`)), delay);
   });
+  return { promise, cancel: () => clearTimeout(timer) };
+};
 
 /** 请求可选配置：headers 与二进制响应类型 */
 export interface IRequestOptions {
@@ -74,10 +78,13 @@ const publicReq = async (params: IRequestParams) => {
 
 // 单个请求（带超时 race）
 export const req = async (params: IRequestParams, delay = serviceConfig.TIME_OUT) => {
+  const timeout = timeoutfn(delay, params.url);
   try {
-    return await Promise.race([timeoutfn(delay, params.url), publicReq(params)]);
+    return await Promise.race([timeout.promise, publicReq(params)]);
   } catch (error) {
     return Promise.reject(error);
+  } finally {
+    timeout.cancel();
   }
 };
 

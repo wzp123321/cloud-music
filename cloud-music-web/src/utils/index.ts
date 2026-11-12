@@ -1,7 +1,8 @@
 import { getBlobResponse } from '@/apis/request';
 
-// 节流防抖 时间戳
-let timeStamp: ReturnType<typeof setTimeout> | undefined;
+// 节流/防抖定时器：按函数引用隔离，避免多个调用方共用一个定时器互相覆盖、串台
+const debounceTimers = new Map<() => void, ReturnType<typeof setTimeout>>();
+const throttleTimers = new Map<() => void, ReturnType<typeof setTimeout>>();
 // components
 import message from '@/utils/message';
 
@@ -131,8 +132,13 @@ export const openBlankUrl = (path: string) => {
  * @param await
  */
 export const debounce = (fn: () => void, timeout = 800) => {
-  clearTimeout(timeStamp);
-  timeStamp = setTimeout(fn, timeout);
+  const prev = debounceTimers.get(fn);
+  if (prev) clearTimeout(prev);
+  const timer = setTimeout(() => {
+    debounceTimers.delete(fn);
+    fn();
+  }, timeout);
+  debounceTimers.set(fn, timer);
 };
 
 /**
@@ -143,11 +149,12 @@ export const debounce = (fn: () => void, timeout = 800) => {
  * @returns
  */
 export const throttle = (fn: () => void, timeout = 500) => {
-  if (timeStamp) {
+  if (throttleTimers.has(fn)) {
     return;
   }
-  timeStamp = setTimeout(() => {
+  const timer = setTimeout(() => {
     fn();
-    clearTimeout(timeStamp);
+    throttleTimers.delete(fn);
   }, timeout);
+  throttleTimers.set(fn, timer);
 };

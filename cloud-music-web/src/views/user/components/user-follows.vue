@@ -29,7 +29,7 @@
 
 <script lang="ts" setup>
 import { ref, computed, onMounted } from 'vue';
-import { FGetCookie } from '@/core/token';
+import { useUserStore } from '@/store/user';
 import { useUserCenter } from '../hooks/useUserCenter';
 
 const userCenterService = useUserCenter();
@@ -53,12 +53,7 @@ const onToggle = (u: UC_IFollowUser) => {
 };
 
 onMounted(() => {
-  const cookie = FGetCookie('cloud-userInfo');
-  try {
-    ownerUid.value = cookie ? JSON.parse(cookie)?.profile?.userId ?? 0 : 0;
-  } catch {
-    ownerUid.value = 0;
-  }
+  ownerUid.value = useUserStore().profile?.userId ?? 0;
   userCenterService.loadFollows();
 });
 </script>

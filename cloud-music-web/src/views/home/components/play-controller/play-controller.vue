@@ -18,7 +18,7 @@
           ></audio>
 
           <div class="flex-row-justify-center mb8">
-            <span>{{ player.currentMusic.name ? player.currentMusic.name : '酷你音乐-陪着我·不要停' }}</span>
+            <span>{{ player.currentMusic.name ? player.currentMusic.name : '云音乐' }}</span>
             <div>
               <span>{{ formatDuration(player.playTimestamp) }}</span> /
               <span>{{ formatDuration(player.currentMusic.dt) }}</span>
@@ -136,7 +136,7 @@ const player = usePlayerStore();
 
     &-panel {
       position: relative;
-      width: 1400px;
+      width: 1200px;
       margin: 0 auto;
 
       .lock-switch {

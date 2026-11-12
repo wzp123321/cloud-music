@@ -1,7 +1,7 @@
 <template>
 <div class="cm-error flex-column-center-center">
   <img src="../../assets/images/common/common-error.png" alt="" />
-  <p class="title">加载失败，请稍后重试</p>
+  <p class="title">{{ title }}</p>
 </div>
 
 </template>
@@ -19,7 +19,7 @@ defineOptions({ name: 'CmSkeleton' });
 defineProps({
     title: {
       type: String,
-      default: '暂无数据',
+      default: '加载失败，请稍后重试',
     },
   });
 </script>

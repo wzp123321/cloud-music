@@ -68,13 +68,16 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
+import { computed, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { ELOGINTYPE } from '../../../apis/header-loginform/index.api';
 import { useLogin } from './hooks/useLogin';
 
 const router = useRouter();
 const loginService = useLogin();
+
+// useLogin 是模块级单例，组件销毁不会带走轮询；卸载时必须显式停止
+onUnmounted(() => loginService.stopQr());
 
 const typeOptions = computed(() => {
   return Object.entries(ELOGINTYPE).map(([k, v]) => {

@@ -15,7 +15,7 @@
       </div>
     </div>
 
-    <div class="up-subcount">
+    <div class="up-subcount grid-cols-5">
       <div v-for="item in subItems" :key="item.label" class="up-sub-item">
         <div class="up-sub-num">{{ item.value }}</div>
         <div class="up-sub-label">{{ item.label }}</div>
@@ -108,7 +108,6 @@ const subItems = computed(() => {
 
   .up-subcount {
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 16px;
     margin-top: 16px;
 

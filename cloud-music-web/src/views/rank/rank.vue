@@ -6,7 +6,7 @@
   <section class="rank--section">
     <h3 class="rank--heading">官方榜单</h3>
     <cm-error v-if="!portal.toplist.length" :title="'暂无榜单'"></cm-error>
-    <div v-else class="rank--toplist">
+    <div v-else class="rank--toplist grid-cols-5">
       <div
         v-for="item in portal.toplist"
         :key="'tl_' + item.id"
@@ -73,7 +73,7 @@
   <section class="rank--section">
     <h3 class="rank--heading">MV 排行榜</h3>
     <cm-error v-if="!portal.topMvList.length" :title="'暂无 MV'"></cm-error>
-    <div v-else class="rank--mv-grid">
+    <div v-else class="rank--mv-grid grid-cols-4">
       <div
         v-for="(mv, index) in portal.topMvList"
         :key="'mv_' + index"
@@ -142,7 +142,7 @@ const route = useRoute();
 
 <style lang="less" scoped>
 .rank {
-  width: 1400px;
+  width: 1200px;
   margin: 0 auto;
   padding: 24px 0 48px;
 
@@ -161,7 +161,6 @@ const route = useRoute();
 
   &--toplist {
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 20px;
     margin-top: 16px;
   }
@@ -269,7 +268,6 @@ const route = useRoute();
 
   &--mv-grid {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 24px;
     margin-top: 16px;
   }

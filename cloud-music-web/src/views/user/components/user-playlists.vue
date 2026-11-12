@@ -4,10 +4,10 @@
       <span>创建的歌单</span>
       <span class="up-count">{{ playlists?.length || 0 }}</span>
     </div>
-    <div v-if="playlists?.length" class="up-grid">
+    <div v-if="playlists?.length" class="up-grid grid-cols-5">
       <div v-for="item in playlists" :key="item.id" class="up-card" @click="openPlaylist(item.id)">
         <div class="up-cover">
-          <img :src="item.coverImgUrl" alt="" />
+          <img :src="item.coverImgUrl" alt="" loading="lazy" />
           <span class="up-playcount">{{ formatPlayCount(item.playCount) }}</span>
         </div>
         <div class="up-card-name" :title="item.name">{{ item.name }}</div>
@@ -59,7 +59,6 @@ const formatPlayCount = (count: number) => {
 
   .up-grid {
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 20px;
   }
 

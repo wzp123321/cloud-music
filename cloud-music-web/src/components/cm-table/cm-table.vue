@@ -12,7 +12,7 @@
     <tr v-for="(item, index) in dataSource.slice((page - 1) * pageSize, page * pageSize)" :key="'song_' + index">
       <td style="width: 10%" class="sort">
         <span>{{ (page - 1) * pageSize + index + 1 }}</span>
-        <img :src="item?.picUrl" alt="" />
+        <img :src="item?.picUrl" alt="" loading="lazy" />
       </td>
       <td ellipsis style="width: 30%">
         <span class="mname">{{ item.name }}</span>

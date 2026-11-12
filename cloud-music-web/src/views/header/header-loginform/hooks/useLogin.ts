@@ -1,4 +1,4 @@
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
 import { postRequest } from '@/apis/request';
 import { ELOGINTYPE, EQRSTATUS, Header_ILoginVO, HL_ILoginUserVO } from '../../../../apis/header-loginform/index.api';
@@ -56,6 +56,12 @@ const create = () => {
       qrPolling = null;
     }
   };
+
+  // 弹窗关闭即停轮询：单例常驻于 header，组件未必卸载，仅靠 onUnmounted 兜不住。
+  // 同时避免「二维码过期 -> startQrLogin 自动续期」在弹窗已关闭时无限重启。
+  watch(_visible, (visible) => {
+    if (!visible) stopQr();
+  });
 
   /** 用户主动刷新二维码 */
   const refreshQr = () => {
@@ -169,6 +175,11 @@ const create = () => {
   const pollQr = () => {
     stopQr();
     qrPolling = setInterval(async () => {
+      // 弹窗已关闭时，即使回调正在 await 中也必须停止，防止过期分支重启轮询
+      if (!_visible.value) {
+        stopQr();
+        return;
+      }
       if (!qrKey) return;
       try {
         const res = await UserService.checkQr(qrKey);

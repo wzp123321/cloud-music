@@ -179,7 +179,7 @@ onMounted(() => {
 
 <style scoped lang="less">
 .playlist-browse {
-  width: 1400px;
+  width: 1200px;
   margin: 0 auto;
   padding-top: 40px;
 
