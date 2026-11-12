@@ -17,6 +17,6 @@ const routes: RouteRecordRaw[] = Object.keys(modules)
   .flatMap((key) => modules[key]?.default ?? []);
 
 export default createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes,
 });

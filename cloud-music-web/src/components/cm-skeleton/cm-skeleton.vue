@@ -1,6 +1,6 @@
 <template>
 <div class="cm-skeleton" :class="{ 'is-placeholder': placeholder }" :style="skeletonStyle">
-  <img v-if="loaded" :src="imageUrl" alt="" />
+  <cm-image v-if="loaded" :src="imageUrl" alt="" />
   <span v-else-if="placeholder" class="cm-skeleton--placeholder" aria-hidden="true">♪</span>
 </div>
 
@@ -8,13 +8,7 @@
 
 <script setup lang="ts">
 
-/*
- * @Descrption: 骨架屏
- * @Author: wanzp
- * @Date: 2022-07-10 15:28:48
- * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2022-07-10 17:06:43
- */
+// 骨架屏
 import { watch, ref, computed, onBeforeUnmount } from 'vue';
 defineOptions({ name: 'CmSkeleton' });
 const props = defineProps({

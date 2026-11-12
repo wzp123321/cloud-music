@@ -3,15 +3,16 @@
  * 该页面面向「接口清单可视化」，各接口返回结构不统一，这里统一压成卡片结构再渲染
  */
 import type { Ref } from 'vue';
+import {
+  extractObject,
+  extractListByCandidates,
+  toCardList,
+  pickNumberId,
+  type ApiCard,
+} from '@/utils/api-normalize';
 
 /** 列表卡片：展示只需要标题 / 副标题 / 图标 / id 四个位 */
-export interface SupplementCard {
-  id: number;
-  title: string;
-  cover: string;
-  subtitle: string;
-  raw: any;
-}
+export type SupplementCard = ApiCard;
 
 /** 写操作结果文案（各面板共用同一份格式） */
 export const formatWriteResult = (label: string, res: any): string => {
@@ -19,44 +20,31 @@ export const formatWriteResult = (label: string, res: any): string => {
   return `${label} 已提交｜code=${obj.code ?? res?.code ?? '—'}｜${obj.message ?? res?.message ?? '无附加信息'}`;
 };
 
-/** 兼容 res.data / res.result / res.list / res.playlist / res.xxx / res.data.list 等多种结构 */
-export const extractList = (res: any): any[] => {
-  if (!res) return [];
-  if (Array.isArray(res)) return res;
-  const candidates = [
-    res.data,
-    res.result,
-    res.list,
-    res.playlist,
-    res.playlists,
-    res.songs,
-    res.records,
-    res.events,
-    res.comments,
-    res.videos,
-    res.albums,
-    res.data?.list,
-    res.result?.list,
-    res.data?.data,
-    res.data?.records,
-    res.data?.playlist,
-    res.data?.songs,
-  ];
-  for (const item of candidates) {
-    if (Array.isArray(item)) return item;
-  }
-  for (const key of Object.keys(res)) {
-    if (Array.isArray(res[key])) return res[key];
-  }
-  return [];
-};
+/** 候选字段优先级：此页面接口以 playlist / events / comments 等为主 */
+const listCandidates = (res: any): any[] => [
+  res.data,
+  res.result,
+  res.list,
+  res.playlist,
+  res.playlists,
+  res.songs,
+  res.records,
+  res.events,
+  res.comments,
+  res.videos,
+  res.albums,
+  res.data?.list,
+  res.result?.list,
+  res.data?.data,
+  res.data?.records,
+  res.data?.playlist,
+  res.data?.songs,
+];
 
-export const extractObj = (res: any): Record<string, any> => {
-  if (!res) return {};
-  if (res.data && typeof res.data === 'object' && !Array.isArray(res.data)) return res.data;
-  if (res.result && typeof res.result === 'object' && !Array.isArray(res.result)) return res.result;
-  return res;
-};
+/** 兼容 res.data / res.result / res.list / res.playlist / res.xxx / res.data.list 等多种结构 */
+export const extractList = (res: any): any[] => extractListByCandidates(res, listCandidates);
+
+export const extractObj = extractObject;
 
 /** 单条原始对象 → 卡片 */
 export const toCard = (raw: any): SupplementCard => {
@@ -80,32 +68,19 @@ export const toCard = (raw: any): SupplementCard => {
 };
 
 /** 列表型归一；详情型对象包成一条卡片，保证有内容可展示 */
-export const toList = (res: any): SupplementCard[] => {
-  const list = extractList(res);
-  if (list.length) return list.map(toCard);
-  const obj = extractObj(res);
-  if (obj && Object.keys(obj).length) {
-    return [
-      toCard({
-        ...obj,
-        title: obj.title ?? obj.name ?? obj.content ?? `响应 code=${obj.code ?? '—'}`,
-      }),
-    ];
-  }
-  return [];
-};
+export const toList = (res: any): SupplementCard[] =>
+  toCardList<SupplementCard>(
+    res,
+    listCandidates,
+    toCard,
+    (obj) => obj.title ?? obj.name ?? obj.content ?? `响应 code=${obj.code ?? '—'}`,
+  );
 
 /** 云盘文件 → songId（详情 / 删除接口的入参来源） */
-export const pickSongId = (raw: any): number => {
-  const r = raw || {};
-  return Number(r.songId ?? r.id ?? r.songid ?? 0) || 0;
-};
+export const pickSongId = (raw: any): number => pickNumberId(raw, ['songId', 'id', 'songid']);
 
 /** 歌单 → playlistId（9 个 playlist_* 接口的入参来源） */
-export const pickPlaylistId = (raw: any): number => {
-  const r = raw || {};
-  return Number(r.id ?? r.playlistId ?? 0) || 0;
-};
+export const pickPlaylistId = (raw: any): number => pickNumberId(raw, ['id', 'playlistId']);
 
 export interface SupplementGuardOptions {
   /** 当前登录态（来自 props，用函数取以保持响应式） */

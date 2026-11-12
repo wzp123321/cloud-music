@@ -1,10 +1,4 @@
-/*
- * @Description: 文件上传
- * @Author: zpwan
- * @Date: 2022-05-11 10:32:20
- * @Last Modified by: zpwan
- * @Last Modified time: 2022-05-11 11:12:06
- */
+// 文件上传
 
 import { ref } from 'vue';
 import { FUploadHandler, verifyUpload } from './util';

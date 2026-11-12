@@ -9,14 +9,14 @@
     <div v-if="toast" class="yunbei-vip-musician--toast" @click="clearToast">{{ toast }}（点击关闭）</div>
 
     <div class="yunbei-vip-musician--tabs">
-      <button
+      <cm-button
         v-for="tab in tabs"
         :key="tab.code"
         :class="['yunbei-vip-musician--tab', activeTab === tab.code ? 'active' : '']"
         @click="switchTab(tab.code)"
       >
         {{ tab.name }}
-      </button>
+      </cm-button>
     </div>
 
     <!-- 共享参数链路面板：上游任务列表点选自动填入，也可手填 -->
@@ -24,11 +24,11 @@
       <span class="yunbei-vip-musician--params-label">参数链路（点选任务列表自动填入，也可手填）</span>
       <label class="yunbei-vip-musician--params-item">
         taskId（任务 id → yunbei_task_finish）
-        <input v-model="params.taskId" placeholder="← yunbei_tasks / yunbei_tasks_todo 点选" />
+        <cm-input v-model="params.taskId" placeholder="← yunbei_tasks / yunbei_tasks_todo 点选" />
       </label>
       <label class="yunbei-vip-musician--params-item">
         songId（歌曲 id → yunbei_rcmd_song）
-        <input v-model="params.songId" placeholder="手填歌曲 id" />
+        <cm-input v-model="params.songId" placeholder="手填歌曲 id" />
       </label>
     </div>
 
@@ -56,22 +56,22 @@
           <div class="yunbei-vip-musician--block-actions">
             <label v-if="b.inputKey" class="yunbei-vip-musician--inline-label">
               {{ b.inputLabel || b.inputKey }}
-              <input
+              <cm-input
                 :value="params[b.inputKey || '']"
                 :placeholder="b.inputHint || '点选上游列表自动填入，或手填'"
                 @input="onParamInput(b.inputKey, $event)"
               />
             </label>
             <label v-if="b.kind === 'upload'" class="yunbei-vip-musician--inline-label">
-              选择文件<input type="file" @change="onFileChange" />
+              选择文件<cm-input type="file" @change="onFileChange" />
             </label>
-            <button
+            <cm-button
               class="yunbei-vip-musician--btn"
               :class="{ 'yunbei-vip-musician--btn--write': b.kind === 'write' || b.kind === 'upload' }"
               @click="runBlock(b)"
             >
               {{ b.buttonText || '加载' }}
-            </button>
+            </cm-button>
             <span class="yunbei-vip-musician--count">{{ results[b.module]?.length || 0 }} 条</span>
             <span v-if="b.emit" class="yunbei-vip-musician--emit">点选列表项 → 填入 {{ b.emit }}</span>
           </div>
@@ -120,9 +120,11 @@ const {
 
 <style scoped lang="less">
 .yunbei-vip-musician {
-  width: 1200px;
+  max-width: 1200px;
+  width: 100%;
+  box-sizing: border-box;
   margin: 0 auto;
-  padding: 24px 0 48px;
+  padding: 24px 24px 48px;
 
   code {
     padding: 1px 5px;

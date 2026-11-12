@@ -11,7 +11,7 @@ import { useUserStore } from '@/store/user';
 /**
  * 头部视图编排：路由跳转、搜索交互、登录弹窗与登录态同步。
  * 数据层已在 useHeader / useLogin（均为模块级单例），这里只做视图侧编排。
- * 从 header.vue 抽出，模板只做展示，行为不变。
+ * 头部：导航跳转、搜索建议与登录态交互编排。
  */
 export function useHeaderView() {
   const route = useRoute();

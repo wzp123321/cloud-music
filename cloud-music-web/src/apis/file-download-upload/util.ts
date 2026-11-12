@@ -1,10 +1,4 @@
-/*
- * @Description: 文件下载工具函数
- * @Author: zpwan
- * @Date: 2022-05-11 10:16:55
- * @Last Modified by: zpwan
- * @Last Modified time: 2022-05-11 10:37:37
- */
+// 文件下载工具函数
 import { IRes } from './file-download-api';
 import message from '@/utils/message';
 

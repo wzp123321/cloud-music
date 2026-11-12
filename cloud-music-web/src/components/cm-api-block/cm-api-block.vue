@@ -12,19 +12,19 @@
     </p>
 
     <div class="cm-api-block--controls">
-      <input
+      <cm-input
         v-if="block.input"
         v-model="inputValue"
         class="cm-api-block--input"
         :placeholder="block.input.label"
       />
-      <input
+      <cm-input
         v-if="block.file"
         type="file"
         class="cm-api-block--file"
         @change="onFileChange"
       />
-      <button class="cm-api-block--btn" @click="emit('run', block)">{{ buttonText }}</button>
+      <cm-button class="cm-api-block--btn" @click="emit('run', block)">{{ buttonText }}</cm-button>
       <span v-if="block.needs" class="cm-api-block--chain">
         {{ block.needs }} ← {{ block.source }}，当前值：<b>{{ sel[block.needs] || '未选择' }}</b>
       </span>

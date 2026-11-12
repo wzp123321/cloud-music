@@ -11,7 +11,7 @@
         v-for="item in portal.toplist"
         :key="'tl_' + item.id"
         :class="['rank--toplist-item', portal.selectedRankId === item.id ? 'active' : '']"
-        @click="selectRank(item.id)"
+        @click="goRankDetail(item.id)"
       >
         <cm-skeleton
           width="100%"
@@ -92,12 +92,9 @@
 
 <script setup lang="ts">
 
-/*
- * @Description: 排行榜页（含榜单详情）
- * @Author: home-recommendation
- */
-import {  onMounted } from 'vue';
-import { useRoute } from 'vue-router';
+// 排行榜页（含榜单详情）
+import { onMounted, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
 import { usePortal } from '../portal/hooks/usePortal';
 import { TopListTrack, TopSongItem, TopMvItem } from '../../apis/portal/portal-api';
@@ -105,6 +102,7 @@ import { TopListTrack, TopSongItem, TopMvItem } from '../../apis/portal/portal-a
 const portal = usePortal();
 defineOptions({ name: 'Rank' });
 const route = useRoute();
+const router = useRouter();
 
     onMounted(() => {
       portal.queryToplist();
@@ -119,11 +117,24 @@ const route = useRoute();
       }
     });
 
-    // 切换榜单：复用状态层的 queryRankDetail(top_list)
-    const selectRank = (id?: number) => {
+    // 榜单卡片点击：榜单本质是一张歌单，跳转独立歌单详情页。
+    // 不能复用 /rank_detail（它指向本组件，跳完首屏无变化，看起来像没点动）。
+    const goRankDetail = (id?: number) => {
       if (id == null) return;
-      portal.queryRankDetail(id);
+      router.push({ path: '/playlist_detail', query: { id: String(id) } });
     };
+
+    // 在同一组件内从 /rank 切到 /rank_detail（或不同 id）时，onMounted 不会重跑，
+    // 用 watch 保证 query.id 变化也能预选对应榜单
+    watch(
+      () => route.query.id,
+      (id) => {
+        const nid = Number(id);
+        if (nid) {
+          portal.queryRankDetail(nid);
+        }
+      },
+    );
 
     const formatTrackArtists = (track: TopListTrack): string => {
       return (track.ar || []).map((artist) => artist.name || '').join(' / ');
@@ -142,9 +153,11 @@ const route = useRoute();
 
 <style lang="less" scoped>
 .rank {
-  width: 1200px;
+  max-width: 1200px;
+  width: 100%;
+  box-sizing: border-box;
   margin: 0 auto;
-  padding: 24px 0 48px;
+  padding: 24px 24px 48px;
 
   &--section {
     margin-top: 24px;

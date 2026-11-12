@@ -10,14 +10,14 @@
 
     <!-- 三个面板按接口清单分组，切换即挂载，各自持有自己的表单与结果态 -->
     <div class="user-supplement--tabs">
-      <button
+      <cm-button
         v-for="tab in tabs"
         :key="tab.code"
         :class="['user-supplement--tab', activeTab === tab.code ? 'active' : '']"
         @click="activeTab = tab.code"
       >
         {{ tab.name }}
-      </button>
+      </cm-button>
     </div>
 
     <supplement-read-panel

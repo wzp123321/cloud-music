@@ -84,7 +84,7 @@ const create = () => {
     }
   };
 
-  // 等价于原 constructor：进入页面即拉取详情 / 地址 / 评论。
+  // 进入页面即拉取详情 / 地址 / 评论。
   _loading.value = true;
   const commonService = new CommonService();
   commonService

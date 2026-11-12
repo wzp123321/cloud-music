@@ -2,18 +2,13 @@ import { onMounted, ref } from 'vue';
 
 import { hasLogin as checkLogin } from '@/apis/content-enhance/content-enhance.service';
 import feedService from '@/apis/feed/feed.service';
+import { extractObject, extractListByCandidates, type ApiCard } from '@/utils/api-normalize';
 
-interface CardItem {
-  id: number;
-  title: string;
-  cover: string;
-  subtitle: string;
-  raw: any;
-}
+type CardItem = ApiCard;
 
 /**
  * 动态流 · 话题 · 相关推荐（P1 5.1~5.3）调试台的数据与交互编排。
- * 从 feed.vue 抽出，模板只做展示，保持原行为与公共能力不变。
+ * 动态页：标签切换、列表加载与互动编排。
  */
 export function useFeed() {
   /** 与 api-inventory-plain.md「P1 动态与话题」5.1~5.3 一一对应 */
@@ -45,7 +40,7 @@ export function useFeed() {
   const relatedPlaylistId = ref<string>('');
   const relatedPlaylistList = ref<CardItem[]>([]);
 
-  /** 标签页切换：模板原用 `activeTab = tab.code` 直接给 ref 赋值，抽出后统一走此方法保响应性 */
+  /** 切换当前标签 */
   const setActiveTab = (code: string) => {
     activeTab.value = code;
   };
@@ -54,30 +49,17 @@ export function useFeed() {
     toast.value = '';
   };
 
-  /** 兼容 res.data / res.result / res.xxx / res.data.list 等多种结构 */
-  const extractList = (res: any): any[] => {
-    if (!res) return [];
-    if (Array.isArray(res)) return res;
-    const candidates = [
-      res.data, res.result, res.list, res.events, res.records, res.topics, res.hot,
-      res.playlist, res.playlists, res.videos, res.songs, res.comments, res.notices,
-      res.data?.list, res.result?.list, res.data?.data, res.data?.events, res.data?.records,
-    ];
-    for (const item of candidates) {
-      if (Array.isArray(item)) return item;
-    }
-    for (const key of Object.keys(res)) {
-      if (Array.isArray(res[key])) return res[key];
-    }
-    return [];
-  };
+  /** 候选字段优先级：动态 / 话题类接口以 events / topics / hot 为主 */
+  const listCandidates = (res: any): any[] => [
+    res.data, res.result, res.list, res.events, res.records, res.topics, res.hot,
+    res.playlist, res.playlists, res.videos, res.songs, res.comments, res.notices,
+    res.data?.list, res.result?.list, res.data?.data, res.data?.events, res.data?.records,
+  ];
 
-  const extractObj = (res: any): Record<string, any> => {
-    if (!res) return {};
-    if (res.data && typeof res.data === 'object' && !Array.isArray(res.data)) return res.data;
-    if (res.result && typeof res.result === 'object' && !Array.isArray(res.result)) return res.result;
-    return res;
-  };
+  /** 兼容 res.data / res.result / res.xxx / res.data.list 等多种结构 */
+  const extractList = (res: any): any[] => extractListByCandidates(res, listCandidates);
+
+  const extractObj = extractObject;
 
   const toCard = (raw: any): CardItem => {
     const r = raw || {};

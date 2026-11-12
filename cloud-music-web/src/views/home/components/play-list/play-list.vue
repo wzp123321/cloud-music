@@ -12,34 +12,17 @@
     >
       <template #reference>
         <div class="pl-poppver-trigger">
-          <i class="iconfont icon-yinleyule" title="播放列表"></i>
+          <cm-icon name="icon-yinleyule" title="播放列表"></cm-icon>
         </div>
       </template>
-      <table v-if="playList.musicList?.length" scroll-y>
-        <thead>
-          <tr>
-            <th style="width: 40px">序号</th>
-            <th style="max-width: 100px">名称</th>
-            <th>歌手</th>
-            <th>专辑</th>
-            <th>操作</th>
-          </tr>
-        </thead>
-        <tbody style="height: 200px">
-          <tr v-for="(item, index) in playList.musicList" :key="item.id ?? index">
-            <td style="width: 40px">{{ index + 0 }}</td>
-            <td style="max-width: 100px">{{ item.name }}</td>
-            <td>{{ item.artist }}</td>
-            <td>{{ item.alName }}</td>
-            <td>
-              <i title="播放" class="iconfont icon-24gf-play" @click="handlePlay(item)"></i>
-              <i title="删除" class="iconfont icon-Close" @click="playList.removeMusic(item.id)"></i>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <cm-playlist-table
+        v-if="playList.musicList?.length"
+        :list="playList.musicList"
+        @play="handlePlay"
+        @remove="playList.removeMusic"
+      />
       <div v-else class="common-table__empty flex-column-center-center">
-        <img src="../../../../assets/images/common/common-data-none.svg" alt="" />
+        <cm-image src="../../../../assets/images/common/common-data-none.svg" alt="" />
         <p>暂无数据</p>
       </div>
     </el-popover>
@@ -98,32 +81,5 @@ const handlePlay = (item: PL_IPlayVO) => {
 .pl-poppver.el-popper {
   overflow: hidden;
   z-index: 9999 !important;
-
-  table {
-    width: 100%;
-
-    thead tr {
-      th {
-        padding-left: 0;
-        padding-right: 0;
-
-        text-align: center;
-      }
-    }
-
-    tbody tr {
-      td {
-        cursor: pointer;
-        height: 40px;
-        line-height: 40px;
-
-        text-align: center;
-
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-    }
-  }
 }
 </style>

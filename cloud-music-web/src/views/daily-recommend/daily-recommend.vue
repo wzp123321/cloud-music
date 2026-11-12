@@ -76,10 +76,7 @@
 
 <script setup lang="ts">
 
-/*
- * @Description: 每日推荐页
- * @Author: home-recommendation
- */
+// 每日推荐页
 import {  onMounted } from 'vue';
 
 import { usePortal } from '../portal/hooks/usePortal';
@@ -114,9 +111,11 @@ defineOptions({ name: 'DailyRecommend' });
 
 <style lang="less" scoped>
 .daily-recommend {
-  width: 1200px;
+  max-width: 1200px;
+  width: 100%;
+  box-sizing: border-box;
   margin: 0 auto;
-  padding: 24px 0 48px;
+  padding: 24px 24px 48px;
 
   &--section {
     margin-top: 24px;

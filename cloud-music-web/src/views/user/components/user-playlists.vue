@@ -7,7 +7,7 @@
     <div v-if="playlists?.length" class="up-grid grid-cols-5">
       <div v-for="item in playlists" :key="item.id" class="up-card" @click="openPlaylist(item.id)">
         <div class="up-cover">
-          <img :src="item.coverImgUrl" alt="" loading="lazy" />
+          <cm-image :src="item.coverImgUrl" alt="" loading="lazy" />
           <span class="up-playcount">{{ formatPlayCount(item.playCount) }}</span>
         </div>
         <div class="up-card-name" :title="item.name">{{ item.name }}</div>

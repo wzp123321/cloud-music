@@ -9,14 +9,14 @@
     <div v-if="toast" class="video-podcast--toast" @click="clearToast">{{ toast }}（点击关闭）</div>
 
     <div class="video-podcast--tabs">
-      <button
+      <cm-button
         v-for="tab in tabs"
         :key="tab.code"
         :class="['video-podcast--tab', activeTab === tab.code ? 'active' : '']"
         @click="switchTab(tab.code)"
       >
         {{ tab.name }}
-      </button>
+      </cm-button>
     </div>
 
     <!-- 共享参数链路面板：上游列表点选自动填入，跨 tab 保留，也可手填 -->
@@ -24,15 +24,15 @@
       <span class="video-podcast--params-label">参数链路（点选上游列表自动填入，跨 tab 保留，也可手填）</span>
       <label class="video-podcast--params-item">
         videoId（视频 id/vid → video_detail / video_detail_info / video_url / video_sub）
-        <input v-model="params.videoId" placeholder="← video_group_list / video_timeline_all 点选" />
+        <cm-input v-model="params.videoId" placeholder="← video_group_list / video_timeline_all 点选" />
       </label>
       <label class="video-podcast--params-item">
         voiceId（播客 id → voicelist_search / voice_detail）
-        <input v-model="params.voiceId" placeholder="← voicelist_list 点选" />
+        <cm-input v-model="params.voiceId" placeholder="← voicelist_list 点选" />
       </label>
       <label class="video-podcast--params-item">
         voiceKeyword（关键词 → voicelist_list_search / voicelist_search）
-        <input v-model="params.voiceKeyword" placeholder="输入播客关键词" />
+        <cm-input v-model="params.voiceKeyword" placeholder="输入播客关键词" />
       </label>
     </div>
 
@@ -60,22 +60,22 @@
           <div class="video-podcast--block-actions">
             <label v-if="b.inputKey" class="video-podcast--inline-label">
               {{ b.inputLabel || b.inputKey }}
-              <input
+              <cm-input
                 :value="params[b.inputKey || '']"
                 :placeholder="b.inputHint || '点选上游列表自动填入，或手填'"
                 @input="onParamInput(b.inputKey, $event)"
               />
             </label>
             <label v-if="b.kind === 'upload'" class="video-podcast--inline-label">
-              选择文件<input type="file" accept="audio/*" @change="onFileChange" />
+              选择文件<cm-input type="file" accept="audio/*" @change="onFileChange" />
             </label>
-            <button
+            <cm-button
               class="video-podcast--btn"
               :class="{ 'video-podcast--btn--write': b.kind === 'write' || b.kind === 'upload' }"
               @click="runBlock(b)"
             >
               {{ b.buttonText || '加载' }}
-            </button>
+            </cm-button>
             <span class="video-podcast--count">{{ results[b.module]?.length || 0 }} 条</span>
             <span v-if="b.emit" class="video-podcast--emit">点选列表项 → 填入 {{ b.emit }}</span>
           </div>
@@ -124,9 +124,11 @@ const {
 
 <style scoped lang="less">
 .video-podcast {
-  width: 1200px;
+  max-width: 1200px;
+  width: 100%;
+  box-sizing: border-box;
   margin: 0 auto;
-  padding: 24px 0 48px;
+  padding: 24px 24px 48px;
 
   code {
     padding: 1px 5px;

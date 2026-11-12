@@ -9,9 +9,9 @@
       @click="linktToDetail"
     >
       <div class="sort">
-        <img v-if="index === 0" src="../../../assets/images/rank/rank-top.png" alt="" />
-        <img v-if="index === 1" src="../../../assets/images/rank/rank-secondary.png" alt="" />
-        <img v-if="index === 2" src="../../../assets/images/rank/rank-third.png" alt="" />
+        <cm-image v-if="index === 0" src="../../../assets/images/rank/rank-top.png" alt="" />
+        <cm-image v-if="index === 1" src="../../../assets/images/rank/rank-secondary.png" alt="" />
+        <cm-image v-if="index === 2" src="../../../assets/images/rank/rank-third.png" alt="" />
         <span v-if="index > 2">{{ index + 1 }}</span>
       </div>
       <div class="info flex-column">
@@ -26,13 +26,7 @@
 
 <script setup lang="ts">
 
-/*
- * @Description: 首页排行榜
- * @Author: zpwan
- * @Date: 2022-06-25 15:48:12
- * @Last Modified by: zpwan
- * @Last Modified time: 2022-06-25 15:54:57
- */
+// 首页排行榜
 import {  PropType } from 'vue';
 import { useRouter } from 'vue-router';
 

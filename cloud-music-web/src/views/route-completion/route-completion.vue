@@ -9,14 +9,14 @@
     </p>
 
     <div class="route-completion--tabs">
-      <button
+      <cm-button
         v-for="tab in tabs"
         :key="tab.code"
         :class="['route-completion--tab', activeTab === tab.code ? 'active' : '']"
         @click="switchTab(tab.code)"
       >
         {{ tab.name }}
-      </button>
+      </cm-button>
     </div>
 
     <div class="route-completion--layout">
@@ -132,9 +132,13 @@ onMounted(() => {
 
 <style scoped lang="less">
 .route-completion {
-  width: 1200px;
+  max-width: 1200px;
+  width: 100%;
+  box-sizing: border-box;
   margin: 0 auto;
   padding-bottom: 60px;
+  padding-left: 24px;
+  padding-right: 24px;
 
   &--intro {
     margin: 20px 0;
@@ -180,6 +184,10 @@ onMounted(() => {
     display: grid;
     grid-template-columns: 460px 1fr;
     gap: 20px;
+
+    @media (max-width: 900px) {
+      grid-template-columns: 1fr;
+    }
   }
 
   &--panel {

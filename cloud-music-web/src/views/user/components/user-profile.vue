@@ -1,7 +1,7 @@
 <template>
   <section class="up-profile">
     <div class="up-cover">
-      <img v-if="detail?.profile?.backgroundUrl" :src="detail.profile.backgroundUrl" class="up-bg" alt="" />
+      <cm-image v-if="detail?.profile?.backgroundUrl" :src="detail.profile.backgroundUrl" class="up-bg" alt="" />
     </div>
     <div class="up-main">
       <el-avatar :size="96" :src="detail?.profile?.avatarUrl" />

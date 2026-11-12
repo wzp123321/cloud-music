@@ -11,7 +11,7 @@
     <template #header>
       <div class="hl-header">
         <span class="hl-header--title">登录</span>
-        <i class="iconfont icon-Close hl-header--close" @click="loginService.handleClose"></i>
+        <cm-icon name="icon-Close" class="hl-header--close" @click="loginService.handleClose"></cm-icon>
       </div>
     </template>
 
@@ -49,7 +49,7 @@
           @keyup.enter="loginService.submit"
         />
       </el-form-item>
-      <button primary class="hl-submit" @click="loginService.submit">登 录</button>
+      <cm-button primary class="hl-submit" @click="loginService.submit">登 录</cm-button>
       <p class="hl-register">
         没有账号？<span @click="onRegister">前往注册</span>
       </p>
@@ -58,7 +58,7 @@
     <!-- 扫码登录 -->
     <div v-else class="hl-qr">
       <div class="hl-qr-img">
-        <img v-if="loginService.qrImg" :src="loginService.qrImg" alt="登录二维码" />
+        <cm-image v-if="loginService.qrImg" :src="loginService.qrImg" alt="登录二维码" />
         <el-button v-else link type="primary" @click="loginService.refreshQr()">点击刷新</el-button>
       </div>
       <p class="hl-qr-tip">{{ loginService.qrTip }}</p>

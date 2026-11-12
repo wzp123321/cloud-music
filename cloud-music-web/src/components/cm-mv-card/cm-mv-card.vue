@@ -3,7 +3,7 @@
   <div class="cm-mv-card--cover">
     <cm-skeleton width="100%" :height="''" :image-url="coverImageUrl" source-type="image"> </cm-skeleton>
     <div class="duration flex-row-justify-center">
-      <span><i class="iconfont icon-z mr2"></i>{{ formatPlayCount(playCount) }}</span>
+      <span><cm-icon name="icon-z" class="mr2"></cm-icon>{{ formatPlayCount(playCount) }}</span>
       <span>{{ formatDuration(duration) }}</span>
     </div>
   </div>
@@ -12,7 +12,7 @@
     <span>{{ publishTime ?? '' }}</span>
   </div>
   <div class="cm-mv-card--icon">
-    <i class="iconfont icon-24gf-play"></i>
+    <cm-icon name="icon-24gf-play"></cm-icon>
   </div>
 </div>
 
@@ -20,13 +20,7 @@
 
 <script setup lang="ts">
 
-/*
- * @Descrption: MV
- * @Author: wanzp
- * @Date: 2022-06-12 19:42:40
- * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2022-06-12 20:43:33
- */
+// MV
 
 
 import { formatPlayCount, formatDuration } from '@/core/utils';

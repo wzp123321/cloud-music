@@ -2,7 +2,7 @@
 <div class="header">
   <div class="header-box flex-row-justify-center">
     <div class="flex-row-start-center">
-      <img src="../../assets/images/portal/portal-logo.png" @click="linkToPortal" />
+      <cm-image src="../../assets/images/portal/portal-logo.png" @click="linkToPortal" />
       <ul class="header-tabs">
         <li
           v-for="(item, index) in header.menus"
@@ -16,7 +16,7 @@
     </div>
     <div class="flex-row-start-center">
       <div class="header-search">
-        <input
+        <cm-input
           v-model="header.keyword"
           placeholder="搜索音乐/歌手/歌单/MV"
           :maxlength="20"
@@ -73,14 +73,14 @@
         <el-popover :show-arrow="false" :teleported="false" placement="bottom" :width="160" trigger="hover">
           <template #reference>
             <span :title="userInfo?.profile?.nickname" class="mr8">{{ userInfo?.profile?.nickname }}</span>
-            <img :src="userInfo?.profile?.avatarUrl" alt="" />
+            <cm-image :src="userInfo?.profile?.avatarUrl" alt="" />
           </template>
           <ul>
-            <li @click="onLinkTo('/user')"><i class="iconfont icon-wode"></i>我的主页</li>
-            <li><i class="iconfont icon-youxiangdenglu"></i>我的消息</li>
-            <li><i class="iconfont icon-31huiyuan"></i>我的等级</li>
-            <li><i class="iconfont icon-shezhi"></i>个人设置</li>
-            <li @click="handleLoginOut"><i class="iconfont icon-tuichu"></i>退出</li>
+            <li @click="onLinkTo('/user')"><cm-icon name="icon-wode"></cm-icon>我的主页</li>
+            <li><cm-icon name="icon-youxiangdenglu"></cm-icon>我的消息</li>
+            <li><cm-icon name="icon-31huiyuan"></cm-icon>我的等级</li>
+            <li><cm-icon name="icon-shezhi"></cm-icon>个人设置</li>
+            <li @click="handleLoginOut"><cm-icon name="icon-tuichu"></cm-icon>退出</li>
           </ul>
         </el-popover>
       </div>
@@ -121,8 +121,12 @@ const {
   line-height: 67px;
 
   &-box {
-    width: 1200px;
+    max-width: 1200px;
+    width: 100%;
+    box-sizing: border-box;
     margin: 0 auto;
+    padding-left: 24px;
+    padding-right: 24px;
 
     .header-tabs {
       li {

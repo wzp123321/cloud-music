@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build --mode production",
-    "preview": "vite preview --outDir dist/ems-admin",
+    "preview": "vite preview --outDir dist/cloud-web",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },

@@ -29,19 +29,19 @@
           >{{ artistDetail.artistVO?.artist?.briefDesc }}</span
         >
       </div>
-      <button radius primary style="width: 180px" class="mt12">
-        <i class="iconfont icon-24gf-play mr6"></i>播放全部歌曲
-      </button>
+      <cm-button radius primary style="width: 180px" class="mt12">
+        <cm-icon name="icon-24gf-play" class="mr6"></cm-icon>播放全部歌曲
+      </cm-button>
       <!-- 关注歌手：artist_sub -->
       <div class="artist-detail--follow mt12">
-        <button
+        <cm-button
           class="artist-detail--follow-btn"
           :class="artistDetail.followCount.data?.isFollow ? 'followed' : ''"
           :disabled="artistDetail.subLoading"
           @click="artistDetail.toggleSub()"
         >
           {{ artistDetail.followCount.data?.isFollow ? '已关注' : '关注歌手' }}
-        </button>
+        </cm-button>
         <span v-if="artistDetail.actionTip" class="artist-detail--tip">{{ artistDetail.actionTip }}</span>
       </div>
     </div>
@@ -70,31 +70,31 @@
       <!-- 热门 50 首 / 全部歌曲：artist_top_song、artist_songs -->
       <div class="artist-detail--enhance mt36">
         <div class="artist-detail--enhance-bar">
-          <button
+          <cm-button
             :class="['artist-detail--switch', artistDetail.songSource === 'top' ? 'active' : '']"
             @click="artistDetail.switchSongSource('top')"
           >
             热门 50 首
-          </button>
-          <button
+          </cm-button>
+          <cm-button
             :class="['artist-detail--switch', artistDetail.songSource === 'all' ? 'active' : '']"
             @click="artistDetail.switchSongSource('all')"
           >
             全部歌曲
-          </button>
+          </cm-button>
           <template v-if="artistDetail.songSource === 'all'">
-            <button
+            <cm-button
               :class="['artist-detail--switch', artistDetail.songOrder === 'hot' ? 'active' : '']"
               @click="artistDetail.switchSongOrder('hot')"
             >
               最热
-            </button>
-            <button
+            </cm-button>
+            <cm-button
               :class="['artist-detail--switch', artistDetail.songOrder === 'time' ? 'active' : '']"
               @click="artistDetail.switchSongOrder('time')"
             >
               最新
-            </button>
+            </cm-button>
           </template>
         </div>
         <cm-error
@@ -192,7 +192,7 @@
     <cm-error v-if="!artistDetail.fans.length" :title="'暂无粉丝数据'"></cm-error>
     <div v-else class="artist-detail--fans">
       <div v-for="(fan, index) in artistDetail.fans" :key="'fan_' + index" class="artist-detail--fan">
-        <img :src="fan.avatarUrl" alt="" loading="lazy" />
+        <cm-image :src="fan.avatarUrl" alt="" loading="lazy" />
         <p :title="fan.nickname">{{ fan.nickname }}</p>
       </div>
     </div>
@@ -208,13 +208,7 @@
 
 <script setup lang="ts">
 
-/*
- * @Descrption: 歌手详情
- * @Author: wanzp
- * @Date: 2022-07-06 21:24:06
- * @Last Modified by: zpwan
- * @Last Modified time: 2022-09-27 20:32:34
- */
+// 歌手详情
 import {  onMounted } from 'vue';
 import { FGetQueryParam } from '@/core/token';
 import { sanitizeHtml } from '@/utils/sanitize';
@@ -242,7 +236,6 @@ artistDetail.init();
 <style lang="less" scoped>
 .artist-detail {
   width: 100%;
-  min-width: 1366px;
   height: 100%;
 
   &--info {

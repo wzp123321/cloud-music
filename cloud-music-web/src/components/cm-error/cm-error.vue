@@ -1,6 +1,6 @@
 <template>
 <div class="cm-error flex-column-center-center">
-  <img src="../../assets/images/common/common-error.png" alt="" />
+  <cm-image src="../../assets/images/common/common-error.png" alt="" />
   <p class="title">{{ title }}</p>
 </div>
 
@@ -8,13 +8,7 @@
 
 <script setup lang="ts">
 
-/*
- * @Descrption: 缺省
- * @Author: wanzp
- * @Date: 2022-07-10 15:28:48
- * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2022-07-10 21:37:24
- */
+// 缺省
 defineOptions({ name: 'CmSkeleton' });
 defineProps({
     title: {

@@ -20,7 +20,7 @@ export interface SupplementPlaylistPanelOptions {
 
 /**
  * 6.3 歌单编辑面板编排：我的歌单取 id → 9 个 playlist_* 接口。
- * 从 supplement-playlist-panel.vue 抽出，模板只做展示，行为不变。
+ * 歌单补充面板：歌单点选、写接口调用与封面上传编排。
  */
 export function useSupplementPlaylistPanel(options: SupplementPlaylistPanelOptions) {
   /** uid 输入框：读写都走父级，保证跨面板一致 */

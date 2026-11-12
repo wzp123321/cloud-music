@@ -8,14 +8,14 @@
     <div v-if="toast" class="dj-radio--toast" @click="clearToast">{{ toast }}（点击关闭）</div>
 
     <div class="dj-radio--tabs">
-      <button
+      <cm-button
         v-for="tab in tabs"
         :key="tab.code"
         :class="['dj-radio--tab', activeTab === tab.code ? 'active' : '']"
         @click="switchTab(tab.code)"
       >
         {{ tab.name }}
-      </button>
+      </cm-button>
     </div>
 
     <!-- 共享参数链路面板：上游列表点选自动填入，跨 tab 保留，也可手填 -->
@@ -23,15 +23,15 @@
       <span class="dj-radio--params-label">参数链路（点选上游列表自动填入，跨 tab 保留，也可手填）</span>
       <label class="dj-radio--params-item">
         rid（电台 id → dj_detail / dj_program / dj_sub / dj_subscriber）
-        <input v-model="params.rid" placeholder="← dj_hot / dj_recommend / dj_toplist* 点选" />
+        <cm-input v-model="params.rid" placeholder="← dj_hot / dj_recommend / dj_toplist* 点选" />
       </label>
       <label class="dj-radio--params-item">
         cateId（分类 id → dj_radio_hot / dj_category_recommend）
-        <input v-model="params.cateId" placeholder="← dj_catelist 点选" />
+        <cm-input v-model="params.cateId" placeholder="← dj_catelist 点选" />
       </label>
       <label class="dj-radio--params-item">
         programId（节目 id → dj_program_detail）
-        <input v-model="params.programId" placeholder="← dj_program 的 programs 点选" />
+        <cm-input v-model="params.programId" placeholder="← dj_program 的 programs 点选" />
       </label>
     </div>
 
@@ -59,22 +59,22 @@
           <div class="dj-radio--block-actions">
             <label v-if="b.inputKey" class="dj-radio--inline-label">
               {{ b.inputLabel || b.inputKey }}
-              <input
+              <cm-input
                 :value="params[b.inputKey || '']"
                 :placeholder="b.inputHint || '点选上游列表自动填入，或手填'"
                 @input="onParamInput(b.inputKey, $event)"
               />
             </label>
             <label v-if="b.kind === 'upload'" class="dj-radio--inline-label">
-              选择文件<input type="file" @change="onFileChange" />
+              选择文件<cm-input type="file" @change="onFileChange" />
             </label>
-            <button
+            <cm-button
               class="dj-radio--btn"
               :class="{ 'dj-radio--btn--write': b.kind === 'write' || b.kind === 'upload' }"
               @click="runBlock(b)"
             >
               {{ b.buttonText || '加载' }}
-            </button>
+            </cm-button>
             <span class="dj-radio--count">{{ results[b.module]?.length || 0 }} 条</span>
             <span v-if="b.emit" class="dj-radio--emit">点选列表项 → 填入 {{ b.emit }}</span>
           </div>
@@ -123,9 +123,11 @@ const {
 
 <style scoped lang="less">
 .dj-radio {
-  width: 1200px;
+  max-width: 1200px;
+  width: 100%;
+  box-sizing: border-box;
   margin: 0 auto;
-  padding: 24px 0 48px;
+  padding: 24px 24px 48px;
 
   code {
     padding: 1px 5px;

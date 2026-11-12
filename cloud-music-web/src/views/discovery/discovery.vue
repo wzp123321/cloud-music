@@ -1,74 +1,48 @@
 <template>
-  <div class="discovery">
-    <cm-navbar :title="'个性化发现与风格分类'" :has-load-more="false"></cm-navbar>
-
-    <p class="discovery--intro">
+  <ApiConsolePage title="个性化发现与风格分类" :blocks="blocks" :tabs="tabs"
+    root-class="discovery"
+  >
+    <template #intro>
       共 21 个接口（任务 2.1~2.4），按 capability 分组切换，每个区块标注 module 名并对应一个真实接口调用点。
       当前登录状态：<b>{{ loggedIn ? '已登录' : '未登录' }}</b>（未登录时写操作与需登录只读接口会降级提示，不发请求）。
-    </p>
-
-    <!-- 详情型接口的参数来源：来自上游列表点击项，或页面手动输入 -->
-    <div class="discovery--globals">
+    
+    </template>
+    <template #globals="{ sel }">
       <label class="discovery--global">
         <span>tagId（← style_list）</span>
-        <input v-model.number="sel.tagId" type="number" placeholder="来自 style_list 点击项 / 手动输入" />
+        <cm-input v-model.number="sel.tagId" type="number" placeholder="来自 style_list 点击项 / 手动输入" />
       </label>
       <label class="discovery--global">
         <span>sheetId（← sheet_list）</span>
-        <input v-model.number="sel.sheetId" type="number" placeholder="来自 sheet_list 点击项 / 手动输入" />
+        <cm-input v-model.number="sel.sheetId" type="number" placeholder="来自 sheet_list 点击项 / 手动输入" />
       </label>
       <label class="discovery--global">
         <span>mlogId（← mlog_music_rcmd）</span>
-        <input v-model.number="sel.mlogId" type="number" placeholder="来自 mlog 列表点击项 / 手动输入" />
+        <cm-input v-model.number="sel.mlogId" type="number" placeholder="来自 mlog 列表点击项 / 手动输入" />
       </label>
-    </div>
-
-    <div class="discovery--tabs">
-      <button
-        v-for="tab in tabs"
-        :key="tab.code"
-        :class="['discovery--tab', activeTab === tab.code ? 'active' : '']"
-        @click="switchTab(tab.code)"
-      >
-        {{ tab.name }}
-      </button>
-    </div>
-
-    <div class="discovery--blocks">
-      <cm-api-block
-        v-for="block in activeBlocks"
-        :key="block.module"
-        :block="block"
-        :state="states[block.module]"
-        :sel="sel"
-        :input-value="inputs[block.module] ?? ''"
-        @update:input-value="inputs[block.module] = $event"
-        @run="runBlock"
-        @card-click="onCardClick"
-      ></cm-api-block>
-    </div>
-
-    <p class="discovery--foot">
+    </template>
+    <template #foot>
       说明：列表接口点击卡片会把 id 写入上方全局参数，再点击详情型接口按钮即「列表点击带参再请求详情」。
-    </p>
-  </div>
+    
+    </template>
+  </ApiConsolePage>
 </template>
 
 <script setup lang="ts">
-import { useApiConsole } from '@/components/cm-api-block/use-api-console';
-
+import ApiConsolePage from '@/components/api-console-page/api-console-page.vue';
+import { hasLogin } from '@/apis/content-enhance/content-enhance.service';
 import { blocks, tabs } from './discovery.blocks';
 
-// 区块渲染交给 cm-api-block，请求编排交给 useApiConsole，本页只剩骨架
-const { loggedIn, activeTab, activeBlocks, sel, inputs, states, runBlock, onCardClick, switchTab } =
-  useApiConsole(blocks);
+const loggedIn = hasLogin();
 </script>
 
-<style scoped lang="less">
+<style lang="less">
 .discovery {
-  width: 1200px;
+  max-width: 1200px;
+  width: 100%;
+  box-sizing: border-box;
   margin: 0 auto;
-  padding: 24px 0 48px;
+  padding: 24px 24px 48px;
 
   &--intro {
     margin-top: 20px;

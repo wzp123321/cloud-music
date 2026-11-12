@@ -13,7 +13,7 @@
   </ul>
   <span v-if="hasLoadMore" :class="['load-more', `font${fontSize}`]" @click="loadMore">
     更多
-    <i :class="['iconfont icon-xiangyou', `font${fontSize}`]"></i>
+    <cm-icon name="icon-xiangyou" :class="`font${fontSize}`"></cm-icon>
   </span>
 </div>
 
@@ -21,13 +21,7 @@
 
 <script setup lang="ts">
 
-/*
- * @Descrption: nav
- * @Author: mikey.zhaopeng
- * @Date: 2022-06-11 20:50:37
- * @Last Modified by: zpwan
- * @Last Modified time: 2022-09-27 20:53:50
- */
+// nav
 import {  PropType } from 'vue';
 import { useRouter } from 'vue-router';
 

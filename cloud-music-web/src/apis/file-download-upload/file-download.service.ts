@@ -1,10 +1,4 @@
-/*
- * @Description: 文件下载导出
- * @Author: zpwan
- * @Date: 2022-05-11 10:16:24
- * @Last Modified by: zpwan
- * @Last Modified time: 2022-05-11 11:02:26
- */
+// 文件下载导出
 
 import { ref } from 'vue';
 

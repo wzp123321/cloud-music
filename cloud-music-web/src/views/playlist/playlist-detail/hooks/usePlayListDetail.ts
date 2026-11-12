@@ -20,7 +20,7 @@ enum EPath {
 }
 
 const create = () => {
-  // 等价于原 constructor：从地址栏读取歌单 id（一次）。
+  // 从地址栏读取歌单 id（一次）。
   const idParam = FGetQueryParam('id');
   const playlistId = idParam ? Number(idParam) : 0;
 
@@ -215,7 +215,7 @@ const create = () => {
     }
   };
 
-  // 等价于原 constructor 末尾：进入页面即初始化拉取。
+  // 进入页面即初始化拉取。
   init();
 
   return reactive({

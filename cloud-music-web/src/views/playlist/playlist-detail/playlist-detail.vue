@@ -2,14 +2,14 @@
   <cm-loading v-if="playListDetailService.loading"></cm-loading>
   <div v-if="!playListDetailService.loading" id="playlist-detail" class="playlist-detail">
     <section class="pd-cover">
-      <img :src="playListDetail?.coverImgUrl" alt="" />
+      <cm-image :src="playListDetail?.coverImgUrl" alt="" />
       <h5>歌单简介</h5>
       <p>{{ playListDetail?.description ?? '' }}</p>
     </section>
     <section class="pd-musiclist">
       <h5>{{ playListDetail?.name }}</h5>
       <div class="pd-musiclist-author">
-        <img :src="playListDetail?.creator?.avatarUrl" alt="" />
+        <cm-image :src="playListDetail?.creator?.avatarUrl" alt="" />
         <span>{{ playListDetail?.creator?.nickname }}</span>
       </div>
       <div v-if="playListDetail?.tags?.length" class="pd-musiclist-tags mt6 mb24">
@@ -27,9 +27,9 @@
         <el-button @click="openEdit">编辑</el-button>
         <el-button @click="setAddVisible(true)">添加歌曲</el-button>
         <span v-if="dynamic" class="pd-stat">
-          <i class="iconfont icon-z"></i> {{ formatStat(dynamic.playCount) }}
-          <i class="iconfont icon-jushoucang ml12"></i> {{ formatStat(dynamic.bookCount ?? dynamic.subscribedCount) }}
-          <i class="iconfont icon-pinglun ml12"></i> {{ formatStat(dynamic.commentCount) }}
+          <cm-icon name="icon-z"></cm-icon> {{ formatStat(dynamic.playCount) }}
+          <cm-icon name="icon-jushoucang" class="ml12"></cm-icon> {{ formatStat(dynamic.bookCount ?? dynamic.subscribedCount) }}
+          <cm-icon name="icon-pinglun" class="ml12"></cm-icon> {{ formatStat(dynamic.commentCount) }}
         </span>
       </div>
 
@@ -130,6 +130,11 @@ const {
   display: grid;
   grid-template-columns: 320px 1fr;
   gap: 56px;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
 
   .pd-cover {
     img {

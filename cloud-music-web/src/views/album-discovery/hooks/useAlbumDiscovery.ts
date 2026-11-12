@@ -16,7 +16,7 @@ type TabCode = 'new' | 'newest' | 'list' | 'style' | 'saleboard';
 
 /**
  * 新碟与数字专辑：tab / 地区 / 榜单周期 → 5 个列表接口的编排。
- * 从 album-discovery.vue 抽出，模板只做展示，行为不变。
+ * 专辑发现页：分类标签、地区/周期筛选与列表加载编排。
  */
 export function useAlbumDiscovery() {
   const router = useRouter();

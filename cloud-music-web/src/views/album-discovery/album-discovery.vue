@@ -3,38 +3,38 @@
     <cm-navbar :title="'新碟与数字专辑'" :has-load-more="false"></cm-navbar>
 
     <div class="album-discovery--tabs">
-      <button
+      <cm-button
         v-for="tab in tabs"
         :key="tab.code"
         :class="['album-discovery--tab', activeTab === tab.code ? 'active' : '']"
         @click="switchTab(tab.code)"
       >
         {{ tab.name }}
-      </button>
+      </cm-button>
     </div>
 
     <div v-if="showAreaFilter || activeTab === 'saleboard'" class="album-discovery--filters">
       <template v-if="showAreaFilter">
         <span class="album-discovery--filter-label">地区</span>
-        <button
+        <cm-button
           v-for="area in currentAreaOptions"
           :key="area.value"
           :class="['album-discovery--filter', activeArea === area.value ? 'active' : '']"
           @click="switchArea(area.value)"
         >
           {{ area.name }}
-        </button>
+        </cm-button>
       </template>
       <template v-if="activeTab === 'saleboard'">
         <span class="album-discovery--filter-label">榜单周期</span>
-        <button
+        <cm-button
           v-for="period in periodOptions"
           :key="period.value"
           :class="['album-discovery--filter', activePeriod === period.value ? 'active' : '']"
           @click="switchPeriod(period.value)"
         >
           {{ period.name }}
-        </button>
+        </cm-button>
       </template>
     </div>
 
@@ -80,9 +80,11 @@ const {
 
 <style scoped lang="less">
 .album-discovery {
-  width: 1200px;
+  max-width: 1200px;
+  width: 100%;
+  box-sizing: border-box;
   margin: 0 auto;
-  padding: 24px 0 48px;
+  padding: 24px 24px 48px;
 
   &--tabs {
     display: flex;

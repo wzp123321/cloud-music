@@ -11,7 +11,7 @@
     <div v-if="list.length" class="up-record-list">
       <div v-for="(item, index) in list" :key="item.song?.id || index" class="up-record-item">
         <span class="up-rank">{{ index + 1 }}</span>
-        <img class="up-rec-cover" :src="item.song?.al?.picUrl || item.song?.album?.picUrl" alt="" loading="lazy" />
+        <cm-image class="up-rec-cover" :src="item.song?.al?.picUrl || item.song?.album?.picUrl" alt="" loading="lazy" />
         <div class="up-rec-info">
           <div class="up-rec-name">{{ item.song?.name }}</div>
           <div class="up-rec-artist">{{ (item.song?.ar || item.song?.artists || [])?.map((a: any) => a.name).join('/') }}</div>

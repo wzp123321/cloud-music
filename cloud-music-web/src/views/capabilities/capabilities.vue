@@ -78,9 +78,11 @@ const linkTo = (path: string) => {
 
 <style scoped lang="less">
 .capabilities {
-  width: 1200px;
+  max-width: 1200px;
+  width: 100%;
+  box-sizing: border-box;
   margin: 0 auto;
-  padding: 24px 0 48px;
+  padding: 24px 24px 48px;
 
   &--intro {
     margin-top: 16px;

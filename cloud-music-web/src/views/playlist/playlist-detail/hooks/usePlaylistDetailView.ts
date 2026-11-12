@@ -43,7 +43,7 @@ const createEmptyDetail = (): PD_IPlaylistDetail => ({
 
 /**
  * 歌单详情页编排：订阅服务层数据流 → 本地视图状态，以及订阅/增删歌曲/弹窗交互。
- * 从 playlist-detail.vue 抽出，模板只做展示，行为不变。
+ * 歌单详情页：订阅、歌曲增删、编辑弹窗与统计格式化编排。
  */
 export function usePlaylistDetailView() {
   const playListDetailService = usePlayListDetail();

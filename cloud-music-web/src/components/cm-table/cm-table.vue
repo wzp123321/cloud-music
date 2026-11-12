@@ -2,38 +2,41 @@
 <table style="width: 100%">
   <thead>
     <tr>
-      <th style="width: 10%">序号</th>
-      <th style="width: 30%">歌曲</th>
+      <th style="width: 8%">序号</th>
+      <th style="width: 32%">歌曲</th>
       <th style="width: 30%">专辑</th>
       <th style="width: 30%">时长</th>
     </tr>
   </thead>
   <tbody>
     <tr v-for="(item, index) in dataSource.slice((page - 1) * pageSize, page * pageSize)" :key="'song_' + index">
-      <td style="width: 10%" class="sort">
+      <td style="width: 8%" class="sort">
         <span>{{ (page - 1) * pageSize + index + 1 }}</span>
-        <img :src="item?.picUrl" alt="" loading="lazy" />
       </td>
-      <td ellipsis style="width: 30%">
-        <span class="mname">{{ item.name }}</span>
-        <span class="tag">无损</span>
-        <span class="mv">mv</span>
+      <td style="width: 32%" class="song-cell">
+        <!-- td 不能设 display:flex，否则表格列宽塌陷、歌名被压成 0 宽 -->
+        <div class="song-cell-inner">
+          <cm-image class="song-cover" :src="item?.picUrl" alt="" />
+          <span class="mname" :title="item.name" @click="linkToDetailPage(item.id)">{{ item.name }}</span>
+          <span class="tag">无损</span>
+          <span class="mv">mv</span>
+        </div>
       </td>
       <td ellipsis style="width: 30%">{{ item.alName ?? '--' }}</td>
       <td ellipsis style="width: 30%">
         <span class="dt">{{ formatDuration(item.dt) }}</span>
         <div class="op-btn flex-row-start-center">
-          <i class="iconfont icon-24gf-play" title="播放" @click="onPlay(index)"></i>
-          <i class="iconfont icon-tianjia" title="添加到歌单" @click="handleAddPlayItem(item)"></i>
-          <i class="iconfont icon-jushoucang" title="收藏"></i>
-          <i class="iconfont icon-xiazai" title="下载"></i>
-          <i class="iconfont icon-xiangqing" title="详情" @click="linkToDetailPage(item.id)"></i>
-          <i
+          <cm-icon name="icon-24gf-play" title="播放" @click="onPlay(item)"></cm-icon>
+          <cm-icon name="icon-tianjia" title="添加到歌单" @click="handleAddPlayItem(item)"></cm-icon>
+          <cm-icon name="icon-jushoucang" title="收藏"></cm-icon>
+          <cm-icon name="icon-xiazai" title="下载"></cm-icon>
+          <cm-icon name="icon-xiangqing" title="详情" @click="linkToDetailPage(item.id)"></cm-icon>
+          <cm-icon
             v-if="showRemove"
-            class="iconfont icon-shanchu"
+            name="icon-shanchu"
             title="从歌单移除"
             @click="handleRemove(item)"
-          ></i>
+          ></cm-icon>
         </div>
       </td>
     </tr>
@@ -47,13 +50,7 @@
 
 <script setup lang="ts">
 
-/*
- * @Description: 表格
- * @Author: zpwan
- * @Date: 2022-09-27 20:09:36
- * @Last Modified by: zpwan
- * @Last Modified time: 2022-09-27 20:33:30
- */
+// 表格
 import {  PropType, ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 
@@ -90,8 +87,11 @@ const page = ref<number>(1);
       return props.dataSource?.length;
     });
 
-    const onPlay = (index: number) => {
-      player.play(props.dataSource[index]);
+    /** 播放当前行：v-for 已按分页 slice，直接传行对象，避免用局部 index 索引全局数组放错歌 */
+    const onPlay = (item: Common_IMusic) => {
+      if (item?.id) {
+        player.play(item);
+      }
     };
 
     const handleAddPlayItem = (item: Common_IMusic) => {
@@ -109,7 +109,12 @@ const page = ref<number>(1);
       message.success('添加成功');
     };
 
+    /** 点歌名/详情 → 先播放该歌曲，再打开播放页（与网易云一致） */
     const linkToDetailPage = (id: number) => {
+      const item = props.dataSource.find((music) => music.id === id);
+      if (item) {
+        player.play(item);
+      }
       router.push({
         path: '/music_detail',
         query: { id },
@@ -134,23 +139,47 @@ table {
     position: relative;
   }
 
-  tbody tr td.sort span,
-  tbody tr td.sort img {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
+  tbody tr td {
+    vertical-align: middle;
+    padding: 8px 0;
   }
 
-  tbody tr td.sort span {
-    font-weight: 600;
-    left: 10px;
+  tbody tr td.sort {
+    text-align: center;
+
+    span {
+      font-weight: 600;
+    }
   }
 
-  tbody tr td.sort img {
-    flex-shrink: 0;
-    left: 60px;
-    width: 54px;
-    height: 54px;
+  tbody tr td.song-cell {
+    .song-cell-inner {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+    }
+
+    .song-cover {
+      width: 40px;
+      height: 40px;
+      border-radius: 4px;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+
+    .mname {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      cursor: pointer;
+
+      &:hover {
+        color: var(--color-primary, #c20c0c);
+      }
+    }
   }
 
   tbody tr td span.tag {

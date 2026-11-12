@@ -6,7 +6,7 @@
   </div>
   <h6 :title="title">{{ title }}</h6>
   <div class="cm-playlist-card--play-count">
-    <i class="iconfont icon-z"></i>
+    <cm-icon name="icon-z"></cm-icon>
     <span>{{ playCount }}</span>
   </div>
   <p v-if="creator" class="cm-playlist-card--creator">by {{ creator }}</p>
@@ -16,13 +16,7 @@
 
 <script setup lang="ts">
 
-/*
- * @Descrption: 歌单卡片
- * @Author: wanzp
- * @Date: 2022-06-12 19:42:40
- * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2022-06-12 20:43:33
- */
+// 歌单卡片
 import { useRouter } from 'vue-router';
 defineOptions({ name: 'CMPlayListCard' });
 defineProps({

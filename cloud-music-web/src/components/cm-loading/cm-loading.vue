@@ -15,13 +15,7 @@
 
 <script setup lang="ts">
 
-/*
- * @Descrption: loading
- * @Author: wanzp 
- * @Date: 2022-07-15 21:13:50 
- * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2022-07-15 21:15:19
- */
+// loading
 defineOptions({ name: 'CmLoading' });
 </script>
 

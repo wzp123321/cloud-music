@@ -1,10 +1,5 @@
-/*
- * @Description： 首页服务
- * @Author: wanzp
- * @Date: 2022-06-09 22:02:59
- * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2022-07-10 21:39:49
- */
+import { useSingletonStore } from "@/store/singletons";
+// 首页服务
 import { ref, reactive } from 'vue';
 import router from '@/router';
 
@@ -34,6 +29,7 @@ import {
 import portalService from '../../../apis/portal/portal-request.service';
 
 import { TARGET_TYPE } from '@/config/enum';
+import message from '@/utils/message';
 
 import { recommendPlayListNavs } from '../constant/index';
 
@@ -98,28 +94,37 @@ const create = () => {
   };
   //#endregion
   //#region banner跳转
-  const handleBannerLinkTo = (_url: string, targetType: number, targetId: number) => {
-    let path = '';
+  const handleBannerLinkTo = (url: string, targetType: number, targetId: number) => {
+    // 带 id 的内跳：统一用详情页约定的 query key（id / mvid），否则打不开正确页面
+    const go = (path: string, key: 'id' | 'mvid') => {
+      if (targetId == null) {
+        if (url) window.open(url, '_blank');
+        else message.info('该 banner 暂未配置跳转');
+        return;
+      }
+      router.push({ path, query: { [key]: String(targetId) } });
+    };
     switch (targetType) {
       case TARGET_TYPE.单曲:
-        path = '/music_detail';
-        break;
+        return go('/music_detail', 'id');
       case TARGET_TYPE.专辑:
-        path = '/album_detail';
-        break;
+        return go('/album_detail', 'id');
       case TARGET_TYPE.歌单:
-        path = '/playlist_detail';
-        break;
-
-      case TARGET_TYPE.独家规划:
-        break;
+        return go('/playlist_detail', 'id');
+      case TARGET_TYPE.MV:
+      case TARGET_TYPE.视频:
+        return go('/mvplay', 'mvid');
+      case TARGET_TYPE.歌手:
+        return go('/artist_detail', 'id');
+      case TARGET_TYPE.用户:
+        return go('/user', 'id');
+      case TARGET_TYPE.电台:
+        return router.push({ path: '/dj-radio-detail', query: { rid: String(targetId) } });
+      default:
+        // 歌词 / 综合 / 声音 / 独家规划 / 网页 等：有外链则打开，否则提示
+        if (url) window.open(url, '_blank');
+        else message.info('该 banner 暂未配置跳转');
     }
-    router.push({
-      path,
-      query: {
-        targetId,
-      },
-    });
   };
   //#endregion
   //#region 加载不同类型歌单
@@ -396,6 +401,16 @@ const create = () => {
     });
   };
   //#endregion
+  //#region 电台 / 节目跳转
+  const linkToDjRadio = (rid?: number | string) => {
+    if (rid == null) return;
+    router.push({ path: '/dj-radio-detail', query: { rid: String(rid) } });
+  };
+  const linkToDjProgram = (id?: number | string) => {
+    if (id == null) return;
+    router.push({ path: '/dj-program-detail', query: { id: String(id) } });
+  };
+  //#endregion
 
   // reactive 包装：ref 自动解包，svc.xxx 仍是「值」，与旧 getter 行为一致；
   // 原带 setter 的字段（如 selectedRecommendPlayListType）经 reactive 写回仍可赋值
@@ -457,10 +472,10 @@ const create = () => {
     linkToDailyRecommend,
     linkToRank,
     linkToAritstDetail,
+    linkToDjRadio,
+    linkToDjProgram,
   });
   return state;
 };
 
-// 模块级缓存：跨组件共享同一实例（替代原 export default new PortService()）
-let shared: ReturnType<typeof create> | null = null;
-export const usePortal = () => (shared ??= create());
+export const usePortal = () => useSingletonStore().get("usePortal", create);

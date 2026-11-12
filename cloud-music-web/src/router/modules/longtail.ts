@@ -8,6 +8,16 @@ const longtailRoutes: RouteRecordRaw[] = [
     component: () => import('@/views/dj-radio/dj-radio.vue'),
   },
   {
+    path: '/dj-radio-detail',
+    meta: { name: '电台详情' },
+    component: () => import('@/views/dj-radio-detail/dj-radio-detail.vue'),
+  },
+  {
+    path: '/dj-program-detail',
+    meta: { name: '节目详情' },
+    component: () => import('@/views/dj-program-detail/dj-program-detail.vue'),
+  },
+  {
     path: '/video-podcast',
     meta: { name: '视频与播客' },
     component: () => import('@/views/video-podcast/video-podcast.vue'),

@@ -1,3 +1,4 @@
+import { useSingletonStore } from "@/store/singletons";
  
 import { ref } from 'vue';
 
@@ -205,7 +206,4 @@ const create = () => {
   return state;
 };
 
-// 模块级缓存：保证跨组件共享同一实例
-let shared: ReturnType<typeof create> | null = null;
-export const useUserCenter = () => (shared ??= create());
-
+export const useUserCenter = () => useSingletonStore().get("useUserCenter", create);

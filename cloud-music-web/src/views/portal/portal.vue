@@ -39,9 +39,9 @@
 
   <!-- 次要板块默认收起，避免首屏过长 -->
   <div class="portal-secondary-toggle">
-    <button type="button" @click="showSecondary = !showSecondary">
+    <cm-button type="button" @click="showSecondary = !showSecondary">
       {{ showSecondary ? '收起榜单与热门歌手' : '展开榜单与热门歌手' }}
-    </button>
+    </cm-button>
   </div>
   <template v-if="showSecondary">
     <!-- 榜单 -->
@@ -76,13 +76,7 @@
 
 <script setup lang="ts">
 
-/*
- * @Description: 首页
- * @Author: wanzp
- * @Date: 2022-06-09 22:15:56
- * @Last Modified by: zpwan
- * @Last Modified time: 2022-06-25 16:06:44
- */
+// 首页
 import { onMounted, ref } from 'vue';
 import { ElCarousel, ElCarouselItem } from 'element-plus';
 
@@ -105,8 +99,12 @@ const showSecondary = ref<boolean>(false);
 
 <style lang="less" scoped>
 .portal {
-  width: 1200px;
+  max-width: 1200px;
+  width: 100%;
+  box-sizing: border-box;
   margin: 0 auto;
+  padding-left: 24px;
+  padding-right: 24px;
   height: 100%;
 
   .el-carousel.banner-carousel {
@@ -160,20 +158,21 @@ const showSecondary = ref<boolean>(false);
 
   &-hot-artists {
     display: grid;
-    grid-template-columns: repeat(5, 182px);
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     justify-content: center;
-    gap: 24px 64px;
+    gap: 24px;
 
     li {
-      width: 182px;
+      width: 100%;
       overflow: hidden;
       text-align: center;
       cursor: pointer;
     }
 
     li img {
-      width: 182px;
-      height: 182px;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 1 / 1;
       border-radius: 50%;
     }
 

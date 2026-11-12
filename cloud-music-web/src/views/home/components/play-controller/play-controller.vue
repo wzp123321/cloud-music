@@ -4,21 +4,33 @@
     <div class="control-panel flex-row-justify-center">
       <div class="playing flex-row-start-center">
         <!-- 头像 -->
-        <img v-if="player.currentMusic.picUrl" :src="player.currentMusic.picUrl" alt="" />
-        <img v-else src="../../../../assets/images/common/common-avatar-default.png" alt="" />
+        <cm-image
+          v-if="player.currentMusic.picUrl"
+          :src="player.currentMusic.picUrl"
+          alt=""
+          class="np-cover"
+          @click="linkToDetail"
+        />
+        <cm-image
+          v-else
+          src="../../../../assets/images/common/common-avatar-default.png"
+          alt=""
+          class="np-cover"
+          @click="linkToDetail"
+        />
         <!-- 进度 -->
         <div class="progress ml20 flex-coulmn">
           <!-- 音乐播放器：元素由组件注入 player store -->
-          <audio
+          <CmAudio
             ref="audioElement"
-            :src="player.currentMusic.url"
+            :src="player.currentMusic.url || undefined"
             @timeupdate="player.onTimeUpdate"
             @ended="player.onEnded('next')"
             @error="player.onError"
-          ></audio>
+          ></CmAudio>
 
           <div class="flex-row-justify-center mb8">
-            <span>{{ player.currentMusic.name ? player.currentMusic.name : '云音乐' }}</span>
+            <span class="np-song" @click="linkToDetail">{{ player.currentMusic.name ? player.currentMusic.name : '云音乐' }}</span>
             <div>
               <span>{{ formatDuration(player.playTimestamp) }}</span> /
               <span>{{ formatDuration(player.currentMusic.dt) }}</span>
@@ -41,36 +53,36 @@
       </div>
 
       <div class="switch flex-row-start-center">
-        <i class="iconfont icon-shangyishou" title="上一首" @click="player.onEnded('preview')"></i>
-        <i
-          :class="['iconfont', player.isPlaying ? 'icon-zanting' : 'icon-24gl-playCircle' ]"
+        <cm-icon name="icon-shangyishou" title="上一首" @click="player.onEnded('preview')"></cm-icon>
+        <cm-icon
+          :name="player.isPlaying ? 'icon-zanting' : 'icon-24gl-playCircle'"
           :title="player.isPlaying ? '暂停' : '播放'"
           @click="player.switchPlayStatus"
-        ></i>
-        <i class="iconfont icon-xiayishou" title="下一首" @click="player.onEnded('next')"></i>
+        ></cm-icon>
+        <cm-icon name="icon-xiayishou" title="下一首" @click="player.onEnded('next')"></cm-icon>
       </div>
 
       <div class="operate-btn flex-row-start-center">
-        <i class="iconfont icon-jushoucang" title="收藏"></i>
-        <i class="iconfont icon-xiazai" title="下载" @click="player.downloadMusic"></i>
-        <i
+        <cm-icon name="icon-jushoucang" title="收藏"></cm-icon>
+        <cm-icon name="icon-xiazai" title="下载" @click="player.downloadMusic"></cm-icon>
+        <cm-icon
           v-for="(item, index) in Object.keys(player.playTypes)"
           v-show="player.playTypeIndex%Object.keys(player.playTypes).length === index"
           :key="item"
-          :class="['iconfont', player.playTypes[item]]"
+          :name="player.playTypes[item]"
           :title="item"
           @click="player.switchPlayType"
-        >
-        </i>
-        <i
-          :class="['mr6 iconfont', player.isMute ? 'icon-jingyin' : 'icon-24gl-volumeMiddle']"
+        ></cm-icon>
+        <cm-icon
+          class="mr6"
+          :name="player.isMute ? 'icon-jingyin' : 'icon-24gl-volumeMiddle'"
           @click="player.switchIsMute"
-        ></i>
+        ></cm-icon>
         <el-slider v-model="player.volume" :show-tooltip="false" @change="player.setVolume" />
       </div>
 
       <span class="lock-switch" @click="handleLockorNot">
-        <i :class="['iconfont', locked ? 'icon-jiesuo' : 'icon-jiesuo1']"></i>
+        <cm-icon :name="locked ? 'icon-jiesuo' : 'icon-jiesuo1'"></cm-icon>
       </span>
     </div>
   </div>
@@ -80,25 +92,31 @@
 
 <script setup lang="ts">
 
-/*
- * @Description: 底部音乐播放
- * @Author: zpwan
- * @Date: 2022-07-16 13:52:03
- * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2022-07-17 15:41:48
- */
-import {  onMounted, ref } from 'vue';
+// 底部音乐播放
+import { onMounted, ref } from 'vue';
 import { ElSlider } from 'element-plus';
+import { useRouter } from 'vue-router';
 
 import { usePlayerStore } from '@/store/player';
 import { useLyricStore } from '@/store/lyric';
 import { formatDuration } from '@/core/utils';
 import { sanitizeHtml } from '@/utils/sanitize';
+// 局部同步引入：避免全局异步组件尚未挂载时 onMounted 拿不到 audio DOM
+import CmAudio from '@/components/cm-audio/cm-audio.vue';
 defineOptions({ name: 'PlayController' });
 const player = usePlayerStore();
     const lyric = useLyricStore();
+    const router = useRouter();
     const locked = ref<boolean>(true);
-    const audioElement = ref<HTMLAudioElement | null>(null);
+    const audioElement = ref<InstanceType<typeof CmAudio> | null>(null);
+
+    // 点击正在播放的歌曲 → 歌曲详情页
+    const linkToDetail = () => {
+      const id = player.currentMusic.id;
+      if (id) {
+        router.push({ path: '/music_detail', query: { id: String(id) } });
+      }
+    };
 
     // 锁定与否
     const handleLockorNot = () => {
@@ -106,8 +124,8 @@ const player = usePlayerStore();
     };
 
     onMounted(() => {
-      // 把 <audio> 注入 player store，播放控制统一由 store action 驱动
-      player.bindAudio(audioElement.value);
+      // 把 audio 原生 DOM 注入 player store，播放控制统一由 store action 驱动
+      player.bindAudio(audioElement.value?.el ?? null);
     });
 
     ;
@@ -136,8 +154,12 @@ const player = usePlayerStore();
 
     &-panel {
       position: relative;
-      width: 1200px;
+      max-width: 1200px;
+      width: 100%;
+      box-sizing: border-box;
       margin: 0 auto;
+      padding-left: 24px;
+      padding-right: 24px;
 
       .lock-switch {
         position: absolute;
@@ -201,6 +223,19 @@ const player = usePlayerStore();
         img {
           width: 64px;
           height: 56px;
+        }
+
+        .np-cover {
+          cursor: pointer;
+          border-radius: 4px;
+        }
+      }
+
+      .playing .progress .np-song {
+        cursor: pointer;
+
+        &:hover {
+          color: var(--color-primary, #c20c0c);
         }
       }
 

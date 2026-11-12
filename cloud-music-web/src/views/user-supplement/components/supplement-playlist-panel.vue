@@ -16,9 +16,9 @@
         <p v-if="!hasLogin" class="user-supplement--degrade">登录后可用（已降级，不发请求）</p>
         <div class="user-supplement--block-actions">
           <label class="user-supplement--inline-label">
-            uid<input v-model="uidModel" placeholder="当前登录 uid，或手填" />
+            uid<cm-input v-model="uidModel" placeholder="当前登录 uid，或手填" />
           </label>
-          <button class="user-supplement--btn" @click="loadMyPlaylists">加载我的歌单</button>
+          <cm-button class="user-supplement--btn" @click="loadMyPlaylists">加载我的歌单</cm-button>
           <span class="user-supplement--count">{{ myPlaylists.length }} 个歌单</span>
         </div>
         <div v-if="myPlaylists.length" class="user-supplement--list">
@@ -40,7 +40,7 @@
         <h3 class="user-supplement--block-title">共享参数 · 歌单 id（← 上方歌单点选，或手填）</h3>
         <div class="user-supplement--form">
           <label
-            >歌单 id<input v-model="playlistId" placeholder="点选我的歌单自动填入，或手填"
+            >歌单 id<cm-input v-model="playlistId" placeholder="点选我的歌单自动填入，或手填"
           /></label>
         </div>
       </section>
@@ -50,15 +50,15 @@
           <code class="user-supplement--module">playlist_update</code> 更新歌单（写）
         </h3>
         <div class="user-supplement--form">
-          <label>名称 name<input v-model="playlistName" placeholder="歌单名" /></label>
-          <label>描述 desc<input v-model="playlistDesc" placeholder="歌单描述" /></label>
-          <label>标签 tags<input v-model="playlistTags" placeholder="逗号分隔" /></label>
-          <button
+          <label>名称 name<cm-input v-model="playlistName" placeholder="歌单名" /></label>
+          <label>描述 desc<cm-input v-model="playlistDesc" placeholder="歌单描述" /></label>
+          <label>标签 tags<cm-input v-model="playlistTags" placeholder="逗号分隔" /></label>
+          <cm-button
             class="user-supplement--btn user-supplement--btn--write"
             @click="doUpdatePlaylist"
           >
             更新歌单
-          </button>
+          </cm-button>
         </div>
       </section>
 
@@ -67,14 +67,14 @@
           <code class="user-supplement--module">playlist_tracks</code> 歌单歌曲增删（写）
         </h3>
         <div class="user-supplement--form">
-          <label>操作 op<input v-model="tracksOp" placeholder="add / del" /></label>
-          <label>歌曲 ids<input v-model="tracksIds" placeholder="歌曲 id，逗号分隔" /></label>
-          <button
+          <label>操作 op<cm-input v-model="tracksOp" placeholder="add / del" /></label>
+          <label>歌曲 ids<cm-input v-model="tracksIds" placeholder="歌曲 id，逗号分隔" /></label>
+          <cm-button
             class="user-supplement--btn user-supplement--btn--write"
             @click="doPlaylistTracks"
           >
             操作歌单歌曲
-          </button>
+          </cm-button>
         </div>
       </section>
 
@@ -83,12 +83,12 @@
           <code class="user-supplement--module">playlist_update_playcount</code> 更新播放量（写）
         </h3>
         <div class="user-supplement--form">
-          <button
+          <cm-button
             class="user-supplement--btn user-supplement--btn--write"
             @click="doUpdatePlaycount"
           >
             更新播放量
-          </button>
+          </cm-button>
         </div>
       </section>
 
@@ -97,7 +97,7 @@
           <code class="user-supplement--module">playlist_video_recent</code> 最近视频歌单（只读）
         </h3>
         <div class="user-supplement--block-actions">
-          <button class="user-supplement--btn" @click="loadVideoRecent">加载最近视频歌单</button>
+          <cm-button class="user-supplement--btn" @click="loadVideoRecent">加载最近视频歌单</cm-button>
           <span class="user-supplement--count">{{ videoRecentList.length }} 条</span>
         </div>
         <div v-if="videoRecentList.length" class="user-supplement--list">
@@ -118,10 +118,10 @@
           <code class="user-supplement--module">playlist_cover_update</code> 上传封面（写 / 上传）
         </h3>
         <div class="user-supplement--form">
-          <label>封面图片<input type="file" accept="image/*" @change="onCoverChange" /></label>
-          <button class="user-supplement--btn user-supplement--btn--write" @click="doUpdateCover">
+          <label>封面图片<cm-input type="file" accept="image/*" @change="onCoverChange" /></label>
+          <cm-button class="user-supplement--btn user-supplement--btn--write" @click="doUpdateCover">
             上传并更新封面
-          </button>
+          </cm-button>
         </div>
       </section>
 
@@ -130,10 +130,10 @@
           <code class="user-supplement--module">playlist_desc_update</code> 更新描述（写）
         </h3>
         <div class="user-supplement--form">
-          <label>描述 desc<input v-model="playlistDesc" placeholder="与更新歌单共享描述" /></label>
-          <button class="user-supplement--btn user-supplement--btn--write" @click="doUpdateDesc">
+          <label>描述 desc<cm-input v-model="playlistDesc" placeholder="与更新歌单共享描述" /></label>
+          <cm-button class="user-supplement--btn user-supplement--btn--write" @click="doUpdateDesc">
             更新描述
-          </button>
+          </cm-button>
         </div>
       </section>
 
@@ -142,10 +142,10 @@
           <code class="user-supplement--module">playlist_tags_update</code> 更新标签（写）
         </h3>
         <div class="user-supplement--form">
-          <label>标签 tags<input v-model="playlistTags" placeholder="与更新歌单共享标签" /></label>
-          <button class="user-supplement--btn user-supplement--btn--write" @click="doUpdateTags">
+          <label>标签 tags<cm-input v-model="playlistTags" placeholder="与更新歌单共享标签" /></label>
+          <cm-button class="user-supplement--btn user-supplement--btn--write" @click="doUpdateTags">
             更新标签
-          </button>
+          </cm-button>
         </div>
       </section>
 
@@ -154,10 +154,10 @@
           <code class="user-supplement--module">playlist_order_update</code> 调整歌单顺序（写）
         </h3>
         <div class="user-supplement--form">
-          <label>顺序 ids<input v-model="orderIds" placeholder="歌单 id，逗号分隔" /></label>
-          <button class="user-supplement--btn user-supplement--btn--write" @click="doUpdateOrder">
+          <label>顺序 ids<cm-input v-model="orderIds" placeholder="歌单 id，逗号分隔" /></label>
+          <cm-button class="user-supplement--btn user-supplement--btn--write" @click="doUpdateOrder">
             调整顺序
-          </button>
+          </cm-button>
         </div>
       </section>
 
@@ -166,10 +166,10 @@
           <code class="user-supplement--module">playlist_privacy</code> 设置歌单隐私（写）
         </h3>
         <div class="user-supplement--form">
-          <label>隐私 privacy<input v-model="privacyVal" placeholder="0 普通 / 10 隐私" /></label>
-          <button class="user-supplement--btn user-supplement--btn--write" @click="doUpdatePrivacy">
+          <label>隐私 privacy<cm-input v-model="privacyVal" placeholder="0 普通 / 10 隐私" /></label>
+          <cm-button class="user-supplement--btn user-supplement--btn--write" @click="doUpdatePrivacy">
             设置隐私
-          </button>
+          </cm-button>
         </div>
       </section>
     </div>

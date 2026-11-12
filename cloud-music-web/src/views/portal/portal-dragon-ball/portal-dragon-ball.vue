@@ -23,10 +23,7 @@
 
 <script setup lang="ts">
 
-/*
- * @Description: 首页金刚区入口
- * @Author: home-recommendation
- */
+// 首页金刚区入口
 import {  toRef } from 'vue';
 import { useRouter } from 'vue-router';
 

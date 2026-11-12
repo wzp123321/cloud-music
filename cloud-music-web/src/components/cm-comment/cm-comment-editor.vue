@@ -1,18 +1,18 @@
 <template>
   <!-- 发评编辑器：文本域 + 提示 + 发布按钮 -->
   <div class="cmc-editor">
-    <textarea
+    <cm-textarea
       :value="modelValue"
       rows="3"
       maxlength="500"
       placeholder="发表你的评论..."
       @input="onInput"
-    ></textarea>
+    ></cm-textarea>
     <div class="cmc-editor-bar">
       <span class="cmc-tip">{{ tip }}</span>
-      <button class="cmc-submit" :disabled="posting" @click="emit('submit')">
+      <cm-button class="cmc-submit" :disabled="posting" @click="emit('submit')">
         {{ posting ? '发布中' : '发布评论' }}
-      </button>
+      </cm-button>
     </div>
   </div>
 </template>

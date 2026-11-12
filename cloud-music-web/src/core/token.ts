@@ -1,6 +1,14 @@
 import { IResTemplate } from '@/apis/common/index.api';
 
 /**
+ * 会话凭证 cookie key（全项目唯一来源）。
+ * 重要约束：本项目后端以「用户资料 JSON」作为 Authorization 凭证（见 request.ts 拦截器），
+ * 并未下发独立的 token，故 cookie 中存的就是 profile 本身，无法设 HttpOnly。
+ * 真正的「token ≠ profile」线级分离需后端配合下发真实 token，前端盲改会断登录。
+ */
+export const TOKEN_KEY = 'cloud-token';
+
+/**
  * 获取地址参数项
  * @param key 参数名
  * @returns 参数名对应的值

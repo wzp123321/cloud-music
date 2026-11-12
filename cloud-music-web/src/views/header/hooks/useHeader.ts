@@ -1,9 +1,4 @@
-/*
- * @Author: wanzp
- * @Date: 2022-06-08 20:37:08
- * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2022-09-10 20:53:57
- */
+import { useSingletonStore } from "@/store/singletons";
 import { ref } from 'vue';
 
 import { menus as menuTabs } from '../constant/index';
@@ -183,6 +178,4 @@ const create = () => {
   return state;
 };
 
-// 模块级缓存：保证跨组件共享同一实例
-let shared: ReturnType<typeof create> | null = null;
-export const useHeader = () => (shared ??= create());
+export const useHeader = () => useSingletonStore().get("useHeader", create);

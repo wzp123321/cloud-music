@@ -29,8 +29,12 @@ import PlayList from './components/play-list/play-list.vue';
   overflow-x: hidden;
 
   .container {
-    width: 1200px;
+    max-width: 1200px;
+    width: 100%;
+    box-sizing: border-box;
     margin: 0 auto;
+    padding-left: 24px;
+    padding-right: 24px;
     flex: 1 1 auto;
     padding-bottom: 90px;
   }

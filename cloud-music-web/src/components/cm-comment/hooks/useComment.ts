@@ -22,7 +22,7 @@ export interface CommentProps {
 
 /**
  * 评论区编排：容器模式（发评 + 热评/最新 + 楼层 + 点赞）与单条模式共用。
- * 从 cm-comment.vue 抽出，模板只做展示，行为不变。
+ * 评论区容器：列表加载、发布、点赞、楼层与点赞用户列表的编排。
  */
 export function useComment(props: CommentProps) {
   /** 是否为「评论区容器」模式：未传 commentVO 且指定了资源 */

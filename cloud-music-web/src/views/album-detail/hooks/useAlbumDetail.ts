@@ -6,9 +6,7 @@ import { AlbumVO, AlbumSongVO } from '../../../apis/album-detail/album-detail-ap
 import contentEnhanceService, { hasLogin } from '@/apis/content-enhance/content-enhance.service';
 import { AlbumDetailDynamicRes, ContentAlbumItem } from '@/apis/content-enhance/index.api';
 
-/*
- * @Descrption: 专辑详情服务
- */
+// 专辑详情服务
 // 专辑详情状态层：以 composable 形式组织，内部用 ref + const 箭头函数
 const create = () => {
   //#region 状态

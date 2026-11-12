@@ -1,10 +1,4 @@
-/*
- * @Descrption: 搜索服务
- * @Author: wanzp
- * @Date: 2022-09-10 20:20:08
- * @Last Modified by: zpwan
- * @Last Modified time: 2022-09-27 20:57:32
- */
+// 搜索服务
 import { computed, reactive, ref } from 'vue';
 
 import message from '@/utils/message';
@@ -23,7 +17,7 @@ enum EPath {
 
 const create = () => {
   //#region
-  // 原 constructor 由调用方传入 keyword；改为无参 hook 后在 create 内自行读取地址栏。
+  // 从地址栏读取搜索关键词。
   const _keyword = ref<string>(FGetQueryParam('keyword') as string);
 
   const _type = ref<string>(SEARCH_TYPE.单曲);

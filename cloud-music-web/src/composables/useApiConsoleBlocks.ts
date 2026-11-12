@@ -1,14 +1,14 @@
 import { computed, onMounted, reactive, ref, type Ref } from 'vue';
 
 import { hasLogin as checkLogin } from '@/apis/content-enhance/content-enhance.service';
+import {
+  extractObject,
+  toCardList,
+  pickNumberId,
+  type ApiCard,
+} from '@/utils/api-normalize';
 
-export interface CardItem {
-  id: number;
-  title: string;
-  cover: string;
-  subtitle: string;
-  raw: any;
-}
+export type CardItem = ApiCard;
 
 export type BlockKind = 'read' | 'loginRead' | 'write' | 'upload' | 'pending' | 'invalid';
 
@@ -63,39 +63,16 @@ export function useApiConsoleBlocks(config: ApiConsoleConfig) {
   const visibleBlocks = computed(() => blocks.filter((b) => b.tab === activeTab.value));
   const panelTip = computed(() => panelTips[activeTab.value] || '');
 
-  /** 兼容 res.data / res.result / res.xxx / 深层数组等多种结构 */
-  const extractList = (res: any): any[] => {
-    if (!res) return [];
-    if (Array.isArray(res)) return res;
-    const candidates = [
-      res.data, res.result, res.list, res.data?.list, res.result?.list, res.data?.data, res.data?.records,
-      res.programs, res.data?.programs, res.result?.programs, res.djRadios, res.data?.djRadios,
-      res.categories, res.data?.categories, res.radios, res.data?.radios, res.toplist, res.data?.toplist,
-      res.videos, res.data?.videos, res.voices, res.voiceList, res.data?.voiceList,
-      res.tasks, res.data?.tasks, res.songs, res.data?.songs, res.records,
-    ];
-    for (const item of candidates) {
-      if (Array.isArray(item)) return item;
-    }
-    for (const key of Object.keys(res)) {
-      if (Array.isArray(res[key])) return res[key];
-    }
-    for (const obj of [res.data, res.result]) {
-      if (obj && typeof obj === 'object') {
-        for (const key of Object.keys(obj)) {
-          if (Array.isArray(obj[key])) return obj[key];
-        }
-      }
-    }
-    return [];
-  };
+  /** 候选字段优先级：此组接口以 programs / djRadios / voices / tasks 等为主 */
+  const listCandidates = (res: any): any[] => [
+    res.data, res.result, res.list, res.data?.list, res.result?.list, res.data?.data, res.data?.records,
+    res.programs, res.data?.programs, res.result?.programs, res.djRadios, res.data?.djRadios,
+    res.categories, res.data?.categories, res.radios, res.data?.radios, res.toplist, res.data?.toplist,
+    res.videos, res.data?.videos, res.voices, res.voiceList, res.data?.voiceList,
+    res.tasks, res.data?.tasks, res.songs, res.data?.songs, res.records,
+  ];
 
-  const extractObj = (res: any): Record<string, any> => {
-    if (!res) return {};
-    if (res.data && typeof res.data === 'object' && !Array.isArray(res.data)) return res.data;
-    if (res.result && typeof res.result === 'object' && !Array.isArray(res.result)) return res.result;
-    return res;
-  };
+  const extractObj = extractObject;
 
   const toCard = (raw: any): CardItem => {
     const r = raw || {};
@@ -106,20 +83,19 @@ export function useApiConsoleBlocks(config: ApiConsoleConfig) {
     return { id, title, cover, subtitle, raw: r };
   };
 
-  const toList = (res: any): CardItem[] => {
-    const list = extractList(res);
-    if (list.length) return list.map(toCard);
-    const obj = extractObj(res);
-    if (obj && Object.keys(obj).length) {
-      return [toCard({ ...obj, title: obj.title ?? obj.name ?? obj.content ?? `响应 code=${obj.code ?? res?.code ?? '—'}` })];
-    }
-    return [];
-  };
+  const toList = (res: any): CardItem[] =>
+    toCardList<CardItem>(
+      res,
+      listCandidates,
+      toCard,
+      (obj, raw) => obj.title ?? obj.name ?? obj.content ?? `响应 code=${obj.code ?? raw?.code ?? '—'}`,
+      true,
+    );
 
-  const pickId = (raw: any): number => {
-    const r = raw || {};
-    return Number(r.id ?? r.rid ?? r.vid ?? r.cateId ?? r.categoryId ?? r.voiceId ?? r.voiceListId ?? r.programId ?? r.mainSongId ?? 0) || 0;
-  };
+  const pickId = (raw: any): number =>
+    pickNumberId(raw, [
+      'id', 'rid', 'vid', 'cateId', 'categoryId', 'voiceId', 'voiceListId', 'programId', 'mainSongId',
+    ]);
 
   const requireLogin = (): boolean => {
     if (!hasLogin.value) {

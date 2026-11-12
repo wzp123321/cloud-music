@@ -8,14 +8,14 @@
     <div v-if="toast" class="message--toast" @click="clearToast">{{ toast }}（点击关闭）</div>
 
     <div class="message--tabs">
-      <button
+      <cm-button
         v-for="tab in tabs"
         :key="tab.code"
         :class="['message--tab', activeTab === tab.code ? 'active' : '']"
         @click="setActiveTab(tab.code)"
       >
         {{ tab.name }}
-      </button>
+      </cm-button>
     </div>
 
     <!-- ==================== 4.1 消息中心 ==================== -->
@@ -32,7 +32,7 @@
           </h3>
           <p v-if="!hasLogin" class="message--degrade">登录后可用（已降级，不发请求）</p>
           <div class="message--block-actions">
-            <button class="message--btn" @click="loadMsg(block.code)">加载{{ block.name }}</button>
+            <cm-button class="message--btn" @click="loadMsg(block.code)">加载{{ block.name }}</cm-button>
             <span class="message--count">{{ msgLists[block.code].length }} 条</span>
           </div>
           <div v-if="msgLists[block.code].length" class="message--list">
@@ -58,9 +58,9 @@
         </h3>
         <p v-if="!hasLogin" class="message--degrade">登录后可用（已降级，不发请求）</p>
         <div class="message--form">
-          <label>对方 uid<input v-model="historyUid" placeholder="点选私信 / 最近联系人自动填入，或手填" /></label>
-          <label>条数<input v-model.number="historyLimit" type="number" min="1" /></label>
-          <button class="message--btn" @click="loadPrivateHistory">加载私信历史</button>
+          <label>对方 uid<cm-input v-model="historyUid" placeholder="点选私信 / 最近联系人自动填入，或手填" /></label>
+          <label>条数<cm-input v-model.number="historyLimit" type="number" min="1" /></label>
+          <cm-button class="message--btn" @click="loadPrivateHistory">加载私信历史</cm-button>
         </div>
         <div v-if="historyList.length" class="message--list">
           <div v-for="(item, idx) in historyList" :key="'hist_' + idx" class="message--item">
@@ -83,7 +83,7 @@
           共享参数 · 目标用户 user_ids（← 4.1 私信 / 最近联系人点选，或手填，逗号分隔）
         </h3>
         <div class="message--form">
-          <label>user_ids<input v-model="targetUserIds" placeholder="如 123456,789012" /></label>
+          <label>user_ids<cm-input v-model="targetUserIds" placeholder="如 123456,789012" /></label>
         </div>
       </section>
 
@@ -91,46 +91,46 @@
         <section class="message--block">
           <h3 class="message--block-title"><code class="message--module">send_text</code> 发送文本私信</h3>
           <div class="message--form">
-            <label>内容 msg<input v-model="sendTextMsg" placeholder="说点什么" /></label>
+            <label>内容 msg<cm-input v-model="sendTextMsg" placeholder="说点什么" /></label>
           </div>
-          <button class="message--btn message--btn--write" @click="doSendText">发送文本</button>
+          <cm-button class="message--btn message--btn--write" @click="doSendText">发送文本</cm-button>
         </section>
 
         <section class="message--block">
           <h3 class="message--block-title"><code class="message--module">send_song</code> 发送歌曲</h3>
           <div class="message--form">
-            <label>歌曲 id<input v-model="sendSongId" placeholder="歌曲 id" /></label>
-            <label>附言 msg<input v-model="sendSongMsg" placeholder="附言（可选）" /></label>
+            <label>歌曲 id<cm-input v-model="sendSongId" placeholder="歌曲 id" /></label>
+            <label>附言 msg<cm-input v-model="sendSongMsg" placeholder="附言（可选）" /></label>
           </div>
-          <button class="message--btn message--btn--write" @click="doSendSong">发送歌曲</button>
+          <cm-button class="message--btn message--btn--write" @click="doSendSong">发送歌曲</cm-button>
         </section>
 
         <section class="message--block">
           <h3 class="message--block-title"><code class="message--module">send_playlist</code> 发送歌单</h3>
           <div class="message--form">
-            <label>歌单 id<input v-model="sendPlaylistId" placeholder="歌单 id" /></label>
-            <label>附言 msg<input v-model="sendPlaylistMsg" placeholder="附言（可选）" /></label>
+            <label>歌单 id<cm-input v-model="sendPlaylistId" placeholder="歌单 id" /></label>
+            <label>附言 msg<cm-input v-model="sendPlaylistMsg" placeholder="附言（可选）" /></label>
           </div>
-          <button class="message--btn message--btn--write" @click="doSendPlaylist">发送歌单</button>
+          <cm-button class="message--btn message--btn--write" @click="doSendPlaylist">发送歌单</cm-button>
         </section>
 
         <section class="message--block">
           <h3 class="message--block-title"><code class="message--module">send_album</code> 发送专辑</h3>
           <div class="message--form">
-            <label>专辑 id<input v-model="sendAlbumId" placeholder="专辑 id" /></label>
-            <label>附言 msg<input v-model="sendAlbumMsg" placeholder="附言（可选）" /></label>
+            <label>专辑 id<cm-input v-model="sendAlbumId" placeholder="专辑 id" /></label>
+            <label>附言 msg<cm-input v-model="sendAlbumMsg" placeholder="附言（可选）" /></label>
           </div>
-          <button class="message--btn message--btn--write" @click="doSendAlbum">发送专辑</button>
+          <cm-button class="message--btn message--btn--write" @click="doSendAlbum">发送专辑</cm-button>
         </section>
 
         <section class="message--block">
           <h3 class="message--block-title"><code class="message--module">share_resource</code> 分享资源</h3>
           <div class="message--form">
-            <label>资源 id<input v-model="shareId" placeholder="资源 id" /></label>
-            <label>类型 type<input v-model="shareType" placeholder="song / playlist / album / mv" /></label>
-            <label>文案 msg<input v-model="shareMsg" placeholder="分享文案（可选）" /></label>
+            <label>资源 id<cm-input v-model="shareId" placeholder="资源 id" /></label>
+            <label>类型 type<cm-input v-model="shareType" placeholder="song / playlist / album / mv" /></label>
+            <label>文案 msg<cm-input v-model="shareMsg" placeholder="分享文案（可选）" /></label>
           </div>
-          <button class="message--btn message--btn--write" @click="doShareResource">分享资源</button>
+          <cm-button class="message--btn message--btn--write" @click="doShareResource">分享资源</cm-button>
         </section>
       </div>
 
@@ -145,13 +145,13 @@
         <section class="message--block">
           <h3 class="message--block-title"><code class="message--module">comment</code> 通用发评论</h3>
           <div class="message--form">
-            <label>操作 t<input v-model="commentT" placeholder="1 发送 / 2 回复 / 3 删除" /></label>
-            <label>资源类型 type<input v-model="commentType" placeholder="0 歌曲 / 1 MV / 2 歌单 / 3 专辑..." /></label>
-            <label>资源 id<input v-model="commentId" placeholder="资源 id" /></label>
-            <label>内容 content<input v-model="commentContent" placeholder="评论内容" /></label>
-            <label>回复 commentId<input v-model="commentReplyId" placeholder="回复时填" /></label>
+            <label>操作 t<cm-input v-model="commentT" placeholder="1 发送 / 2 回复 / 3 删除" /></label>
+            <label>资源类型 type<cm-input v-model="commentType" placeholder="0 歌曲 / 1 MV / 2 歌单 / 3 专辑..." /></label>
+            <label>资源 id<cm-input v-model="commentId" placeholder="资源 id" /></label>
+            <label>内容 content<cm-input v-model="commentContent" placeholder="评论内容" /></label>
+            <label>回复 commentId<cm-input v-model="commentReplyId" placeholder="回复时填" /></label>
           </div>
-          <button class="message--btn message--btn--write" @click="doComment">提交评论</button>
+          <cm-button class="message--btn message--btn--write" @click="doComment">提交评论</cm-button>
         </section>
 
         <section class="message--block">
@@ -159,11 +159,11 @@
             <code class="message--module">hug_comment</code> 评论抱抱（cid ← 4.1 msg_comments 点选）
           </h3>
           <div class="message--form">
-            <label>资源 id<input v-model="hugId" placeholder="资源 id" /></label>
-            <label>评论 cid<input v-model="hugCid" placeholder="点选收到的评论自动填入，或手填" /></label>
-            <label>类型 type<input v-model="hugType" placeholder="资源类型" /></label>
+            <label>资源 id<cm-input v-model="hugId" placeholder="资源 id" /></label>
+            <label>评论 cid<cm-input v-model="hugCid" placeholder="点选收到的评论自动填入，或手填" /></label>
+            <label>类型 type<cm-input v-model="hugType" placeholder="资源类型" /></label>
           </div>
-          <button class="message--btn message--btn--write" @click="doHugComment">抱抱评论</button>
+          <cm-button class="message--btn message--btn--write" @click="doHugComment">抱抱评论</cm-button>
         </section>
       </div>
 
@@ -222,9 +222,11 @@ const {
 
 <style scoped lang="less">
 .message {
-  width: 1200px;
+  max-width: 1200px;
+  width: 100%;
+  box-sizing: border-box;
   margin: 0 auto;
-  padding: 24px 0 48px;
+  padding: 24px 24px 48px;
 
   code {
     padding: 1px 5px;

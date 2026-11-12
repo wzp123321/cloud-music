@@ -1,3 +1,4 @@
+import { useSingletonStore } from "@/store/singletons";
 import { ref, watch } from 'vue';
 
 import { postRequest } from '@/apis/request';
@@ -242,6 +243,4 @@ const create = () => {
   return state;
 };
 
-// 模块级缓存：保证跨组件共享同一实例
-let shared: ReturnType<typeof create> | null = null;
-export const useLogin = () => (shared ??= create());
+export const useLogin = () => useSingletonStore().get("useLogin", create);

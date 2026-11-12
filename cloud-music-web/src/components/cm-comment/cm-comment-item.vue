@@ -1,7 +1,7 @@
 <template>
   <!-- 单条评论：头像 + 内容 + 回复 + 操作 + 楼层/赞过的人展开 -->
   <div class="cm-comment-item">
-    <img :src="item?.user?.avatarUrl" alt="" loading="lazy" />
+    <cm-image :src="item?.user?.avatarUrl" alt="" loading="lazy" />
 
     <div class="cm-comment-content">
       <p class="userinfo">

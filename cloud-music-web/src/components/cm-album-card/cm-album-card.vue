@@ -1,5 +1,5 @@
 <template>
-<div class="cm-album-card">
+<div class="cm-album-card" @click="linkToAlbumDetail">
   <div class="cm-album-card--cover">
     <cm-skeleton width="100%" :height="'236px'" :image-url="coverImageUrl" source-type="image"> </cm-skeleton>
   </div>
@@ -8,7 +8,7 @@
     <span>{{ formatDate(publishTime, 'YYYY-MM-DD') }}</span>
   </div>
   <div class="cm-album-card--icon">
-    <i class="iconfont icon-24gf-play"></i>
+    <cm-icon name="icon-24gf-play"></cm-icon>
   </div>
 </div>
 
@@ -16,18 +16,13 @@
 
 <script setup lang="ts">
 
-/*
- * @Descrption: 专辑卡片
- * @Author: wanzp
- * @Date: 2022-06-12 19:42:40
- * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2022-06-12 20:43:33
- */
+// 专辑卡片
 
 
 import { formatDate } from '@/core/utils';
+import { useRouter } from 'vue-router';
 defineOptions({ name: 'CMAlbumCard' });
-defineProps({
+const props = defineProps({
     coverImageUrl: {
       type: String,
       default: '',
@@ -45,6 +40,13 @@ defineProps({
       default: 0,
     },
   });
+
+const router = useRouter();
+// 专辑卡原先没有任何点击跳转，点封面/卡片无反应；此处补齐跳转到专辑详情
+const linkToAlbumDetail = () => {
+  if (props.id == null) return;
+  router.push({ path: '/album_detail', query: { id: String(props.id) } });
+};
 ;
 </script>
 

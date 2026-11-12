@@ -14,7 +14,7 @@
         </h3>
         <p v-if="!hasLogin" class="user-supplement--degrade">登录后可用（已降级，不发请求）</p>
         <div class="user-supplement--block-actions">
-          <button class="user-supplement--btn" @click="loadCloudList">加载我的云盘</button>
+          <cm-button class="user-supplement--btn" @click="loadCloudList">加载我的云盘</cm-button>
           <span class="user-supplement--count">{{ cloudList.length }} 个文件</span>
         </div>
         <div v-if="cloudList.length" class="user-supplement--list">
@@ -39,9 +39,9 @@
         </h3>
         <div class="user-supplement--form">
           <label
-            >songId<input v-model="cloudSongId" placeholder="点选上方云盘文件自动填入，或手填"
+            >songId<cm-input v-model="cloudSongId" placeholder="点选上方云盘文件自动填入，或手填"
           /></label>
-          <button class="user-supplement--btn" @click="loadCloudDetail">查看云盘详情</button>
+          <cm-button class="user-supplement--btn" @click="loadCloudDetail">查看云盘详情</cm-button>
         </div>
         <div v-if="cloudDetailList.length" class="user-supplement--list">
           <div
@@ -61,13 +61,13 @@
           <code class="user-supplement--module">user_cloud_del</code> 删除云盘歌曲（写操作）
         </h3>
         <div class="user-supplement--form">
-          <label>songId<input v-model="cloudSongId" placeholder="与详情共享 songId" /></label>
-          <button
+          <label>songId<cm-input v-model="cloudSongId" placeholder="与详情共享 songId" /></label>
+          <cm-button
             class="user-supplement--btn user-supplement--btn--write"
             @click="doDelCloud"
           >
             删除云盘歌曲
-          </button>
+          </cm-button>
         </div>
       </section>
     </div>

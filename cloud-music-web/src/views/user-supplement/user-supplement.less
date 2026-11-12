@@ -3,9 +3,11 @@
  * 三个面板拆成子组件后样式统一放这里，由页面级非 scoped 样式引入一次；类名以 user-supplement-- 为前缀，不会外泄
  */
 .user-supplement {
-  width: 1200px;
+  max-width: 1200px;
+  width: 100%;
+  box-sizing: border-box;
   margin: 0 auto;
-  padding: 24px 0 48px;
+  padding: 24px 24px 48px;
 
   code {
     padding: 1px 5px;

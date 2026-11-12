@@ -3,6 +3,7 @@
  * 接口返回结构五花八门（res.data / res.result / res.xxx），这里统一捞出第一个数组并映射成卡片
  */
 import type { BlockCard } from './api-block.types';
+import { pickListBfs, prettyJson } from '@/utils/api-normalize';
 
 /** 常见列表字段名，按优先级探测（取各接口并集，命中即返回） */
 const LIST_KEYS = [
@@ -40,26 +41,7 @@ const LIST_KEYS = [
 ];
 
 /** 在响应体（含 data / result / 任意嵌套）中找出第一个数组作为列表 */
-export const pickList = (res: any): any[] => {
-  if (Array.isArray(res)) return res;
-  if (!res || typeof res !== 'object') return [];
-  const seen = new Set<any>();
-  const queue: any[] = [res];
-  while (queue.length) {
-    const cur = queue.shift();
-    if (!cur || typeof cur !== 'object' || seen.has(cur)) continue;
-    seen.add(cur);
-    if (Array.isArray(cur)) return cur;
-    for (const key of LIST_KEYS) {
-      if (Array.isArray(cur[key])) return cur[key];
-    }
-    for (const key of Object.keys(cur)) {
-      const child = cur[key];
-      if (child && typeof child === 'object') queue.push(child);
-    }
-  }
-  return [];
-};
+export const pickList = (res: any): any[] => pickListBfs(res, LIST_KEYS);
 
 const pickId = (raw: any, index: number): any => {
   const r = raw ?? {};
@@ -159,13 +141,7 @@ export const normalize = (res: any): BlockCard[] => {
 };
 
 /** 原始返回格式化：循环引用等异常时退化为字符串 */
-export const pretty = (raw: any): string => {
-  try {
-    return JSON.stringify(raw, null, 2);
-  } catch {
-    return String(raw);
-  }
-};
+export const pretty = prettyJson;
 
 /**
  * 把上游返回里的 id / unikey / key 写进参数池：

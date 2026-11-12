@@ -1,6 +1,4 @@
-/*
- * @Description: '云盘' 接口清单页 · 区块定义
- */
+// '云盘' 接口清单页 · 区块定义
 import type { ApiBlock } from '@/components/cm-api-block/api-block.types';
 
 import cloudDiskService from '../../apis/cloud-disk/cloud-disk.service';

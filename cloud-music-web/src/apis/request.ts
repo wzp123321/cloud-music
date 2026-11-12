@@ -5,7 +5,7 @@ import axios, {
   AxiosError,
 } from 'axios';
 import serviceConfig from '@/config/request';
-import { FGetCookie } from '@/core/token';
+import { FGetCookie, TOKEN_KEY } from '@/core/token';
 
 // 统一 axios 单例：全项目共用，拦截器集中管理（token 注入 / 错误归一）
 const instance: AxiosInstance = axios.create({
@@ -13,9 +13,9 @@ const instance: AxiosInstance = axios.create({
   timeout: serviceConfig.TIME_OUT,
 });
 
-// 请求拦截：自动注入 cookie 中的登录态（cloud-token 存在时）
+// 请求拦截：自动注入 cookie 中的登录凭证
 instance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-  const token = FGetCookie('cloud-token');
+  const token = FGetCookie(TOKEN_KEY);
   if (token) {
     config.headers.set('Authorization', token);
   }

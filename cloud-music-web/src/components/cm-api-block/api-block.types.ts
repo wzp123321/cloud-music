@@ -6,14 +6,10 @@
 /** 区块类型：读取 / 需登录只读 / 写操作 */
 export type BlockKind = 'read' | 'loginRead' | 'write';
 
+import type { ApiCard } from '@/utils/api-normalize';
+
 /** 列表卡片：各接口返回结构不一，统一压成这四个展示位 */
-export interface BlockCard {
-  id: any;
-  title: string;
-  cover: string;
-  subtitle: string;
-  raw: any;
-}
+export type BlockCard = ApiCard;
 
 /** 每个区块独立的请求态 */
 export interface BlockState {

@@ -12,7 +12,15 @@ const parseTimePart = (part?: string): number => {
 
 export const useLyricStore = defineStore('lyric', () => {
   const lrcList = ref<LyricLine[]>([]);
-  const lrcPanel = ref<string[]>([]);
+  /** 当前应高亮/滚动到的歌词行索引（-1 表示未开始） */
+  const activeIndex = ref<number>(-1);
+
+  /** 截至当前行的歌词：由 activeIndex 派生，进度回拖时自动回退，不再累积 */
+  const lrcPanel = computed<string[]>(() =>
+    activeIndex.value < 0
+      ? []
+      : lrcList.value.slice(0, activeIndex.value + 1).map((line) => line.lyc),
+  );
 
   /** 当前应展示的歌词 */
   const showLyc = computed(() =>
@@ -21,7 +29,7 @@ export const useLyricStore = defineStore('lyric', () => {
 
   const reset = () => {
     lrcList.value = [];
-    lrcPanel.value = [];
+    activeIndex.value = -1;
   };
 
   /** 解析 [mm:ss.ms]歌词 文本 */
@@ -44,21 +52,24 @@ export const useLyricStore = defineStore('lyric', () => {
     });
   };
 
-  /** 按播放进度推进歌词面板（每次只往后追加一行） */
+  /** 按播放进度重算当前行：直接按时间定位，进度回拖也能回到对应歌词 */
   const syncPanel = (time: number) => {
-    if (!lrcList.value.length) {
-      lrcPanel.value = [];
+    const list = lrcList.value;
+    if (!list.length) {
+      activeIndex.value = -1;
       return;
     }
-    if (!lrcPanel.value.length) {
-      lrcPanel.value.push(lrcList.value[0]?.lyc ?? '', lrcList.value[1]?.lyc ?? '');
-      return;
+    // 当前行：最后一行时间 <= 当前播放时间的歌词
+    let idx = -1;
+    for (let i = 0; i < list.length; i += 1) {
+      if (time >= list[i].time) {
+        idx = i;
+      } else {
+        break;
+      }
     }
-    const next = lrcList.value[lrcPanel.value.length];
-    if (next && time > next.time) {
-      lrcPanel.value.push(next.lyc);
-    }
+    activeIndex.value = idx;
   };
 
-  return { lrcList, lrcPanel, showLyc, parse, reset, syncPanel };
+  return { lrcList, lrcPanel, activeIndex, showLyc, parse, reset, syncPanel };
 });

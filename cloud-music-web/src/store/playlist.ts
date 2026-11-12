@@ -65,11 +65,19 @@ export const usePlaylistStore = defineStore(
       pick: ['musicList'],
       // 旧格式是纯数组，不是 { musicList: [...] }，故自定义序列化
       serializer: {
-        serialize: (data) => JSON.stringify(data.musicList ?? []),
+        // 音源 url 是限时地址，不能持久化；还原时置空，由 startPlayback 按需补拉
+        serialize: (data) =>
+          JSON.stringify((data.musicList ?? []).map((item: PL_IPlayVO) => ({ ...item, url: '' }))),
         deserialize: (raw) => {
           try {
             const list = JSON.parse(raw);
-            return { musicList: Array.isArray(list) ? list : [] };
+            // 还原时同样丢弃可能过期/非法的 url，留待播放时按需补拉
+            return {
+              musicList: (Array.isArray(list) ? list : []).map((item: Record<string, unknown>) => ({
+                ...item,
+                url: '',
+              })),
+            };
           } catch {
             return { musicList: [] };
           }

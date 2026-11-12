@@ -12,9 +12,9 @@
         </h3>
         <p v-if="!hasLogin" class="user-supplement--degrade">登录后可用（已降级，不发请求）</p>
         <div class="user-supplement--block-actions">
-          <button class="user-supplement--btn" @click="loadRead(block.code)">
+          <cm-button class="user-supplement--btn" @click="loadRead(block.code)">
             加载{{ block.name }}
-          </button>
+          </cm-button>
           <span class="user-supplement--count">{{ readLists[block.code].length }} 条</span>
         </div>
         <div v-if="readLists[block.code].length" class="user-supplement--list">
@@ -36,16 +36,16 @@
           <code class="user-supplement--module">user_replacephone</code> 换绑手机（写操作）
         </h3>
         <div class="user-supplement--form">
-          <label>新手机号 phone<input v-model="phone" placeholder="新手机号" /></label>
-          <label>验证码 captcha<input v-model="captcha" placeholder="新手机验证码" /></label>
-          <label>旧验证码 oldcaptcha<input v-model="oldcaptcha" placeholder="原手机验证码（可选）" /></label>
-          <label>区号 countrycode<input v-model="countrycode" placeholder="如 86" /></label>
-          <button
+          <label>新手机号 phone<cm-input v-model="phone" placeholder="新手机号" /></label>
+          <label>验证码 captcha<cm-input v-model="captcha" placeholder="新手机验证码" /></label>
+          <label>旧验证码 oldcaptcha<cm-input v-model="oldcaptcha" placeholder="原手机验证码（可选）" /></label>
+          <label>区号 countrycode<cm-input v-model="countrycode" placeholder="如 86" /></label>
+          <cm-button
             class="user-supplement--btn user-supplement--btn--write"
             @click="doReplacePhone"
           >
             换绑手机
-          </button>
+          </cm-button>
         </div>
       </section>
     </div>

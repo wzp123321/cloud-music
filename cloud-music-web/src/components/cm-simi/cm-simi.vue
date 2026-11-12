@@ -12,7 +12,7 @@
         class="cms-item"
         @click="onItemClick(item)"
       >
-        <img :src="item.cover" alt="" loading="lazy" />
+        <cm-image :src="item.cover" alt="" loading="lazy" />
         <div class="cms-info">
           <p class="name" :title="item.name">{{ item.name }}</p>
           <p class="sub" :title="item.subtitle">{{ item.subtitle }}</p>

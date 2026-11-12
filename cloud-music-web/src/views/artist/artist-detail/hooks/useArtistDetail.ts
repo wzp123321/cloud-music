@@ -1,10 +1,4 @@
-/*
- * @Descrption: 歌手详情服务
- * @Author: wanzp
- * @Date: 2022-07-06 21:40:47
- * @Last Modified by: zpwan
- * @Last Modified time: 2022-09-27 20:40:20
- */
+// 歌手详情服务
 import { FGetQueryParam } from '@/core/token';
 import artistDetailService from '../../../../apis/artist-detail/ad.service';
 
@@ -44,7 +38,7 @@ const navs = [
 // 歌手详情状态层：以 composable 形式组织，内部用 ref + const 箭头函数
 const create = () => {
   //#region 状态
-  const id = ref(0); // 歌手 id（原为普通字段，改为 ref 以保持响应式与写入同步）
+  const id = ref(0); // 歌手 id
   const artistVO = ref<ArtistVO>() as Ref<ArtistVO>; // 歌手详情：保持旧 getter 的返回类型 ArtistVO
   const loading = ref<boolean>(false);
   const is_error = ref<boolean>(false);

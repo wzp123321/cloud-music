@@ -62,9 +62,13 @@ onMounted(() => {
 
 <style scoped lang="less">
 .my-playlist {
-  width: 1200px;
+  max-width: 1200px;
+  width: 100%;
+  box-sizing: border-box;
   margin: 0 auto;
   padding-top: 40px;
+  padding-left: 24px;
+  padding-right: 24px;
 
   .mp-header {
     display: flex;
@@ -89,9 +93,14 @@ onMounted(() => {
 
   .mp-grid {
     display: grid;
-    grid-template-columns: repeat(5, 262px);
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 24px 24px;
     margin-top: 24px;
+
+    // 卡片改为填满列宽，避免 5×262px 超出 1200px 容器导致横向溢出/裁切
+    :deep(.cm-playlist-card) {
+      width: 100%;
+    }
   }
 }
 </style>
