@@ -6,7 +6,8 @@ import App from './app.vue';
 
 import registerGlobalComponents from '@/components/register';
 import { injectDirective } from '@/utils/core';
-// 样式
+// 样式：ElMessage / ElLoading / ElMessageBox 为显式 import，auto-import resolver 不会为其注入样式，
+// 故保留全量 CSS，避免命令式组件与全局提示丢失样式；JS 巨块拆分交给 vite.config.ts 的 manualChunks。
 import 'element-plus/dist/index.css';
 import '@/assets/css/index.less';
 

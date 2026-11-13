@@ -5,7 +5,8 @@ import axios, {
   AxiosError,
 } from 'axios';
 import serviceConfig from '@/config/request';
-import { FGetCookie, TOKEN_KEY } from '@/core/token';
+import { getCookie, TOKEN_KEY } from '@/core/token';
+import message from '@/utils/message';
 
 // 统一 axios 单例：全项目共用，拦截器集中管理（token 注入 / 错误归一）
 const instance: AxiosInstance = axios.create({
@@ -15,7 +16,7 @@ const instance: AxiosInstance = axios.create({
 
 // 请求拦截：自动注入 cookie 中的登录凭证
 instance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-  const token = FGetCookie(TOKEN_KEY);
+  const token = getCookie(TOKEN_KEY);
   if (token) {
     config.headers.set('Authorization', token);
   }
@@ -25,7 +26,12 @@ instance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
 // 响应拦截：统一错误归一，业务层只需关心 resolve 数据 / catch 统一错误
 instance.interceptors.response.use(
   (response: AxiosResponse) => response,
-  (error: AxiosError) => Promise.reject(error),
+  (error: AxiosError) => {
+    // 全局兜底：service 层静默降级的路径也能得到反馈（消除「点了没反应」）。
+    // 业务层 catch 会再弹更具体的文案；message.show() 先 close 上一条，用户只会看到最后一条，不堆叠。
+    message.error('请求失败，请稍后重试');
+    return Promise.reject(error);
+  },
 );
 
 // 请求超时辅助函数：超时必须 reject，否则调用方会把超时当正常数据 resolve。
@@ -92,23 +98,13 @@ export const req = async (params: IRequestParams, delay = serviceConfig.TIME_OUT
 // 泛型默认 any 是 API 边界的逃生口：未显式传泛型的旧调用保持原有宽松行为，
 // 新代码应写成 getRequest<XxxRes>(...)，返回类型由 apis/*.api.ts 收口。
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const getRequest = async <T = any>(url: string, param?: unknown): Promise<T> => {
-  try {
-    return (await req({ url, method: 'get', param })) as T;
-  } catch (err) {
-    return Promise.reject(err);
-  }
-};
+export const getRequest = async <T = any>(url: string, param?: unknown): Promise<T> =>
+  (await req({ url, method: 'get', param })) as T;
 
 // POST form request (multipart/form-data，用于文件上传场景如歌单封面)
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const postFormRequest = async <T = any>(url: string, formData: FormData): Promise<T> => {
-  try {
-    return (await req({ url, method: 'post', param: formData })) as T;
-  } catch (err) {
-    return Promise.reject(err);
-  }
-};
+export const postFormRequest = async <T = any>(url: string, formData: FormData): Promise<T> =>
+  (await req({ url, method: 'post', param: formData })) as T;
 
 // POST request
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -116,13 +112,7 @@ export const postRequest = async <T = any>(
   url: string,
   param?: unknown,
   options?: IRequestOptions,
-): Promise<T> => {
-  try {
-    return (await req({ url, method: 'post', param, options })) as T;
-  } catch (err) {
-    return Promise.reject(err);
-  }
-};
+): Promise<T> => (await req({ url, method: 'post', param, options })) as T;
 
 // 文件流下载：复用统一实例（拦截器自动注入 Authorization），返回完整响应以读取 headers
 export const getBlobResponse = (

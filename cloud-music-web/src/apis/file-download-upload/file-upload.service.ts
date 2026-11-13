@@ -1,7 +1,7 @@
 // 文件上传
 
 import { ref } from 'vue';
-import { FUploadHandler, verifyUpload } from './util';
+import { pickUploadFile, verifyUpload } from './util';
 
 class FileUploadService {
   //#region
@@ -25,7 +25,7 @@ class FileUploadService {
     if (!this._is_initial.value) {
       throw new Error('尚未初始化！');
     }
-    const file = await FUploadHandler(Object.keys(this._accept.value).join());
+    const file = await pickUploadFile(Object.keys(this._accept.value).join());
     if (
       !verifyUpload(list, file, this._single_limit_size.value, this._accept.value, this._total_limit_size.value)
     ) {

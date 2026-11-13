@@ -1,5 +1,5 @@
 <template>
-  <ApiConsolePage title="云盘" :blocks="blocks" :tabs="tabs"
+  <api-console-page title="云盘" :blocks="blocks" :tabs="tabs"
   >
     <template #intro>
       共 2 个接口（任务 6.1），每个区块标注 module 名并对应一个真实接口调用点。
@@ -13,7 +13,7 @@
       每个请求独立 try/catch，失败降级为空值。上传需先选择本地音频文件，再把 songId 与文件一起放进 FormData 提交。
     
     </template>
-  </ApiConsolePage>
+  </api-console-page>
 </template>
 
 <script setup lang="ts">

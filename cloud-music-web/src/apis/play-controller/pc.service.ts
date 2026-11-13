@@ -6,7 +6,7 @@ const musicService = {
    * @param params
    * @returns
    */
-  async getLyricById(params: { id: number }) {
+  getLyricById: async (params: { id: number }) => {
     const url = '/lyric';
     const res = await getRequest(url, params);
     return res;
@@ -16,7 +16,7 @@ const musicService = {
    * @param params
    * @returns
    */
-  async getSongDownloadUrl(params: { id: number }) {
+  getSongDownloadUrl: async (params: { id: number }) => {
     const url = '/song/download/url';
     const res = await getRequest(url, params);
     return res;

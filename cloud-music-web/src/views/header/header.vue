@@ -46,7 +46,7 @@
                 :key="'hot_' + index"
                 @mousedown.prevent="onSelectKeyword(item.first)"
               >
-                <span class="hot-rank" :class="{ top: index < 3 }">{{ index + 1 }}</span>
+                <span class="hot-rank" :class="{ 'top-three': index < 3 }">{{ index + 1 }}</span>
                 <span class="hot-word">{{ item.first }}</span>
                 <span v-if="item.second" class="hot-sub">{{ item.second }}</span>
               </li>
@@ -58,7 +58,7 @@
                 :key="'hd_' + index"
                 @mousedown.prevent="onSelectKeyword(item.searchWord)"
               >
-                <span class="hot-rank" :class="{ top: index < 3 }">{{ index + 1 }}</span>
+                <span class="hot-rank" :class="{ 'top-three': index < 3 }">{{ index + 1 }}</span>
                 <span class="hot-word">{{ item.searchWord }}</span>
                 <span v-if="item.content" class="hot-content">{{ item.content }}</span>
               </li>
@@ -77,9 +77,9 @@
           </template>
           <ul>
             <li @click="onLinkTo('/user')"><cm-icon name="icon-wode"></cm-icon>我的主页</li>
-            <li><cm-icon name="icon-youxiangdenglu"></cm-icon>我的消息</li>
-            <li><cm-icon name="icon-31huiyuan"></cm-icon>我的等级</li>
-            <li><cm-icon name="icon-shezhi"></cm-icon>个人设置</li>
+            <li @click="onLinkTo('/message')"><cm-icon name="icon-youxiangdenglu"></cm-icon>我的消息</li>
+            <li @click="onLinkTo('/user')"><cm-icon name="icon-31huiyuan"></cm-icon>我的等级</li>
+            <li @click="onLinkTo('/account-profile')"><cm-icon name="icon-shezhi"></cm-icon>个人设置</li>
             <li @click="handleLoginOut"><cm-icon name="icon-tuichu"></cm-icon>退出</li>
           </ul>
         </el-popover>
@@ -218,7 +218,7 @@ const {
           color: var(--color-text-secondary);
           font-style: italic;
 
-          &.top {
+          &.top-three {
             color: #ec4141;
           }
         }

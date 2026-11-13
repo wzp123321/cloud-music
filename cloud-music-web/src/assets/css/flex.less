@@ -7,12 +7,7 @@
   flex-wrap: wrap;
 }
 
-.flex-row {
-  display: flex;
-  display: -webkit-flex;
 
-  flex-direction: row !important;
-}
 
 .flex-column {
   display: flex;
@@ -23,19 +18,9 @@
   flex-direction: column;
 }
 
-.flex1 {
-  flex: 1;
-}
 
-.flex-row-start-start {
-  display: flex;
-  display: -webkit-flex;
 
-  flex-direction: row;
 
-  justify-content: start;
-  align-items: flex-start;
-}
 
 .flex-row-start-end {
   display: flex;
@@ -57,34 +42,11 @@
   align-items: center;
 }
 
-.flex-row-center-start {
-  display: flex;
-  display: -webkit-flex;
 
-  flex-direction: row;
 
-  justify-content: center;
-  align-items: start;
-}
 
-.flex-row-end-start {
-  display: flex;
-  display: -webkit-flex;
 
-  flex-direction: row;
 
-  justify-content: end;
-  align-items: start;
-}
-
-.flex-row-end-center {
-  display: flex;
-
-  flex-direction: row;
-
-  justify-content: end;
-  align-items: center;
-}
 
 .flex-row-justify-center {
   display: flex;
@@ -113,63 +75,17 @@
   align-items: center;
 }
 
-.flex-column-start-start {
-  display: flex;
 
-  flex-direction: column;
 
-  justify-content: start;
-  align-items: flex-start;
-}
 
-.flex-column-start-end {
-  display: flex;
 
-  flex-direction: column;
 
-  justify-content: start;
-  align-items: flex-end;
-}
 
-.flex-column-start-center {
-  display: flex;
-  display: -webkit-flex;
 
-  flex-direction: column;
 
-  justify-content: start;
-  align-items: center;
-}
 
-.flex-column-center-start {
-  display: flex;
-  display: -webkit-flex;
 
-  flex-direction: column;
 
-  justify-content: center;
-  align-items: start;
-}
-
-.flex-column-end-start {
-  display: flex;
-  display: -webkit-flex;
-
-  flex-direction: column;
-
-  justify-content: end;
-  align-items: start;
-}
-
-.flex-column-end-center {
-  display: flex;
-  display: -webkit-flex;
-
-  flex-direction: column;
-
-  justify-content: end;
-  align-items: center;
-}
 
 .flex-column-center-center {
   display: flex;
@@ -181,21 +97,11 @@
   align-items: center;
 }
 
-.flex-column-justify-center {
-  display: flex;
-  display: -webkit-flex;
 
-  flex-direction: column;
-
-  justify-content: space-between;
-  align-items: center;
-}
 
 // 栅格工具类：等宽自适应列（列数覆盖现有 repeat(2/4/5/6) 用法）。
 // 旧代码里散落的 `grid-template-columns: repeat(N, minmax(0,1fr))` 可逐步替换为对应 class。
-.grid {
-  display: grid;
-}
+
 
 .grid-cols-2 {
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -213,10 +119,6 @@
   grid-template-columns: repeat(6, minmax(0, 1fr));
 }
 
-.grid-gap-16 {
-  gap: 16px;
-}
 
-.grid-gap-18 {
-  gap: 18px;
-}
+
+

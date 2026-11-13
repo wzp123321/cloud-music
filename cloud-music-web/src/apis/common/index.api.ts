@@ -3,11 +3,6 @@ export interface ICodeName<T> {
   name: string;
 }
 
-export interface IIdName<T> {
-  id: T;
-  name: string;
-}
-
 // 通用响应类型统一收敛到 apis/types.ts，此处 re-export 以兼容既有引用
 export type { IResTemplate, IHttpListResponsive } from '../types';
 

@@ -1,4 +1,4 @@
-export interface PL_IPlayVO {
+export interface PL_PlayVO {
   alName: string;
   artist: string;
   dt: number;

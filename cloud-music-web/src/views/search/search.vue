@@ -52,13 +52,13 @@
 </template>
 <script lang="ts" setup>
 import { ref, computed, watch } from 'vue';
-import { FGetQueryParam } from '@/core/token';
-import { useSearch, SEARCH_IMultimatchEntry } from './hooks/useSearch';
+import { getQueryParam } from '@/core/token';
+import { useSearch, SEARCH_MultimatchEntry } from './hooks/useSearch';
 
 import { SEARCH_TYPE } from '../../apis/search/index.api';
 
 const keyword = computed(() => {
-  return FGetQueryParam('keyword') as string;
+  return getQueryParam('keyword') as string;
 });
 const search = useSearch();
 
@@ -76,7 +76,7 @@ const navs = computed(() => {
 });
 
 /** 点击多重匹配入口：切换类型并重新查询 */
-const onMultimatchClick = (item: SEARCH_IMultimatchEntry) => {
+const onMultimatchClick = (item: SEARCH_MultimatchEntry) => {
   if (item.code) {
     search.type = item.code;
     search.query();

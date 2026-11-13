@@ -1,5 +1,5 @@
 <template>
-  <ApiConsolePage title="歌曲互动与播放记录" :blocks="blocks" :tabs="tabs"
+  <api-console-page title="歌曲互动与播放记录" :blocks="blocks" :tabs="tabs"
     root-class="pi"
   >
     <template #intro>
@@ -35,7 +35,7 @@
       onMounted 自动触发； 需登录只读接口未登录时仅提示、不发请求。
     
     </template>
-  </ApiConsolePage>
+  </api-console-page>
 </template>
 
 <script setup lang="ts">

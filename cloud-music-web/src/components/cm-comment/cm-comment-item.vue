@@ -68,12 +68,12 @@
 <script lang="ts" setup>
 import { PropType } from 'vue';
 import { sanitizeHtml } from '@/utils/sanitize';
-import { CM_ICommentVO } from './cm-comment.api';
+import { CM_CommentVO } from './cm-comment.api';
 
 defineProps({
   /** 单条评论数据 */
   item: {
-    type: Object as PropType<CM_ICommentVO>,
+    type: Object as PropType<CM_CommentVO>,
     required: true,
   },
   /** 是否能发起点赞/楼层（需要资源类型与 id） */
@@ -83,12 +83,12 @@ defineProps({
   },
   /** 已加载的楼层回复列表 */
   floorList: {
-    type: Array as PropType<CM_ICommentVO[]>,
+    type: Array as PropType<CM_CommentVO[]>,
     default: () => [],
   },
   /** 已加载的点赞用户列表 */
   hugList: {
-    type: Array as PropType<CM_ICommentVO[]>,
+    type: Array as PropType<CM_CommentVO[]>,
     default: () => [],
   },
   /** 楼层是否展开 */
@@ -104,9 +104,9 @@ defineProps({
 });
 
 const emit = defineEmits<{
-  (e: 'like', item: CM_ICommentVO): void;
-  (e: 'toggle-floor', item: CM_ICommentVO): void;
-  (e: 'toggle-hug', item: CM_ICommentVO): void;
+  (e: 'like', item: CM_CommentVO): void;
+  (e: 'toggle-floor', item: CM_CommentVO): void;
+  (e: 'toggle-hug', item: CM_CommentVO): void;
 }>();
 </script>
 

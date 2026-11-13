@@ -33,14 +33,14 @@ import { useUserStore } from '@/store/user';
 import { useUserCenter } from '../hooks/useUserCenter';
 
 const userCenterService = useUserCenter();
-import { UC_IFollowUser } from '@/apis/user/user.api';
+import { UC_FollowUser } from '@/apis/user/user.api';
 
 const tab = ref<'follows' | 'followeds'>('follows');
 const ownerUid = ref<number>(0);
 
 const follows = computed(() => userCenterService.followsValue);
 const followeds = computed(() => userCenterService.followedsValue);
-const list = computed<UC_IFollowUser[]>(() => (tab.value === 'follows' ? follows.value : followeds.value));
+const list = computed<UC_FollowUser[]>(() => (tab.value === 'follows' ? follows.value : followeds.value));
 
 const switchTab = (t: 'follows' | 'followeds') => {
   tab.value = t;
@@ -48,7 +48,7 @@ const switchTab = (t: 'follows' | 'followeds') => {
   else userCenterService.loadFolloweds();
 };
 
-const onToggle = (u: UC_IFollowUser) => {
+const onToggle = (u: UC_FollowUser) => {
   userCenterService.toggleFollow(u.userId, u.followed);
 };
 

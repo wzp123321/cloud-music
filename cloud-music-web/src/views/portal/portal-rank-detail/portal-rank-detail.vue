@@ -31,6 +31,7 @@ import {  PropType } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { PlayListVO, SingerVO } from '../../../apis/portal/portal-api';
+import message from '@/utils/message';
 defineOptions({ name: 'PortalRankDetail' });
 const props = defineProps({
     playlistVO: {
@@ -46,7 +47,10 @@ const router = useRouter();
 
     const linktToDetail = () => {
       const id = props.playlistVO?.id;
-      if (!id) return;
+      if (!id) {
+        message.info('该内容暂无详情信息');
+        return;
+      }
       router.push({
         path: '/music_detail',
         query: {
@@ -65,10 +69,6 @@ const router = useRouter();
   overflow: hidden;
   background-color: var(--color-default);
 
-  img.cover-img {
-    width: 100%;
-    height: 234px;
-  }
 
   ul {
     flex: 1 1 auto;

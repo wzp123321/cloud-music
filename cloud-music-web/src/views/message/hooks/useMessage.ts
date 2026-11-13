@@ -10,7 +10,7 @@ type CardItem = ApiCard;
  * 消息中心 · 私信 · 分享（P1 4.1~4.3）调试台的数据与交互编排。
  * 消息中心调试台：各接口区块的数据与交互编排。
  */
-export function useMessage() {
+export const useMessage = () => {
   /** 与 api-inventory-plain.md「P1 消息私信与分享」4.1~4.3 一一对应 */
   const tabs = [
     { code: 'c4_1', name: '4.1 消息中心（6）' },

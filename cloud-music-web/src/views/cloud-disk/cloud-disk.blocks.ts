@@ -16,7 +16,7 @@ export const tabs: { code: string; name: string }[] = [
 export const blocks: ApiBlock[] = [
   {
     module: 'cloud_match', title: '本地音频匹配', desc: '需登录只读：匹配曲库，返回 songId 提供给 cloud 上传带参', tab: '6.1',
-    kind: 'loginRead', url: '/cloud/match', provides: ['songId'],
+    kind: 'login-read', url: '/cloud/match', provides: ['songId'],
     input: { label: 'songId（可选，手动输入用于匹配）', def: '' },
     params: (_s, v) => (v ? { songId: v } : {}),
     run: cloudDiskService.matchCloud,

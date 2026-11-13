@@ -11,20 +11,22 @@ import { getRequest, postFormRequest } from '@/apis/request';
  *   hasLogin() + window.confirm 控制，service 不自动触发；
  * - cloud_match 需登录只读（/cloud/match 实测 301），返回匹配结果并提供 songId 给 cloud 带参。
  */
-async function call(url: string, params: Record<string, any> = {}): Promise<any> {
+const call = async (url: string, params: Record<string, unknown> = {}): Promise<any> => {
   try {
     const res = await getRequest(url, params);
     return res ?? {};
   } catch {
+    // 上游异常，降级为空对象，避免未捕获异常打断页面（响应拦截器统一提示，此处不重复 message.error）
     return {};
   }
 }
 
-async function callForm(url: string, formData: FormData): Promise<any> {
+const callForm = async (url: string, formData: FormData): Promise<any> => {
   try {
     const res = await postFormRequest(url, formData);
     return res ?? {};
   } catch {
+    // 上游异常，降级为空对象，避免未捕获异常打断页面（响应拦截器统一提示，此处不重复 message.error）
     return {};
   }
 }

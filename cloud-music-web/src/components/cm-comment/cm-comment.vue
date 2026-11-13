@@ -3,7 +3,7 @@
     <!-- 容器模式：发评 + 标题 + 热评/最新切换（传 type + id 时启用） -->
     <template v-if="isContainer">
       <div class="cmc-panel">
-        <CmCommentEditor v-model="draft" :posting="posting" :tip="editorTip" @submit="onSubmit" />
+        <cm-comment-editor v-model="draft" :posting="posting" :tip="editorTip" @submit="onSubmit" />
       </div>
       <div class="cmc-header">
         <h5>评论<span v-if="total">（{{ total }}）</span></h5>
@@ -15,7 +15,7 @@
     </template>
 
     <!-- 评论列表：容器模式=内部列表；单条模式=外部 v-for 传入的一条 -->
-    <CmCommentItem
+    <cm-comment-item
       v-for="(item, index) in renderList"
       :key="item?.commentId ?? index"
       :item="item"
@@ -39,13 +39,13 @@
 import { PropType } from 'vue';
 import CmCommentItem from './cm-comment-item.vue';
 import CmCommentEditor from './cm-comment-editor.vue';
-import { CM_ICommentVO, CM_CommentType } from './cm-comment.api';
+import { CM_CommentVO, CM_CommentType } from './cm-comment.api';
 import { useComment } from './hooks/useComment';
 
 const props = defineProps({
   /** 单条评论（兼容现有 v-for :commentVO 用法） */
   commentVO: {
-    type: Object as PropType<CM_ICommentVO>,
+    type: Object as PropType<CM_CommentVO>,
     default: undefined,
   },
   /** 资源类型：music / album / playlist / mv / dj / video / event */

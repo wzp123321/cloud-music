@@ -1,5 +1,5 @@
 // 歌手详情服务
-import { FGetQueryParam } from '@/core/token';
+import { getQueryParam } from '@/core/token';
 import artistDetailService from '../../../../apis/artist-detail/ad.service';
 
 import { ArtistVO, AlbumVO, MvVO, DescRes } from '../../../../apis/artist-detail/artist-detail-api';
@@ -66,7 +66,7 @@ const create = () => {
   //#endregion
   //#region 初始化：拉取歌手详情与热门歌曲，并加载增强数据
   const init = async () => {
-    id.value = Number(FGetQueryParam('id'));
+    id.value = Number(getQueryParam('id'));
     loading.value = true;
     is_error.value = false;
     try {

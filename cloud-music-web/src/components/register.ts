@@ -29,8 +29,10 @@ const components: Record<string, Component> = {
   'cm-video': defineAsyncComponent(() => import('./cm-video/cm-video.vue')),
 };
 
-export default function registerGlobalComponents(app: App): void {
+const registerGlobalComponents = (app: App): void => {
   Object.entries(components).forEach(([name, component]) => {
     app.component(name, component);
   });
-}
+};
+
+export default registerGlobalComponents;

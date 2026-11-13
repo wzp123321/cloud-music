@@ -4,10 +4,10 @@ import {
   getPlaylistHot,
   getHighqualityTags,
   getTopPlaylistHighquality,
-  PM_IPlaylistVO,
+  PM_PlaylistVO,
 } from '@/apis/playlist-manage/index.api';
 
-export function usePlaylistView() {
+export const usePlaylistView = () => {
   const loading = ref(false);
   const listLoading = ref(false);
   const selectedCat = ref('全部');
@@ -16,7 +16,7 @@ export function usePlaylistView() {
   const hotTags = ref<{ name: string }[]>([]);
   const hqTags = ref<{ name: string }[]>([]);
   const catGroups = ref<{ categoryName: string; subs: { name: string }[] }[]>([]);
-  const playlists = ref<PM_IPlaylistVO[]>([]);
+  const playlists = ref<PM_PlaylistVO[]>([]);
 
   const createVisible = ref(false);
 

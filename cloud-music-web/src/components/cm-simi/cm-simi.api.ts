@@ -18,7 +18,7 @@ export const SIMI_TITLE: Record<CM_SimiType, string> = {
 };
 
 /** 归一化后的相似推荐项 */
-export interface CM_ISimiItem {
+export interface CM_SimiItem {
   id: number | string;
   name: string;
   cover?: string;
@@ -26,7 +26,7 @@ export interface CM_ISimiItem {
 }
 
 /** 各 simi 接口原始响应 */
-export interface CM_ISimiRes {
+export interface CM_SimiRes {
   code?: number;
   songs?: any[];
   playlists?: any[];
@@ -40,33 +40,33 @@ export interface CM_ISimiRes {
 export const getSimiSong = (
   id: number | string,
   params: { limit?: number; offset?: number } = {},
-): Promise<CM_ISimiRes> => getRequest('/simi/song', { id, ...params });
+): Promise<CM_SimiRes> => getRequest('/simi/song', { id, ...params });
 
 /** 相似歌单（simi_playlist，入参 songid） */
 export const getSimiPlaylist = (
   id: number | string,
   params: { limit?: number; offset?: number } = {},
-): Promise<CM_ISimiRes> => getRequest('/simi/playlist', { id, ...params });
+): Promise<CM_SimiRes> => getRequest('/simi/playlist', { id, ...params });
 
 /** 相似歌手（simi_artist，入参 artistid） */
-export const getSimiArtist = (id: number | string): Promise<CM_ISimiRes> =>
+export const getSimiArtist = (id: number | string): Promise<CM_SimiRes> =>
   getRequest('/simi/artist', { id });
 
 /** 相似MV（simi_mv，入参 mvid） */
-export const getSimiMv = (mvid: number | string): Promise<CM_ISimiRes> =>
+export const getSimiMv = (mvid: number | string): Promise<CM_SimiRes> =>
   getRequest('/simi/mv', { mvid });
 
 /** 相似用户（simi_user，入参 songid） */
 export const getSimiUser = (
   id: number | string,
   params: { limit?: number; offset?: number } = {},
-): Promise<CM_ISimiRes> => getRequest('/simi/user', { id, ...params });
+): Promise<CM_SimiRes> => getRequest('/simi/user', { id, ...params });
 
 /** 按类型分发到对应接口 */
-export async function fetchSimi(
+export const fetchSimi = async (
   type: CM_SimiType,
   id: number | string,
-): Promise<CM_ISimiRes> {
+): Promise<CM_SimiRes> => {
   switch (type) {
     case 'song':
       return getSimiSong(id);
@@ -84,7 +84,7 @@ export async function fetchSimi(
 }
 
 /** 将各接口响应归一化为统一列表项 */
-export function normalizeSimi(type: CM_SimiType, res: CM_ISimiRes): CM_ISimiItem[] {
+export const normalizeSimi = (type: CM_SimiType, res: CM_SimiRes): CM_SimiItem[] => {
   switch (type) {
     case 'song':
       return (res?.songs ?? []).map((s: any) => ({

@@ -31,7 +31,7 @@ import portalService from '../../../apis/portal/portal-request.service';
 import { TARGET_TYPE } from '@/config/enum';
 import message from '@/utils/message';
 
-import { recommendPlayListNavs } from '../constant/index';
+import { recommendPlayListNavs, HOME_RANK_IDS } from '../constant/index';
 
 // 首页状态层：以 composable 形式组织，内部用 ref + const 箭头函数
 const create = () => {
@@ -71,16 +71,22 @@ const create = () => {
   // 不在首页预热，省掉 12 个与首屏无关的请求
   const init = () => {
     loading.value = true;
-    queryBannerLsit();
-    queryPlayListByType();
-    queryHotSinger();
-    getSomeRankList();
-    queryBlockPage();
-    queryDragonBall();
+    // 6 类首屏数据仍并发发起，不新增请求；allSettled 保证任一取数 reject 也能复位 loading
+    const tasks = [
+      queryBannerList(),
+      queryPlayListByType(),
+      queryHotSinger(),
+      getSomeRankList(),
+      queryBlockPage(),
+      queryDragonBall(),
+    ];
+    Promise.allSettled(tasks).finally(() => {
+      loading.value = false;
+    });
   };
   //#endregion
   //#region
-  const queryBannerLsit = async () => {
+  const queryBannerList = async () => {
     try {
       const res: BannerRes = await portalService.getBannerList();
       if (res?.code === 200 && res?.banners?.length) {
@@ -98,7 +104,7 @@ const create = () => {
     // 带 id 的内跳：统一用详情页约定的 query key（id / mvid），否则打不开正确页面
     const go = (path: string, key: 'id' | 'mvid') => {
       if (targetId == null) {
-        if (url) window.open(url, '_blank');
+        if (url) window.open(url, '_blank', 'noopener,noreferrer');
         else message.info('该 banner 暂未配置跳转');
         return;
       }
@@ -122,7 +128,7 @@ const create = () => {
         return router.push({ path: '/dj-radio-detail', query: { rid: String(targetId) } });
       default:
         // 歌词 / 综合 / 声音 / 独家规划 / 网页 等：有外链则打开，否则提示
-        if (url) window.open(url, '_blank');
+        if (url) window.open(url, '_blank', 'noopener,noreferrer');
         else message.info('该 banner 暂未配置跳转');
     }
   };
@@ -160,17 +166,9 @@ const create = () => {
   };
   //#endregion
   //#region 新碟
-  /**
-   * 19723756 飙升
-   * 3779629 新歌
-   * 3778678 热歌
-   * 2809513713 欧美
-   * 745956260 韩语
-   */
   const getSomeRankList = async () => {
     try {
-      const types = [19723756, 3779629, 3778678, 2809513713, 745956260];
-      const promiseArr = types.map((item) => {
+      const promiseArr = HOME_RANK_IDS.map((item) => {
         return portalService.getRankDetailById({ id: item });
       });
       const resArr = await Promise.all(promiseArr);
@@ -369,19 +367,31 @@ const create = () => {
   //#endregion
   //#region 推荐流跳转
   const linkToPlaylist = (id?: number | string) => {
-    if (id == null) return;
+    if (id == null) {
+      message.info('该内容暂无详情信息');
+      return;
+    }
     router.push({ path: '/playlist_detail', query: { id: String(id) } });
   };
   const linkToSong = (id?: number | string) => {
-    if (id == null) return;
+    if (id == null) {
+      message.info('该内容暂无详情信息');
+      return;
+    }
     router.push({ path: '/music_detail', query: { id: String(id) } });
   };
   const linkToMv = (id?: number | string) => {
-    if (id == null) return;
+    if (id == null) {
+      message.info('该内容暂无详情信息');
+      return;
+    }
     router.push({ path: '/mvplay', query: { mvid: String(id) } });
   };
   const linkToAlbum = (id?: number | string) => {
-    if (id == null) return;
+    if (id == null) {
+      message.info('该内容暂无详情信息');
+      return;
+    }
     router.push({ path: '/album_detail', query: { id: String(id) } });
   };
   const linkToDailyRecommend = () => {
@@ -392,7 +402,7 @@ const create = () => {
   };
   //#endregion
   //#region
-  const linkToAritstDetail = (id: number) => {
+  const linkToArtistDetail = (id: number) => {
     router.push({
       path: '/artist_detail',
       query: {
@@ -403,11 +413,17 @@ const create = () => {
   //#endregion
   //#region 电台 / 节目跳转
   const linkToDjRadio = (rid?: number | string) => {
-    if (rid == null) return;
+    if (rid == null) {
+      message.info('该内容暂无详情信息');
+      return;
+    }
     router.push({ path: '/dj-radio-detail', query: { rid: String(rid) } });
   };
   const linkToDjProgram = (id?: number | string) => {
-    if (id == null) return;
+    if (id == null) {
+      message.info('该内容暂无详情信息');
+      return;
+    }
     router.push({ path: '/dj-program-detail', query: { id: String(id) } });
   };
   //#endregion
@@ -445,7 +461,7 @@ const create = () => {
     topMvList,
     // 方法（对应原 public 方法，签名不变）
     init,
-    queryBannerLsit,
+    queryBannerList,
     handleBannerLinkTo,
     queryPlayListByType,
     queryHotSinger,
@@ -471,7 +487,7 @@ const create = () => {
     linkToAlbum,
     linkToDailyRecommend,
     linkToRank,
-    linkToAritstDetail,
+    linkToArtistDetail,
     linkToDjRadio,
     linkToDjProgram,
   });

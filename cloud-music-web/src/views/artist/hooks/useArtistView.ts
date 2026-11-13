@@ -3,8 +3,9 @@ import { useRouter } from 'vue-router';
 
 import contentEnhanceService, { hasLogin as checkLogin } from '@/apis/content-enhance/content-enhance.service';
 import { ContentArtistItem, ContentSongItem, ContentMvItem } from '@/apis/content-enhance/index.api';
+import message from '@/utils/message';
 
-export function useArtistView() {
+export const useArtistView = () => {
   const router = useRouter();
 
   const typeOptions = [
@@ -80,15 +81,24 @@ export function useArtistView() {
 
   /** 列表 → 详情参数来源：artists[].id 传入 /artist_detail?id= */
   const linkToArtist = (id?: number) => {
-    if (!id) return;
+    if (!id) {
+      message.info('该内容暂无详情信息');
+      return;
+    }
     router.push({ path: '/artist_detail', query: { id: String(id) } });
   };
   const linkToSong = (id?: number) => {
-    if (!id) return;
+    if (!id) {
+      message.info('该内容暂无详情信息');
+      return;
+    }
     router.push({ path: '/music_detail', query: { id: String(id) } });
   };
   const linkToMv = (id?: number) => {
-    if (!id) return;
+    if (!id) {
+      message.info('该内容暂无详情信息');
+      return;
+    }
     router.push({ path: '/mvplay', query: { mvid: String(id) } });
   };
 

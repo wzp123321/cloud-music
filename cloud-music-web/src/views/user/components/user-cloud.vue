@@ -17,12 +17,12 @@
 <script lang="ts" setup>
 import { ref, onMounted, watch } from 'vue';
 import { useUserCenter } from '../hooks/useUserCenter';
-import { UC_ICloudItem } from '@/apis/user/user.api';
+import { UC_CloudItem } from '@/apis/user/user.api';
 
 const userCenterService = useUserCenter();
 
-const list = ref<UC_ICloudItem[]>([]);
-const cloud = ref<{ list: UC_ICloudItem[]; count: number }>({ list: [], count: 0 });
+const list = ref<UC_CloudItem[]>([]);
+const cloud = ref<{ list: UC_CloudItem[]; count: number }>({ list: [], count: 0 });
 
 const formatSize = (size?: number) => {
   if (!size) return '';

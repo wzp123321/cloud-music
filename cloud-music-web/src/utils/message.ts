@@ -1,5 +1,6 @@
 import { ElMessage } from 'element-plus';
-let messageInstance: any;
+// ElMessage 返回的 handler 提供 close()，用于关闭上一条常驻消息
+let messageInstance: ReturnType<typeof ElMessage> | undefined;
 const DURATION = 3 * 1000;
 // loading 不应自消：duration 0 表示常驻，直到下一次 success/error/info 覆盖
 const LOADING_DURATION = 0;

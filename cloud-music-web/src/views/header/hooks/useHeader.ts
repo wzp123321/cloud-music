@@ -9,13 +9,13 @@ import {
   getSearchHot,
   getSearchHotDetail,
   getSearchSuggest,
-  SE_IHotItem,
-  SE_IHotDetailItem,
-  SE_ISuggestItem,
+  SE_HotItem,
+  SE_HotDetailItem,
+  SE_SuggestItem,
 } from '@/apis/search-enhance/index.api';
 
 // 建议类型映射（模块级纯函数，不依赖实例状态）
-const mapSuggestType = (key: string): SE_ISuggestItem['type'] => {
+const mapSuggestType = (key: string): SE_SuggestItem['type'] => {
   switch (key) {
     case 'songs':
     case 'song':
@@ -46,11 +46,11 @@ const create = () => {
   /** 搜索框是否聚焦（控制热搜/建议面板显隐） */
   const _searchFocus = ref<boolean>(false);
   /** 热搜榜（search_hot） */
-  const _hotList = ref<SE_IHotItem[]>([]);
+  const _hotList = ref<SE_HotItem[]>([]);
   /** 热搜详情（search_hot_detail） */
-  const _hotDetail = ref<SE_IHotDetailItem[]>([]);
+  const _hotDetail = ref<SE_HotDetailItem[]>([]);
   /** 搜索建议（search_suggest） */
-  const _suggestList = ref<SE_ISuggestItem[]>([]);
+  const _suggestList = ref<SE_SuggestItem[]>([]);
   /** 面板加载态 */
   const _panelLoading = ref<boolean>(false);
   /** 建议去抖定时器（非响应式状态） */
@@ -102,7 +102,7 @@ const create = () => {
         const res = await getSearchSuggest(kw, 'mobile');
         const order = res?.order ?? [];
         const result = res?.result ?? {};
-        const list: SE_ISuggestItem[] = [];
+        const list: SE_SuggestItem[] = [];
         order.forEach((key) => {
           const items = result[key] ?? [];
           items.forEach((item: any) => {
@@ -157,13 +157,13 @@ const create = () => {
     set searchFocus(value: boolean) {
       _searchFocus.value = value;
     },
-    get hotList(): SE_IHotItem[] {
+    get hotList(): SE_HotItem[] {
       return _hotList.value;
     },
-    get hotDetail(): SE_IHotDetailItem[] {
+    get hotDetail(): SE_HotDetailItem[] {
       return _hotDetail.value;
     },
-    get suggestList(): SE_ISuggestItem[] {
+    get suggestList(): SE_SuggestItem[] {
       return _suggestList.value;
     },
     get panelLoading(): boolean {

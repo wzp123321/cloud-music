@@ -24,10 +24,10 @@
 </template>
 
 <script lang="ts" setup>
-import { UC_IUserDetail } from '@/apis/user/user.api';
+import { UC_UserDetail } from '@/apis/user/user.api';
 
 defineProps<{
-  detail: UC_IUserDetail;
+  detail: UC_UserDetail;
   canEdit: boolean;
 }>();
 

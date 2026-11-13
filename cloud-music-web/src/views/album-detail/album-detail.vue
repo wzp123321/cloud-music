@@ -72,8 +72,9 @@
 // 专辑详情
 import { computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { FGetQueryParam } from '@/core/token';
+import { getQueryParam } from '@/core/token';
 import { useAlbumDetail } from './hooks/useAlbumDetail';
+import message from '@/utils/message';
 
 import { formatDate } from '../../core/utils';
 import type { Common_IMusic } from '../../apis/common/index.api';
@@ -86,7 +87,7 @@ const router = useRouter();
       albumDetail.query();
     });
 
-    const resourceId = Number(FGetQueryParam('id') ?? 0);
+    const resourceId = Number(getQueryParam('id') ?? 0);
 
     /** 接口原始歌曲结构 → cm-table / 播放器使用的扁平结构 */
     const songList = computed<Common_IMusic[]>(() =>
@@ -103,7 +104,10 @@ const router = useRouter();
 
     /** 收藏专辑列表 → 专辑详情，参数 id ← album_sublist.data[].id */
     const linkToAlbum = (id?: number) => {
-      if (!id) return;
+      if (!id) {
+        message.info('该内容暂无详情信息');
+        return;
+      }
       router.push({ path: '/album_detail', query: { id: String(id) } });
     };
 

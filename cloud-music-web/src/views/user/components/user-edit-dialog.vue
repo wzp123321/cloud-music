@@ -30,12 +30,12 @@
 <script lang="ts" setup>
 import { ref, watch } from 'vue';
 import UserService from '@/apis/user/user.service';
-import { UC_IUserDetail } from '@/apis/user/user.api';
+import { UC_UserDetail } from '@/apis/user/user.api';
 import message from '@/utils/message';
 
 const props = defineProps<{
   visible: boolean;
-  detail: UC_IUserDetail;
+  detail: UC_UserDetail;
 }>();
 
 const emit = defineEmits<{

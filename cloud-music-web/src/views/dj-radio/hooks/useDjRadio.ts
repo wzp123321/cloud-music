@@ -7,7 +7,7 @@ import { Block, useApiConsoleBlocks } from '@/composables/useApiConsoleBlocks';
  * 电台 · 分类 · 节目 · 榜单（P1 1.1~1.4）调试台。
  * 数据与交互编排统一交给 useApiConsoleBlocks，本 hook 只声明本页专属配置。
  */
-export function useDjRadio() {
+export const useDjRadio = () => {
   /** 1.1~1.4 按 capability 子任务分 tab */
   const tabs = [
     { code: 'c1_1', name: '1.1 电台发现（9）' },
@@ -53,7 +53,7 @@ export function useDjRadio() {
     { module: 'dj_radio_hot', name: '分类热门电台', tab: 'c1_2', kind: 'read', inputKey: 'cateId', inputLabel: 'cateId', run: () => djRadioService.getDjRadioHot({ cateId: Number(params.cateId) || 0, limit: 30 }) },
     // 1.3 订阅与榜单（9）
     { module: 'dj_sub', name: '订阅电台（写）', tab: 'c1_3', kind: 'write', inputKey: 'rid', inputLabel: 'rid', buttonText: '订阅(t=1)', run: () => djRadioService.setDjSub({ rid: Number(params.rid) || 0, t: 1 }) },
-    { module: 'dj_sublist', name: '我的订阅电台', tab: 'c1_3', kind: 'loginRead', run: () => djRadioService.getDjSublist({ limit: 30 }) },
+    { module: 'dj_sublist', name: '我的订阅电台', tab: 'c1_3', kind: 'login-read', run: () => djRadioService.getDjSublist({ limit: 30 }) },
     { module: 'dj_subscriber', name: '电台订阅者', tab: 'c1_3', kind: 'read', inputKey: 'rid', inputLabel: 'rid', run: () => djRadioService.getDjSubscriber({ rid: Number(params.rid) || 0, limit: 30 }) },
     { module: 'dj_paygift', name: '电台付费礼物', tab: 'c1_3', kind: 'read', run: () => djRadioService.getDjPaygift({ limit: 30 }) },
     { module: 'dj_toplist', name: '电台榜（rid 来源）', tab: 'c1_3', kind: 'read', emit: 'rid', run: () => djRadioService.getDjToplist({ limit: 30 }) },

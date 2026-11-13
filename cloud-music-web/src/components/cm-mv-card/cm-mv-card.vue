@@ -160,8 +160,8 @@ const router = useRouter();
   &:hover {
     .cm-mv-card--cover::after {
       content: '';
-      width: 320px;
-      height: 210px;
+      width: 100%;
+      height: 100%;
       position: absolute;
       top: 0;
       left: 0;

@@ -2,7 +2,7 @@
 import { computed, reactive, ref } from 'vue';
 
 import message from '@/utils/message';
-import { FGetQueryParam } from '@/core/token';
+import { getQueryParam } from '@/core/token';
 import { getRequest } from '@/apis/request';
 import {
   getSearchMultimatch,
@@ -15,10 +15,15 @@ enum EPath {
   搜索 = '/search',
 }
 
+// 请求序号：模块级递增，用于丢弃过期响应，防止旧请求覆盖新结果。
+// query 与 queryMultimatch 各用一路，避免页面同时调用二者时互相作废。
+let seq = 0;
+let multimatchSeq = 0;
+
 const create = () => {
   //#region
   // 从地址栏读取搜索关键词。
-  const _keyword = ref<string>(FGetQueryParam('keyword') as string);
+  const _keyword = ref<string>(getQueryParam('keyword') as string);
 
   const _type = ref<string>(SEARCH_TYPE.单曲);
 
@@ -29,7 +34,7 @@ const create = () => {
   const _mvs = ref<MvVO[]>([]);
 
   /** 多重匹配概览（各类型匹配数量入口） */
-  const _multimatch = ref<SEARCH_IMultimatchEntry[]>([]);
+  const _multimatch = ref<SEARCH_MultimatchEntry[]>([]);
 
   // type 原为可读写 getter/setter（模板里 v-model 会写入），用可写 computed 保持语义。
   const type = computed({
@@ -53,13 +58,19 @@ const create = () => {
   //#endregion
 
   const query = async () => {
+    const mySeq = ++seq;
+    // 请求前快照 keyword 与 type，避免响应回来后用「当前」type 解析旧请求的数据
+    const requestKeyword = _keyword.value;
+    const requestType = _type.value;
     const params = {
-      keywords: _keyword.value,
-      type: Number(_type.value),
+      keywords: requestKeyword,
+      type: Number(requestType),
     };
     try {
       const res = await getRequest(EPath.搜索, params);
-      switch (_type.value) {
+      // 已有更新的请求发出，丢弃本次过期响应
+      if (mySeq !== seq) return;
+      switch (requestType) {
         case SEARCH_TYPE.单曲:
           _songs.value = res?.result?.songs?.map((item: any) => {
             return {
@@ -106,19 +117,25 @@ const create = () => {
           break;
       }
     } catch {
+      // 过期请求的失败同样不得清空新结果
+      if (mySeq !== seq) return;
       message.error('搜索失败，请稍后重试');
       _songs.value = [];
       _albums.value = [];
       _mvs.value = [];
     } finally {
-      _loadingResult.value = false;
+      // 只有最新请求能结束 loading，避免旧请求提前关闭加载态
+      if (mySeq === seq) _loadingResult.value = false;
     }
   };
 
   /** 多重匹配：拉取各类型匹配数量概览 */
   const queryMultimatch = async () => {
+    const mySeq = ++multimatchSeq;
     try {
       const res = await getSearchMultimatch({ keywords: _keyword.value });
+      // keyword 变化会触发重查，丢弃过期响应
+      if (mySeq !== multimatchSeq) return;
       const result = res?.result ?? {};
       const orders = result.orders ?? [];
       _multimatch.value = orders
@@ -128,8 +145,10 @@ const create = () => {
           code: multimatchCode(key),
           count: Array.isArray(result[key]) ? result[key].length : 0,
         }))
-        .filter((v: SEARCH_IMultimatchEntry) => v.count > 0);
+        .filter((v: SEARCH_MultimatchEntry) => v.count > 0);
     } catch {
+      // 过期请求的失败不得清空新结果
+      if (mySeq !== multimatchSeq) return;
       message.error('搜索失败，请稍后重试');
       _multimatch.value = [];
     }
@@ -157,7 +176,7 @@ const create = () => {
 export const useSearch = () => create();
 
 /** 多重匹配入口项 */
-export interface SEARCH_IMultimatchEntry {
+export interface SEARCH_MultimatchEntry {
   /** server 返回的类型 key，如 song/artist/album/playlist/video */
   key: string;
   /** 中文名 */

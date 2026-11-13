@@ -1,6 +1,6 @@
 import { ElLoading, ElMessage } from 'element-plus';
 
-export function injectDirective(app: any) {
+export const injectDirective = (app: any) => {
   app.use(ElLoading);
   app.use(ElMessage);
 }

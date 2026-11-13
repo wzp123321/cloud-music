@@ -1,5 +1,5 @@
 <template>
-  <ApiConsolePage title="账号资料" :blocks="blocks" :tabs="tabs"
+  <api-console-page title="账号资料" :blocks="blocks" :tabs="tabs"
     :kind-labels="kindLabels"
   >
     <template #intro>
@@ -24,7 +24,7 @@
       为规避误触发真实注册/换绑/短信流程，所有手机号输入框均不预填任何真实号码。
     
     </template>
-  </ApiConsolePage>
+  </api-console-page>
 </template>
 
 <script setup lang="ts">

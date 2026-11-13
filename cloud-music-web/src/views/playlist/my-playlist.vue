@@ -27,11 +27,11 @@
 
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue';
-import { getPlaylistMylike, PM_IPlaylistVO } from '@/apis/playlist-manage/index.api';
+import { getPlaylistMylike, PM_PlaylistVO } from '@/apis/playlist-manage/index.api';
 import PlaylistFormDialog from './components/playlist-form-dialog.vue';
 
 const loading = ref(false);
-const playlists = ref<PM_IPlaylistVO[]>([]);
+const playlists = ref<PM_PlaylistVO[]>([]);
 const createVisible = ref(false);
 
 const openCreate = () => {

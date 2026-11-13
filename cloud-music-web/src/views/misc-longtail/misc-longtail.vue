@@ -1,5 +1,5 @@
 <template>
-  <ApiConsolePage title="杂项长尾" :blocks="blocks" :tabs="tabs"
+  <api-console-page title="杂项长尾" :blocks="blocks" :tabs="tabs"
   >
     <template #intro>
       共 9 个接口（任务 8.1），每个区块标注 module 名并对应一个真实接口调用点。
@@ -14,7 +14,7 @@
       每个请求独立 try/catch，失败降级为空值。inner_version 在 onMounted 自动加载用于版本自检。
     
     </template>
-  </ApiConsolePage>
+  </api-console-page>
 </template>
 
 <script setup lang="ts">

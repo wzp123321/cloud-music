@@ -4,11 +4,12 @@ import { useRouter } from 'vue-router';
 import { formatPlayCount } from '@/core/utils';
 import contentEnhanceService, { hasLogin as checkLogin } from '@/apis/content-enhance/content-enhance.service';
 import { ContentMvItem } from '@/apis/content-enhance/index.api';
+import message from '@/utils/message';
 
 type TabCode = 'all' | 'exclusive' | 'first';
 
 /** MV 发现页：三个 tab、地区/排序筛选与收藏列表的编排。 */
-export function useMvView() {
+export const useMvView = () => {
   const router = useRouter();
 
   const tabs: { code: TabCode; name: string }[] = [
@@ -84,7 +85,10 @@ export function useMvView() {
 
   /** 列表 → 播放页参数来源：data[].id 传入 /mvplay?mvid= */
   const linkToMv = (id?: number) => {
-    if (!id) return;
+    if (!id) {
+      message.info('该内容暂无详情信息');
+      return;
+    }
     router.push({ path: '/mvplay', query: { mvid: String(id) } });
   };
 

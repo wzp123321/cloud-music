@@ -10,6 +10,7 @@
     <p class="cm-api-block--desc">
       {{ block.desc }}<code class="cm-api-block--url">{{ block.url }}</code>
     </p>
+    <p v-if="block.note" class="cm-api-block--note">{{ block.note }}</p>
 
     <div class="cm-api-block--controls">
       <cm-input
@@ -24,7 +25,7 @@
         class="cm-api-block--file"
         @change="onFileChange"
       />
-      <cm-button class="cm-api-block--btn" @click="emit('run', block)">{{ buttonText }}</cm-button>
+      <cm-button class="cm-api-block--btn" @click="onRun">{{ buttonText }}</cm-button>
       <span v-if="block.needs" class="cm-api-block--chain">
         {{ block.needs }} ← {{ block.source }}，当前值：<b>{{ sel[block.needs] || '未选择' }}</b>
       </span>
@@ -103,12 +104,25 @@ const kindText = computed(
   () => props.kindLabels?.[props.block.kind] ?? DEFAULT_KIND_LABELS[props.block.kind],
 );
 
-/** 按钮文案随类型变化：写操作要强调二次确认 */
+/** 按钮文案随类型变化：写操作要强调二次确认，失效接口仅作说明/核验入口 */
 const buttonText = computed(() => {
+  if (props.block.buttonText) return props.block.buttonText;
+  if (props.block.kind === 'invalid') return '查看失效说明/核验';
   if (props.block.kind === 'write') return '执行（需登录 + 二次确认）';
-  if (props.block.kind === 'loginRead') return '加载（需登录）';
+  if (props.block.kind === 'login-read') return '加载（需登录）';
   return '请求接口';
 });
+
+/** 失效接口：点击需二次确认后才手动核验一次，取消则不发请求、不进主流程 */
+const onRun = () => {
+  if (props.block.kind === 'invalid') {
+    const ok = window.confirm(
+      `${props.block.module} 已登记失效（上游接口异常），不进主流程自动请求；仅用于登记核验，仍要手动发起一次请求吗？`,
+    );
+    if (!ok) return;
+  }
+  emit('run', props.block);
+};
 
 /** 「点击卡片可提供参数」的提示文案 */
 const providesText = computed(() =>
@@ -159,7 +173,7 @@ const onFileChange = (event: Event) => {
     color: #666;
     background: rgba(0, 0, 0, 0.05);
 
-    &.kind-loginRead {
+    &.kind-login-read {
       color: #b8860b;
       background: rgba(184, 134, 11, 0.12);
     }
@@ -167,6 +181,12 @@ const onFileChange = (event: Event) => {
     &.kind-write {
       color: #c20c0c;
       background: rgba(194, 12, 12, 0.12);
+    }
+
+    &.kind-invalid {
+      color: #999;
+      background: rgba(0, 0, 0, 0.06);
+      text-decoration: line-through;
     }
   }
 
@@ -225,6 +245,16 @@ const onFileChange = (event: Event) => {
     b {
       color: var(--color-primary, #c20c0c);
     }
+  }
+
+  &--note {
+    margin-top: 6px;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    line-height: 1.5;
+    color: #b8860b;
+    background: rgba(184, 134, 11, 0.08);
   }
 
   &--loading,

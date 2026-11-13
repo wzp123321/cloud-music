@@ -1,8 +1,8 @@
 import { computed, reactive, ref } from 'vue';
 
-import { FGetQueryParam } from '@/core/token';
-import { PD_IPlaylistDetail } from '../../../../apis/playlist-detail/index.api';
-import { MP_IMVCommentRes } from '../../../../apis/mvplay/index.api';
+import { getQueryParam } from '@/core/token';
+import { PD_PlaylistDetail } from '../../../../apis/playlist-detail/index.api';
+import { MP_MVCommentRes } from '../../../../apis/mvplay/index.api';
 import { Common_IMusic } from '../../../../apis/common/index.api';
 import { getRequest } from '../../../../apis/request';
 import CommonService from '../../../../apis/common/common.service';
@@ -12,7 +12,7 @@ import {
   addTrackToPlaylist,
   deleteTrackFromPlaylist,
   getPlaylistTrackAll,
-  PM_IDynamicRes,
+  PM_DynamicRes,
 } from '../../../../apis/playlist-manage/index.api';
 
 enum EPath {
@@ -21,11 +21,11 @@ enum EPath {
 
 const create = () => {
   // 从地址栏读取歌单 id（一次）。
-  const idParam = FGetQueryParam('id');
+  const idParam = getQueryParam('id');
   const playlistId = idParam ? Number(idParam) : 0;
 
   //#region
-  const _playListResult = ref<PD_IPlaylistDetail>({
+  const _playListResult = ref<PD_PlaylistDetail>({
     backgroundCoverUrl: '',
     bannedTrackIds: '',
     cloudTrackCount: '',
@@ -59,14 +59,14 @@ const create = () => {
     tracks: [],
   });
 
-  const _playListCommentResult = ref<MP_IMVCommentRes>({
+  const _playListCommentResult = ref<MP_MVCommentRes>({
     comments: [],
     hotComments: [],
   });
 
   const _playListMusicListResult = ref<Common_IMusic[]>([]);
 
-  const _dynamic = ref<PM_IDynamicRes>({ code: 0 });
+  const _dynamic = ref<PM_DynamicRes>({ code: 0 });
 
   const _subscribed = ref<boolean>(false);
 
@@ -94,7 +94,7 @@ const create = () => {
   //#endregion
 
   const queryCommentList = async () => {
-    const id = Number(FGetQueryParam('id'));
+    const id = Number(getQueryParam('id'));
     const commonService = new CommonService();
     const res = await commonService.getPlayListCommentList(id);
     _playListCommentResult.value = {
@@ -156,7 +156,7 @@ const create = () => {
   };
 
   const init = async () => {
-    const id = FGetQueryParam('id');
+    const id = getQueryParam('id');
     _loading.value = true;
     try {
       const res = await getRequest(EPath.查询歌单详情, {

@@ -1,12 +1,12 @@
-import { FGetQueryParam } from '@/core/token';
+import { getQueryParam } from '@/core/token';
 import { computed, reactive, ref } from 'vue';
 
 import CommonService from '../../../apis/common/common.service';
-import { MP_IMvDetail, MP_IMVCommentRes } from '../../../apis/mvplay/index.api';
+import { MP_MvDetail, MP_MVCommentRes } from '../../../apis/mvplay/index.api';
 
 const create = () => {
   //#region
-  const _mvDetailResult = ref<MP_IMvDetail>({
+  const _mvDetailResult = ref<MP_MvDetail>({
     artistId: 0,
     artistName: '',
     artists: {
@@ -34,7 +34,7 @@ const create = () => {
 
   const _mvUrlResult = ref<string>('');
 
-  const _mvCommentResult = ref<MP_IMVCommentRes>({
+  const _mvCommentResult = ref<MP_MVCommentRes>({
     comments: [],
     hotComments: [],
   });
@@ -49,7 +49,7 @@ const create = () => {
   //#endregion
 
   //#region
-  const _mvid = Number(FGetQueryParam('mvid'));
+  const _mvid = Number(getQueryParam('mvid'));
 
   const _loading = ref<boolean>(false);
 

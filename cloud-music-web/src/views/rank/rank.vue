@@ -98,6 +98,7 @@ import { useRoute, useRouter } from 'vue-router';
 
 import { usePortal } from '../portal/hooks/usePortal';
 import { TopListTrack, TopSongItem, TopMvItem } from '../../apis/portal/portal-api';
+import message from '@/utils/message';
 
 const portal = usePortal();
 defineOptions({ name: 'Rank' });
@@ -120,7 +121,10 @@ const router = useRouter();
     // 榜单卡片点击：榜单本质是一张歌单，跳转独立歌单详情页。
     // 不能复用 /rank_detail（它指向本组件，跳完首屏无变化，看起来像没点动）。
     const goRankDetail = (id?: number) => {
-      if (id == null) return;
+      if (id == null) {
+        message.info('该内容暂无详情信息');
+        return;
+      }
       router.push({ path: '/playlist_detail', query: { id: String(id) } });
     };
 

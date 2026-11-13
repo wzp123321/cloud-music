@@ -13,11 +13,12 @@ import { getRequest } from '@/apis/request';
  */
 
 /** 统一安全请求：失败给空值 */
-async function call(url: string, params: Record<string, any> = {}): Promise<any> {
+const call = async (url: string, params: Record<string, unknown> = {}): Promise<any> => {
   try {
     const res = await getRequest(url, params);
     return res ?? {};
   } catch {
+    // 上游异常，降级为空对象，避免未捕获异常打断页面（响应拦截器统一提示，此处不重复 message.error）
     return {};
   }
 }

@@ -81,6 +81,7 @@ import {  onMounted } from 'vue';
 
 import { usePortal } from '../portal/hooks/usePortal';
 import { RecommendSongItem, PersonalizedNewSongItem } from '../../apis/portal/portal-api';
+import message from '@/utils/message';
 
 const portal = usePortal();
 defineOptions({ name: 'DailyRecommend' });
@@ -102,7 +103,10 @@ defineOptions({ name: 'DailyRecommend' });
 
     // 包装一层，过滤掉可选 id，保证传入 dislikeRecommendSong 的一定为 number
     const handleDislike = (id?: number) => {
-      if (id == null) return;
+      if (id == null) {
+        message.info('该歌曲缺少 id，无法操作');
+        return;
+      }
       portal.dislikeRecommendSong(id);
     };
 

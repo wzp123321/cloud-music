@@ -51,10 +51,10 @@
             <span v-if="b.kind === 'invalid'" class="video-podcast--badge video-podcast--badge--invalid">已登记失效</span>
             <span v-else-if="b.kind === 'pending'" class="video-podcast--badge video-podcast--badge--pending">待核·不进主路径</span>
             <span v-else-if="b.kind === 'write' || b.kind === 'upload'" class="video-podcast--badge video-podcast--badge--write">写操作</span>
-            <span v-else-if="b.kind === 'loginRead'" class="video-podcast--badge video-podcast--badge--login">需登录只读</span>
+            <span v-else-if="b.kind === 'login-read'" class="video-podcast--badge video-podcast--badge--login">需登录只读</span>
           </h3>
           <p v-if="b.note" class="video-podcast--note">{{ b.note }}</p>
-          <p v-if="(b.kind === 'loginRead' || b.kind === 'write' || b.kind === 'upload') && !hasLogin" class="video-podcast--degrade">
+          <p v-if="(b.kind === 'login-read' || b.kind === 'write' || b.kind === 'upload') && !hasLogin" class="video-podcast--degrade">
             登录后可用（已降级，不发请求）
           </p>
           <div class="video-podcast--block-actions">

@@ -4,7 +4,7 @@ import { ElMessageBox } from 'element-plus';
 
 import { useHeader } from './useHeader';
 import { useLogin } from '../header-loginform/hooks/useLogin';
-import { HL_ILoginUserVO } from '../../../apis/header-loginform/index.api';
+import { HL_LoginUserVO } from '../../../apis/header-loginform/index.api';
 import message from '@/utils/message';
 import { useUserStore } from '@/store/user';
 
@@ -13,7 +13,7 @@ import { useUserStore } from '@/store/user';
  * 数据层已在 useHeader / useLogin（均为模块级单例），这里只做视图侧编排。
  * 头部：导航跳转、搜索建议与登录态交互编排。
  */
-export function useHeaderView() {
+export const useHeaderView = () => {
   const route = useRoute();
   const router = useRouter();
   const userStore = useUserStore();
@@ -22,7 +22,7 @@ export function useHeaderView() {
 
   header.loadDefaultKeyword();
 
-  const userInfo = ref<HL_ILoginUserVO>({});
+  const userInfo = ref<HL_LoginUserVO>({});
 
   const onLinkTo = (url: string) => {
     router.push({

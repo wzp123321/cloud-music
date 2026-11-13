@@ -2,7 +2,7 @@ import { useSingletonStore } from "@/store/singletons";
 import { ref, watch } from 'vue';
 
 import { postRequest } from '@/apis/request';
-import { ELOGINTYPE, EQRSTATUS, Header_ILoginVO, HL_ILoginUserVO } from '../../../../apis/header-loginform/index.api';
+import { ELOGINTYPE, EQRSTATUS, Header_ILoginVO, HL_LoginUserVO } from '../../../../apis/header-loginform/index.api';
 import UserService from '@/apis/user/user.service';
 
 enum EPath {
@@ -18,7 +18,7 @@ const QR_POLL_INTERVAL = 2000;
 // 创建登录弹窗共享状态：响应式数据统一用 ref，行为统一为 const 箭头函数
 const create = () => {
   //#region 登录结果（$ 字段对外保持为 Ref，供组件 watch 订阅）
-  const _loginResult = ref<HL_ILoginUserVO>({});
+  const _loginResult = ref<HL_LoginUserVO>({});
   //#endregion
   //#region 基础状态
   const _visible = ref<boolean>(false);

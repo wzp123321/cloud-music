@@ -21,13 +21,13 @@
         <!-- 进度 -->
         <div class="progress ml20 flex-coulmn">
           <!-- 音乐播放器：元素由组件注入 player store -->
-          <CmAudio
+          <cm-audio
             ref="audioElement"
             :src="player.currentMusic.url || undefined"
             @timeupdate="player.onTimeUpdate"
             @ended="player.onEnded('next')"
             @error="player.onError"
-          ></CmAudio>
+          ></cm-audio>
 
           <div class="flex-row-justify-center mb8">
             <span class="np-song" @click="linkToDetail">{{ player.currentMusic.name ? player.currentMusic.name : '云音乐' }}</span>

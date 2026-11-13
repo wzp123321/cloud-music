@@ -38,7 +38,7 @@ export enum EUserPath {
 }
 
 /** 歌单（用户歌单列表项） */
-export interface UC_IPlaylist {
+export interface UC_Playlist {
   id: number;
   name: string;
   coverImgUrl: string;
@@ -52,7 +52,7 @@ export interface UC_IPlaylist {
 }
 
 /** 用户详情 */
-export interface UC_IUserDetail {
+export interface UC_UserDetail {
   level?: number;
   listenSongs?: number;
   profile: Common_IUserVO;
@@ -61,7 +61,7 @@ export interface UC_IUserDetail {
 }
 
 /** 用户等级 */
-export interface UC_IUserLevel {
+export interface UC_UserLevel {
   level: number;
   progress: number;
   nextPlayCount?: number;
@@ -72,7 +72,7 @@ export interface UC_IUserLevel {
 }
 
 /** 用户订阅数 */
-export interface UC_IUserSubcount {
+export interface UC_UserSubcount {
   programCount: number;
   djRadioCount: number;
   mvCount: number;
@@ -85,7 +85,7 @@ export interface UC_IUserSubcount {
 }
 
 /** 听歌排行里的歌曲（兼容 al/album、ar/artists 两种上游结构） */
-export interface UC_ISongBrief {
+export interface UC_SongBrief {
   id?: number;
   name?: string;
   al?: { name?: string; picUrl?: string };
@@ -95,22 +95,22 @@ export interface UC_ISongBrief {
 }
 
 /** 听歌排行项 */
-export interface UC_IRecordItem {
+export interface UC_RecordItem {
   playCount: number;
   score: number;
-  song: UC_ISongBrief;
+  song: UC_SongBrief;
   [key: string]: unknown;
 }
 
 /** 听歌排行（type: 0 全部 / 1 最近一周） */
-export interface UC_IRecord {
-  allData: UC_IRecordItem[];
-  weekData: UC_IRecordItem[];
+export interface UC_Record {
+  allData: UC_RecordItem[];
+  weekData: UC_RecordItem[];
   [key: string]: unknown;
 }
 
 /** 用户动态 */
-export interface UC_IEvent {
+export interface UC_Event {
   id: string;
   type: string;
   user: Common_IUserVO;
@@ -121,7 +121,7 @@ export interface UC_IEvent {
 }
 
 /** 云盘文件 */
-export interface UC_ICloudItem {
+export interface UC_CloudItem {
   songId: number;
   songName: string;
   artist: string;
@@ -132,7 +132,7 @@ export interface UC_ICloudItem {
 }
 
 /** 关注 / 粉丝 用户（精简） */
-export interface UC_IFollowUser {
+export interface UC_FollowUser {
   userId: number;
   nickname: string;
   avatarUrl: string;
@@ -143,19 +143,19 @@ export interface UC_IFollowUser {
 }
 
 /** 二维码 key 返回 */
-export interface UC_IQrKey {
+export interface UC_QrKey {
   unikey: string;
   [key: string]: unknown;
 }
 
 /** 二维码创建返回 */
-export interface UC_IQrCreate {
+export interface UC_QrCreate {
   qrurl: string;
   qrimg: string;
 }
 
 /** 二维码检查返回：code 800 过期 / 801 等待扫码 / 802 待确认 / 803 成功 */
-export interface UC_IQrCheck {
+export interface UC_QrCheck {
   code: number;
   message: string;
   nickname?: string;
@@ -165,7 +165,7 @@ export interface UC_IQrCheck {
 }
 
 /** 登录状态返回 */
-export interface UC_ILoginStatus {
+export interface UC_LoginStatus {
   code: number;
   data?: {
     profile?: Common_IUserVO;
@@ -176,7 +176,7 @@ export interface UC_ILoginStatus {
 }
 
 /** 资料更新入参 */
-export interface UC_IUpdateProfile {
+export interface UC_UpdateProfile {
   nickname?: string;
   signature?: string;
   gender?: number;
@@ -186,7 +186,7 @@ export interface UC_IUpdateProfile {
 }
 
 /** 绑定手机入参 */
-export interface UC_IBindingCellphone {
+export interface UC_BindingCellphone {
   phone: string;
   captcha: string;
   countrycode?: string;
@@ -194,18 +194,18 @@ export interface UC_IBindingCellphone {
 }
 
 /** 绑定手机返回 */
-export interface UC_IBindingCellphoneRes {
+export interface UC_BindingCellphoneRes {
   code: number;
   [key: string]: unknown;
 }
 
 /** 上传头像入参（FormData 文件上传，字段名 imgFile） */
-export interface UC_IAvatarUpload {
+export interface UC_AvatarUpload {
   imgFile: File;
 }
 
 /** 上传头像返回 */
-export interface UC_IAvatarUploadRes {
+export interface UC_AvatarUploadRes {
   code: number;
   data?: {
     url?: string;

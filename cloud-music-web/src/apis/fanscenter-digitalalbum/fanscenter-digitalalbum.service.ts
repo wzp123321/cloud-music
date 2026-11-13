@@ -11,11 +11,12 @@ import { getRequest } from '@/apis/request';
  * - digitalAlbum_detail / digitalAlbum_sales 需有效 id，属「待核不进主路径」，仅用户手动输入 id 点击后触发；
  * - digitalAlbum_ordering 为写操作，是否发出请求由页面根据 hasLogin() + window.confirm 控制。
  */
-async function call(url: string, params: Record<string, any> = {}): Promise<any> {
+const call = async (url: string, params: Record<string, unknown> = {}): Promise<any> => {
   try {
     const res = await getRequest(url, params);
     return res ?? {};
   } catch {
+    // 上游异常，降级为空对象，避免未捕获异常打断页面（响应拦截器统一提示，此处不重复 message.error）
     return {};
   }
 }

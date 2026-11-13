@@ -1,5 +1,5 @@
 <template>
-  <ApiConsolePage title="个性化发现与风格分类" :blocks="blocks" :tabs="tabs"
+  <api-console-page title="个性化发现与风格分类" :blocks="blocks" :tabs="tabs"
     root-class="discovery"
   >
     <template #intro>
@@ -25,7 +25,7 @@
       说明：列表接口点击卡片会把 id 写入上方全局参数，再点击详情型接口按钮即「列表点击带参再请求详情」。
     
     </template>
-  </ApiConsolePage>
+  </api-console-page>
 </template>
 
 <script setup lang="ts">

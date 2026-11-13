@@ -7,7 +7,8 @@
     "build": "vue-tsc --noEmit && vite build --mode production",
     "preview": "vite preview --outDir dist/cloud-web",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "verify": "node scripts/verify-navigation.mjs"
   },
   "dependencies": {
     "axios": "^1.7.0",

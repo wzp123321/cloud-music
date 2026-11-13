@@ -5,7 +5,7 @@ import dayjs from 'dayjs';
  * @param timeStamp
  * @returns
  */
-export function formatDuration(timeStamp: number) {
+export const formatDuration = (timeStamp: number) => {
   if (!timeStamp) {
     return '00:00';
   }
@@ -23,7 +23,7 @@ export function formatDuration(timeStamp: number) {
  * @param timeStamp
  * @returns
  */
-export function formatPlayCount(count: number) {
+export const formatPlayCount = (count: number) => {
   const unit = count > 9999 ? 'w' : '';
   const fCount = count > 9999 ? Number((count / 10000).toFixed(1)) : count;
   return `${fCount}${unit}`;

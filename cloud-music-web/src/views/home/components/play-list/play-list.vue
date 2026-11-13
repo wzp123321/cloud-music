@@ -21,7 +21,7 @@
         @play="handlePlay"
         @remove="playList.removeMusic"
       />
-      <div v-else class="common-table__empty flex-column-center-center">
+      <div v-else class="common-table-empty flex-column-center-center">
         <cm-image src="../../../../assets/images/common/common-data-none.svg" alt="" />
         <p>暂无数据</p>
       </div>
@@ -33,7 +33,7 @@
 import { computed } from 'vue';
 import { usePlaylistStore } from '@/store/playlist';
 import { usePlayerStore } from '@/store/player';
-import { PL_IPlayVO } from '../../../../apis/play-list/index.api';
+import { PL_PlayVO } from '../../../../apis/play-list/index.api';
 
 const playList = usePlaylistStore();
 const player = usePlayerStore();
@@ -41,7 +41,7 @@ const playing = computed(() => {
   return player.isPlaying;
 });
 
-const handlePlay = (item: PL_IPlayVO) => {
+const handlePlay = (item: PL_PlayVO) => {
   player.play(item);
 };
 </script>

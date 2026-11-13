@@ -47,10 +47,10 @@
             <span v-if="b.kind === 'invalid'" class="yunbei-vip-musician--badge yunbei-vip-musician--badge--invalid">已登记失效</span>
             <span v-else-if="b.kind === 'pending'" class="yunbei-vip-musician--badge yunbei-vip-musician--badge--pending">待核·不进主路径</span>
             <span v-else-if="b.kind === 'write' || b.kind === 'upload'" class="yunbei-vip-musician--badge yunbei-vip-musician--badge--write">写操作</span>
-            <span v-else-if="b.kind === 'loginRead'" class="yunbei-vip-musician--badge yunbei-vip-musician--badge--login">需登录只读</span>
+            <span v-else-if="b.kind === 'login-read'" class="yunbei-vip-musician--badge yunbei-vip-musician--badge--login">需登录只读</span>
           </h3>
           <p v-if="b.note" class="yunbei-vip-musician--note">{{ b.note }}</p>
-          <p v-if="(b.kind === 'loginRead' || b.kind === 'write' || b.kind === 'upload') && !hasLogin" class="yunbei-vip-musician--degrade">
+          <p v-if="(b.kind === 'login-read' || b.kind === 'write' || b.kind === 'upload') && !hasLogin" class="yunbei-vip-musician--degrade">
             登录后可用（已降级，不发请求）
           </p>
           <div class="yunbei-vip-musician--block-actions">

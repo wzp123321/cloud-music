@@ -10,7 +10,7 @@ import {
 
 export type CardItem = ApiCard;
 
-export type BlockKind = 'read' | 'loginRead' | 'write' | 'upload' | 'pending' | 'invalid';
+export type BlockKind = 'read' | 'login-read' | 'write' | 'upload' | 'pending' | 'invalid';
 
 export interface Block {
   module: string;
@@ -51,7 +51,7 @@ export interface ApiConsoleConfig {
  * 三个页面仅 tabs / panelTips / params 初始值 / blocks（各自 service）不同，
  * 其余列表抽取、登录降级、写操作二次确认、tab 自动加载等逻辑完全一致，统一在此维护。
  */
-export function useApiConsoleBlocks(config: ApiConsoleConfig) {
+export const useApiConsoleBlocks = (config: ApiConsoleConfig) => {
   const { tabs, panelTips = {}, params, uploadFile = ref<File | null>(null), blocks, emitHint = '详情/写操作' } = config;
 
   const hasLogin = ref<boolean>(checkLogin());
@@ -146,7 +146,7 @@ export function useApiConsoleBlocks(config: ApiConsoleConfig) {
         return;
       }
     }
-    if (b.kind === 'loginRead' && !requireLogin()) {
+    if (b.kind === 'login-read' && !requireLogin()) {
       results[b.module] = [];
       return;
     }

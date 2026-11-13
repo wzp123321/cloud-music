@@ -1,25 +1,25 @@
 import { onMounted, ref, watch } from 'vue';
 
-import { FGetQueryParam } from '@/core/token';
+import { getQueryParam } from '@/core/token';
 import { useMvPlayer } from './useMvPlayer';
-import { MP_IMvDetail, MP_IMVCommentRes } from '../../../apis/mvplay/index.api';
+import { MP_MvDetail, MP_MVCommentRes } from '../../../apis/mvplay/index.api';
 import contentEnhanceService, { hasLogin } from '@/apis/content-enhance/content-enhance.service';
 import { MvDetailInfoRes } from '@/apis/content-enhance/index.api';
 import { useRequest } from '@/hooks/useRequest';
 
-export function useMvplayView() {
+export const useMvplayView = () => {
   const mvPlayer = useMvPlayer();
   // 互动数据请求统一走 useRequest（箭头体内延迟引用 loadMvStat，无 TDZ 问题）
   const { run: runMvStat } = useRequest(() => loadMvStat());
 
   /** 参数来源：mvid ← MV 列表 data[].id 或 /mvplay?mvid= */
-  const mvid = Number(FGetQueryParam('mvid') || 0);
+  const mvid = Number(getQueryParam('mvid') || 0);
   const mvStat = ref<MvDetailInfoRes>({});
   const isSubed = ref<boolean>(false);
   const subLoading = ref<boolean>(false);
   const subTip = ref<string>('');
 
-  const mvDetail = ref<MP_IMvDetail>({
+  const mvDetail = ref<MP_MvDetail>({
     artistId: 0,
     artistName: '',
     artists: {
@@ -45,7 +45,7 @@ export function useMvplayView() {
     subCount: '',
   });
   const url = ref<string>('');
-  const commentRes = ref<MP_IMVCommentRes>({
+  const commentRes = ref<MP_MVCommentRes>({
     comments: [],
     hotComments: [],
   });

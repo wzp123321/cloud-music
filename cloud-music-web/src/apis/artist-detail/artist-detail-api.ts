@@ -17,10 +17,10 @@ export interface ArtistVO {
     musicSize: number;
     albumSize: number;
   };
-  hotSongs: AD_IMusicVO[];
+  hotSongs: AD_MusicVO[];
 }
 
-export interface AD_IMusicVO {
+export interface AD_MusicVO {
   name: string;
   id: number;
   ar: {

@@ -1,13 +1,13 @@
 import { ref, watch } from 'vue';
 
 import { usePlayListDetail } from './usePlayListDetail';
-import { PD_IPlaylistDetail } from '../../../../apis/playlist-detail/index.api';
+import { PD_PlaylistDetail } from '../../../../apis/playlist-detail/index.api';
 import { Common_IMusic } from '../../../../apis/common/index.api';
-import { MP_IMVCommentRes } from '../../../../apis/mvplay/index.api';
+import { MP_MVCommentRes } from '../../../../apis/mvplay/index.api';
 import message from '@/utils/message';
 
 /** 每次返回新对象，避免 tags/tracks 等数组在多个组件实例间共享引用 */
-const createEmptyDetail = (): PD_IPlaylistDetail => ({
+const createEmptyDetail = (): PD_PlaylistDetail => ({
   backgroundCoverUrl: '',
   bannedTrackIds: '',
   cloudTrackCount: '',
@@ -45,14 +45,14 @@ const createEmptyDetail = (): PD_IPlaylistDetail => ({
  * 歌单详情页编排：订阅服务层数据流 → 本地视图状态，以及订阅/增删歌曲/弹窗交互。
  * 歌单详情页：订阅、歌曲增删、编辑弹窗与统计格式化编排。
  */
-export function usePlaylistDetailView() {
+export const usePlaylistDetailView = () => {
   const playListDetailService = usePlayListDetail();
 
   const playlistId = Number(new URLSearchParams(window.location.search).get('id') || '0');
 
-  const playListDetail = ref<PD_IPlaylistDetail>(createEmptyDetail());
+  const playListDetail = ref<PD_PlaylistDetail>(createEmptyDetail());
   const musicList = ref<Common_IMusic[]>([]);
-  const commentRes = ref<MP_IMVCommentRes>({
+  const commentRes = ref<MP_MVCommentRes>({
     comments: [],
     hotComments: [],
   });

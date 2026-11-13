@@ -54,7 +54,7 @@ export const useApiConsole = (blocks: ApiBlock[], options: ApiConsoleOptions = {
     if (!st || st.loading) return;
 
     // 需登录只读 / 写操作：未登录降级，不发请求
-    if ((block.kind === 'write' || block.kind === 'loginRead') && !checkLogin()) {
+    if ((block.kind === 'write' || block.kind === 'login-read') && !checkLogin()) {
       st.tip = '登录后可用（未登录，已降级，未发送请求）';
       return;
     }

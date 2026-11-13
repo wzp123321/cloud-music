@@ -1,7 +1,7 @@
 import { Common_IUserVO } from '../common/user.api';
-import { AD_IMusicVO } from '../artist-detail/artist-detail-api';
+import { AD_MusicVO } from '../artist-detail/artist-detail-api';
 
-export interface PD_IPlaylistDetail {
+export interface PD_PlaylistDetail {
   backgroundCoverUrl: string;
   bannedTrackIds: string;
   cloudTrackCount: string;
@@ -34,5 +34,5 @@ export interface PD_IPlaylistDetail {
   titleImageUrl: string;
   trackCount: string;
 
-  tracks: AD_IMusicVO[];
+  tracks: AD_MusicVO[];
 }

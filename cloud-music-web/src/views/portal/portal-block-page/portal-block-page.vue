@@ -116,7 +116,7 @@ const blockPageList = toRef(portal, 'blockPageList');
       if (/ALBUM/.test(type)) return portal.linkToAlbum(id);
       if (/SONG/.test(type)) return portal.linkToSong(id);
       if (/VIDEO|MV/.test(type)) return portal.linkToMv(id);
-      if (/ARTIST|SINGER/.test(type)) return portal.linkToAritstDetail(Number(id));
+      if (/ARTIST|SINGER/.test(type)) return portal.linkToArtistDetail(Number(id));
       if (/USER/.test(type) || /USER/.test(action)) {
         return router.push({ path: '/user', query: { id: String(id) } });
       }
@@ -132,7 +132,7 @@ const blockPageList = toRef(portal, 'blockPageList');
       }
       // 外链：新标签打开
       const url = r?.resourceUrl || r?.action?.actionType;
-      if (isExternalUrl(url)) return window.open(url, '_blank');
+      if (isExternalUrl(url)) return window.open(url, '_blank', 'noopener,noreferrer');
     };
 
     ;

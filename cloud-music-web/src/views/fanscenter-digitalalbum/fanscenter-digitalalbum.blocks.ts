@@ -27,27 +27,27 @@ export const blocks: ApiBlock[] = [
   // 5.1 粉丝中心（5，均需登录只读）
   {
     module: 'fanscenter_overview_get', title: '粉丝概览', desc: '需登录只读：粉丝总数与概览', tab: '5.1',
-    kind: 'loginRead', url: '/fanscenter/overview/get',
+    kind: 'login-read', url: '/fanscenter/overview/get',
     run: fanscenterDigitalalbumService.getFansOverview,
   },
   {
     module: 'fanscenter_basicinfo_age_get', title: '粉丝画像-年龄', desc: '需登录只读：粉丝年龄分布', tab: '5.1',
-    kind: 'loginRead', url: '/fanscenter/basicinfo/age/get',
+    kind: 'login-read', url: '/fanscenter/basicinfo/age/get',
     run: fanscenterDigitalalbumService.getFansAge,
   },
   {
     module: 'fanscenter_basicinfo_gender_get', title: '粉丝画像-性别', desc: '需登录只读：粉丝性别分布', tab: '5.1',
-    kind: 'loginRead', url: '/fanscenter/basicinfo/gender/get',
+    kind: 'login-read', url: '/fanscenter/basicinfo/gender/get',
     run: fanscenterDigitalalbumService.getFansGender,
   },
   {
     module: 'fanscenter_basicinfo_province_get', title: '粉丝画像-省份', desc: '需登录只读：粉丝地域分布', tab: '5.1',
-    kind: 'loginRead', url: '/fanscenter/basicinfo/province/get',
+    kind: 'login-read', url: '/fanscenter/basicinfo/province/get',
     run: fanscenterDigitalalbumService.getFansProvince,
   },
   {
     module: 'fanscenter_trend_list', title: '粉丝趋势', desc: '需登录只读：粉丝增长趋势列表', tab: '5.1',
-    kind: 'loginRead', url: '/fanscenter/trend/list',
+    kind: 'login-read', url: '/fanscenter/trend/list',
     input: { label: 'limit（可选，手动输入）', def: '' },
     params: (_s, v) => (v ? { limit: Number(v) } : {}),
     run: fanscenterDigitalalbumService.getFansTrend,
@@ -56,7 +56,7 @@ export const blocks: ApiBlock[] = [
   // 5.2 数字专辑（4）
   {
     module: 'digitalAlbum_purchased', title: '已购数字专辑', desc: '需登录只读：返回项 albumId 提供给 detail/sales/ordering 带参', tab: '5.2',
-    kind: 'loginRead', url: '/digitalAlbum/purchased', provides: ['albumId'],
+    kind: 'login-read', url: '/digitalAlbum/purchased', provides: ['albumId'],
     run: fanscenterDigitalalbumService.getDigitalAlbumPurchased,
   },
   {

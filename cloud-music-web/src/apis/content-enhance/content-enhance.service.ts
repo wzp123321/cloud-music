@@ -1,5 +1,5 @@
 import { getRequest } from '@/apis/request';
-import { FGetCookie, TOKEN_KEY } from '@/core/token';
+import { getCookie, TOKEN_KEY } from '@/core/token';
 import {
   AlbumNewRes,
   AlbumNewestRes,
@@ -40,8 +40,8 @@ import {
 
 /** 是否已有登录态（用于写操作/需登录接口的 UI 降级）
  *  登录态以凭证 cookie 为准（登录时写入、退出时清空），与用户 store 的 isLogin 一致 */
-export function hasLogin(): boolean {
-  return !!FGetCookie(TOKEN_KEY);
+export const hasLogin = (): boolean => {
+  return !!getCookie(TOKEN_KEY);
 }
 
 const contentEnhanceService = {

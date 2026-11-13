@@ -1,7 +1,7 @@
 import { computed, onMounted, ref, watch } from 'vue';
 
 import {
-  CM_ICommentVO,
+  CM_CommentVO,
   CM_CommentType,
   getCommentList,
   getCommentNew,
@@ -14,7 +14,7 @@ import {
 
 /** cm-comment 的 props 形状（.vue 内 defineProps 传入，保持单一数据源） */
 export interface CommentProps {
-  commentVO?: CM_ICommentVO;
+  commentVO?: CM_CommentVO;
   type: CM_CommentType;
   id?: number | string;
   threadId: string;
@@ -24,7 +24,7 @@ export interface CommentProps {
  * 评论区编排：容器模式（发评 + 热评/最新 + 楼层 + 点赞）与单条模式共用。
  * 评论区容器：列表加载、发布、点赞、楼层与点赞用户列表的编排。
  */
-export function useComment(props: CommentProps) {
+export const useComment = (props: CommentProps) => {
   /** 是否为「评论区容器」模式：未传 commentVO 且指定了资源 */
   const isContainer = computed(
     () => !props.commentVO && props.id !== undefined && props.id !== null && props.id !== '',
@@ -37,7 +37,7 @@ export function useComment(props: CommentProps) {
   const extraParam = () => (props.threadId ? { threadId: props.threadId } : {});
 
   // 单条模式：拷贝一份，避免直接改 props
-  const singleList = ref<CM_ICommentVO[]>([]);
+  const singleList = ref<CM_CommentVO[]>([]);
   watch(
     () => props.commentVO,
     (v) => {
@@ -47,8 +47,8 @@ export function useComment(props: CommentProps) {
   );
 
   // 容器模式状态
-  const hotList = ref<CM_ICommentVO[]>([]);
-  const latestList = ref<CM_ICommentVO[]>([]);
+  const hotList = ref<CM_CommentVO[]>([]);
+  const latestList = ref<CM_CommentVO[]>([]);
   const tab = ref<'hot' | 'new'>('hot');
   const total = ref(0);
   const loading = ref(false);
@@ -65,7 +65,7 @@ export function useComment(props: CommentProps) {
   );
 
   /** 加载评论：各类型列表(含热评) + 新版通用评论(按时间) */
-  async function loadComments() {
+  const loadComments = async () => {
     if (!isContainer.value) return;
     loading.value = true;
     try {
@@ -92,7 +92,7 @@ export function useComment(props: CommentProps) {
   }
 
   /** 热评兜底（comment_hot） */
-  async function loadHot() {
+  const loadHot = async () => {
     try {
       const res = await getCommentHot({
         type: props.type,
@@ -114,7 +114,7 @@ export function useComment(props: CommentProps) {
   };
 
   /** 发布评论（comment 的 add）并刷新最新列表（comment_new） */
-  async function onSubmit() {
+  const onSubmit = async () => {
     const content = draft.value.trim();
     if (!content) {
       editorTip.value = '评论内容不能为空';
@@ -149,7 +149,7 @@ export function useComment(props: CommentProps) {
   }
 
   /** 点赞 / 取消点赞（comment_like） */
-  async function onLike(item: CM_ICommentVO) {
+  const onLike = async (item: CM_CommentVO) => {
     if (!canInteract.value || !item?.commentId) return;
     const t: 1 | 0 = item.liked ? 0 : 1;
     try {
@@ -169,8 +169,8 @@ export function useComment(props: CommentProps) {
 
   // 楼层评论
   const floorOpenId = ref<number | null>(null);
-  const floorMap = ref<Record<string, CM_ICommentVO[]>>({});
-  async function onToggleFloor(item: CM_ICommentVO) {
+  const floorMap = ref<Record<string, CM_CommentVO[]>>({});
+  const onToggleFloor = async (item: CM_CommentVO) => {
     if (!canInteract.value || !item?.commentId) return;
     const cid = item.commentId;
     if (floorOpenId.value === cid) {
@@ -197,8 +197,8 @@ export function useComment(props: CommentProps) {
 
   // 点赞用户列表
   const hugOpenId = ref<number | null>(null);
-  const hugList = ref<CM_ICommentVO[]>([]);
-  async function onToggleHug(item: CM_ICommentVO) {
+  const hugList = ref<CM_CommentVO[]>([]);
+  const onToggleHug = async (item: CM_CommentVO) => {
     if (!canInteract.value || !item?.commentId) return;
     if (hugOpenId.value === item.commentId) {
       hugOpenId.value = null;

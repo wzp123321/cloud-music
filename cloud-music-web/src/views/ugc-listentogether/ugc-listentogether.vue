@@ -1,5 +1,5 @@
 <template>
-  <ApiConsolePage title="UGC 与一起听" :blocks="blocks" :tabs="tabs"
+  <api-console-page title="UGC 与一起听" :blocks="blocks" :tabs="tabs"
   >
     <template #intro>
       共 15 个接口（任务 4.1 UGC 内容 7 个、4.2 一起听房间 8 个），按 capability
@@ -20,7 +20,7 @@
       每个请求独立 try/catch，失败降级为空值。列表项点击可把上游 id 写入参数池，供下游详情接口带参。
     
     </template>
-  </ApiConsolePage>
+  </api-console-page>
 </template>
 
 <script setup lang="ts">

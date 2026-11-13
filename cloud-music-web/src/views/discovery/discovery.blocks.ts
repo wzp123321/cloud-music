@@ -160,7 +160,7 @@ export const blocks: ApiBlock[] = [
   },
   {
     module: 'hot_topic', title: '热门话题', desc: '热门话题（需登录只读，未登录降级不发请求）', tab: '2.4',
-    kind: 'loginRead', url: '/hot/topic',
+    kind: 'login-read', url: '/hot/topic',
     input: { label: '条数', def: '10' },
     params: (_s, v) => ({ limit: Number(v) || 10 }),
     run: discoveryService.getHotTopic,

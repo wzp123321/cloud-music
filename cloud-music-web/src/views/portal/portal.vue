@@ -61,7 +61,7 @@
         v-for="(item, index) in portal.hotSingerList.slice(0, 5)"
         :key="'artist_'+ index"
         class="flex-column"
-        @click="portal.linkToAritstDetail(item.id)"
+        @click="portal.linkToArtistDetail(item.id)"
       >
         <cm-skeleton width="100%" :height="'182px'" :image-url="item?.img1v1Url" source-type="image" :border-radius="'50%'">
         </cm-skeleton>

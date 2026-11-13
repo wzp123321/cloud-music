@@ -18,18 +18,18 @@
         <div class="song-cell-inner">
           <cm-image class="song-cover" :src="item?.picUrl" alt="" />
           <span class="mname" :title="item.name" @click="linkToDetailPage(item.id)">{{ item.name }}</span>
-          <span class="tag">无损</span>
-          <span class="mv">mv</span>
+          <span class="quality-badge">无损</span>
+          <span class="mv-badge">mv</span>
         </div>
       </td>
       <td ellipsis style="width: 30%">{{ item.alName ?? '--' }}</td>
       <td ellipsis style="width: 30%">
-        <span class="dt">{{ formatDuration(item.dt) }}</span>
+        <span class="duration-text">{{ formatDuration(item.dt) }}</span>
         <div class="op-btn flex-row-start-center">
           <cm-icon name="icon-24gf-play" title="播放" @click="onPlay(item)"></cm-icon>
           <cm-icon name="icon-tianjia" title="添加到歌单" @click="handleAddPlayItem(item)"></cm-icon>
-          <cm-icon name="icon-jushoucang" title="收藏"></cm-icon>
-          <cm-icon name="icon-xiazai" title="下载"></cm-icon>
+          <cm-icon name="icon-jushoucang" title="收藏" @click="message.info('该功能暂未开放')"></cm-icon>
+          <cm-icon name="icon-xiazai" title="下载" @click="message.info('该功能暂未开放')"></cm-icon>
           <cm-icon name="icon-xiangqing" title="详情" @click="linkToDetailPage(item.id)"></cm-icon>
           <cm-icon
             v-if="showRemove"
@@ -60,7 +60,7 @@ import { usePlayerStore } from '@/store/player';
 import { usePlaylistStore } from '@/store/playlist';
 
 import { Common_IMusic } from '../../apis/common/index.api';
-import { PL_IPlayVO } from '../../apis/play-list/index.api';
+import { PL_PlayVO } from '../../apis/play-list/index.api';
 import { ElPagination } from 'element-plus';
 import message from '@/utils/message';
 defineOptions({ name: 'CmTable' });
@@ -95,7 +95,7 @@ const page = ref<number>(1);
     };
 
     const handleAddPlayItem = (item: Common_IMusic) => {
-      const music: PL_IPlayVO = {
+      const music: PL_PlayVO = {
         artist: item?.artist,
         dt: item?.dt,
         url: '',
@@ -182,25 +182,23 @@ table {
     }
   }
 
-  tbody tr td span.tag {
+  tbody tr td span.quality-badge {
     margin: 0 5px;
     flex-shrink: 0;
     font-size: 15px;
     color: #e6b86d;
-    cursor: pointer;
     font-size: 12px;
     padding: 1px 2px;
     border: 1px solid #e6b86d;
     border-radius: 4px;
   }
-  tbody tr td span.mv {
+  tbody tr td span.mv-badge {
     margin-left: 5px;
     flex-shrink: 0;
     font-size: 12px;
     padding: 1px 3px;
     border-radius: 5px;
     font-weight: 400;
-    cursor: pointer;
     color: var(--color-default);
     background-color: #666;
   }
@@ -216,7 +214,7 @@ table {
     margin-left: 24px;
   }
 
-  tbody tr:hover td span.dt {
+  tbody tr:hover td span.duration-text {
     display: none;
     transition: all 233ms;
   }

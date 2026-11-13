@@ -10,14 +10,14 @@
       </tr>
     </thead>
     <tbody style="height: 200px">
-      <tr v-for="(item, index) in list" :key="item.id ?? index">
+      <tr v-for="(item, index) in list" :key="item.id ?? index" @click="emit('play', item)">
         <td style="width: 40px">{{ index + 1 }}</td>
         <td style="max-width: 100px">{{ item.name }}</td>
         <td>{{ item.artist }}</td>
         <td>{{ item.alName }}</td>
         <td>
-          <cm-icon name="icon-24gf-play" title="播放" @click="emit('play', item)"></cm-icon>
-          <cm-icon name="icon-Close" title="删除" @click="emit('remove', item.id)"></cm-icon>
+          <cm-icon name="icon-24gf-play" title="播放" @click.stop="emit('play', item)"></cm-icon>
+          <cm-icon name="icon-Close" title="删除" @click.stop="emit('remove', item.id)"></cm-icon>
         </td>
       </tr>
     </tbody>
@@ -25,14 +25,14 @@
 </template>
 
 <script setup lang="ts">
-import type { PL_IPlayVO } from '@/apis/play-list/index.api';
+import type { PL_PlayVO } from '@/apis/play-list/index.api';
 
 /** 播放队列紧凑表格：业务层只传数据、接事件，原生 table 细节收敛在组件内 */
 defineOptions({ name: 'CmPlaylistTable' });
 
-defineProps<{ list: PL_IPlayVO[] }>();
+defineProps<{ list: PL_PlayVO[] }>();
 const emit = defineEmits<{
-  play: [item: PL_IPlayVO];
+  play: [item: PL_PlayVO];
   remove: [id: number];
 }>();
 </script>

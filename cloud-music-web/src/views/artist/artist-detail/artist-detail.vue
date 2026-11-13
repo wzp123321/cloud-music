@@ -14,14 +14,14 @@
       <h6>{{ artistDetail.artistVO?.artist?.name }}</h6>
       <div class="flex-row-start-center mt16 mb16">
         <label>单曲：</label>
-        <span class="mr40 num">{{ artistDetail.artistVO?.artist?.musicSize }}</span>
+        <span class="mr40 count-value">{{ artistDetail.artistVO?.artist?.musicSize }}</span>
         <label>专辑：</label>
-        <span class="mr40 num">{{ artistDetail.artistVO?.artist?.albumSize }}</span>
+        <span class="mr40 count-value">{{ artistDetail.artistVO?.artist?.albumSize }}</span>
         <label>MV：</label>
-        <span class="mr40 num">{{ artistDetail.artistVO?.artist?.mvSize }}</span>
+        <span class="mr40 count-value">{{ artistDetail.artistVO?.artist?.mvSize }}</span>
         <!-- 粉丝数：artist_follow_count -->
         <label>粉丝：</label>
-        <span class="mr40 num">{{ artistDetail.followCount.data?.fansCnt ?? 0 }}</span>
+        <span class="mr40 count-value">{{ artistDetail.followCount.data?.fansCnt ?? 0 }}</span>
       </div>
       <div class="desc mt16">
         <label class="font16">简介：</label>
@@ -210,7 +210,7 @@
 
 // 歌手详情
 import {  onMounted } from 'vue';
-import { FGetQueryParam } from '@/core/token';
+import { getQueryParam } from '@/core/token';
 import { sanitizeHtml } from '@/utils/sanitize';
 
 import { useArtistDetail } from './hooks/useArtistDetail';
@@ -219,7 +219,7 @@ const artistDetail = useArtistDetail();
 defineOptions({ name: 'ArtistDetail' });
 artistDetail.init();
 
-    const artistId = Number(FGetQueryParam('id') ?? 0);
+    const artistId = Number(getQueryParam('id') ?? 0);
 
     onMounted(() => {
       const pageEle = document.getElementsByClassName('home');
@@ -253,11 +253,6 @@ artistDetail.init();
       z-index: -1;
     }
 
-    img.avatar {
-      width: 230px;
-      height: 230px;
-      border-radius: 50%;
-    }
 
     h6 {
       height: 42px;
@@ -267,15 +262,14 @@ artistDetail.init();
     }
 
     label,
-    span,
-    .alias {
+    span {
       color: #999;
       font-size: 18px;
       font-weight: 300;
       line-height: 25px;
     }
 
-    span.num {
+    span.count-value {
       color: #666;
     }
 

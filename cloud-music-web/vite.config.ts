@@ -59,8 +59,10 @@ export default ({ mode, command }) => {
             if (!id.includes('node_modules')) {
               return;
             }
+            // element-plus 不再强制聚合成单一巨块：交由 Rollup 按引用关系自动分包，
+            // 按需组件跟随各路由懒加载 chunk 拆分，消除 799 kB 的 element-plus chunk
             if (id.includes('element-plus') || id.includes('@element-plus')) {
-              return 'element-plus';
+              return;
             }
             if (id.includes('pinia') || id.includes('/vue') || id.includes('vue-') || id.includes('@vue')) {
               return 'vue-vendor';

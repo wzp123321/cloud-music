@@ -1,5 +1,5 @@
 <template>
-  <ApiConsolePage title="粉丝中心与数字专辑" :blocks="blocks" :tabs="tabs"
+  <api-console-page title="粉丝中心与数字专辑" :blocks="blocks" :tabs="tabs"
   >
     <template #intro>
       共 9 个接口（任务 5.1 粉丝中心 5 个、5.2 数字专辑 4 个），按 capability 分组切换，每个区块标注 module 名并对应一个真实接口调用点。
@@ -13,7 +13,7 @@
       每个请求独立 try/catch，失败降级为空值。列表项点击可把上游 id 写入参数池，供下游详情接口带参。
     
     </template>
-  </ApiConsolePage>
+  </api-console-page>
 </template>
 
 <script setup lang="ts">

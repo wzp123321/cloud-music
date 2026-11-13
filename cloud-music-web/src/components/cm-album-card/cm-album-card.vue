@@ -20,6 +20,7 @@
 
 
 import { formatDate } from '@/core/utils';
+import message from '@/utils/message';
 import { useRouter } from 'vue-router';
 defineOptions({ name: 'CMAlbumCard' });
 const props = defineProps({
@@ -44,7 +45,10 @@ const props = defineProps({
 const router = useRouter();
 // 专辑卡原先没有任何点击跳转，点封面/卡片无反应；此处补齐跳转到专辑详情
 const linkToAlbumDetail = () => {
-  if (props.id == null) return;
+  if (!props.id) {
+    message.info('该内容暂无详情信息');
+    return;
+  }
   router.push({ path: '/album_detail', query: { id: String(props.id) } });
 };
 ;
@@ -127,8 +131,8 @@ const linkToAlbumDetail = () => {
   &:hover {
     .cm-album-card--cover::after {
       content: '';
-      width: 251px;
-      height: 195px;
+      width: 100%;
+      height: 100%;
       position: absolute;
       top: 0;
       left: 0;

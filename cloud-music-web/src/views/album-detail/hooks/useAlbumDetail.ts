@@ -1,5 +1,5 @@
 import { ref, reactive, type Ref } from 'vue';
-import { FGetQueryParam } from '@/core/token';
+import { getQueryParam } from '@/core/token';
 import infoService from '../../../apis/album-detail/album-detail-service';
 
 import { AlbumVO, AlbumSongVO } from '../../../apis/album-detail/album-detail-api';
@@ -21,7 +21,7 @@ const create = () => {
   //#endregion
   const query = async () => {
     try {
-      const id = FGetQueryParam('id');
+      const id = getQueryParam('id');
       _id.value = Number(id) || 0;
       const res = await infoService.getAlbumDetailById({ id: _id.value });
       if (res?.code === 200) {

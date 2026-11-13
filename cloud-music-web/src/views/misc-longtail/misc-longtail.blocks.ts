@@ -14,7 +14,7 @@ export const tabs: { code: string; name: string }[] = [
 // ---------- 9 个接口 → 9 个真实调用点区块 ----------
 // 写操作：weblog，未登录降级 + window.confirm 二次确认，禁止 onMounted 自动调用。
 // 需登录只读：calendar，未登录降级；时间参数用 new Date() 生成。
-// 待核不进主路径：pl_count（业务异常，仅手动点击触发，不自动加载）。
+// 已失效降级：summary_annual（404）、pl_count（空响应）标 kind: invalid，不进主流程自动请求，仅手动核验。
 // 只读可自动加载：inner_version（应用启动版本自检）。
 
 export const blocks: ApiBlock[] = [
@@ -39,8 +39,10 @@ export const blocks: ApiBlock[] = [
     run: miscLongtailService.getThresholdDetail,
   },
   {
-    module: 'summary_annual', title: '年度听歌总结', desc: '只读：展示年度听歌数据', tab: '8.1',
-    kind: 'read', url: '/summary/annual',
+    module: 'summary_annual', title: '年度听歌总结', desc: '已失效：上游 /summary/annual 实测 404，不进主流程自动请求', tab: '8.1',
+    kind: 'invalid', url: '/summary/annual',
+    buttonText: '查看失效说明/核验',
+    note: '已登记失效（上游 /summary/annual 404）：不进主流程自动请求，本按钮需二次确认后仅手动核验一次，结果按空值处理',
     params: () => ({}),
     run: miscLongtailService.getSummaryAnnual,
   },
@@ -51,8 +53,10 @@ export const blocks: ApiBlock[] = [
     run: miscLongtailService.getCreatorAuthinfo,
   },
   {
-    module: 'pl_count', title: '计数', desc: '待核：业务异常，不进主路径，仅手动点击触发、不自动加载', tab: '8.1',
-    kind: 'read', url: '/pl/count',
+    module: 'pl_count', title: '计数', desc: '已失效：上游 /pl/count 返回空响应，不进主流程自动请求', tab: '8.1',
+    kind: 'invalid', url: '/pl/count',
+    buttonText: '查看失效说明/核验',
+    note: '已登记失效（上游 /pl/count 返回空响应）：不进主流程自动请求，本按钮需二次确认后仅手动核验一次，结果按空值处理',
     params: () => ({}),
     run: miscLongtailService.getPlCount,
   },
@@ -71,7 +75,7 @@ export const blocks: ApiBlock[] = [
   },
   {
     module: 'calendar', title: '日历', desc: '需登录只读：时间参数 startTime/endTime 用 new Date() 生成（不硬编码）', tab: '8.1',
-    kind: 'loginRead', url: '/calendar',
+    kind: 'login-read', url: '/calendar',
     params: () => {
       const now = new Date();
       const start = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();

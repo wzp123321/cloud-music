@@ -10,7 +10,7 @@ type CardItem = ApiCard;
  * 动态流 · 话题 · 相关推荐（P1 5.1~5.3）调试台的数据与交互编排。
  * 动态页：标签切换、列表加载与互动编排。
  */
-export function useFeed() {
+export const useFeed = () => {
   /** 与 api-inventory-plain.md「P1 动态与话题」5.1~5.3 一一对应 */
   const tabs = [
     { code: 'c5_1', name: '5.1 动态流（3）' },
@@ -140,7 +140,10 @@ export function useFeed() {
   /** 列表 → 写操作参数来源 */
   const onEventClick = (item: CardItem) => {
     const id = pickEventId(item.raw) || item.id;
-    if (!id) return;
+    if (!id) {
+      toast.value = '该动态缺少 id，无法选择';
+      return;
+    }
     eventDelId.value = String(id);
     eventForwardId.value = String(id);
     toast.value = `已选择动态 id=${id}，可用于 event_del / event_forward`;

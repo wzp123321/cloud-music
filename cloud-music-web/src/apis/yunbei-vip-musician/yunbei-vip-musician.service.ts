@@ -19,7 +19,7 @@ const yunbeiVipMusicianService = {
   //#region 3.1 云贝积分（11 个）
   /** 云贝余额/总额（需登录只读） */
   getYunbei: (params: Params = {}): Promise<any> => getRequest('/yunbei', params),
-  /** 云贝信息（已登记失效：上游 404，仅登记不接入主路径） */
+  /** 【上游已失效】/yunbei/info 实测 404：页面已标 kind: invalid，不进主流程自动请求；方法保留供手动核验 */
   getYunbeiInfo: (params: Params = {}): Promise<any> => getRequest('/yunbei/info', params),
   /** 云贝支出（需登录只读） */
   getYunbeiExpense: (params: Params = {}): Promise<any> => getRequest('/yunbei/expense', params),

@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import type { RouteRecordRaw } from 'vue-router';
+import message from '@/utils/message';
 
 /**
  * 路由模块自动注册
@@ -16,7 +17,16 @@ const routes: RouteRecordRaw[] = Object.keys(modules)
   .sort()
   .flatMap((key) => modules[key]?.default ?? []);
 
-export default createRouter({
+const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
 });
+
+// 全项目大量 router.push 未带 .catch，统一在此兜底：跳转异常提示一次并保留错误日志
+router.onError((error) => {
+  message.error('页面跳转失败，请重试');
+  // eslint-disable-next-line no-console
+  console.error('[router]', error);
+});
+
+export default router;

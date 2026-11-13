@@ -1,23 +1,23 @@
 import { getRequest, postRequest, postFormRequest, unwrapData } from '../request';
 import {
   EUserPath,
-  UC_IUserDetail,
-  UC_IPlaylist,
-  UC_IUserLevel,
-  UC_IUserSubcount,
-  UC_IRecord,
-  UC_IEvent,
-  UC_ICloudItem,
-  UC_IFollowUser,
-  UC_IQrKey,
-  UC_IQrCreate,
-  UC_IQrCheck,
-  UC_ILoginStatus,
-  UC_IUpdateProfile,
-  UC_IBindingCellphone,
-  UC_IBindingCellphoneRes,
-  UC_IAvatarUpload,
-  UC_IAvatarUploadRes,
+  UC_UserDetail,
+  UC_Playlist,
+  UC_UserLevel,
+  UC_UserSubcount,
+  UC_Record,
+  UC_Event,
+  UC_CloudItem,
+  UC_FollowUser,
+  UC_QrKey,
+  UC_QrCreate,
+  UC_QrCheck,
+  UC_LoginStatus,
+  UC_UpdateProfile,
+  UC_BindingCellphone,
+  UC_BindingCellphoneRes,
+  UC_AvatarUpload,
+  UC_AvatarUploadRes,
 } from './user.api';
 
 /**
@@ -29,44 +29,44 @@ class UserService {
   //#region 用户资料与资产
   /** 用户详情 */
   public async getUserDetail(uid: number) {
-    return getRequest<UC_IUserDetail>(EUserPath.用户详情, { uid });
+    return getRequest<UC_UserDetail>(EUserPath.用户详情, { uid });
   }
 
   /** 我的歌单 */
   public async getUserPlaylists(uid: number, limit = 30, offset = 0) {
-    const res = await getRequest<{ playlist?: UC_IPlaylist[] }>(EUserPath.用户歌单, { uid, limit, offset });
+    const res = await getRequest<{ playlist?: UC_Playlist[] }>(EUserPath.用户歌单, { uid, limit, offset });
     return res?.playlist ?? [];
   }
 
   /** 用户等级 */
   public async getUserLevel() {
-    return unwrapData<UC_IUserLevel>(await getRequest(EUserPath.用户等级));
+    return unwrapData<UC_UserLevel>(await getRequest(EUserPath.用户等级));
   }
 
   /** 用户订阅数 */
   public async getUserSubcount() {
-    return unwrapData<UC_IUserSubcount>(await getRequest(EUserPath.用户订阅数));
+    return unwrapData<UC_UserSubcount>(await getRequest(EUserPath.用户订阅数));
   }
 
   /** 听歌排行 type: 0 全部，1 最近一周 */
   public async getUserRecord(uid: number, type = 1) {
-    const res = await getRequest<UC_IRecord>(EUserPath.听歌排行, { uid, type });
-    return (res ?? {}) as UC_IRecord;
+    const res = await getRequest<UC_Record>(EUserPath.听歌排行, { uid, type });
+    return (res ?? {}) as UC_Record;
   }
 
   /** 用户动态 */
   public async getUserEvent(uid: number, limit = 20, lasttime = -1) {
-    const res = await getRequest<{ events: UC_IEvent[]; more: boolean }>(EUserPath.用户动态, {
+    const res = await getRequest<{ events: UC_Event[]; more: boolean }>(EUserPath.用户动态, {
       uid,
       limit,
       lasttime,
     });
-    return (res ?? {}) as { events: UC_IEvent[]; more: boolean };
+    return (res ?? {}) as { events: UC_Event[]; more: boolean };
   }
 
   /** 云盘 */
   public async getUserCloud(limit = 30, offset = 0) {
-    return unwrapData<{ list: UC_ICloudItem[]; count: number }>(
+    return unwrapData<{ list: UC_CloudItem[]; count: number }>(
       await getRequest(EUserPath.云盘, { limit, offset }),
     );
   }
@@ -75,13 +75,13 @@ class UserService {
   //#region 关注关系
   /** 关注列表 */
   public async getUserFollows(uid: number, limit = 30, offset = 0) {
-    const res = await getRequest<{ follow?: UC_IFollowUser[] }>(EUserPath.关注列表, { uid, limit, offset });
+    const res = await getRequest<{ follow?: UC_FollowUser[] }>(EUserPath.关注列表, { uid, limit, offset });
     return res?.follow ?? [];
   }
 
   /** 粉丝列表 */
   public async getUserFolloweds(uid: number, limit = 30, offset = 0) {
-    const res = await getRequest<{ followeds?: UC_IFollowUser[] }>(EUserPath.粉丝列表, { uid, limit, offset });
+    const res = await getRequest<{ followeds?: UC_FollowUser[] }>(EUserPath.粉丝列表, { uid, limit, offset });
     return res?.followeds ?? [];
   }
 
@@ -93,7 +93,7 @@ class UserService {
 
   //#region 资料编辑
   /** 更新用户资料 */
-  public async updateUser(payload: UC_IUpdateProfile) {
+  public async updateUser(payload: UC_UpdateProfile) {
     return postRequest(EUserPath.更新资料, payload);
   }
 
@@ -103,35 +103,35 @@ class UserService {
   }
 
   /** 绑定手机号 POST /user/bindingcellphone */
-  public async bindingCellphone(payload: UC_IBindingCellphone) {
-    const res = await postRequest<UC_IBindingCellphoneRes>(EUserPath.绑定手机, payload);
-    return (res ?? {}) as UC_IBindingCellphoneRes;
+  public async bindingCellphone(payload: UC_BindingCellphone) {
+    const res = await postRequest<UC_BindingCellphoneRes>(EUserPath.绑定手机, payload);
+    return (res ?? {}) as UC_BindingCellphoneRes;
   }
 
   /** 上传头像（FormData 文件上传）POST /avatar/upload */
-  public async uploadAvatar(payload: UC_IAvatarUpload) {
+  public async uploadAvatar(payload: UC_AvatarUpload) {
     const formData = new FormData();
     formData.append('imgFile', payload.imgFile);
-    const res = await postFormRequest<UC_IAvatarUploadRes>(EUserPath.上传头像, formData);
-    return (res ?? {}) as UC_IAvatarUploadRes;
+    const res = await postFormRequest<UC_AvatarUploadRes>(EUserPath.上传头像, formData);
+    return (res ?? {}) as UC_AvatarUploadRes;
   }
   //#endregion
 
   //#region 二维码登录
   /** 生成二维码 key */
   public async getQrKey() {
-    return unwrapData<UC_IQrKey>(await getRequest(EUserPath.二维码Key));
+    return unwrapData<UC_QrKey>(await getRequest(EUserPath.二维码Key));
   }
 
   /** 生成二维码图片（qrimg 为 dataURL） */
   public async getQrCreate(key: string, qrimg = true) {
-    return unwrapData<UC_IQrCreate>(await getRequest(EUserPath.二维码创建, { key, qrimg }));
+    return unwrapData<UC_QrCreate>(await getRequest(EUserPath.二维码创建, { key, qrimg }));
   }
 
   /** 轮询扫码状态 */
   public async checkQr(key: string) {
-    const res = await getRequest<UC_IQrCheck>(EUserPath.二维码检查, { key });
-    return (res ?? {}) as UC_IQrCheck;
+    const res = await getRequest<UC_QrCheck>(EUserPath.二维码检查, { key });
+    return (res ?? {}) as UC_QrCheck;
   }
   //#endregion
 
@@ -143,8 +143,8 @@ class UserService {
 
   /** 查询当前登录状态 */
   public async loginStatus() {
-    const res = await getRequest<UC_ILoginStatus>(EUserPath.登录状态);
-    return (res ?? {}) as UC_ILoginStatus;
+    const res = await getRequest<UC_LoginStatus>(EUserPath.登录状态);
+    return (res ?? {}) as UC_LoginStatus;
   }
   //#endregion
 }

@@ -37,7 +37,7 @@ const userSupplementService = {
   //#endregion
 
   //#region 6.2 云盘
-  /** 云盘歌曲详情：songId ← 云盘列表点选或输入 */
+  /** 【上游已失效】/user/cloud/detail 实测 404：方法保留供手动核验，不进主流程自动请求 */
   getUserCloudDetail: (params: Params = {}): Promise<any> => getRequest('/user/cloud/detail', params),
   /** 删除云盘歌曲（写操作） */
   delUserCloud: (params: Params): Promise<any> => getRequest('/user/cloud/del', params),

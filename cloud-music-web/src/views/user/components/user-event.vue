@@ -18,11 +18,11 @@
 <script lang="ts" setup>
 import { ref, onMounted, watch } from 'vue';
 import { useUserCenter } from '../hooks/useUserCenter';
-import { UC_IEvent } from '@/apis/user/user.api';
+import { UC_Event } from '@/apis/user/user.api';
 
 const userCenterService = useUserCenter();
 
-const events = ref<UC_IEvent[]>([]);
+const events = ref<UC_Event[]>([]);
 
 const formatTime = (t?: number) => {
   if (!t) return '';

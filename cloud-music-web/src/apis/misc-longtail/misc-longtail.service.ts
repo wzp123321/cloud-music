@@ -11,11 +11,12 @@ import { getRequest } from '@/apis/request';
  * - calendar 需登录只读（页面未登录降级），时间参数用 new Date() 生成；
  * - pl_count 业务异常属「待核不进主路径」，仅用户手动点击触发，不自动加载。
  */
-async function call(url: string, params: Record<string, any> = {}): Promise<any> {
+const call = async (url: string, params: Record<string, unknown> = {}): Promise<any> => {
   try {
     const res = await getRequest(url, params);
     return res ?? {};
   } catch {
+    // 上游异常，降级为空对象，避免未捕获异常打断页面（响应拦截器统一提示，此处不重复 message.error）
     return {};
   }
 }

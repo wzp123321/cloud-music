@@ -1,5 +1,5 @@
 import { ref, reactive } from 'vue';
-import { FGetQueryParam } from '@/core/token';
+import { getQueryParam } from '@/core/token';
 import djRadioService from '@/apis/dj-radio/dj-radio.service';
 
 /** 电台详情 VO（dj_detail → data） */
@@ -57,7 +57,7 @@ const create = () => {
   const isSub = ref<boolean>(false);
 
   const query = async () => {
-    const rid = Number(FGetQueryParam('rid')) || 0;
+    const rid = Number(getQueryParam('rid')) || 0;
     _rid.value = rid;
     if (!rid) {
       error.value = true;

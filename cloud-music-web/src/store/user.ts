@@ -1,11 +1,11 @@
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
-import { FGetCookie, FSetCookie, TOKEN_KEY } from '@/core/token';
+import { getCookie, setCookie, TOKEN_KEY } from '@/core/token';
 import { postRequest } from '@/apis/request';
 import UserService from '@/apis/user/user.service';
-import { HL_ILoginUserVO } from '@/apis/header-loginform/index.api';
+import { HL_LoginUserVO } from '@/apis/header-loginform/index.api';
 
-type UserProfile = NonNullable<HL_ILoginUserVO['profile']>;
+type UserProfile = NonNullable<HL_LoginUserVO['profile']>;
 
 /** 安全解析凭证串为 profile；解析失败回落 null，不影响登录态判定 */
 const parseProfileFromToken = (token: string): UserProfile | null => {
@@ -22,7 +22,7 @@ const parseProfileFromToken = (token: string): UserProfile | null => {
 /** 登录态：以凭证 cookie 为准，状态不做 pinia 持久化 */
 export const useUserStore = defineStore('user', () => {
   // token = 原始会话凭证（profile JSON 字符串）；profile = 其解析结果，二者分离存储职责
-  const token = ref(FGetCookie(TOKEN_KEY) ?? '');
+  const token = ref(getCookie(TOKEN_KEY) ?? '');
   const profile = ref<UserProfile | null>(parseProfileFromToken(token.value));
   const isLogin = computed(() => Boolean(token.value));
 
@@ -30,7 +30,7 @@ export const useUserStore = defineStore('user', () => {
   const setLogin = (userProfile: UserProfile) => {
     token.value = JSON.stringify(userProfile);
     profile.value = userProfile;
-    FSetCookie(TOKEN_KEY, token.value);
+    setCookie(TOKEN_KEY, token.value);
   };
 
   /** 退出登录：调用后端并清空本地态 */
@@ -38,7 +38,7 @@ export const useUserStore = defineStore('user', () => {
     const res = await postRequest('/logout');
     token.value = '';
     profile.value = null;
-    FSetCookie(TOKEN_KEY, '');
+    setCookie(TOKEN_KEY, '');
     return res;
   };
 

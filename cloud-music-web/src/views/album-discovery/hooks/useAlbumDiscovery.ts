@@ -2,6 +2,7 @@ import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 import contentEnhanceService from '@/apis/content-enhance/content-enhance.service';
+import message from '@/utils/message';
 
 /** 统一卡片模型：5 个列表接口的字段在这里归一 */
 interface AlbumCardItem {
@@ -18,7 +19,7 @@ type TabCode = 'new' | 'newest' | 'list' | 'style' | 'saleboard';
  * 新碟与数字专辑：tab / 地区 / 榜单周期 → 5 个列表接口的编排。
  * 专辑发现页：分类标签、地区/周期筛选与列表加载编排。
  */
-export function useAlbumDiscovery() {
+export const useAlbumDiscovery = () => {
   const router = useRouter();
 
   const tabs: { code: TabCode; name: string }[] = [
@@ -137,7 +138,10 @@ export function useAlbumDiscovery() {
 
   /** 列表 → 详情参数来源：卡片 id 传入 /album_detail?id= */
   const linkToAlbum = (id?: number) => {
-    if (!id) return;
+    if (!id) {
+      message.info('该内容暂无详情信息');
+      return;
+    }
     router.push({ path: '/album_detail', query: { id: String(id) } });
   };
 

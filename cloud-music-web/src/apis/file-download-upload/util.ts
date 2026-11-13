@@ -7,7 +7,7 @@ import message from '@/utils/message';
  * @param blob 二进制流
  * @param name 输出文件名
  */
-export function FBlobHandler(blob: Blob, name?: string): Promise<void> {
+export const saveBlobAsFile = (blob: Blob, name?: string): Promise<void> => {
   return new Promise((resolve, reject) => {
     if (blob.size) {
       const reader = new FileReader();
@@ -20,7 +20,7 @@ export function FBlobHandler(blob: Blob, name?: string): Promise<void> {
         reader.readAsText(blob);
       } else {
         reader.onloadend = (e) => {
-          FDownLoadHandler(e.target?.result as string, name)
+          downloadFileByUrl(e.target?.result as string, name)
             .then(() => resolve())
             .catch((error) => reject(error));
         };
@@ -37,7 +37,7 @@ export function FBlobHandler(blob: Blob, name?: string): Promise<void> {
  * @param url 源路径
  * @param name 输出文件名
  */
-export function FDownLoadHandler(url: string, name?: string): Promise<void> {
+export const downloadFileByUrl = (url: string, name?: string): Promise<void> => {
   return new Promise((resolve, reject) => {
     if (url) {
       const element = document.createElement('a');
@@ -103,7 +103,7 @@ export const verifyUpload = (
  * @param accept 允许的后缀
  * @returns 目标文件域
  */
-export function FUploadHandler(accept?: string): Promise<File> {
+export const pickUploadFile = (accept?: string): Promise<File> => {
   return new Promise((resolve, reject) => {
     const element = document.createElement('input');
     element.type = 'file';

@@ -3,8 +3,8 @@
  * 「一个接口 = 一个区块」，页面只提供数据，渲染与请求态展示由 cm-api-block 负责
  */
 
-/** 区块类型：读取 / 需登录只读 / 写操作 */
-export type BlockKind = 'read' | 'loginRead' | 'write';
+/** 区块类型：读取 / 需登录只读 / 写操作 / 已失效（仅手动核验） */
+export type BlockKind = 'read' | 'login-read' | 'write' | 'invalid';
 
 import type { ApiCard } from '@/utils/api-normalize';
 
@@ -44,6 +44,10 @@ export interface ApiBlock {
   needs?: string;
   source?: string;
   confirmMsg?: string;
+  /** 自定义按钮文案（失效接口可写「查看失效说明/核验」） */
+  buttonText?: string;
+  /** 补充说明（失效接口用于展示失效原因与降级约定） */
+  note?: string;
   params?: (sel: Record<string, any>, v: string) => Record<string, any>;
   run: (p: any) => Promise<any>;
 }
@@ -51,6 +55,7 @@ export interface ApiBlock {
 /** 默认的区块类型文案 */
 export const DEFAULT_KIND_LABELS: Record<BlockKind, string> = {
   read: '读取',
-  loginRead: '需登录只读',
+  'login-read': '需登录只读',
   write: '写操作',
+  invalid: '接口已失效',
 };

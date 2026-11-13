@@ -8,7 +8,7 @@
 
     <div :class="rootClass + '--globals'">
       <slot name="globals" :sel="sel" :sel-keys="selKeys">
-        <label v-for="key in selKeys" :key="key" class="pg--global">
+        <label v-for="key in selKeys" :key="key" class="api-console-page--global">
           <span>参数池 {{ key }}（来自上游列表点击项 / 手动输入）</span>
           <cm-input v-model="sel[key]" type="text" :placeholder="key + '：可手动填写'" />
         </label>
@@ -61,7 +61,7 @@ const props = withDefaults(
     rootClass?: string;
     kindLabels?: Partial<Record<ApiBlock['kind'], string>>;
   }>(),
-  { rootClass: 'pg' },
+  { rootClass: 'api-console-page' },
 );
 
 const { activeTab, activeBlocks, sel, selKeys, inputs, states, runBlock, onCardClick, onFileChange, switchTab } =

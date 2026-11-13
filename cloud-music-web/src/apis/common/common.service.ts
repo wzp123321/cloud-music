@@ -1,6 +1,6 @@
 import { postRequest } from '../request';
 import type { ApiEnvelope } from '../types';
-import type { CS_ICommentListRes, CS_IMvDetail, CS_IMvUrl, CS_ISongDetailRes } from '../common.models';
+import type { CS_CommentListRes, CS_MvDetail, CS_MvUrl, CS_SongDetailRes } from '../common.models';
 
 enum EPath {
   查询MV详情 = '/mv/detail',
@@ -18,8 +18,8 @@ class CommonService {
    * @param mvid
    * @returns MV 详情；上游无 data 时返回 undefined
    */
-  public async getMvDetailById(mvid: number): Promise<CS_IMvDetail | undefined> {
-    const res = await postRequest<ApiEnvelope<CS_IMvDetail>>(EPath.查询MV详情, { mvid });
+  public async getMvDetailById(mvid: number): Promise<CS_MvDetail | undefined> {
+    const res = await postRequest<ApiEnvelope<CS_MvDetail>>(EPath.查询MV详情, { mvid });
     return res?.data;
   }
   /**
@@ -27,8 +27,8 @@ class CommonService {
    * @param id
    * @returns 播放地址信息；上游无 data 时返回 undefined
    */
-  public async getMvUrlById(id: number): Promise<CS_IMvUrl | undefined> {
-    const res = await postRequest<ApiEnvelope<CS_IMvUrl>>(EPath.查询mv播放地址, { id });
+  public async getMvUrlById(id: number): Promise<CS_MvUrl | undefined> {
+    const res = await postRequest<ApiEnvelope<CS_MvUrl>>(EPath.查询mv播放地址, { id });
     return res?.data;
   }
   /**
@@ -36,8 +36,8 @@ class CommonService {
    * @param id
    * @returns 扁平评论列表（code / comments / hotComments）
    */
-  public async getMvCommentList(id: number): Promise<CS_ICommentListRes> {
-    return await postRequest<CS_ICommentListRes>(EPath.获取MV评论, { id });
+  public async getMvCommentList(id: number): Promise<CS_CommentListRes> {
+    return await postRequest<CS_CommentListRes>(EPath.获取MV评论, { id });
   }
 
   /**
@@ -45,8 +45,8 @@ class CommonService {
    * @param id
    * @returns 扁平评论列表（code / comments / hotComments）
    */
-  public async getPlayListCommentList(id: number): Promise<CS_ICommentListRes> {
-    return await postRequest<CS_ICommentListRes>(EPath.获取歌单评论, { id });
+  public async getPlayListCommentList(id: number): Promise<CS_CommentListRes> {
+    return await postRequest<CS_CommentListRes>(EPath.获取歌单评论, { id });
   }
 
   /**
@@ -54,8 +54,8 @@ class CommonService {
    * @param ids 逗号分隔的歌曲 id
    * @returns 歌曲详情批量结果
    */
-  public async getMusicDetailByIds(ids: string): Promise<CS_ISongDetailRes> {
-    return await postRequest<CS_ISongDetailRes>(EPath.获取歌曲详情可批量, { ids });
+  public async getMusicDetailByIds(ids: string): Promise<CS_SongDetailRes> {
+    return await postRequest<CS_SongDetailRes>(EPath.获取歌曲详情可批量, { ids });
   }
 }
 

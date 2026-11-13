@@ -25,10 +25,10 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue';
-import { UC_IRecord } from '@/apis/user/user.api';
+import { UC_Record } from '@/apis/user/user.api';
 
 const props = defineProps<{
-  record: UC_IRecord;
+  record: UC_Record;
   type: number;
 }>();
 

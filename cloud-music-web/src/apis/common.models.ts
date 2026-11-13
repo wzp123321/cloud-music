@@ -4,10 +4,10 @@
  * 依据 cloud-music-server 实测返回结构定义；上游缺字段属常态，
  * 除页面强依赖的字段外一律可选，避免渲染期因缺字段抛错。
  */
-import type { CM_ICommentVO } from '@/components/cm-comment/cm-comment.api';
+import type { CM_CommentVO } from '@/components/cm-comment/cm-comment.api';
 
 /** MV 详情（/mv/detail 的 data） */
-export interface CS_IMvDetail {
+export interface CS_MvDetail {
   id: string;
   name: string;
   artistId: number;
@@ -34,7 +34,7 @@ export interface CS_IMvDetail {
 }
 
 /** MV 播放地址（/mv/url 的 data） */
-export interface CS_IMvUrl {
+export interface CS_MvUrl {
   id?: number;
   url?: string;
   r?: number;
@@ -49,17 +49,17 @@ export interface CS_IMvUrl {
 }
 
 /** 评论列表（/comment/mv、/comment/playlist 均返回该扁平结构） */
-export interface CS_ICommentListRes {
+export interface CS_CommentListRes {
   code?: number;
   total?: number;
   more?: boolean;
   moreHot?: boolean;
-  comments?: CM_ICommentVO[];
-  hotComments?: CM_ICommentVO[];
+  comments?: CM_CommentVO[];
+  hotComments?: CM_CommentVO[];
 }
 
 /** 歌曲详情项（/song/detail 批量返回的元素，字段按需取用） */
-export interface CS_ISongDetail {
+export interface CS_SongDetail {
   id: number;
   name: string;
   /** 时长（毫秒） */
@@ -76,7 +76,7 @@ export interface CS_ISongDetail {
 }
 
 /** 歌曲详情批量响应（/song/detail） */
-export interface CS_ISongDetailRes {
+export interface CS_SongDetailRes {
   code?: number;
-  songs?: CS_ISongDetail[];
+  songs?: CS_SongDetail[];
 }

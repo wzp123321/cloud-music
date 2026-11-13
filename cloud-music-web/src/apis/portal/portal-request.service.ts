@@ -57,7 +57,7 @@ const portalService = {
    * @param params
    * @returns
    */
-  async getNewDVDList(params: NewDVDParams) {
+  getNewDVDList: async (params: NewDVDParams) => {
     const url = '/top/album';
     const res = await postRequest(url, params);
     return res;
@@ -67,7 +67,7 @@ const portalService = {
    * @param params
    * @returns
    */
-  async getRankDetailById(params: { id: number }) {
+  getRankDetailById: async (params: { id: number }) => {
     const url = '/playlist/detail';
     const res = await postRequest(url, params);
     return res;
@@ -183,12 +183,19 @@ const portalService = {
   },
   /**
    * 单个榜单详情（按 id）
-   * @param params id 榜单 id
+   * 【上游已失效】/top/list 实测 404。本方法原被榜单页主流程自动调用
+   * （usePortal.queryToplist 成功后自动触发 queryRankDetail → getTopList；首页首屏并不调用），
+   * 为避免自动请求 404 与错误提示刷屏，这里显式失效降级为
+   * 空结果、不再发出请求；方法保留供手动核验上游状态，需核验时恢复下方被注释的请求行即可。
+   * @param _params id 榜单 id（降级后暂不使用，保留仅为维持调用签名）
    */
-  async getTopList(params: { id: number }): Promise<TopListRes> {
-    const url = '/top/list';
-    const res: TopListRes = await postRequest(url, { id: params.id });
-    return res;
+  async getTopList(_params: { id: number }): Promise<TopListRes> {
+    // 上游异常，降级为空结果（TopListRes 字段均为可选；榜单页 rankTrackList 回落为 []，
+    // rank.vue 已有「暂无榜单歌曲」空态占位，不会白屏）
+    // const url = '/top/list';
+    // const res: TopListRes = await postRequest(url, { id: _params.id });
+    // return res;
+    return {};
   },
   /**
    * 精品歌单

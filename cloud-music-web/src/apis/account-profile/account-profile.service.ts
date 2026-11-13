@@ -14,11 +14,12 @@ import { getRequest } from '@/apis/request';
  *   hasLogin() + window.confirm 控制；禁止 onMounted 自动调用、禁止预填真实手机号；
  * - verify_getQr / verify_qrcodestatus / countries_code_list / nickname_check / sign_happy_info 为只读。
  */
-async function call(url: string, params: Record<string, any> = {}): Promise<any> {
+const call = async (url: string, params: Record<string, unknown> = {}): Promise<any> => {
   try {
     const res = await getRequest(url, params);
     return res ?? {};
   } catch {
+    // 上游异常，降级为空对象，避免未捕获异常打断页面（响应拦截器统一提示，此处不重复 message.error）
     return {};
   }
 }

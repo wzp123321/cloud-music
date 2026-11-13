@@ -101,7 +101,10 @@ const linkToUser = (userId?: number) => {
 };
 
 const linkToProgram = (id?: number) => {
-  if (!id) return;
+  if (!id) {
+    message.info('该内容暂无详情信息');
+    return;
+  }
   router.push({ path: '/dj-program-detail', query: { id: String(id) } });
 };
 

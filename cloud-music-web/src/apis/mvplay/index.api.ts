@@ -1,6 +1,6 @@
-import { CM_ICommentVO } from '../../components/cm-comment/cm-comment.api';
+import { CM_CommentVO } from '../../components/cm-comment/cm-comment.api';
 
-export interface MP_IMvDetail {
+export interface MP_MvDetail {
   artistId: number;
   artistName: string;
   artists: {
@@ -26,7 +26,7 @@ export interface MP_IMvDetail {
   subCount: string;
 }
 
-export interface MP_IMVCommentRes {
-  comments: CM_ICommentVO[];
-  hotComments: CM_ICommentVO[];
+export interface MP_MVCommentRes {
+  comments: CM_CommentVO[];
+  hotComments: CM_CommentVO[];
 }

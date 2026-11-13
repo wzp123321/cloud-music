@@ -1,5 +1,5 @@
 import { ref, reactive } from 'vue';
-import { FGetQueryParam } from '@/core/token';
+import { getQueryParam } from '@/core/token';
 import djRadioService from '@/apis/dj-radio/dj-radio.service';
 
 /** 电台节目详情 VO（dj_program_detail → data.program） */
@@ -38,7 +38,7 @@ const create = () => {
   const error = ref<boolean>(false);
 
   const query = async () => {
-    const id = Number(FGetQueryParam('id')) || 0;
+    const id = Number(getQueryParam('id')) || 0;
     if (!id) {
       error.value = true;
       loading.value = false;

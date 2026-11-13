@@ -2,21 +2,21 @@ import { useSingletonStore } from "@/store/singletons";
  
 import { ref } from 'vue';
 
-import { FGetQueryParam } from '@/core/token';
+import { getQueryParam } from '@/core/token';
 import { useUserStore } from '@/store/user';
 import UserService from '@/apis/user/user.service';
 import {
-  UC_IUserDetail,
-  UC_IPlaylist,
-  UC_IUserLevel,
-  UC_IUserSubcount,
-  UC_IRecord,
-  UC_IEvent,
-  UC_ICloudItem,
-  UC_IFollowUser,
+  UC_UserDetail,
+  UC_Playlist,
+  UC_UserLevel,
+  UC_UserSubcount,
+  UC_Record,
+  UC_Event,
+  UC_CloudItem,
+  UC_FollowUser,
 } from '@/apis/user/user.api';
 
-const emptyDetail: UC_IUserDetail = { profile: {} as any };
+const emptyDetail: UC_UserDetail = { profile: {} as any };
 
 // 创建用户中心共享状态：响应式数据统一用 ref，行为统一为 const 箭头函数
 const create = () => {
@@ -24,10 +24,10 @@ const create = () => {
   const uidRef = ref<number>(0);
 
   //#region 可观察状态（$ 字段对外保持为 Ref，供组件 watch 订阅）
-  const _userDetail = ref<UC_IUserDetail>(emptyDetail);
-  const _playlists = ref<UC_IPlaylist[]>([]);
-  const _level = ref<UC_IUserLevel>({ level: 0, progress: 0 });
-  const _subcount = ref<UC_IUserSubcount>({
+  const _userDetail = ref<UC_UserDetail>(emptyDetail);
+  const _playlists = ref<UC_Playlist[]>([]);
+  const _level = ref<UC_UserLevel>({ level: 0, progress: 0 });
+  const _subcount = ref<UC_UserSubcount>({
     programCount: 0,
     djRadioCount: 0,
     mvCount: 0,
@@ -37,11 +37,11 @@ const create = () => {
     createdPlaylistCount: 0,
     subPlaylistCount: 0,
   });
-  const _record = ref<UC_IRecord>({ allData: [], weekData: [] });
-  const _event = ref<UC_IEvent[]>([]);
-  const _cloud = ref<{ list: UC_ICloudItem[]; count: number }>({ list: [], count: 0 });
-  const _follows = ref<UC_IFollowUser[]>([]);
-  const _followeds = ref<UC_IFollowUser[]>([]);
+  const _record = ref<UC_Record>({ allData: [], weekData: [] });
+  const _event = ref<UC_Event[]>([]);
+  const _cloud = ref<{ list: UC_CloudItem[]; count: number }>({ list: [], count: 0 });
+  const _follows = ref<UC_FollowUser[]>([]);
+  const _followeds = ref<UC_FollowUser[]>([]);
   //#endregion
 
   //#region 基础状态
@@ -80,7 +80,7 @@ const create = () => {
 
   // 读取路由 uid，未指定时使用 cookie 中的当前登录用户，并触发全量加载
   const init = () => {
-    const qid = FGetQueryParam('uid');
+    const qid = getQueryParam('uid');
     if (qid) {
       uidRef.value = Number(qid);
     } else {
@@ -188,10 +188,10 @@ const create = () => {
     get followLoaded(): boolean {
       return _followLoaded.value;
     },
-    get followsValue(): UC_IFollowUser[] {
+    get followsValue(): UC_FollowUser[] {
       return _follows.value;
     },
-    get followedsValue(): UC_IFollowUser[] {
+    get followedsValue(): UC_FollowUser[] {
       return _followeds.value;
     },
     init,

@@ -15,7 +15,7 @@
         <cm-image :src="item.cover" alt="" loading="lazy" />
         <div class="cms-info">
           <p class="name" :title="item.name">{{ item.name }}</p>
-          <p class="sub" :title="item.subtitle">{{ item.subtitle }}</p>
+          <p class="cm-simi--subtitle" :title="item.subtitle">{{ item.subtitle }}</p>
         </div>
       </div>
     </div>
@@ -29,7 +29,7 @@ import { onMounted, ref, watch, PropType } from 'vue';
 import { useRouter } from 'vue-router';
 import {
   CM_SimiType,
-  CM_ISimiItem,
+  CM_SimiItem,
   SIMI_TITLE,
   fetchSimi,
   normalizeSimi,
@@ -68,10 +68,10 @@ const SIMI_ROUTE: Record<CM_SimiType, { path: string; key: string }> = {
 };
 
 const router = useRouter();
-const list = ref<CM_ISimiItem[]>([]);
+const list = ref<CM_SimiItem[]>([]);
 const loading = ref(false);
 
-async function load() {
+const load = async () => {
   if (
     props.id === undefined ||
     props.id === null ||
@@ -91,7 +91,7 @@ async function load() {
   }
 }
 
-const onItemClick = (item: CM_ISimiItem) => {
+const onItemClick = (item: CM_SimiItem) => {
   const route = SIMI_ROUTE[props.type];
   if (!route || !router) return;
   router.push({ path: route.path, query: { [route.key]: String(item.id) } });
@@ -160,7 +160,7 @@ watch([() => props.type, () => props.id], load);
         color: var(--color-text);
       }
 
-      .sub {
+      .cm-simi--subtitle {
         font-size: 12px;
         color: var(--color-text-secondary);
         margin-top: 4px;

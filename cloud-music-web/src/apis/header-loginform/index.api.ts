@@ -17,7 +17,7 @@ export interface Header_ILoginVO {
   password: string;
 }
 
-export interface HL_ILoginUserVO {
+export interface HL_LoginUserVO {
   profile?: {
     backgroundUrl: string;
     vipType: number;

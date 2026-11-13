@@ -11,11 +11,12 @@ import { getRequest } from '@/apis/request';
  * - 写操作（devoteUgcUser / createListenRoom / *_command / heatbeat / endListenRoom）是否发出
  *   请求由页面根据 hasLogin() + window.confirm 控制，service 只负责封装，不自动触发。
  */
-async function call(url: string, params: Record<string, any> = {}): Promise<any> {
+const call = async (url: string, params: Record<string, unknown> = {}): Promise<any> => {
   try {
     const res = await getRequest(url, params);
     return res ?? {};
   } catch {
+    // 上游异常，降级为空对象，避免未捕获异常打断页面（响应拦截器统一提示，此处不重复 message.error）
     return {};
   }
 }

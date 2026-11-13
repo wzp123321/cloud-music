@@ -35,8 +35,8 @@ export const CM_COMMENT_ROUTE: Record<CM_CommentType, string> = {
 /**
  * 评论
  */
-export interface CM_ICommentVO {
-  beReplied?: CM_ICommentVO[];
+export interface CM_CommentVO {
+  beReplied?: CM_CommentVO[];
   commentId?: number;
   commentLocationType?: number;
   content?: string;
@@ -55,16 +55,16 @@ export interface CM_ICommentVO {
     location?: string;
     userId?: string;
   };
-  pendantData?: CM_ICommentVO;
+  pendantData?: CM_CommentVO;
   user?: Common_IUserVO;
   [key: string]: any;
 }
 
 /** 评论列表响应（comment_music~event / comment_hot） */
-export interface CM_ICommentListRes {
+export interface CM_CommentListRes {
   code?: number;
-  hotComments?: CM_ICommentVO[];
-  comments?: CM_ICommentVO[];
+  hotComments?: CM_CommentVO[];
+  comments?: CM_CommentVO[];
   total?: number;
   more?: boolean;
   moreHot?: boolean;
@@ -72,11 +72,11 @@ export interface CM_ICommentListRes {
 }
 
 /** 新版通用评论响应（comment_new） */
-export interface CM_ICommentNewRes {
+export interface CM_CommentNewRes {
   code?: number;
   data?: {
-    comments?: CM_ICommentVO[];
-    hotComments?: CM_ICommentVO[];
+    comments?: CM_CommentVO[];
+    hotComments?: CM_CommentVO[];
     totalCount?: number;
     [key: string]: any;
   };
@@ -84,11 +84,11 @@ export interface CM_ICommentNewRes {
 }
 
 /** 楼层评论响应（comment_floor） */
-export interface CM_ICommentFloorRes {
+export interface CM_CommentFloorRes {
   code?: number;
   data?: {
-    comments?: CM_ICommentVO[];
-    ownerComment?: CM_ICommentVO;
+    comments?: CM_CommentVO[];
+    ownerComment?: CM_CommentVO;
     totalCount?: number;
     [key: string]: any;
   };
@@ -96,19 +96,19 @@ export interface CM_ICommentFloorRes {
 }
 
 /** 点赞用户列表响应（comment_hug_list） */
-export interface CM_IHugListRes {
+export interface CM_HugListRes {
   code?: number;
   data?: {
-    hugComments?: CM_ICommentVO[];
-    comments?: CM_ICommentVO[];
+    hugComments?: CM_CommentVO[];
+    comments?: CM_CommentVO[];
     [key: string]: any;
   };
-  hugComments?: CM_ICommentVO[];
+  hugComments?: CM_CommentVO[];
   [key: string]: any;
 }
 
 /** 通用资源参数 */
-interface CM_IResourceParam {
+interface CM_ResourceParam {
   type: CM_CommentType;
   id: number | string;
   threadId?: string;
@@ -130,19 +130,19 @@ export const getCommentList = (
     threadId?: string;
     [key: string]: any;
   } = {},
-): Promise<CM_ICommentListRes> => getRequest(CM_COMMENT_ROUTE[type], { id, ...params });
+): Promise<CM_CommentListRes> => getRequest(CM_COMMENT_ROUTE[type], { id, ...params });
 //#endregion
 
 //#region 通用评论能力
 /** 新版通用评论列表（comment_new；sortType 99 推荐 / 2 热度 / 3 时间） */
 export const getCommentNew = (
-  params: CM_IResourceParam & {
+  params: CM_ResourceParam & {
     pageNo?: number;
     pageSize?: number;
     sortType?: number;
     cursor?: string;
   },
-): Promise<CM_ICommentNewRes> => {
+): Promise<CM_CommentNewRes> => {
   const { type, id, threadId, ...rest } = params;
   return getRequest('/comment/new', {
     type: CM_COMMENT_TYPE_NUM[type] ?? 0,
@@ -154,8 +154,8 @@ export const getCommentNew = (
 
 /** 热门评论（comment_hot） */
 export const getCommentHot = (
-  params: CM_IResourceParam & { limit?: number; offset?: number; before?: number },
-): Promise<CM_ICommentListRes> => {
+  params: CM_ResourceParam & { limit?: number; offset?: number; before?: number },
+): Promise<CM_CommentListRes> => {
   const { type, id, threadId, ...rest } = params;
   return getRequest('/comment/hot', {
     type: CM_COMMENT_TYPE_NUM[type] ?? 0,
@@ -167,12 +167,12 @@ export const getCommentHot = (
 
 /** 楼层评论（comment_floor） */
 export const getCommentFloor = (
-  params: CM_IResourceParam & {
+  params: CM_ResourceParam & {
     parentCommentId: number;
     time?: number;
     limit?: number;
   },
-): Promise<CM_ICommentFloorRes> => {
+): Promise<CM_CommentFloorRes> => {
   const { type, id, threadId, ...rest } = params;
   return getRequest('/comment/floor', {
     type: CM_COMMENT_TYPE_NUM[type] ?? 0,
@@ -184,14 +184,14 @@ export const getCommentFloor = (
 
 /** 点赞用户列表（comment_hug_list） */
 export const getCommentHugList = (
-  params: CM_IResourceParam & {
+  params: CM_ResourceParam & {
     cid: number;
     uid?: number | string;
     page?: number;
     pageSize?: number;
     cursor?: string;
   },
-): Promise<CM_IHugListRes> => {
+): Promise<CM_HugListRes> => {
   const { type, id, threadId, ...rest } = params;
   return getRequest('/comment/hug/list', {
     type: CM_COMMENT_TYPE_NUM[type] ?? 0,
@@ -203,7 +203,7 @@ export const getCommentHugList = (
 
 /** 点赞 / 取消点赞评论（comment_like；t=1 点赞 / 0 取消） */
 export const likeComment = (
-  params: CM_IResourceParam & { cid: number; t: 1 | 0 },
+  params: CM_ResourceParam & { cid: number; t: 1 | 0 },
 ): Promise<any> => {
   const { type, id, threadId, ...rest } = params;
   return postRequest('/comment/like', {
@@ -220,7 +220,7 @@ export const likeComment = (
  * 真正写评论由 comment.js 提供，故发评走 /comment，comment_new 用于列表刷新。
  */
 export const sendComment = (
-  params: CM_IResourceParam & {
+  params: CM_ResourceParam & {
     content?: string;
     commentId?: number;
     t?: 1 | 0 | 2;
