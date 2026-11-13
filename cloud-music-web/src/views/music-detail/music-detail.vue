@@ -91,14 +91,14 @@
         </div>
 
         <div class="ctrl-center">
-          <cm-icon name="icon-shangyishou" title="上一首" @click="player.switchMusic('preview')"></cm-icon>
+          <cm-icon name="icon-shangyishou" title="上一首" @click="player.switchMusic('preview', true)"></cm-icon>
           <cm-icon
             class="play-btn"
             :name="player.isPlaying ? 'icon-zanting' : 'icon-24gl-playCircle'"
             :title="player.isPlaying ? '暂停' : '播放'"
             @click="player.switchPlayStatus"
           ></cm-icon>
-          <cm-icon name="icon-xiayishou" title="下一首" @click="player.switchMusic('next')"></cm-icon>
+          <cm-icon name="icon-xiayishou" title="下一首" @click="player.switchMusic('next', true)"></cm-icon>
         </div>
 
         <div class="ctrl-side ctrl-right">

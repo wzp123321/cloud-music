@@ -90,7 +90,8 @@ const page = ref<number>(1);
     /** 播放当前行：v-for 已按分页 slice，直接传行对象，避免用局部 index 索引全局数组放错歌 */
     const onPlay = (item: Common_IMusic) => {
       if (item?.id) {
-        player.play(item);
+        // 带上整张列表作为播放上下文：后续按列表顺序切歌，而不是只有这一首
+        player.play(item, props.dataSource);
       }
     };
 
@@ -113,7 +114,7 @@ const page = ref<number>(1);
     const linkToDetailPage = (id: number) => {
       const item = props.dataSource.find((music) => music.id === id);
       if (item) {
-        player.play(item);
+        player.play(item, props.dataSource);
       }
       router.push({
         path: '/music_detail',

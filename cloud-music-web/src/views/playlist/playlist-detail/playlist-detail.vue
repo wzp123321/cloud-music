@@ -18,6 +18,9 @@
 
       <!-- 操作栏：订阅 / 编辑 / 添加歌曲 -->
       <div class="pd-toolbar mb24">
+        <el-button type="primary" @click="playAll">
+          <cm-icon name="icon-24gf-play" class="mr6"></cm-icon>播放全部
+        </el-button>
         <el-button
           :type="playListDetailService.subscribed ? 'default' : 'primary'"
           @click="onToggleSubscribe"
@@ -98,6 +101,7 @@
 <script lang="ts" setup>
 import PlaylistFormDialog from '../components/playlist-form-dialog.vue';
 import { usePlaylistDetailView } from './hooks/usePlaylistDetailView';
+import { usePlayerStore } from '@/store/player';
 
 const {
   playListDetailService,
@@ -118,6 +122,16 @@ const {
   onEdited,
   formatStat,
 } = usePlaylistDetailView();
+
+const player = usePlayerStore();
+
+/** 播放全部：整张歌单作为播放上下文，从第一首开始 */
+const playAll = () => {
+  const list = musicList.value;
+  if (list.length) {
+    player.play(list[0], list);
+  }
+};
 </script>
 
 <style scoped lang="less">

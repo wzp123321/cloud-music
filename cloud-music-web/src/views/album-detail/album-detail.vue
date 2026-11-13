@@ -33,7 +33,7 @@
       <span v-if="albumDetail.actionTip" class="album-detail--tip">{{ albumDetail.actionTip }}</span>
     </div>
 
-    <cm-button radius primary style="width: 180px" class="mt12">
+    <cm-button radius primary style="width: 180px" class="mt12" @click="playAll">
       <cm-icon name="icon-24gf-play" class="mr6"></cm-icon>播放全部歌曲
     </cm-button>
 
@@ -78,10 +78,12 @@ import message from '@/utils/message';
 
 import { formatDate } from '../../core/utils';
 import type { Common_IMusic } from '../../apis/common/index.api';
+import { usePlayerStore } from '@/store/player';
 
 const albumDetail = useAlbumDetail();
 defineOptions({ name: 'AlbumDetail' });
 const router = useRouter();
+const player = usePlayerStore();
 
     onMounted(() => {
       albumDetail.query();
@@ -101,6 +103,13 @@ const router = useRouter();
         picUrl: song.al?.picUrl ?? '',
       })),
     );
+
+    /** 播放全部：整张专辑作为播放上下文，从第一首开始 */
+    const playAll = () => {
+      if (songList.value.length) {
+        player.play(songList.value[0], songList.value);
+      }
+    };
 
     /** 收藏专辑列表 → 专辑详情，参数 id ← album_sublist.data[].id */
     const linkToAlbum = (id?: number) => {

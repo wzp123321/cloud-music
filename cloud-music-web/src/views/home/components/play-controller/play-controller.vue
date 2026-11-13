@@ -53,13 +53,14 @@
       </div>
 
       <div class="switch flex-row-start-center">
-        <cm-icon name="icon-shangyishou" title="上一首" @click="player.onEnded('preview')"></cm-icon>
+        <!-- 手动切歌直接按队列顺序走；播放模式（单曲循环/随机）只约束 @ended 的自然结束 -->
+        <cm-icon name="icon-shangyishou" title="上一首" @click="player.switchMusic('preview', true)"></cm-icon>
         <cm-icon
           :name="player.isPlaying ? 'icon-zanting' : 'icon-24gl-playCircle'"
           :title="player.isPlaying ? '暂停' : '播放'"
           @click="player.switchPlayStatus"
         ></cm-icon>
-        <cm-icon name="icon-xiayishou" title="下一首" @click="player.onEnded('next')"></cm-icon>
+        <cm-icon name="icon-xiayishou" title="下一首" @click="player.switchMusic('next', true)"></cm-icon>
       </div>
 
       <div class="operate-btn flex-row-start-center">
