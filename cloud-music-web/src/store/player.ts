@@ -28,6 +28,8 @@ export const usePlayerStore = defineStore(
     const isMute = ref(false);
     const volume = ref(50);
     const errorList = ref<number[]>([]);
+    /** 音频真实时长(ms)：loadedmetadata 后从 el.duration 读取，校准接口 dt 与音源实际长度不符 */
+    const realDuration = ref(0);
     /** 歌词按歌曲缓存：避免暂停→恢复、单曲循环重复请求 /lyric 并 reset 导致歌词闪烁 */
     const lyricRawCache = new Map<number, string>();
     let lyricLoadedId = 0;
@@ -138,6 +140,8 @@ export const usePlayerStore = defineStore(
       // play 同一首歌时 id 不变，需作废已加载标记，让歌词从缓存重新 parse
       lyricLoadedId = 0;
       playTimestamp.value = 0;
+      // 切到新歌：真实时长作废，等新 loadedmetadata 回填
+      realDuration.value = 0;
       currentIndex.value = index;
       isPlaying.value = true;
       await startPlayback();
@@ -147,6 +151,16 @@ export const usePlayerStore = defineStore(
     const onEnded = (direction: 'next' | 'preview' = 'next') => {
       const list = playlist.musicList;
       if (!list.length) {
+        return;
+      }
+      const el = audioEl.value;
+      const dt = currentMusic.value.dt || 0;
+      // 片段检测：真实时长显著小于接口时长（试听/受限音源）。若仍按播放模式静默切下一首，
+      // 会表现为「唱到一半就跳歌」；这里改为停止并提示，把选择权交回用户。
+      if (el && realDuration.value && dt && realDuration.value < dt * 0.9) {
+        isPlaying.value = false;
+        el.pause();
+        message.info('当前为试听片段，已停止播放');
         return;
       }
       const type = PLAY_TYPE_KEYS[playTypeIndex.value % PLAY_TYPE_KEYS.length];
@@ -160,6 +174,7 @@ export const usePlayerStore = defineStore(
           isPlaying.value = true;
           break;
         case PLAY_TYPE.RANDOM:
+          realDuration.value = 0;
           currentIndex.value = Math.min(
             Math.round(Math.random() * list.length),
             list.length - 1,
@@ -185,6 +200,8 @@ export const usePlayerStore = defineStore(
       }
       isPlaying.value = false;
       playTimestamp.value = 0;
+      // 切歌后 src 会变，旧的真实时长作废，等新 loadedmetadata 回填
+      realDuration.value = 0;
       currentIndex.value =
         type === 'preview'
           ? (currentIndex.value - 1 + len) % len
@@ -208,6 +225,13 @@ export const usePlayerStore = defineStore(
       }
     };
 
+    /** <audio> loadedmetadata：读取真实时长校准接口 dt（进度/切歌语义以真实音源为准） */
+    const onLoadedMetadata = () => {
+      const el = audioEl.value;
+      realDuration.value =
+        el && Number.isFinite(el.duration) && el.duration > 0 ? el.duration * 1000 : 0;
+    };
+
     /** <audio> timeupdate：刷新进度并推进歌词 */
     const onTimeUpdate = () => {
       const el = audioEl.value;
@@ -217,9 +241,10 @@ export const usePlayerStore = defineStore(
         return;
       }
       playTimestamp.value = el.currentTime * 1000;
-      progress.value = Number(
-        Math.round((100 * playTimestamp.value) / (currentMusic.value.dt || 1)),
-      );
+      // 进度以「真实音频时长优先、接口 dt 兜底」计算，避免音源是片段/试听时
+      // 进度条走到一半而实际已 ended 切歌的错位。
+      const total = realDuration.value || currentMusic.value.dt || 1;
+      progress.value = Number(Math.round((100 * playTimestamp.value) / total));
       lyric.syncPanel(playTimestamp.value);
     };
 
@@ -375,6 +400,7 @@ export const usePlayerStore = defineStore(
       bindAudio,
       play,
       onEnded,
+      onLoadedMetadata,
       switchMusic,
       switchPlayType,
       switchPlayStatus,

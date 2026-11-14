@@ -1,7 +1,10 @@
 export interface RequestBaseConfig {
   cookie?: string
+  headers?: Record<string, string | string[]>
   realIP?: string // IPv4/IPv6 filled in X-Real-IP
   proxy?: string // HTTP proxy
+  randomCNIP?: boolean // Whether to use a random Chinese IP address filled in X-Real-IP
+  timeout?: number // Request timeout in ms
 }
 
 export interface MultiPageConfig {
@@ -271,20 +274,20 @@ export function batch(
 ): Promise<Response>
 
 export function captcha_sent(
-  params: { cellphone: string; ctcode?: number | string } & RequestBaseConfig,
+  params: { phone: string; ctcode?: number | string } & RequestBaseConfig,
 ): Promise<Response>
 
 export function captcha_verify(
   params: {
     ctcode?: number | string
-    cellphone: number | string
+    phone: number | string
     captcha: string
   } & RequestBaseConfig,
 ): Promise<Response>
 
 export function cellphone_existence_check(
   params: {
-    cellphone: number | string
+    phone: number | string
     countrycode: number | string
   } & RequestBaseConfig,
 ): Promise<Response>
@@ -1085,7 +1088,7 @@ type SongDetail = {
   m: SongDetailQuality | null
   l: SongDetailQuality | null
   sq: SongDetailQuality | null
-  hr: unknown
+  hr: SongDetailQuality | null
   a: unknown | null
   cd: string
   no: number
@@ -1809,4 +1812,1050 @@ export function voicelist_list_search(
     voiceFeeType?: string | number
     radioId?: string
   } & RequestBaseConfig,
+): Promise<Response>
+
+export function voice_delete(
+  params: {
+    ids: number | string
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function djRadio_top(
+  params: {
+    djRadioId?: number | string
+    sortIndex?: number | string
+    dataGapDays?: number | string
+    dataType?: number | string
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function voice_lyric(
+  params: {
+    id: number | string
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function api(
+  params: {
+    uri: string
+    data?: string | Record<string, unknown>
+    crypto?: string
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function captcha_safe_sent(
+  params: { ctcode?: number | string } & RequestBaseConfig,
+): Promise<Response>
+
+export function captcha_sent_v1(
+  params: {
+    phone: number | string
+    ctcode?: number | string
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function device_kickoff(
+  params: { deviceKey: string | number; captcha?: string } & RequestBaseConfig,
+): Promise<Response>
+
+export function device_list(params: RequestBaseConfig): Promise<Response>
+
+export function deviceinfo_center_upload(
+  params: { deviceName: string; name?: string } & RequestBaseConfig,
+): Promise<Response>
+
+export function eapi_decrypt(
+  params: { hexString: string; isReq?: boolean | string } & RequestBaseConfig,
+): Promise<Response>
+
+export const enum EventPrivacy {
+  everyone = 0,
+  following = 1,
+  onlyMe = 2,
+  mutualFollowing = 6,
+}
+
+export interface UserEventAllResponse {
+  code: number
+  events: Record<string, unknown>[]
+  /** Upstream account statistic; it can include events no longer returned. */
+  size: number | null
+  /** Number of unique events in `events`. */
+  retrievedCount: number
+  /** Positive difference between `size` and `retrievedCount`. */
+  unavailableCount: number | null
+  sizeMismatch: boolean | null
+  pageCount: number
+  more: false
+  lasttime: string | number | null
+}
+
+export function event_privacy(
+  params: {
+    evId: string | number
+    privacy: EventPrivacy
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function inner_version(params: RequestBaseConfig): Promise<Response>
+
+export function listentogether_status(
+  params: RequestBaseConfig,
+): Promise<Response>
+
+export function relay_play_state_submit(
+  params: {
+    id: string | number
+    sessionId?: string
+    progress?: string | number
+    playMode?: string
+    type?: string
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function rep_ugc_activity_collect(
+  params: { activityId?: string | number } & RequestBaseConfig,
+): Promise<Response>
+
+export function rep_ugc_activity_get(
+  params: RequestBaseConfig,
+): Promise<Response>
+
+export function rep_ugc_exam_info_get(
+  params: { examType: string | number } & RequestBaseConfig,
+): Promise<Response>
+
+export function rep_ugc_exam_question_single_get(
+  params: {
+    examType: string | number
+    taskId: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function rep_ugc_exam_result_get(
+  params: {
+    examType: string | number
+    taskId: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function rep_ugc_exam_start(
+  params: { examType: string | number } & RequestBaseConfig,
+): Promise<Response>
+
+export function rep_ugc_exam_submit(
+  params: {
+    examType: string | number
+    taskId: string | number
+    questionId: string | number
+    answer: string
+  } & RequestBaseConfig,
+): Promise<Response>
+
+declare const rep_ugc_user_collect_vip: (
+  params: { activityId?: string | number } & RequestBaseConfig,
+) => Promise<Response>
+
+export function rep_ugc_user_get(params: RequestBaseConfig): Promise<Response>
+
+export function rep_ugc_user_sign(params: RequestBaseConfig): Promise<Response>
+
+export function rep_ugc_user_vip(params: RequestBaseConfig): Promise<Response>
+
+export function song_copyright_rcmd(
+  params: {
+    songid?: string | number
+    id?: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function user_event_all(
+  params: RequestBaseConfig,
+): Promise<Response<UserEventAllResponse>>
+
+export function artist_new_song_playall(
+  params: RequestBaseConfig,
+): Promise<Response>
+
+export function artist_new_song_mv_list_v2(
+  params: {
+    startTimestamp?: number | string
+    before?: number | string
+    sourceType?: number | string
+    limit?: number | string
+    firstRequest?: boolean | string
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function vip_growthpoint_getall(
+  params: RequestBaseConfig,
+): Promise<Response>
+
+export function musician_vip_tasks(params: RequestBaseConfig): Promise<Response>
+
+export function aidj_content_rcmd(
+  params: {
+    latitude?: string | number
+    longitude?: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function album_privilege(
+  params: {
+    id: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function artist_detail_dynamic(
+  params: {
+    id: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function artist_follow_count(
+  params: {
+    id: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function broadcast_category_region_get(
+  params: RequestBaseConfig,
+): Promise<Response>
+
+export function broadcast_channel_collect_list(
+  params: MultiPageConfig & RequestBaseConfig,
+): Promise<Response>
+
+export function broadcast_channel_currentinfo(
+  params: {
+    id: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function broadcast_channel_list(
+  params: {
+    categoryId?: string | number
+    regionId?: string | number
+    lastId?: string | number
+    score?: string | number
+  } & MultiPageConfig &
+    RequestBaseConfig,
+): Promise<Response>
+
+export function broadcast_sub(
+  params: {
+    t: SubAction
+    id: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function chart_detail(
+  params: {
+    chartCode: string | number
+    targetId: string | number
+    targetType: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function chart_song_detail(
+  params: {
+    chartCode: string | number
+    targetId: string | number
+    targetType: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function cloud_import(
+  params: {
+    md5: string
+    id?: string | number
+    bitrate?: string | number
+    fileSize?: string | number
+    artist?: string
+    album?: string
+    song?: string
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function cloud_lyric_get(
+  params: {
+    uid: string | number
+    sid: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function cloud_upload_complete(
+  params: {
+    songId: string | number
+    resourceId: string | number
+    md5: string
+    filename: string
+    song?: string
+    artist?: string
+    album?: string
+    bitrate?: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function cloud_upload_token(
+  params: {
+    md5: string
+    fileSize: string | number
+    filename: string
+    bitrate?: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function comment_info_list(
+  params: {
+    ids?: string
+    type?: CommentType
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function comment_report(
+  params: {
+    id: string | number
+    cid: string | number
+    reason: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function creator_authinfo_get(
+  params: RequestBaseConfig,
+): Promise<Response>
+
+export function dj_difm_all_style_channel(
+  params: {
+    sources?: string
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function dj_difm_channel_subscribe(
+  params: {
+    id: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function dj_difm_channel_unsubscribe(
+  params: {
+    id: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function dj_difm_playing_tracks_list(
+  params: {
+    channelId: string | number
+    limit?: string | number
+    source?: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function dj_difm_subscribe_channels_get(
+  params: {
+    sources?: string
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function fanscenter_basicinfo_age_get(
+  params: RequestBaseConfig,
+): Promise<Response>
+
+export function fanscenter_basicinfo_gender_get(
+  params: RequestBaseConfig,
+): Promise<Response>
+
+export function fanscenter_basicinfo_province_get(
+  params: RequestBaseConfig,
+): Promise<Response>
+
+export function fanscenter_overview_get(
+  params: RequestBaseConfig,
+): Promise<Response>
+
+export function fanscenter_trend_list(
+  params: {
+    startTime?: string | number
+    endTime?: string | number
+    type?: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function lbs_city_code(
+  params: {
+    bizCode?: string
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function listen_data_realtime_report(
+  params: {
+    type?: string
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function listen_data_report(
+  params: {
+    type?: string
+    endTime?: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function listen_data_song_play_rank(
+  params: {
+    type?: string
+    endTime?: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function listen_data_today_song(
+  params: RequestBaseConfig,
+): Promise<Response>
+
+export function listen_data_total(params: RequestBaseConfig): Promise<Response>
+
+export function listen_data_year_report(
+  params: RequestBaseConfig,
+): Promise<Response>
+
+export function listentogether_accept(
+  params: {
+    roomId: string | number
+    inviterId: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function listentogether_end(
+  params: {
+    roomId: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function listentogether_heatbeat(
+  params: {
+    roomId: string | number
+    songId: string | number
+    playStatus: string | number
+    progress: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function listentogether_play_command(
+  params: {
+    roomId: string | number
+    commandType: string | number
+    progress?: string | number
+    playStatus: string | number
+    formerSongId: string | number
+    targetSongId: string | number
+    clientSeq: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function listentogether_room_check(
+  params: {
+    roomId: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function listentogether_room_create(
+  params: RequestBaseConfig,
+): Promise<Response>
+
+export function listentogether_sync_list_command(
+  params: {
+    roomId: string | number
+    commandType: string | number
+    userId: string | number
+    version: string | number
+    randomList: string
+    displayList: string
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function listentogether_sync_playlist_get(
+  params: {
+    roomId: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function mlog_music_rcmd(
+  params: {
+    mvid?: string | number
+    songid?: string | number
+    limit?: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function music_first_listen_info(
+  params: {
+    id: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function personal_fm_mode(
+  params: {
+    mode: string
+    submode?: string
+    limit?: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function playlist_category_list(
+  params: {
+    cat?: string
+    limit?: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function playlist_detail_rcmd_get(
+  params: {
+    id: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function playlist_import_name_task_create(
+  params: {
+    local?: string
+    importStarPlaylist?: boolean
+    ['name']?: string
+    ['description']?: string
+    ['id']?: string | number
+    ['url']?: string
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function playlist_import_task_status(
+  params: {
+    id: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function playlist_privacy(
+  params: {
+    id: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function playmode_song_vector(
+  params: {
+    ids: string
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function radio_sport_get(
+  params: {
+    bpm?: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function recent_listen_list(params: RequestBaseConfig): Promise<Response>
+
+export function recommend_songs_dislike(
+  params: {
+    id: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function register_anonimous(params: RequestBaseConfig): Promise<Response>
+
+export function sati_resource_list(
+  params: {
+    tag: string
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function sati_resource_list_more(
+  params: {
+    id: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function sati_resource_sub(
+  params: {
+    id: string | number
+    cancel?: string | boolean
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function sati_resource_sub_list(
+  params: RequestBaseConfig,
+): Promise<Response>
+
+export function sati_tag_list(params: RequestBaseConfig): Promise<Response>
+
+export function sati_timescene_resources_get(
+  params: RequestBaseConfig,
+): Promise<Response>
+
+export function search_match(
+  params: {
+    title?: string
+    album?: string
+    artist?: string
+    duration?: string | number
+    md5?: string
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function search_suggest_pc(
+  params: {
+    keyword: string
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function send_album(
+  params: {
+    id: string | number
+    msg?: string
+    user_ids: string
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function send_song(
+  params: {
+    id: string | number
+    msg?: string
+    user_ids: string
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function song_chorus(
+  params: {
+    id: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function song_cloud_download(
+  params: { id: string | number } & RequestBaseConfig,
+): Promise<Response>
+
+export function song_creators(
+  params: {
+    id: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function song_downlist(
+  params: MultiPageConfig & RequestBaseConfig,
+): Promise<Response>
+
+export function song_download_url_v1(
+  params: {
+    id: string | number
+    level: SoundQualityType
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function song_dynamic_cover(
+  params: {
+    id: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function song_like(
+  params: {
+    id: string | number
+    like?: string | boolean
+    uid?: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function song_like_check(
+  params: {
+    ids: string
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function song_lyrics_mark(
+  params: {
+    id: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function song_lyrics_mark_add(
+  params: {
+    id: string | number
+    markId?: string
+    data?: string
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function song_lyrics_mark_del(
+  params: {
+    id: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function song_lyrics_mark_user_page(
+  params: MultiPageConfig & RequestBaseConfig,
+): Promise<Response>
+
+export function song_monthdownlist(
+  params: MultiPageConfig & RequestBaseConfig,
+): Promise<Response>
+
+export function song_music_detail(
+  params: {
+    id: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function song_red_count(
+  params: {
+    id: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function song_singledownlist(
+  params: MultiPageConfig & RequestBaseConfig,
+): Promise<Response>
+
+export function song_url_v1_302(
+  params: {
+    id: string | number
+    level: SoundQualityType
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function starpick_comments_summary(
+  params: RequestBaseConfig,
+): Promise<Response>
+
+export function summary_annual(
+  params: {
+    year: string
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function threshold_detail_get(
+  params: RequestBaseConfig,
+): Promise<Response>
+
+export function thinktank_audit_resource_detail(
+  params: { type?: string | number } & RequestBaseConfig,
+): Promise<Response>
+
+export function thinktank_audit_resource_update(
+  params: {
+    type?: string | number
+    taskId: string | number
+    judgement: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function toplist_detail_v2(params: RequestBaseConfig): Promise<Response>
+
+export function ugc_album_get(
+  params: {
+    id: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function ugc_artist_get(
+  params: {
+    id: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function ugc_artist_search(
+  params: {
+    keyword: string
+    limit?: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function ugc_detail(
+  params: {
+    auditStatus?: string
+    type?: string | number
+    sortBy?: string
+    order?: string
+  } & MultiPageConfig &
+    RequestBaseConfig,
+): Promise<Response>
+
+export function ugc_mv_get(
+  params: {
+    id: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function ugc_song_get(
+  params: {
+    id: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function ugc_user_devote(params: RequestBaseConfig): Promise<Response>
+
+export function user_detail_new(
+  params: {
+    uid: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function user_follow_mixed(
+  params: {
+    size?: string | number
+    cursor?: string | number
+    scene?: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function user_medal(
+  params: {
+    uid: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function user_mutualfollow_get(
+  params: {
+    uid: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function user_playlist_collect(
+  params: {
+    uid: string | number
+  } & MultiPageConfig &
+    RequestBaseConfig,
+): Promise<Response>
+
+export function user_playlist_create(
+  params: {
+    uid: string | number
+  } & MultiPageConfig &
+    RequestBaseConfig,
+): Promise<Response>
+
+export function user_social_status(
+  params: {
+    uid: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function user_social_status_edit(
+  params: {
+    type: string | number
+    iconUrl?: string
+    content?: string
+    actionUrl?: string
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function user_social_status_rcmd(
+  params: RequestBaseConfig,
+): Promise<Response>
+
+export function user_social_status_support(
+  params: RequestBaseConfig,
+): Promise<Response>
+
+export function verify_getQr(
+  params: {
+    vid: string | number
+    type: string | number
+    token: string
+    evid: string
+    sign: string
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function verify_qrcodestatus(
+  params: {
+    qr: string
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function vip_sign(params: RequestBaseConfig): Promise<Response>
+
+export function vip_sign_detail(
+  params: { timestamp: string | number } & RequestBaseConfig,
+): Promise<Response>
+
+export function vip_sign_history(
+  params: { type?: string | number } & RequestBaseConfig,
+): Promise<Response>
+
+export function vip_sign_info(params: RequestBaseConfig): Promise<Response>
+
+export function vip_tasks_v1(
+  params: {
+    id?: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function voice_detail(
+  params: {
+    id: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function voice_upload(
+  params: {
+    songFile: {
+      name: string
+      data: string | Buffer
+    }
+    imgFile?: {
+      name: string
+      data: string | Buffer
+    }
+    voiceListId: string | number
+    coverImgId?: string | number
+    categoryId: string | number
+    secondCategoryId: string | number
+    description: string
+    songName?: string
+    privacy?: string | number
+    publishTime?: string | number
+    autoPublish?: string | number
+    autoPublishText?: string
+    orderNo?: string | number
+    composedSongs?: string
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function voicelist_detail(
+  params: {
+    id: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function voicelist_list(
+  params: {
+    voiceListId: string | number
+  } & MultiPageConfig &
+    RequestBaseConfig,
+): Promise<Response>
+
+export function voicelist_my_created(
+  params: {
+    limit?: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function voicelist_search(
+  params: {
+    podcastName?: string
+    limit?: string | number
+    offset?: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function voicelist_trans(
+  params: {
+    radioId?: string | number
+    programId?: string | number
+    position?: string | number
+  } & MultiPageConfig &
+    RequestBaseConfig,
+): Promise<Response>
+
+export function fans_group_detail(
+  params: {
+    groupId: string
+    scene?: string
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function fans_group_feed_recommend(
+  params: {
+    fansGroupId: string
+    cursor?: string
+    size?: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function fans_group_user_groups(
+  params?: RequestBaseConfig,
+): Promise<Response>
+
+export function fans_group_user_group_detail(
+  params: {
+    groupId: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function banner_v3(
+  params: { clientType?: string } & RequestBaseConfig,
+): Promise<Response>
+
+export function comment_default_text(
+  params: { threadId?: string } & RequestBaseConfig,
+): Promise<Response>
+
+export function comment_hotwall_square_info(
+  params: RequestBaseConfig,
+): Promise<Response>
+
+export function dislike_list(params: RequestBaseConfig): Promise<Response>
+
+export function dj_category_list(params: RequestBaseConfig): Promise<Response>
+
+export function event_search(
+  params: {
+    keyword?: string
+    keywords?: string
+  } & MultiPageConfig &
+    RequestBaseConfig,
+): Promise<Response>
+
+export function mlog_mycollect(
+  params: {
+    time?: string | number
+    limit?: string | number
+    type?: string | number
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function recommend_category_configs(
+  params: RequestBaseConfig,
+): Promise<Response>
+
+export function recommend_category_set(
+  params: {
+    category: string | number
+    tags: string
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function recommend_category_songs(
+  params: RequestBaseConfig,
+): Promise<Response>
+
+export function recommend_songs_v1(
+  params: { ispush?: boolean | string } & RequestBaseConfig,
+): Promise<Response>
+
+export function search_lyric(
+  params: {
+    keyword?: string
+    keywords?: string
+  } & MultiPageConfig &
+    RequestBaseConfig,
+): Promise<Response>
+
+export function search_song_list_page(
+  params: {
+    keyword?: string
+    keywords?: string
+    scene?: string
+  } & MultiPageConfig &
+    RequestBaseConfig,
+): Promise<Response>
+
+export function search_suggest_mobile(
+  params: {
+    keyword?: string
+    keywords?: string
+  } & RequestBaseConfig,
+): Promise<Response>
+
+export function song_simi_get(
+  params: { id: string | number } & RequestBaseConfig,
+): Promise<Response>
+
+export function song_wiki_info(
+  params: { id: string | number } & RequestBaseConfig,
 ): Promise<Response>

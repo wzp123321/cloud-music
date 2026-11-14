@@ -1,21 +1,16 @@
+const createOption = require('../util/option.js')
 module.exports = async (query, request) => {
   const data = {
     key: query.key,
-    type: 1,
+    type: 3,
   }
   try {
-    let result = await request(
-      'POST',
-      `https://music.163.com/weapi/login/qrcode/client/login`,
+    const result = await request(
+      `/api/login/qrcode/client/login`,
       data,
-      {
-        crypto: 'weapi',
-        cookie: query.cookie,
-        proxy: query.proxy,
-        realIP: query.realIP,
-      },
+      createOption(query),
     )
-    result = {
+    return {
       status: 200,
       body: {
         ...result.body,
@@ -23,12 +18,13 @@ module.exports = async (query, request) => {
       },
       cookie: result.cookie,
     }
-    return result
   } catch (error) {
+    // request 异常（key 失效/过期/网络抖动）：返回明确业务失败态而非冒泡成 HTTP 404。
+    // 否则 server.js 顶层 catch 会以 body 为空返回 404，前端轮询静默忽略 → 登录卡死无提示。
     return {
       status: 200,
-      body: {},
-      cookie: result.cookie,
+      body: { code: 800, message: '二维码不存在或已过期' },
+      cookie: [],
     }
   }
 }

@@ -1,24 +1,17 @@
 // 邮箱登录
 
-const crypto = require('crypto')
+const CryptoJS = require('crypto-js')
 
+const createOption = require('../util/option.js')
 module.exports = async (query, request) => {
-  query.cookie.os = 'ios'
-  query.cookie.appver = '8.7.01'
   const data = {
+    type: '0',
+    https: 'true',
     username: query.email,
-    password:
-      query.md5_password ||
-      crypto.createHash('md5').update(query.password).digest('hex'),
+    password: query.md5_password || CryptoJS.MD5(query.password).toString(),
     rememberLogin: 'true',
   }
-  let result = await request('POST', `https://music.163.com/api/login`, data, {
-    crypto: 'weapi',
-    ua: 'pc',
-    cookie: query.cookie,
-    proxy: query.proxy,
-    realIP: query.realIP,
-  })
+  let result = await request(`/api/w/login`, data, createOption(query))
   if (result.body.code === 502) {
     return {
       status: 200,
@@ -33,7 +26,12 @@ module.exports = async (query, request) => {
     result = {
       status: 200,
       body: {
-        ...result.body,
+        ...JSON.parse(
+          JSON.stringify(result.body).replace(
+            /avatarImgId_str/g,
+            'avatarImgIdStr',
+          ),
+        ),
         cookie: result.cookie.join(';'),
       },
       cookie: result.cookie,

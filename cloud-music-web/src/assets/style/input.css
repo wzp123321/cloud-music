@@ -19,7 +19,10 @@ input:focus {
 input:hover {
   border-color: var(--color-btn-primary);
 }
-input:read-write:enabled:focus {
+/* 只作用于项目原子组件 cm-input 等原生输入框。Element Plus 的 el-input / el-input
+   type=textarea 内部也是原生 input/textarea，其聚焦态由 .el-input__wrapper /
+   .el-textarea__inner 自己负责；不排除会出现「外层聚焦光晕 + 内层光环」双重阴影。 */
+input:read-write:enabled:focus:not(.el-input__inner) {
   border-color: var(--color-btn-primary);
   box-shadow: 0px 0px 0px 2px var(--color-box-focus);
 }
@@ -67,7 +70,7 @@ textarea {
 textarea:hover {
   border-color: var(--color-primary);
 }
-textarea:read-write:enabled:focus {
+textarea:read-write:enabled:focus:not(.el-textarea__inner) {
   border-color: var(--color-primary);
   box-shadow: 0px 0px 0px 2px var(--color-box-focus);
 }

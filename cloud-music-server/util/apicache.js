@@ -1,5 +1,6 @@
 var url = require('url')
 var MemoryCache = require('./memory-cache')
+const logger = require('./logger.js')
 
 var t = {
   ms: 1,
@@ -349,7 +350,7 @@ function ApiCache() {
           try {
             redis.del(key)
           } catch (err) {
-            console.log('[apicache] error in redis.del("' + key + '")')
+            logger.info('[apicache] error in redis.del("' + key + '")')
           }
         }
         index.all = index.all.filter(doesntMatch(key))
@@ -373,7 +374,7 @@ function ApiCache() {
         try {
           redis.del(target)
         } catch (err) {
-          console.log('[apicache] error in redis.del("' + target + '")')
+          logger.info('[apicache] error in redis.del("' + target + '")')
         }
       }
 
@@ -404,7 +405,7 @@ function ApiCache() {
           try {
             redis.del(key)
           } catch (err) {
-            console.log('[apicache] error in redis.del("' + key + '")')
+            logger.info('[apicache] error in redis.del("' + key + '")')
           }
         })
       }
@@ -668,7 +669,10 @@ function ApiCache() {
       req.apicacheTimer = new Date()
 
       // In Express 4.x the url is ambigious based on where a router is mounted.  originalUrl will give the full Url
-      var key = req.hostname + (req.originalUrl || req.url)
+      var key =
+        req.hostname +
+        (req.originalUrl || req.url) +
+        JSON.stringify(req.cookies)
       // Remove querystring from key if jsonp option is enabled
       if (opt.jsonp) {
         key = url.parse(key).pathname

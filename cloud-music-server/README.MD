@@ -22,12 +22,12 @@
 
 ## 环境要求
 
-需要 NodeJS 14+ 环境
+需要 NodeJS 18+ 环境
 
 ## 安装
 
 ```shell
-$ git clone git@github.com:Binaryify/NeteaseCloudMusicApi.git
+$ git clone git@gitlab.com:Binaryify/NeteaseCloudMusicApi.git
 $ cd NeteaseCloudMusicApi
 $ npm install
 ```
@@ -35,7 +35,7 @@ $ npm install
 或者
 
 ```shell
-$ git clone https://github.com/Binaryify/NeteaseCloudMusicApi.git
+$ git clone https://gitlab.com/Binaryify/NeteaseCloudMusicApi.git
 $ cd NeteaseCloudMusicApi
 $ npm install
 ```
@@ -48,7 +48,7 @@ $ npm install
 $ node app.js
 ```
 
-服务器启动默认端口为 19830,若不想使用 19830 端口,可使用以下命令: Mac/Linux
+服务器启动默认端口为 3000,若不想使用 3000 端口,可使用以下命令: Mac/Linux
 
 ```shell
 $ PORT=4000 node app.js
@@ -59,6 +59,55 @@ windows 下使用 git-bash 或者 cmder 等终端执行以下命令:
 ```shell
 $ set PORT=4000 && node app.js
 ```
+
+## npx 方式运行
+
+可在终端直接执行
+
+```bash
+npx NeteaseCloudMusicApi@latest
+```
+
+使用此命令，可直接启动服务，无需下载或者 clone 项目
+
+## Docker 容器运行
+
+> 注意: 在 docker 中运行的时候, 由于使用了 request 来发请求, 所以会检查几个 proxy 相关的环境变量(如下所列), 这些环境变量 会影响到 request 的代理, 详情请参考[request 的文档](https://github.com/request/request#proxies), 如果这些环境变量 指向的代理不可用, 那么就会造成错误, 所以在使用 docker 的时候一定要注意这些环境变量. 不过, 要是你在 query 中加上了 proxy 参数, 那么环境变量会被覆盖, 就会用你通过 proxy 参数提供的代理了.
+
+request 相关的环境变量
+
+1. http_proxy
+2. https_proxy
+3. HTTP_PROXY
+4. HTTPS_PROXY
+5. no_proxy
+6. NO_PROXY
+
+```shell
+docker pull binaryify/netease_cloud_music_api
+
+docker run -d -p 3000:3000 --name netease_cloud_music_api    binaryify/netease_cloud_music_api
+
+
+// 或者
+docker run -d -p 3000:3000 binaryify/netease_cloud_music_api
+
+// 去掉或者设置相关的环境变量
+
+docker run -d -p 3000:3000 --name netease_cloud_music_api -e http_proxy= -e https_proxy= -e no_proxy= -e HTTP_PROXY= -e HTTPS_PROXY= -e NO_PROXY= binaryify/netease_cloud_music_api
+
+// 或者
+docker run -d -p 3000:3000 -e http_proxy= -e https_proxy= -e no_proxy= -e HTTP_PROXY= -e HTTPS_PROXY= -e NO_PROXY= binaryify/netease_cloud_music_api
+```
+
+> 以下是自行 build docker 镜像方式
+
+```
+$ git clone https://gitlab.com/Binaryify/neteasecloudmusicapi.git && cd NeteaseCloudMusicApi
+
+$ sudo docker build . -t netease-music-api
+
+$ sudo docker run -d -p 3000:3000 netease-music-api
 
 ## Vercel 部署
 
@@ -80,23 +129,23 @@ v4.0.8 加入了 Vercel 配置文件,可以直接在 Vercel 下部署了,不需�
 ### 操作方法
 
 1. fork 此项目
-2. 在腾讯云serverless应用管理页面( https://console.cloud.tencent.com/sls ),点击`新建应用`
+2. 在腾讯云 serverless 应用管理页面( https://console.cloud.tencent.com/sls ),点击`新建应用`
 3. 顶部`创建方式`选择 `Web 应用`
 4. 选择 `Express框架`,点击底部`下一步按钮`
-5. 输入`应用名`,上传方式选择`代码仓库`,进行GitHub授权(如已授权可跳过这一步),代码仓库选择刚刚fork的项目
+5. 输入`应用名`,上传方式选择`代码仓库`,进行 GitHub 授权(如已授权可跳过这一步),代码仓库选择刚刚 fork 的项目
 6. 启动文件填入:
 
 ```
 #!/bin/bash
 export PORT=9000
-/var/lang/node16/bin/node app.js
+/var/lang/node18/bin/node app.js
 ```
 
 7. 点击`完成`,等待部署完成,点击`资源列表`的 `API网关` 里的 `URL`,正常情况会打开文档地址,点击文档`例子`可查看接口调用效果
 
-## 可以在Node.js调用
+## 可以在 Node.js 调用
 
-v3.31.0后支持Node.js调用,导入的方法为`module`内的文件名,返回内容包含`status`和`body`,`status`为状态码,`body`为请求返回内容,参考`module_example` 文件夹下的 `test.js`
+v3.31.0 后支持 Node.js 调用,导入的方法为`module`内的文件名,返回内容包含`status`和`body`,`status`为状态码,`body`为请求返回内容,参考`module_example` 文件夹下的 `test.js`
 
 ```js
 const { login_cellphone, user_cloud } = require('NeteaseCloudMusicApi')
@@ -130,9 +179,13 @@ banner({ type: 0 }).then((res) => {
 
 ## 使用文档
 
-[文档地址](http://docs.neteasecloudmusicapi.binaryify.com/#/)
+[文档地址](https://docs-neteasecloudmusicapi.vercel.app)
 
-![文档](https://raw.githubusercontent.com/Binaryify/NeteaseCloudMusicApi/master/static/docs.png)
+## 调试工具
+
+- `eapi` 请求参数或返回内容可在 `/eapi_decrypt.html` 里解析
+- 请求参数模式下, 解密结果可直接带到 `/api.html` 继续调试
+- 需要返回值加密时, 可传 `e_r=1`, `weapi` 和 `eapi` 都支持
 
 ## 功能特性
 
@@ -200,7 +253,7 @@ banner({ type: 0 }).then((res) => {
 62. 电台 - 详情
 63. 电台 - 节目
 64. 给评论点赞
-65. 获取动态
+65. 获取动态列表
 66. 热搜列表(简略)
 67. 发送私信
 68. 发送私信歌单
@@ -209,7 +262,7 @@ banner({ type: 0 }).then((res) => {
 71. 歌单分类
 72. 收藏的歌手列表
 73. 订阅的电台列表
-74. 相关歌单推荐
+74. 相关歌单
 75. 付费精选接口
 76. 音乐是否可用检查接口
 77. 登录状态
@@ -251,10 +304,10 @@ banner({ type: 0 }).then((res) => {
 113. 云盘数据详情
 114. 私信内容
 115. 我的数字专辑
-116. batch批量请求接口
+116. batch 批量请求接口
 117. 获取视频标签列表
-118. 全部mv
-119. 网易出品mv
+118. 全部 mv
+119. 网易出品 mv
 120. 收藏/取消收藏专辑
 121. 专辑动态信息
 122. 热搜列表(详细)
@@ -266,20 +319,20 @@ banner({ type: 0 }).then((res) => {
 128. 更新歌单标签
 129. 默认搜索关键词
 130. 删除歌单
-131. 电台banner
+131. 电台 banner
 132. 用户电台
 133. 热门电台
 134. 电台 - 节目详情
 135. 电台 - 节目榜
 136. 电台 - 新晋电台榜/热门电台榜
 137. 类别热门电台
-138. 云村热评
-139. 电台24小时节目榜
-140. 电台24小时主播榜
+138. 云村热评(官方下架,暂不能用)
+139. 电台 24 小时节目榜
+140. 电台 24 小时主播榜
 141. 电台最热主播榜
 142. 电台主播新人榜
 143. 电台付费精品榜
-144. 歌手热门50首歌曲
+144. 歌手热门 50 首歌曲
 145. 购买数字专辑
 146. 获取 mv 点赞转发评论数数据
 147. 获取视频点赞转发评论数数据
@@ -294,8 +347,8 @@ banner({ type: 0 }).then((res) => {
 156. 国家编码列表
 157. 首页-发现
 158. 首页-发现-圆形图标入口列表
-159. 数字专辑-全部新碟
-160. 数字专辑-热门新碟
+159. 全部新碟
+160. 数字专辑-新碟上架
 161. 数字专辑&数字单曲-榜单
 162. 数字专辑-语种风格馆
 163. 数字专辑详情
@@ -318,7 +371,7 @@ banner({ type: 0 }).then((res) => {
 180. 云贝签到信息
 181. 云贝签到
 182. 云贝所有任务
-183. 云贝todo任务
+183. 云贝 todo 任务
 184. 云贝今日签到信息
 185. 云贝完成任务
 186. 云贝收入
@@ -331,7 +384,7 @@ banner({ type: 0 }).then((res) => {
 193. 评论抱一抱列表
 194. 收藏的专栏
 195. 关注歌手新歌
-196. 关注歌手新MV
+196. 关注歌手新 MV
 197. 歌手详情
 198. 云盘上传
 199. 二维码登录
@@ -345,12 +398,12 @@ banner({ type: 0 }).then((res) => {
 207. 云贝推歌
 208. 云贝推歌历史记录
 209. 已购单曲
-210. 获取mlog播放地址
-211. 将mlog id转为视频id
-212. vip成长值
-213. vip成长值获取记录
-214. vip任务
-215. 领取vip成长值
+210. 获取 mlog 播放地址
+211. 将 mlog id 转为视频 id
+212. vip 成长值
+213. vip 成长值获取记录
+214. vip 任务
+215. 领取 vip 成长值
 216. 歌手粉丝
 217. 数字专辑详情
 218. 数字专辑销量
@@ -361,10 +414,10 @@ banner({ type: 0 }).then((res) => {
 223. 领取云豆
 224. 获取 VIP 信息
 225. 音乐人签到
-226. 发送文本动态
-227. 获取客户端歌曲下载 url
-228. 获取歌单所有歌曲
-229. 乐签信息
+226. 获取客户端歌曲下载 url
+227. 获取歌单所有歌曲
+228. 乐签信息
+229. 获取歌手视频
 230. 最近播放-歌曲
 231. 最近播放-视频
 232. 最近播放-声音
@@ -406,10 +459,93 @@ banner({ type: 0 }).then((res) => {
 268. 用户贡献条目、积分、云贝数量
 269. 年度听歌报告
 270. 播客声音搜索
-
-## 更新日志
-
-[changelog](https://github.com/Binaryify/NeteaseCloudMusicApi/blob/master/CHANGELOG.MD)
+271. 播客声音排序
+272. 播客列表详情
+273. 本地歌曲文件匹配网易云歌曲信息
+274. 歌曲音质详情
+275. 歌曲红心数量
+276. 私人 FM 模式选择
+277. 播客删除
+278. 电台排行榜获取
+279. 获取声音歌词
+280. 获取专辑歌曲的音质
+281. 歌手动态信息
+282. 最近听歌列表
+283. 云盘导入歌曲
+284. 获取客户端歌曲下载链接 - 新版
+285. 当前账号关注的用户/歌手
+286. 会员下载歌曲记录
+287. 会员本月下载歌曲记录
+288. 已购买单曲
+289. 歌曲是否喜爱
+290. 用户是否互相关注
+291. 歌曲动态封面
+292. 用户徽章
+293. 用户状态
+294. 用户状态 - 支持设置的状态
+295. 用户状态 - 相同状态的用户
+296. 用户状态 - 编辑
+297. 听歌足迹 - 年度听歌足迹
+298. 听歌足迹 - 今日收听
+299. 听歌足迹 - 总收听时长
+300. 听歌足迹 - 本周/本月收听时长
+301. 听歌足迹 - 周/月/年收听报告
+302. 歌单导入 - 元数据/文字/链接导入
+303. 歌单导入 - 任务状态
+304. 副歌时间
+305. 相关歌单推荐
+306. 歌词摘录 - 歌词摘录信息
+307. 歌词摘录 - 我的歌词本
+308. 歌词摘录 - 添加/修改摘录歌词
+309. 歌词摘录 - 删除摘录歌词
+310. 广播电台 - 分类/地区信息
+311. 广播电台 - 我的收藏
+312. 广播电台 - 电台信息
+313. 广播电台 - 全部电台
+314. 广播电台 - 收藏/取消收藏电台
+315. 用户的创建歌单列表
+316. 用户的收藏歌单列表
+317. DIFM电台 - 分类
+318. DIFM电台 - 收藏列表
+319. DIFM电台 - 收藏频道
+320. DIFM电台 - 取消收藏频道
+321. DIFM电台 - 播放列表
+322. 助眠解压 - 特定时间场景下的推荐资源
+323. 助眠解压 - 标签列表
+324. 助眠解压 - 获取标签下资源列表
+325. 助眠解压 - 查看同类推荐
+326. 助眠解压 - 收藏
+327. 助眠解压 - 收藏列表
+328. 跑步漫游
+329. 歌曲创作者信息
+330. 获取用户详情
+331. 更新用户信息
+332. 更新歌单
+333. 歌手分类列表
+334. 收藏/取消收藏歌手
+335. 获取音乐 url
+336. 获取音乐 url - 新版
+337. 搜索多重匹配
+338. 对歌单添加或删除歌曲
+339. 获取逐字歌词
+340. 资源点赞( MV,电台,视频)
+341. 每日推荐歌曲-不感兴趣
+342. mv 地址
+343. 排行榜详情
+344. 电台 - 付费精品
+345. 电台 - 付费精选
+346. 发送私信(带专辑)
+347. 云贝
+348. 一起听相关
+349. 获取 VIP 信息(app端)
+350. 公开隐私歌单
+351. 云村星评馆 - 简要评论
+352. 私人 DJ
+353. 播客列表
+354. 播客声音详情
+355. 多级行政区划数据
+356. 指定维度音乐排行榜详情
+357. 指定维度音乐排行榜列表
 
 ## 单元测试
 
@@ -417,15 +553,13 @@ banner({ type: 0 }).then((res) => {
 $ npm test
 ```
 
-![单元测试](https://raw.githubusercontent.com/Binaryify/NeteaseCloudMusicApi/master/static/screenshot1.png)
-![单元测试](https://raw.githubusercontent.com/Binaryify/NeteaseCloudMusicApi/master/static/screenshot2.png)
-
 ## SDK
 
-| 语言 |                    作者                     |                                                    地址                                                    |  类型  |
-| :--: | :-----------------------------------------: | :--------------------------------------------------------------------------------------------------------: | :----: |
-| Java |    [JackuXL](https://github.com/JackuXL)    | [https://github.com/JackuXL/NeteaseCloudMusicApi-SDK](https://github.com/JackuXL/NeteaseCloudMusicApi-SDK) | 第三方 |
-| Java | [1015770492](https://github.com/1015770492) |                              https://github.com/1015770492/yumbo-music-utils                               | 第三方 |
+|  语言  |                    作者                     |                                                    地址                                                    |  类型  |
+| :----: | :-----------------------------------------: | :--------------------------------------------------------------------------------------------------------: | :----: |
+|  Java  |    [JackuXL](https://github.com/JackuXL)    | [https://github.com/JackuXL/NeteaseCloudMusicApi-SDK](https://github.com/JackuXL/NeteaseCloudMusicApi-SDK) | 第三方 |
+|  Java  | [1015770492](https://github.com/1015770492) |                              https://github.com/1015770492/yumbo-music-utils                               | 第三方 |
+| Python |    [盧瞳](https://github.com/2061360308)    |          [NeteaseCloudMusic_PythonSDK](https://github.com/2061360308/NeteaseCloudMusic_PythonSDK)          | 第三方 |
 
 ## 贡献者
 
@@ -433,4 +567,4 @@ $ npm test
 
 ## License
 
-[The MIT License (MIT)](https://github.com/Binaryify/NeteaseCloudMusicApi/blob/master/LICENSE)
+[The MIT License (MIT)](https://gitlab.com/Binaryify/NeteaseCloudMusicApi/blob/main/LICENSE)

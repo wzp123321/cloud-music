@@ -118,19 +118,26 @@ class UserService {
   //#endregion
 
   //#region 二维码登录
+  /**
+   * 二维码三个 GET 统一带唯一参数 t：
+   * 上游 apicache 按「hostname + 完整 URL」缓存 2 分钟，且响应带 cache-control: max-age=120，
+   * 不加 t 时刷新二维码会拿回同一个 unikey、轮询也始终读到第一次的状态。
+   */
   /** 生成二维码 key */
   public async getQrKey() {
-    return unwrapData<UC_QrKey>(await getRequest(EUserPath.二维码Key));
+    return unwrapData<UC_QrKey>(await getRequest(EUserPath.二维码Key, { t: Date.now() }));
   }
 
   /** 生成二维码图片（qrimg 为 dataURL） */
   public async getQrCreate(key: string, qrimg = true) {
-    return unwrapData<UC_QrCreate>(await getRequest(EUserPath.二维码创建, { key, qrimg }));
+    return unwrapData<UC_QrCreate>(
+      await getRequest(EUserPath.二维码创建, { key, qrimg, t: Date.now() }),
+    );
   }
 
   /** 轮询扫码状态 */
   public async checkQr(key: string) {
-    const res = await getRequest<UC_QrCheck>(EUserPath.二维码检查, { key });
+    const res = await getRequest<UC_QrCheck>(EUserPath.二维码检查, { key, t: Date.now() });
     return (res ?? {}) as UC_QrCheck;
   }
   //#endregion

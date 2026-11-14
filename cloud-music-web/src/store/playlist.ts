@@ -8,7 +8,9 @@ import { Common_IMusic } from '@/apis/common/index.api';
 const LIST_STORAGE_KEY = 'cloud-music-list';
 
 enum EPath {
-  查询歌曲地址 = '/song/url',
+  // v1 以 level 区分音质(standard/exhigh/lossless/hires/sky/jymaster)，对非会员也能拿到 standard 可用音源，
+  // 相比旧 /song/url(靠 br) 在部分受限曲目上更稳、更易拿到完整音源。
+  查询歌曲地址 = '/song/url/v1',
 }
 
 export const usePlaylistStore = defineStore(
@@ -17,10 +19,13 @@ export const usePlaylistStore = defineStore(
     // 队列唯一真相源：合并原 Player._musicList 与 PlayListService._musicList
     const musicList = ref<PL_PlayVO[]>([]);
 
-    /** 查询歌曲可播放地址，接口异常时返回空串 */
+    /**
+     * 查询歌曲可播放地址，接口异常时返回空串。
+     * 走 /song/url/v1 + level：v1 接受 { id, level }，返回的 data[0].url 即 CDN 直链。
+     */
     const queryMusicUrl = async (id: string): Promise<string> => {
       try {
-        const res = await getRequest(EPath.查询歌曲地址, { id });
+        const res = await getRequest(EPath.查询歌曲地址, { id, level: 'standard' });
         return res?.data?.[0]?.url ?? '';
       } catch {
         return '';

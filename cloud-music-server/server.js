@@ -5,9 +5,11 @@ const request = require('./util/request')
 const packageJSON = require('./package.json')
 const exec = require('child_process').exec
 const cache = require('./util/apicache').middleware
-const { cookieToJson } = require('./util/index')
+const { cookieToJson, getCookieHeader, hasCookie } = require('./util/index')
 const fileUpload = require('express-fileupload')
 const decode = require('safe-decode-uri-component')
+const logger = require('./util/logger.js')
+const { APP_CONF } = require('./util/config.json')
 
 /**
  * The version check result.
@@ -116,13 +118,65 @@ async function checkVersion() {
             ? VERSION_CHECK_RESULT.NOT_LATEST
             : VERSION_CHECK_RESULT.LATEST,
         )
+      } else {
+        resolve({
+          status: VERSION_CHECK_RESULT.FAILED,
+        })
       }
     })
-
-    resolve({
-      status: VERSION_CHECK_RESULT.FAILED,
-    })
   })
+}
+
+function parseCorsAllowOrigins(corsAllowOrigin) {
+  if (!corsAllowOrigin) {
+    return null
+  }
+
+  const origins = corsAllowOrigin
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean)
+
+  return origins.length > 0 ? origins : null
+}
+
+function getCorsAllowOrigin(allowOrigins, requestOrigin) {
+  if (!allowOrigins) {
+    return requestOrigin || '*'
+  }
+
+  if (allowOrigins.includes('*')) {
+    return '*'
+  }
+
+  if (requestOrigin && allowOrigins.includes(requestOrigin)) {
+    return requestOrigin
+  }
+
+  return null
+}
+
+function createConsoleSpinner(message = '启动中') {
+  if (!process.stdout.isTTY) {
+    return {
+      stop() {},
+    }
+  }
+
+  const frames = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏']
+  let index = 0
+  process.stdout.write(`${frames[index]} ${message}...`)
+  const timer = setInterval(() => {
+    index = (index + 1) % frames.length
+    process.stdout.write(`\r${frames[index]} ${message}...`)
+  }, 80)
+
+  return {
+    stop() {
+      clearInterval(timer)
+      process.stdout.write(`\r✔ ${message} 完成。\n`)
+    },
+  }
 }
 
 /**
@@ -131,20 +185,32 @@ async function checkVersion() {
  * @param {ModuleDefinition[]} [moduleDefs] Customized module definitions [advanced]
  * @returns {Promise<import("express").Express>} The server instance.
  */
-async function consturctServer(moduleDefs) {
+async function constructServer(moduleDefs) {
   const app = express()
   const { CORS_ALLOW_ORIGIN } = process.env
+  const allowOrigins = parseCorsAllowOrigins(CORS_ALLOW_ORIGIN)
   app.set('trust proxy', true)
 
+  /**
+   * Serving static files
+   */
+  app.use(express.static(path.join(__dirname, 'public')))
   /**
    * CORS & Preflight request
    */
   app.use((req, res, next) => {
     if (req.path !== '/' && !req.path.includes('.')) {
+      const corsAllowOrigin = getCorsAllowOrigin(
+        allowOrigins,
+        req.headers.origin,
+      )
+      const shouldSetVaryHeader = corsAllowOrigin && corsAllowOrigin !== '*'
       res.set({
         'Access-Control-Allow-Credentials': true,
-        'Access-Control-Allow-Origin':
-          CORS_ALLOW_ORIGIN || req.headers.origin || '*',
+        ...(corsAllowOrigin
+          ? { 'Access-Control-Allow-Origin': corsAllowOrigin }
+          : {}),
+        ...(shouldSetVaryHeader ? { Vary: 'Origin' } : {}),
         'Access-Control-Allow-Headers': 'X-Requested-With,Content-Type',
         'Access-Control-Allow-Methods': 'PUT,POST,GET,DELETE,OPTIONS',
         'Content-Type': 'application/json; charset=utf-8',
@@ -158,29 +224,40 @@ async function consturctServer(moduleDefs) {
    */
   app.use((req, _, next) => {
     req.cookies = {}
-    //;(req.headers.cookie || '').split(/\s*;\s*/).forEach((pair) => { //  Polynomial regular expression //
-    ;(req.headers.cookie || '').split(/;\s+|(?<!\s)\s+$/g).forEach((pair) => {
-      let crack = pair.indexOf('=')
-      if (crack < 1 || crack == pair.length - 1) return
-      req.cookies[decode(pair.slice(0, crack)).trim()] = decode(
-        pair.slice(crack + 1),
-      ).trim()
-    })
+    getCookieHeader(req.headers)
+      .split(';')
+      .forEach((pair) => {
+        let crack = pair.indexOf('=')
+        if (crack < 1 || crack == pair.length - 1) return
+        req.cookies[decode(pair.slice(0, crack)).trim()] = decode(
+          pair.slice(crack + 1),
+        ).trim()
+      })
     next()
   })
 
   /**
    * Body Parser and File Upload
    */
-  app.use(express.json())
-  app.use(express.urlencoded({ extended: false }))
+  const MAX_UPLOAD_SIZE_MB = 500
+  const MAX_UPLOAD_SIZE_BYTES = MAX_UPLOAD_SIZE_MB * 1024 * 1024
 
-  app.use(fileUpload())
+  app.use(express.json({ limit: `${MAX_UPLOAD_SIZE_MB}mb` }))
+  app.use(
+    express.urlencoded({ extended: false, limit: `${MAX_UPLOAD_SIZE_MB}mb` }),
+  )
 
-  /**
-   * Serving static files
-   */
-  app.use(express.static(path.join(__dirname, 'public')))
+  app.use(
+    fileUpload({
+      limits: {
+        fileSize: MAX_UPLOAD_SIZE_BYTES,
+      },
+      useTempFiles: true,
+      tempFileDir: require('os').tmpdir(),
+      abortOnLimit: true,
+      parseNested: true,
+    }),
+  )
 
   /**
    * Cache
@@ -205,38 +282,61 @@ async function consturctServer(moduleDefs) {
 
   for (const moduleDef of moduleDefinitions) {
     // Register the route.
-    app.use(moduleDef.route, async (req, res) => {
+    app.all(moduleDef.route, async (req, res) => {
       ;[req.query, req.body].forEach((item) => {
-        if (typeof item.cookie === 'string') {
+        // item may be undefined (some environments / middlewares).
+        // Guard access to avoid "Cannot read properties of undefined (reading 'cookie')".
+        if (item && typeof item.cookie === 'string') {
           item.cookie = cookieToJson(decode(item.cookie))
         }
       })
 
-      let query = Object.assign(
-        {},
-        { cookie: req.cookies },
-        req.query,
-        req.body,
-        req.files,
-      )
+      const queryCookie = req.query && req.query.cookie
+      const bodyCookie = req.body && req.body.cookie
+      const fileCookie = req.files && req.files.cookie
+      const cookie = hasCookie(fileCookie)
+        ? fileCookie
+        : hasCookie(bodyCookie)
+        ? bodyCookie
+        : hasCookie(queryCookie)
+        ? queryCookie
+        : req.cookies
+      const query = Object.assign({}, req.query, req.body, req.files, {
+        cookie,
+      })
 
       try {
+        let usedCrypto = ''
         const moduleResponse = await moduleDef.module(query, (...params) => {
-          // 参数注入客户端IP
           const obj = [...params]
-          let ip = req.ip
+          const options = obj[2] || {}
+          usedCrypto = options.crypto || ''
+          let ip = ''
 
-          if (ip.substr(0, 7) == '::ffff:') {
-            ip = ip.substr(7)
+          if (options.randomCNIP) {
+            ip = global.cnIp
+          } else {
+            ip = req.ip
+
+            if (ip.substring(0, 7) == '::ffff:') {
+              ip = ip.substring(7)
+            }
+            if (ip == '::1') {
+              ip = global.cnIp
+            }
           }
-          // console.log(ip)
-          obj[3] = {
-            ...obj[3],
+
+          obj[2] = {
+            ...options,
             ip,
           }
+
           return request(...obj)
         })
-        console.log('[OK]', decode(req.originalUrl))
+        const displayCrypto = usedCrypto || (APP_CONF.encrypt ? 'eapi' : 'api')
+        logger.info(
+          `Request Success: [${displayCrypto}] ${decode(req.originalUrl)}`,
+        )
 
         const cookies = moduleResponse.cookie
         if (!query.noCookie) {
@@ -254,9 +354,14 @@ async function consturctServer(moduleDefs) {
             }
           }
         }
+        if (moduleResponse.redirectUrl) {
+          res.redirect(moduleResponse.status || 302, moduleResponse.redirectUrl)
+          return
+        }
+
         res.status(moduleResponse.status).send(moduleResponse.body)
       } catch (/** @type {*} */ moduleResponse) {
-        console.log('[ERR]', decode(req.originalUrl), {
+        logger.error(`${decode(req.originalUrl)}`, {
           status: moduleResponse.status,
           body: moduleResponse.body,
         })
@@ -288,29 +393,37 @@ async function consturctServer(moduleDefs) {
  * @returns {Promise<import('express').Express & ExpressExtension>}
  */
 async function serveNcmApi(options) {
-  const port = Number(options.port || process.env.PORT || '19830')
+  const port = Number(options.port || process.env.PORT || '3000')
   const host = options.host || process.env.HOST || ''
+
+  const spinner = createConsoleSpinner('服务启动中')
 
   const checkVersionSubmission =
     options.checkVersion &&
     checkVersion().then(({ npmVersion, ourVersion, status }) => {
       if (status == VERSION_CHECK_RESULT.NOT_LATEST) {
-        console.log(
+        logger.warn(
           `最新版本: ${npmVersion}, 当前版本: ${ourVersion}, 请及时更新`,
         )
       }
     })
-  const constructServerSubmission = consturctServer(options.moduleDefs)
+  const constructServerSubmission = constructServer(options.moduleDefs)
 
   const [_, app] = await Promise.all([
     checkVersionSubmission,
     constructServerSubmission,
   ])
 
+  spinner.stop()
+
   /** @type {import('express').Express & ExpressExtension} */
   const appExt = app
   appExt.server = app.listen(port, host, () => {
-    console.log(`server running @ http://${host ? host : 'localhost'}:${port}`)
+    logger.info(
+      `Server started successfully @ http://${
+        host ? host : 'localhost'
+      }:${port}`,
+    )
   })
 
   return appExt

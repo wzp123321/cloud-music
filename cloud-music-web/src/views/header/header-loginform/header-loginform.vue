@@ -97,25 +97,31 @@ const onRegister = () => {
 
 <style lang="less">
 .el-dialog.header-loginform {
-  border-radius: 12px;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.18);
 
   .el-dialog__header {
-    padding: 20px 24px 0;
+    padding: 0;
     margin-right: 0;
   }
 
   .el-dialog__body {
-    padding: 16px 28px 28px;
+    padding: 0 32px 32px;
   }
 
   .hl-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    padding: 22px 28px 18px;
+    background: linear-gradient(180deg, rgba(194, 12, 12, 0.04), transparent);
+    border-bottom: 1px solid var(--color-text-divider);
 
     &--title {
-      font-size: 18px;
+      font-size: 19px;
       font-weight: 600;
+      letter-spacing: 1px;
       color: var(--color-text-title);
     }
 
@@ -123,28 +129,41 @@ const onRegister = () => {
       font-size: 16px;
       color: var(--color-text-secondary);
       cursor: pointer;
-      transition: color var(--param-transition-time);
+      transition: color var(--param-transition-time), transform var(--param-transition-time);
 
       &:hover {
-        color: var(--color-text-title);
+        color: var(--color-primary);
+        transform: rotate(90deg);
       }
     }
   }
 
   .hl-tabs {
     display: flex;
-    margin-bottom: 20px;
-    border-bottom: 1px solid var(--color-text-divider);
+    margin: 24px 0 22px;
 
     li {
       flex: 1;
-      padding: 10px 0;
+      position: relative;
+      padding: 12px 0;
       text-align: center;
-      font-size: 14px;
+      font-size: 15px;
       color: var(--color-text-primary);
       cursor: pointer;
-      border-bottom: 2px solid transparent;
-      transition: all var(--param-transition-time);
+      transition: color var(--param-transition-time);
+
+      &::after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        bottom: 0;
+        width: 24px;
+        height: 3px;
+        border-radius: 3px;
+        background: var(--color-primary);
+        transform: translateX(-50%) scaleX(0);
+        transition: transform var(--param-transition-time);
+      }
 
       &:hover {
         color: var(--color-primary);
@@ -153,37 +172,63 @@ const onRegister = () => {
       &.active {
         color: var(--color-primary);
         font-weight: 600;
-        border-bottom-color: var(--color-primary);
+
+        &::after {
+          transform: translateX(-50%) scaleX(1);
+        }
       }
     }
   }
 
   .el-form {
     .el-form-item {
-      margin-bottom: 16px;
+      margin-bottom: 18px;
     }
 
     .el-input__wrapper {
-      border-radius: 6px;
+      border-radius: 8px;
       padding: 0 14px;
+      background-color: var(--color-text-background);
+      box-shadow: 0 0 0 1px var(--color-text-border) inset;
+      transition: box-shadow var(--param-transition-time), background-color var(--param-transition-time);
+
+      &:hover {
+        box-shadow: 0 0 0 1px var(--color-border25) inset;
+      }
+
+      &.is-focus {
+        background-color: #fff;
+        box-shadow: 0 0 0 1px var(--color-primary) inset, 0 0 0 3px var(--color-box-focus);
+      }
     }
 
     .el-input--large {
-      --el-input-height: 42px;
+      --el-input-height: 44px;
     }
 
     .hl-submit {
       width: 100%;
-      height: 42px;
-      margin-top: 4px;
+      height: 44px;
+      margin-top: 8px;
       font-size: 15px;
       font-weight: 600;
-      letter-spacing: 6px;
-      border-radius: 6px;
+      letter-spacing: 8px;
+      text-indent: 8px;
+      border-radius: 8px;
+      transition: box-shadow var(--param-transition-time), transform var(--param-transition-time);
+
+      &:hover {
+        box-shadow: 0 6px 16px rgba(194, 12, 12, 0.25);
+      }
+
+      &:active {
+        box-shadow: 0 2px 8px rgba(194, 12, 12, 0.2);
+        transform: translateY(1px);
+      }
     }
 
     .hl-register {
-      margin-top: 14px;
+      margin-top: 16px;
       text-align: center;
       font-size: 13px;
       color: var(--color-text-secondary);
@@ -191,6 +236,8 @@ const onRegister = () => {
       span {
         color: var(--color-primary);
         cursor: pointer;
+        font-weight: 500;
+        transition: color var(--param-transition-time);
 
         &:hover {
           color: var(--color-primary-hover);
@@ -203,32 +250,36 @@ const onRegister = () => {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 12px 0 8px;
+    padding: 16px 0 8px;
 
     .hl-qr-img {
-      width: 200px;
-      height: 200px;
+      width: 196px;
+      height: 196px;
       display: flex;
       align-items: center;
       justify-content: center;
-      border: 1px solid var(--color-text-border);
-      border-radius: 8px;
+      background: #fff;
+      border: 1px solid var(--color-text-divider);
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
       overflow: hidden;
 
       img {
         width: 100%;
         height: 100%;
+        display: block;
       }
     }
 
     .hl-qr-tip {
-      margin-top: 16px;
+      margin-top: 18px;
       font-size: 13px;
       color: var(--color-text-secondary);
+      text-align: center;
     }
 
     .el-button {
-      margin-top: 10px;
+      margin-top: 8px;
     }
   }
 }

@@ -31,10 +31,11 @@ const create = () => {
 
   //#region 二维码登录状态
   const _qrImg = ref<string>('');
-  const _qrTip = ref<string>('请使用网易云音乐 APP 扫码登录');
+  const _qrTip = ref<string>('请使用音乐 APP 扫码登录');
   /** 轮询定时器与二维码 key（非响应式状态） */
   let qrPolling: ReturnType<typeof setInterval> | null = null;
   let qrKey = '';
+  let qrFailCount = 0; // 连续轮询失败计数：超阈值给提示，避免长时间静默卡死
   //#endregion
 
   const show = () => {
@@ -139,7 +140,7 @@ const create = () => {
   /** 开始二维码登录：生成 key -> 生成二维码 -> 轮询 */
   const startQrLogin = async () => {
     stopQr();
-    _qrTip.value = '请使用网易云音乐 APP 扫码登录';
+    _qrTip.value = '请使用音乐 APP 扫码登录';
     try {
       const keyRes = await UserService.getQrKey();
       qrKey = keyRes?.unikey || '';
@@ -184,13 +185,14 @@ const create = () => {
       if (!qrKey) return;
       try {
         const res = await UserService.checkQr(qrKey);
+        qrFailCount = 0; // 任意正常响应都重置失败计数
         switch (res?.code) {
           case EQRSTATUS.过期:
             _qrTip.value = '二维码已过期，正在刷新...';
             startQrLogin();
             break;
           case EQRSTATUS.等待扫码:
-            _qrTip.value = '请使用网易云音乐 APP 扫码登录';
+            _qrTip.value = '请使用音乐 APP 扫码登录';
             break;
           case EQRSTATUS.待确认:
             _qrTip.value = '已扫码，请在手机上确认登录';
@@ -203,7 +205,14 @@ const create = () => {
             break;
         }
       } catch {
-        // 单次轮询失败忽略，继续下一次
+        // 轮询失败（网络/服务异常）：累计计数，超阈值提示并刷新，避免静默卡死
+        qrFailCount += 1;
+        if (qrFailCount >= 5) {
+          message.error('二维码登录请求异常，正在刷新');
+          _qrTip.value = '登录请求异常，正在刷新...';
+          qrFailCount = 0;
+          startQrLogin();
+        }
       }
     }, QR_POLL_INTERVAL);
   };

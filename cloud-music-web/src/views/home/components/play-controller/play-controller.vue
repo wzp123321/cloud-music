@@ -25,6 +25,7 @@
             ref="audioElement"
             :src="player.currentMusic.url || undefined"
             @timeupdate="player.onTimeUpdate"
+            @loadedmetadata="player.onLoadedMetadata"
             @ended="player.onEnded('next')"
             @error="player.onError"
           ></cm-audio>
