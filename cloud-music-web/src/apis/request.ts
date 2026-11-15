@@ -6,6 +6,7 @@ import axios, {
 } from 'axios';
 import serviceConfig from '@/config/request';
 import { getCookie, TOKEN_KEY } from '@/core/token';
+import { getNcmCookie } from '@/core/ncm-cookie';
 import message from '@/utils/message';
 
 // 统一 axios 单例：全项目共用，拦截器集中管理（token 注入 / 错误归一）
@@ -59,10 +60,73 @@ interface IRequestParams {
   options?: IRequestOptions;
 }
 
+// 上游返回的展示文案带第三方品牌名（榜单「网易云古典榜」、电台「网易每日轻松一刻」等）。
+// 统一在响应出口清洗字符串值，避免每个页面各自处理；字段名、URL、Blob 响应不受影响。
+const BRAND_TEXT_RULES: Array<[RegExp, string]> = [
+  [/网易云音乐/g, '音乐'],
+  [/网易出品/g, '独家出品'],
+  [/网易云?/g, ''],
+];
+
+const stripBrandText = <T>(value: T): T => {
+  if (typeof value === 'string') {
+    const text = value as unknown as string;
+    return BRAND_TEXT_RULES.reduce(
+      (acc, [pattern, replacement]) => acc.replace(pattern, replacement),
+      text,
+    ) as unknown as T;
+  }
+  if (Array.isArray(value)) {
+    const list = value as unknown as unknown[];
+    for (let i = 0; i < list.length; i += 1) {
+      list[i] = stripBrandText(list[i]);
+    }
+    return value;
+  }
+  if (value && typeof value === 'object') {
+    const proto = Object.getPrototypeOf(value);
+    if (proto === Object.prototype || proto === null) {
+      const record = value as unknown as Record<string, unknown>;
+      for (const key of Object.keys(record)) {
+        // cookie 是会话凭证（803 / login_refresh 的 body.cookie），不能被品牌文案清洗改写
+        if (key === 'cookie') {
+          continue;
+        }
+        record[key] = stripBrandText(record[key]);
+      }
+    }
+  }
+  return value;
+};
+
+/**
+ * 合并上游会话凭证：登录后所有接口都要带 cookie，否则上游仍按游客处理，
+ * /login/status 拿不到 profile、/song/url 只给 30 秒试听片段。
+ * 仅登录成功（803）后才会有值，未登录时不改动原请求参数。
+ */
+const withNcmCookie = (url: string, param: unknown, isForm: boolean): unknown => {
+  const cookie = getNcmCookie();
+  // 二维码生成/轮询必须保持匿名，带旧凭证会干扰上游。
+  // 其余接口（含 login/refresh、login/status、song/url）都带凭证：
+  // refresh 成功后 UserService 会把下游发回的新凭证写回本地，不会出现旧值覆盖新值。
+  if (!cookie || url.includes('/login/qr/')) {
+    return param;
+  }
+  if (isForm) {
+    (param as FormData).append('cookie', cookie);
+    return param;
+  }
+  if (param && typeof param === 'object') {
+    return { ...(param as Record<string, unknown>), cookie };
+  }
+  return { cookie };
+};
+
 // 底层请求：处理 FormData / JSON 的 Content-Type，并合并外部 options
 const publicReq = async (params: IRequestParams) => {
   const { url, method, param, options } = params;
   const isForm = typeof FormData !== 'undefined' && param instanceof FormData;
+  const payload = withNcmCookie(url, param, isForm);
   // 合并外部传入的 headers；FormData 场景交由 axios 自动设置 multipart boundary
   const headers = isForm
     ? { ...(options?.headers || {}) }
@@ -78,8 +142,8 @@ const publicReq = async (params: IRequestParams) => {
     method,
     ...options,
     headers,
-    [method === 'post' ? 'data' : 'params']: param,
-  }).then((res: AxiosResponse) => (res ? res.data : undefined));
+    [method === 'post' ? 'data' : 'params']: payload,
+  }).then((res: AxiosResponse) => stripBrandText(res ? res.data : undefined));
 };
 
 // 单个请求（带超时 race）

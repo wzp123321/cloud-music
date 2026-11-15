@@ -1,6 +1,6 @@
-# NeteaseCloudMusicApi
+# Cloud Music API
 
-网易云音乐 NodeJS 版 API
+Cloud Music API
 
 ## 灵感来自
 
@@ -134,7 +134,7 @@
 116. batch 批量请求接口
 117. 获取视频标签列表
 118. 全部 mv
-119. 网易出品 mv
+119. 独家出品 mv
 120. 收藏/取消收藏专辑
 121. 专辑动态信息
 122. 热搜列表(详细)
@@ -288,7 +288,7 @@
 270. 播客声音搜索
 271. 播客声音排序
 272. 播客列表详情
-273. 本地歌曲文件匹配网易云歌曲信息
+273. 本地歌曲文件匹配歌曲信息
 274. 歌曲音质详情
 275. 歌曲红心数量
 276. 私人 FM 模式选择
@@ -392,7 +392,7 @@ $ npm install
 $ node app.js
 ```
 
-服务器启动默认端口为 3000, 若不想使用 3000 端口 , 可使用以下命令 : Mac/Linux
+服务器启动默认端口为 19830, 若不想使用 19830 端口 , 可使用以下命令 : Mac/Linux
 
 ```shell
 $ PORT=4000 node app.js
@@ -477,7 +477,7 @@ export PORT=9000
 
 ```javascript
 // 例子
-const url = `http://localhost:3000/song/url?id=33894312&proxy=http://121.196.226.246:84`
+const url = `http://localhost:19830/song/url?id=33894312&proxy=http://121.196.226.246:84`
 fetch(url).then(function () {
   // do what you want
 })
@@ -539,18 +539,18 @@ request 相关的环境变量
 ```shell
 docker pull binaryify/netease_cloud_music_api
 
-docker run -d -p 3000:3000 --name netease_cloud_music_api    binaryify/netease_cloud_music_api
+docker run -d -p 19830:19830 --name netease_cloud_music_api    binaryify/netease_cloud_music_api
 
 
 // 或者
-docker run -d -p 3000:3000 binaryify/netease_cloud_music_api
+docker run -d -p 19830:19830 binaryify/netease_cloud_music_api
 
 // 去掉或者设置相关的环境变量
 
-docker run -d -p 3000:3000 --name netease_cloud_music_api -e http_proxy= -e https_proxy= -e no_proxy= -e HTTP_PROXY= -e HTTPS_PROXY= -e NO_PROXY= binaryify/netease_cloud_music_api
+docker run -d -p 19830:19830 --name netease_cloud_music_api -e http_proxy= -e https_proxy= -e no_proxy= -e HTTP_PROXY= -e HTTPS_PROXY= -e NO_PROXY= binaryify/netease_cloud_music_api
 
 // 或者
-docker run -d -p 3000:3000 -e http_proxy= -e https_proxy= -e no_proxy= -e HTTP_PROXY= -e HTTPS_PROXY= -e NO_PROXY= binaryify/netease_cloud_music_api
+docker run -d -p 19830:19830 -e http_proxy= -e https_proxy= -e no_proxy= -e HTTP_PROXY= -e HTTPS_PROXY= -e NO_PROXY= binaryify/netease_cloud_music_api
 ```
 
 > 以下是自行 build docker 镜像方式
@@ -560,7 +560,7 @@ $ git clone https://gitlab.com/Binaryify/neteasecloudmusicapi.git && cd NeteaseC
 
 $ sudo docker build . -t netease-music-api
 
-$ sudo docker run -d -p 3000:3000 netease-music-api
+$ sudo docker run -d -p 19830:19830 netease-music-api
 ```
 
 ## 接口文档
@@ -571,14 +571,14 @@ $ sudo docker run -d -p 3000:3000 netease-music-api
 
 !> 为使用方便,降低门槛, 文档示例接口直接使用了 GET 请求,本项目同时支持 GET/POST 请按实际需求使用 (POST 请求 url 必须添加时间戳,使每次请求 url 不一样,不然请求会被缓存)
 
-!> 由于接口做了缓存处理 ( 缓存 2 分钟,不缓存数据极容易引起网易服务器高频 ip 错误 , 可在 app.js 设置 , 可能会导致登录后获取不到 cookie), **相同的 url** 会在两分钟内只向网易服务器发一次请求 , 如果遇到不需要缓
+!> 由于接口做了缓存处理 ( 缓存 2 分钟,不缓存数据极容易引起服务器高频 ip 错误 , 可在 app.js 设置 , 可能会导致登录后获取不到 cookie), **相同的 url** 会在两分钟内只向服务器发一次请求 , 如果遇到不需要缓
 存结果的接口 , 可在请求 url 后面加一个时间戳参数使 url 不同 , 例子 :
 `/simi/playlist?id=347230&timestamp=1503019930000` (之所以加入缓存机制是因为项目早期没有缓存机制，很多 issues 都是报 IP 高频，请按自己需求改造缓存中间件(app.js)，源码不复杂)
 
 !> 不要频繁调登录接口,不然可能会被风控,登录状态还存在就不要重复调登录接口
 
 !> 如果是跨域请求 , 请在所有请求带上 `xhrFields: { withCredentials: true }` (axios 为 `withCredentials: true`, Fetch API 为 `fetch(url, { credentials: 'include' })`), 或直接手动传入 cookie (参见 `登录`), 否则
-可能会因为没带上 cookie 导致 301, 具体例子可看 `public/test.html`, 访问`http://localhost:3000/test.html`(默认端口的话) 例子使用 jQuery 和 axios
+可能会因为没带上 cookie 导致 301, 具体例子可看 `public/test.html`, 访问`http://localhost:19830/test.html`(默认端口的话) 例子使用 jQuery 和 axios
 
 !> 301 错误基本都是没登录就调用了需要登录的接口,如果登录了还是提示 301, 基本都是缓存把数据缓存起来了,解决方法是加时间戳或者等待 2 分钟或者重启服务重新登录后再调用接口,可自行改造缓存方法
 
@@ -588,7 +588,7 @@ $ sudo docker run -d -p 3000:3000 netease-music-api
 
 !> 文档可能会有缓存 , 如果文档版本和 github 上的版本不一致,请清除缓存再查看
 
-!> 由于网易限制,此项目在国外服务器或部分国内云服务上使用会受到限制,如 `460 cheating异常`,如需解决 , 可使用`realIP`参数,传进国内IP解决,如:`?realIP=116.25.146.177`
+!> 由于限制,此项目在国外服务器或部分国内云服务上使用会受到限制,如 `460 cheating异常`,如需解决 , 可使用`realIP`参数,传进国内IP解决,如:`?realIP=116.25.146.177`
 即可解决
 
 !> 图片加上 `?param=宽y高` 可控制图片尺寸，如 `http://p4.music.126.net/JzNK4a5PjjPIXAgVlqEc5Q==/109951164154280311.jpg?param=200y200`, `http://p4.music.126.net/JzNK4a5PjjPIXAgVlqEc5Q==/109951164154280311.jpg?param=50y50`
@@ -605,7 +605,7 @@ $ sudo docker run -d -p 3000:3000 netease-music-api
 
 不要频繁调登录接口,不然可能会被风控,登录状态还存在就不要重复调登录接口
 
-~~因网易增加了网易云盾验证,密码登录暂时不要使用,尽量使用短信验证码登录和二维码登录,否则调用某些接口会触发需要验证的错误~~
+~~因增加了盾验证,密码登录暂时不要使用,尽量使用短信验证码登录和二维码登录,否则调用某些接口会触发需要验证的错误~~
 
 #### 1. 手机登录
 
@@ -633,7 +633,7 @@ $ sudo docker run -d -p 3000:3000 netease-music-api
 
 **必选参数 :**
 
-`email`: 163 网易邮箱
+`email`: 163 邮箱
 
 `password`: 密码
 
@@ -702,9 +702,9 @@ body {
 
 调用可参考项目文件例子
 
-`/public/qrlogin.html` (访问地址:http://localhost:3000/qrlogin.html)
+`/public/qrlogin.html` (访问地址:http://localhost:19830/qrlogin.html)
 
-`/public/qrlogin-nocookie.html` (访问地址:http://localhost:3000/qrlogin-nocookie.html)
+`/public/qrlogin-nocookie.html` (访问地址:http://localhost:19830/qrlogin-nocookie.html)
 
 
 #### 3. 游客登录
@@ -754,7 +754,7 @@ body {
 
 ### 注册(修改密码)
 
-说明 : 调用此接口 ,传入手机号码和验证码,密码,昵称, 可注册网易云音乐账号(同时可修改密码)
+说明 : 调用此接口 ,传入手机号码和验证码,密码,昵称, 可注册音乐账号(同时可修改密码)
 
 **必选参数 :**
 
@@ -1319,7 +1319,7 @@ tags: 歌单标签
 
 ### 获取动态列表
 
-说明 : 调用此接口 , 可获取各种动态 , 对应网页版网易云，朋友界面里的各种动态消息
+说明 : 调用此接口 , 可获取各种动态 , 对应网页版，朋友界面里的各种动态消息
 ，如分享的视频，音乐，照片等！
 
 **必选参数 :**
@@ -1565,7 +1565,7 @@ tags: 歌单标签
 
 ### 获取歌单所有歌曲
 
-说明 : 由于网易云接口限制，歌单详情只会提供 10 首歌，通过调用此接口，传入对应的歌单`id`，即可获得对应的所有歌曲
+说明 : 由于接口限制，歌单详情只会提供 10 首歌，通过调用此接口，传入对应的歌单`id`，即可获得对应的所有歌曲
 
 **必选参数 :** `id` : 歌单 id
 
@@ -2398,18 +2398,18 @@ id: u64, 歌曲ID
 pst: 0，功能未知
 t: enum,
   0: 一般类型
-  1: 通过云盘上传的音乐，网易云不存在公开对应
+  1: 通过云盘上传的音乐，不存在公开对应
     如果没有权限将不可用，除了歌曲长度以外大部分信息都为null。
     可以通过 `/api/v1/playlist/manipulate/tracks` 接口添加到播放列表。
     如果添加到“我喜欢的音乐”，则仅自己可见，除了长度以外各种信息均为未知，且无法播放。
     如果添加到一般播放列表，虽然返回code 200，但是并没有效果。
     网页端打开会看到404画面。
     属于这种歌曲的例子: https://music.163.com/song/1345937107
-  2: 通过云盘上传的音乐，网易云存在公开对应
+  2: 通过云盘上传的音乐，存在公开对应
     如果没有权限则只能看到信息，但无法直接获取到文件。
     可以通过 `/api/v1/playlist/manipulate/tracks` 接口添加到播放列表。
     如果添加到“我喜欢的音乐”，则仅自己可见，且无法播放。
-    如果添加到一般播放列表，则自己会看到显示“云盘文件”，且云盘会多出其对应的网易云公开歌曲。其他人看到的是其对应的网易云公开歌曲。
+    如果添加到一般播放列表，则自己会看到显示“云盘文件”，且云盘会多出其对应的公开歌曲。其他人看到的是其对应的公开歌曲。
     网页端打开会看到404画面。
     属于这种歌曲的例子: https://music.163.com/song/435005015
 ar: Vec<Artist>, 歌手列表
@@ -2833,7 +2833,7 @@ privilege:权限相关信息
 
 **可选参数 :**
 `area`: 地区,可选值为全部,内地,港台,欧美,日本,韩国,不填则为全部
-`type`: 类型,可选值为全部,官方版,原生,现场版,网易出品,不填则为全部
+`type`: 类型,可选值为全部,官方版,原生,现场版,独家出品,不填则为全部
 
 `order`: 排序,可选值为上升最快,最热,最新,不填则为上升最快
 
@@ -2858,9 +2858,9 @@ privilege:权限相关信息
 
 **调用例子 :** `/mv/first?limit=10`
 
-### 网易出品 mv
+### 独家出品 mv
 
-说明 : 调用此接口 , 可获取网易出品 mv
+说明 : 调用此接口 , 可获取独家出品 mv
 
 **可选参数 :** `limit`: 取出数量 , 默认为 30
 
@@ -2962,7 +2962,7 @@ privilege:权限相关信息
 
 说明 : 调用此接口 , 传入 mvid ( 在搜索音乐的时候传 type=1004 获得 ) , 可获取对应
 MV 数据 , 数据包含 mv 名字 , 歌手 , 发布时间 , mv 视频地址等数据 , 其中 mv 视频
-网易做了防盗链处理 , 可能不能直接播放 , 需要播放的话需要调用 ' mv 地址' 接口
+做了防盗链处理 , 可能不能直接播放 , 需要播放的话需要调用 ' mv 地址' 接口
 
 **必选参数 :** `mvid`: mv 的 id
 
@@ -3170,7 +3170,7 @@ type : 地区
 
 参考: https://github.com/binaryify/NeteaseCloudMusicApi/blob/main/public/cloud.html
 
-访问地址: http://localhost:3000/cloud.html
+访问地址: http://localhost:19830/cloud.html
 
 支持命令行调用,参考 module_example 目录下`song_upload.js`
 
@@ -3206,7 +3206,7 @@ type : 地区
 
 **必选参数 :**
 
-- `cookie`: 网易云音乐 Cookie (在请求体中传递)
+- `cookie`: 音乐 Cookie (在请求体中传递)
 - `md5`: 文件 MD5 值
 - `fileSize`: 文件大小(字节)
 - `filename`: 文件名
@@ -3232,7 +3232,7 @@ type : 地区
 
 **必选参数 :**
 
-- `cookie`: 网易云音乐 Cookie (在请求体中传递)
+- `cookie`: 音乐 Cookie (在请求体中传递)
 - `songId`: 歌曲 ID
 - `resourceId`: 资源 ID
 - `md5`: 文件 MD5
@@ -3936,7 +3936,7 @@ type='1009' 获取其 id, 如`/search?keywords= 代码时间 &type=1009`
 
 代码可参考: https://gitlab.com/Binaryify/NeteaseCloudMusicApi/blob/main/public/listen_together_host.html
 
-访问地址: http://localhost:3000/listen_together_host.html
+访问地址: http://localhost:19830/listen_together_host.html
 
 从机模式: 待整理
 
@@ -4194,7 +4194,7 @@ type='1009' 获取其 id, 如`/search?keywords= 代码时间 &type=1009`
 
 ### 歌曲相关视频
 
-说明： 可以调用此接口获取歌曲相关视频 (区别于 MV)， 有些歌曲没有 MV 但是有用户上传的与此歌曲相关的 Mlog。 此功能仅在 网易云音乐 APP 上存在。
+说明： 可以调用此接口获取歌曲相关视频 (区别于 MV)， 有些歌曲没有 MV 但是有用户上传的与此歌曲相关的 Mlog。 此功能仅在 音乐 APP 上存在。
 
 请注意：此接口偶尔会在相关视频后返回不相关视频，请合理使用。
 
@@ -4860,7 +4860,7 @@ qrCodeStatus:20,detailReason:0  验证成功qrCodeStatus:21,detailReason:0 二�
 
 **调用例子 :** `/summary/annual?year=2024`
 
-### 本地歌曲文件匹配网易云歌曲信息
+### 本地歌曲文件匹配歌曲信息
 
 说明: 调用此接口可以为本地歌曲文件搜索匹配歌曲ID、专辑封面等信息
 
@@ -4964,7 +4964,7 @@ qrCodeStatus:20,detailReason:0  验证成功qrCodeStatus:21,detailReason:0 二�
 
 1.文件已经有用户上传至云盘
 
-2.文件是网易云音乐自己的音源
+2.文件是音乐自己的音源
 
 **必选参数 :**
 
@@ -5673,13 +5673,13 @@ let data = encodeURIComponent(
 
 ### 获取当前登录用户的全部可枚举动态
 
-说明 : 登录后调用此接口，会组合 `/user/account` 与 `/user/event` 的原子能力：先从 Cookie 取得当前用户 id，再自动跟随 `lasttime` 游标读取至 `more=false`。接口返回网易云允许当前用户本人查看的公开及非公开动态，不能读取其他用户的私密动态。
+说明 : 登录后调用此接口，会组合 `/user/account` 与 `/user/event` 的原子能力：先从 Cookie 取得当前用户 id，再自动跟随 `lasttime` 游标读取至 `more=false`。接口返回允许当前用户本人查看的公开及非公开动态，不能读取其他用户的私密动态。
 
 本接口不接受 `limit` 或 `lasttime`，一次请求会完成全部上游分页。账号动态较多时，请预留足够的请求时间。
 
 数量字段说明：
 
-- `size`：网易云返回的账户统计数量，可能包含已删除、被屏蔽、资源失效或旧类型且不再下发的记录。
+- `size`：返回的账户统计数量，可能包含已删除、被屏蔽、资源失效或旧类型且不再下发的记录。
 - `retrievedCount`：本次实际取得的唯一动态数量，始终等于 `events.length`。
 - `unavailableCount`：`size - retrievedCount` 的正差值；缺失记录没有返回 id，无法继续读取或修改。
 - `sizeMismatch`：`size` 与 `retrievedCount` 是否不一致。若上游未返回 `size`，相关字段为 `null`。
@@ -6223,7 +6223,7 @@ let data = encodeURIComponent(
 
 ### 上报设备中心设备名称
 
-说明: 登录后调用此接口, 传入 `deviceName`, 可修改当前设备在网易云登录设备管理列表里显示的名称
+说明: 登录后调用此接口, 传入 `deviceName`, 可修改当前设备在登录设备管理列表里显示的名称
 
 **必选参数 :** `deviceName`: 期望展示的设备名称
 

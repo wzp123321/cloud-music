@@ -8,9 +8,10 @@ import { Common_IMusic } from '@/apis/common/index.api';
 const LIST_STORAGE_KEY = 'cloud-music-list';
 
 enum EPath {
-  // v1 以 level 区分音质(standard/exhigh/lossless/hires/sky/jymaster)，对非会员也能拿到 standard 可用音源，
-  // 相比旧 /song/url(靠 br) 在部分受限曲目上更稳、更易拿到完整音源。
-  查询歌曲地址 = '/song/url/v1',
+  // 旧接口以 br 指定码率；实测上游 /song/url/v1 对多数曲目返回 -460「网络环境存在风险」，
+  // 反而是旧接口能稳定拿到完整音源，故旧接口优先、v1 兜底。
+  查询歌曲地址 = '/song/url',
+  查询歌曲地址V1 = '/song/url/v1',
 }
 
 export const usePlaylistStore = defineStore(
@@ -19,17 +20,62 @@ export const usePlaylistStore = defineStore(
     // 队列唯一真相源：合并原 Player._musicList 与 PlayListService._musicList
     const musicList = ref<PL_PlayVO[]>([]);
 
+    interface ISongUrlItem {
+      url?: string;
+      time?: number;
+      freeTrialInfo?: unknown;
+    }
+    interface ISongUrlRes {
+      data?: ISongUrlItem[];
+      code?: number;
+    }
+
     /**
      * 查询歌曲可播放地址，接口异常时返回空串。
-     * 走 /song/url/v1 + level：v1 接受 { id, level }，返回的 data[0].url 即 CDN 直链。
+     *
+     * 两个坑（实测）：
+     * 1. 上游 /song/url/v1 对多数曲目返回 -460「网络环境存在风险」，旧 /song/url?br= 反而稳定，
+     *    所以旧接口优先、v1 兜底，取其中 audio 时长更长（非试听片段）的那个。
+     * 2. 服务端 apicache 对所有 HTTP 200 缓存 2 分钟，键含完整 URL；-460 / 空结果也是 200，
+     *    不带唯一参数时一次失败会被缓存住，导致「这首歌一直播不了」。故必须带 t。
+     * 登录凭证由 request.ts 统一以 cookie 参数注入，登录后上游才会返回完整音源而非 30 秒试听。
      */
     const queryMusicUrl = async (id: string): Promise<string> => {
-      try {
-        const res = await getRequest(EPath.查询歌曲地址, { id, level: 'standard' });
-        return res?.data?.[0]?.url ?? '';
-      } catch {
+      const t = Date.now();
+      const candidates: ISongUrlItem[] = [];
+      const requests: Array<[string, Record<string, unknown>]> = [
+        [EPath.查询歌曲地址, { id, br: 128000, t }],
+        [EPath.查询歌曲地址V1, { id, level: 'standard', t: t + 1 }],
+      ];
+      for (const [path, param] of requests) {
+        try {
+          const res = await getRequest<ISongUrlRes>(path, param);
+          // 顶层 code 非 200 且无 data 时视为上游风控拒绝，继续试下一个接口
+          const item = res?.data?.[0];
+          if (item?.url) {
+            candidates.push(item);
+            // 旧接口已给出完整音源：直接返回，不再打 v1（少一次请求、少一次风控）
+            if (!item.freeTrialInfo && (item.time ?? 0) > 0) {
+              break;
+            }
+          }
+        } catch {
+          // 单个接口失败不影响另一个
+        }
+      }
+      if (!candidates.length) {
         return '';
       }
+      // 优先「非试听且时长更长」的音源：试听片段 time 通常只有 30 秒左右
+      candidates.sort((a, b) => {
+        const aTrial = a.freeTrialInfo ? 1 : 0;
+        const bTrial = b.freeTrialInfo ? 1 : 0;
+        if (aTrial !== bTrial) {
+          return aTrial - bTrial;
+        }
+        return (b.time ?? 0) - (a.time ?? 0);
+      });
+      return candidates[0].url ?? '';
     };
 
     /** 加入队列：已存在返回原索引；否则补齐 url 后插入队首并返回 0 */

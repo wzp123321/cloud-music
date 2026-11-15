@@ -47,7 +47,7 @@ const groups: { title: string; items: CapabilityItem[] }[] = [
     items: [
       { title: '新碟与数字专辑', path: '/album', desc: '新碟、最新专辑、风格馆、销量榜' },
       { title: '歌手', path: '/artists', desc: '歌手分类、关注歌手新歌与新 MV' },
-      { title: 'MV', path: '/mv', desc: '全部 MV、网易出品、最新 MV、收藏' },
+      { title: 'MV', path: '/mv', desc: '全部 MV、独家出品、最新 MV、收藏' },
       { title: '个性化发现', path: '/discovery', desc: '个性化推荐、风格分类、歌单页、mlog 与热题' },
       { title: '歌曲互动与播放记录', path: '/play-interaction', desc: '红心、私人 FM、智能播放、歌曲信息、历史记录' },
       { title: '消息中心', path: '/message', desc: '评论/@我/通知/私信、分享与发评论' },

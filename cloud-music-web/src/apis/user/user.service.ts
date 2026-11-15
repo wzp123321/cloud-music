@@ -1,3 +1,4 @@
+import { mergeNcmCookie } from '@/core/ncm-cookie';
 import { getRequest, postRequest, postFormRequest, unwrapData } from '../request';
 import {
   EUserPath,
@@ -143,15 +144,35 @@ class UserService {
   //#endregion
 
   //#region 登录状态保持
-  /** 刷新登录态 */
+  /**
+   * 刷新登录态：上游会在 body.cookie 里下发续期后的凭证，同步回本地，
+   * 否则后续请求仍带旧凭证（query.cookie 优先级高于浏览器 Cookie）会慢慢失效。
+   * 带 t 绕过服务端 apicache。
+   */
   public async loginRefresh() {
-    return postRequest(EUserPath.登录刷新);
+    const res = await postRequest<{ code?: number; cookie?: string }>(EUserPath.登录刷新, {
+      t: Date.now(),
+    });
+    if (res?.cookie) {
+      mergeNcmCookie(res.cookie);
+    }
+    return res;
   }
 
-  /** 查询当前登录状态 */
+  /**
+   * 查询当前登录状态。
+   * 上游 /login/status 把 code、profile 包在 data 里（{"data":{"code":200,"profile":...}}），
+   * 顶层没有 code；而调用方统一按 res.code === 200 判定，故在此归一化成顶层 code。
+   * 带唯一 t 绕过服务端 2 分钟 apicache：否则游客态响应会被缓存，扫码成功后仍读到游客态。
+   */
   public async loginStatus() {
-    const res = await getRequest<UC_LoginStatus>(EUserPath.登录状态);
-    return (res ?? {}) as UC_LoginStatus;
+    const res = await getRequest<UC_LoginStatus>(EUserPath.登录状态, { t: Date.now() });
+    const body = (res ?? {}) as UC_LoginStatus;
+    const inner = (body.data ?? {}) as { code?: number; [key: string]: unknown };
+    return {
+      ...body,
+      code: body.code ?? inner.code,
+    } as UC_LoginStatus;
   }
   //#endregion
 }

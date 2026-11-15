@@ -393,7 +393,7 @@ async function constructServer(moduleDefs) {
  * @returns {Promise<import('express').Express & ExpressExtension>}
  */
 async function serveNcmApi(options) {
-  const port = Number(options.port || process.env.PORT || '3000')
+  const port = Number(options.port || process.env.PORT || '19830')
   const host = options.host || process.env.HOST || ''
 
   const spinner = createConsoleSpinner('服务启动中')

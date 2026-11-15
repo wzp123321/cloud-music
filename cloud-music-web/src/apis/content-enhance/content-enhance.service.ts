@@ -177,7 +177,7 @@ const contentEnhanceService = {
       offset: params.offset || 0,
     });
   },
-  /** 网易出品（独家推荐） */
+  /** 独家出品（独家推荐） */
   async getMvExclusiveRcmd(params: { limit?: number; offset?: number } = {}): Promise<MvListRes> {
     return await getRequest('/mv/exclusive/rcmd', { limit: params.limit || 30, offset: params.offset || 0 });
   },

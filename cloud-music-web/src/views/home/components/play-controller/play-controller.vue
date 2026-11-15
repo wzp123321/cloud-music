@@ -31,10 +31,10 @@
           ></cm-audio>
 
           <div class="flex-row-justify-center mb8">
-            <span class="np-song" @click="linkToDetail">{{ player.currentMusic.name ? player.currentMusic.name : '云音乐' }}</span>
+            <span class="np-song" @click="linkToDetail">{{ player.currentMusic.name ? player.currentMusic.name : '暂无播放' }}</span>
             <div>
               <span>{{ formatDuration(player.playTimestamp) }}</span> /
-              <span>{{ formatDuration(player.currentMusic.dt) }}</span>
+              <span>{{ formatDuration(player.displayDuration) }}</span>
             </div>
           </div>
           <el-slider

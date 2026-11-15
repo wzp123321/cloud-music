@@ -110,7 +110,7 @@ const page = ref<number>(1);
       message.success('添加成功');
     };
 
-    /** 点歌名/详情 → 先播放该歌曲，再打开播放页（与网易云一致） */
+    /** 点歌名/详情 → 先播放该歌曲，再打开播放页（与主流播放器一致） */
     const linkToDetailPage = (id: number) => {
       const item = props.dataSource.find((music) => music.id === id);
       if (item) {

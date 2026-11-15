@@ -30,6 +30,7 @@ declare module 'vue' {
     CmTable: typeof import('./src/components/cm-table/cm-table.vue')['default']
     CmTextarea: typeof import('./src/components/cm-textarea/cm-textarea.vue')['default']
     CmVideo: typeof import('./src/components/cm-video/cm-video.vue')['default']
+    ElAvatar: typeof import('element-plus/es')['ElAvatar']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElDialog: typeof import('element-plus/es')['ElDialog']
     ElForm: typeof import('element-plus/es')['ElForm']
@@ -38,6 +39,7 @@ declare module 'vue' {
     ElPopover: typeof import('element-plus/es')['ElPopover']
     ElRadio: typeof import('element-plus/es')['ElRadio']
     ElRadioGroup: typeof import('element-plus/es')['ElRadioGroup']
+    ElTag: typeof import('element-plus/es')['ElTag']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }

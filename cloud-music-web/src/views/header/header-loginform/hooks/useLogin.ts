@@ -1,6 +1,7 @@
 import { useSingletonStore } from "@/store/singletons";
 import { ref, watch } from 'vue';
 
+import { setNcmCookie } from '@/core/ncm-cookie';
 import { postRequest } from '@/apis/request';
 import { ELOGINTYPE, EQRSTATUS, Header_ILoginVO, HL_LoginUserVO } from '../../../../apis/header-loginform/index.api';
 import UserService from '@/apis/user/user.service';
@@ -95,6 +96,10 @@ const create = () => {
       if (res?.code !== 200) {
         message.error(res?.message);
       } else {
+        // 与扫码 803 同理：/login/cellphone 的 body.cookie 才是上游会话凭证
+        if (res?.cookie) {
+          setNcmCookie(res.cookie);
+        }
         message.success('登录成功');
         onLoginSuccess(res?.profile);
       }
@@ -112,6 +117,10 @@ const create = () => {
       if (res?.code !== 200) {
         message.error(res?.message);
       } else {
+        // /login 的 body.cookie 才是上游会话凭证
+        if (res?.cookie) {
+          setNcmCookie(res.cookie);
+        }
         message.success('登录成功');
         onLoginSuccess(res?.profile);
       }
@@ -199,6 +208,11 @@ const create = () => {
             break;
           case EQRSTATUS.成功:
             stopQr();
+            // 803 才会一次性返回真实会话凭证；必须先落盘再查 /login/status，
+            // 否则后续请求仍是游客态（profile 为 null、音源只给试听片段）。
+            if (res.cookie) {
+              setNcmCookie(res.cookie);
+            }
             await onQrLoginSuccess();
             break;
           default:

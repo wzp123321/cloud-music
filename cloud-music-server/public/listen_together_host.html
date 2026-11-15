@@ -111,7 +111,7 @@
         },
       })
       if (res.data.data.code != 200) {
-        alert('请先使用登录 API 登录到网易云音乐')
+        alert('请先使用登录 API 登录到音乐服务')
       } else {
         this.account.userId = res.data.data.profile.userId
         this.account.nickname = res.data.data.profile.nickname

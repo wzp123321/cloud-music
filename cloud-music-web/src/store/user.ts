@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 import { getCookie, setCookie, TOKEN_KEY } from '@/core/token';
+import { clearNcmCookie } from '@/core/ncm-cookie';
 import { postRequest } from '@/apis/request';
 import UserService from '@/apis/user/user.service';
 import { HL_LoginUserVO } from '@/apis/header-loginform/index.api';
@@ -35,10 +36,12 @@ export const useUserStore = defineStore('user', () => {
 
   /** 退出登录：调用后端并清空本地态 */
   const logout = async () => {
+    // /logout 需要携带上游凭证才能真正在服务端失效，所以先请求、再清本地
     const res = await postRequest('/logout');
     token.value = '';
     profile.value = null;
     setCookie(TOKEN_KEY, '');
+    clearNcmCookie();
     return res;
   };
 

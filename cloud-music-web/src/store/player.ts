@@ -33,12 +33,16 @@ export const usePlayerStore = defineStore(
     /** 歌词按歌曲缓存：避免暂停→恢复、单曲循环重复请求 /lyric 并 reset 导致歌词闪烁 */
     const lyricRawCache = new Map<number, string>();
     let lyricLoadedId = 0;
+    /** 试听片段提示按歌曲只弹一次，避免单曲循环时反复刷提示 */
+    let trialTipShownFor = 0;
 
     /** 当前歌曲从队列派生，不再额外维护一份副本 */
     const currentMusic = computed<Common_IMusic>(
       () => playlist.musicList[currentIndex.value] ?? EMPTY_MUSIC,
     );
     const playTypes = PLAY_TYPES;
+    /** 展示用总时长：真实音源时长优先，接口 dt 兜底。试听片段时避免显示 5:00 却 0:30 就结束 */
+    const displayDuration = computed(() => realDuration.value || currentMusic.value.dt || 0);
 
     /** 组件挂载后注入音频元素，并同步音量 / 静音态 */
     const bindAudio = (el: HTMLAudioElement | null) => {
@@ -85,7 +89,7 @@ export const usePlayerStore = defineStore(
       if (resetFlag) {
         el.currentTime = 0;
       }
-      document.title = currentMusic.value.name || '云音乐';
+      document.title = currentMusic.value.name || 'Cloud Music';
       // :src 是响应式绑定：切歌、还原持久化队列、补拉限时 url 都会改它。
       // 必须等 Vue 把 src patch 到 DOM 后再 play()，否则会在无 src 的 <audio> 上调用 play()
       // 并被浏览器拒绝，表现为「刷新后第一次点播放没声音，要再点一次」。
@@ -155,13 +159,18 @@ export const usePlayerStore = defineStore(
       }
       const el = audioEl.value;
       const dt = currentMusic.value.dt || 0;
-      // 片段检测：真实时长显著小于接口时长（试听/受限音源）。若仍按播放模式静默切下一首，
-      // 会表现为「唱到一半就跳歌」；这里改为停止并提示，把选择权交回用户。
-      if (el && realDuration.value && dt && realDuration.value < dt * 0.9) {
-        isPlaying.value = false;
-        el.pause();
-        message.info('当前为试听片段，已停止播放');
-        return;
+      // 片段检测：真实时长显著小于接口时长（试听/受限音源）。上游只给 30 秒片段时，
+      // 不能把整个队列停死（表现为「播一半就没了」），给一次明确提示后仍按播放模式推进。
+      // 完整音源要靠登录态（request.ts 统一带 cookie）与可用的音源接口，见 playlist.queryMusicUrl。
+      if (
+        el &&
+        realDuration.value &&
+        dt &&
+        realDuration.value < dt * 0.9 &&
+        trialTipShownFor !== currentMusic.value.id
+      ) {
+        trialTipShownFor = currentMusic.value.id;
+        message.info('该歌曲仅提供试听片段，登录或开通会员后可听完整版');
       }
       const type = PLAY_TYPE_KEYS[playTypeIndex.value % PLAY_TYPE_KEYS.length];
       switch (type) {
@@ -253,8 +262,10 @@ export const usePlayerStore = defineStore(
     const seek = (value?: number | number[]) => {
       dragging.value = false;
       const el = audioEl.value;
-      const dt = currentMusic.value.dt || 0;
-      if (!el || !dt) {
+      // 跳转基准必须与 onTimeUpdate 计算 progress 的分母一致，否则试听片段（真实 30s、
+      // 接口 dt 5 分钟）时点一下进度条就 seek 到音频之外，立刻触发 ended / 播放失败。
+      const total = realDuration.value || currentMusic.value.dt || 0;
+      if (!el || !total) {
         return;
       }
       // change 的 payload 才是权威值；中途 progress 可能被滞后的 timeupdate 覆盖，
@@ -263,7 +274,7 @@ export const usePlayerStore = defineStore(
       const percent =
         typeof changed === 'number' && Number.isFinite(changed) ? changed : progress.value;
       progress.value = Math.max(0, Math.min(100, percent));
-      const timeMs = Math.max(0, Math.min(dt, (progress.value / 100) * dt));
+      const timeMs = Math.max(0, Math.min(total, (progress.value / 100) * total));
       el.currentTime = timeMs / 1000;
       playTimestamp.value = timeMs;
       lyric.syncPanel(timeMs);
@@ -283,16 +294,14 @@ export const usePlayerStore = defineStore(
     /** 跳转到指定毫秒位置（用于点击歌词行） */
     const seekTo = (timeMs: number) => {
       const el = audioEl.value;
-      const dt = currentMusic.value.dt || 0;
-      if (!el || !dt) {
+      const total = realDuration.value || currentMusic.value.dt || 0;
+      if (!el || !total) {
         return;
       }
-      el.currentTime = Math.max(0, Math.min(timeMs, dt)) / 1000;
-      playTimestamp.value = timeMs;
-      progress.value = Math.min(
-        100,
-        Math.round((timeMs / dt) * 100),
-      );
+      const target = Math.max(0, Math.min(timeMs, total));
+      el.currentTime = target / 1000;
+      playTimestamp.value = target;
+      progress.value = Math.min(100, Math.round((target / total) * 100));
       lyric.syncPanel(timeMs);
     };
 
@@ -397,6 +406,7 @@ export const usePlayerStore = defineStore(
       errorList,
       currentMusic,
       playTypes,
+      displayDuration,
       bindAudio,
       play,
       onEnded,

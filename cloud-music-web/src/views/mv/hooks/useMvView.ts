@@ -14,7 +14,7 @@ export const useMvView = () => {
 
   const tabs: { code: TabCode; name: string }[] = [
     { code: 'all', name: '全部 MV' },
-    { code: 'exclusive', name: '网易出品' },
+    { code: 'exclusive', name: '独家出品' },
     { code: 'first', name: '最新 MV' },
   ];
 

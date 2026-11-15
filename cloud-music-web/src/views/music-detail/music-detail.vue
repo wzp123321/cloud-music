@@ -11,7 +11,7 @@
     <header class="md-header">
       <cm-icon name="icon-fanhui" title="返回" @click="goBack"></cm-icon>
       <div class="md-head-title">
-        <span class="t-name">{{ player.currentMusic.name || '云音乐' }}</span>
+        <span class="t-name">{{ player.currentMusic.name || '暂无播放' }}</span>
         <span class="t-artist"> - {{ player.currentMusic.artist || '未知歌手' }}</span>
       </div>
     </header>
@@ -30,7 +30,7 @@
       <section class="md-right">
         <div class="md-right-head">
           <div class="md-meta">
-            <h2 class="md-title">{{ player.currentMusic.name || '云音乐' }}</h2>
+            <h2 class="md-title">{{ player.currentMusic.name || '暂无播放' }}</h2>
             <div class="md-sub">
               <span class="md-sub-item">
                 <label>专辑：</label>{{ player.currentMusic.alName || '未知' }}
@@ -81,7 +81,7 @@
           @mouseup="player.endDragging"
           @change="player.seek"
         />
-        <span class="md-time">{{ formatDuration(player.currentMusic.dt) }}</span>
+        <span class="md-time">{{ formatDuration(player.displayDuration) }}</span>
       </div>
 
       <div class="md-controls">

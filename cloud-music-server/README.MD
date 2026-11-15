@@ -48,7 +48,7 @@ $ npm install
 $ node app.js
 ```
 
-服务器启动默认端口为 3000,若不想使用 3000 端口,可使用以下命令: Mac/Linux
+服务器启动默认端口为 19830,若不想使用 19830 端口,可使用以下命令: Mac/Linux
 
 ```shell
 $ PORT=4000 node app.js
@@ -86,18 +86,18 @@ request 相关的环境变量
 ```shell
 docker pull binaryify/netease_cloud_music_api
 
-docker run -d -p 3000:3000 --name netease_cloud_music_api    binaryify/netease_cloud_music_api
+docker run -d -p 19830:19830 --name netease_cloud_music_api    binaryify/netease_cloud_music_api
 
 
 // 或者
-docker run -d -p 3000:3000 binaryify/netease_cloud_music_api
+docker run -d -p 19830:19830 binaryify/netease_cloud_music_api
 
 // 去掉或者设置相关的环境变量
 
-docker run -d -p 3000:3000 --name netease_cloud_music_api -e http_proxy= -e https_proxy= -e no_proxy= -e HTTP_PROXY= -e HTTPS_PROXY= -e NO_PROXY= binaryify/netease_cloud_music_api
+docker run -d -p 19830:19830 --name netease_cloud_music_api -e http_proxy= -e https_proxy= -e no_proxy= -e HTTP_PROXY= -e HTTPS_PROXY= -e NO_PROXY= binaryify/netease_cloud_music_api
 
 // 或者
-docker run -d -p 3000:3000 -e http_proxy= -e https_proxy= -e no_proxy= -e HTTP_PROXY= -e HTTPS_PROXY= -e NO_PROXY= binaryify/netease_cloud_music_api
+docker run -d -p 19830:19830 -e http_proxy= -e https_proxy= -e no_proxy= -e HTTP_PROXY= -e HTTPS_PROXY= -e NO_PROXY= binaryify/netease_cloud_music_api
 ```
 
 > 以下是自行 build docker 镜像方式
@@ -107,7 +107,7 @@ $ git clone https://gitlab.com/Binaryify/neteasecloudmusicapi.git && cd NeteaseC
 
 $ sudo docker build . -t netease-music-api
 
-$ sudo docker run -d -p 3000:3000 netease-music-api
+$ sudo docker run -d -p 19830:19830 netease-music-api
 
 ## Vercel 部署
 
