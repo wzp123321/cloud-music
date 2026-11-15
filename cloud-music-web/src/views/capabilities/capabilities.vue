@@ -69,6 +69,12 @@ const groups: { title: string; items: CapabilityItem[] }[] = [
       { title: '杂项长尾', path: '/misc-longtail', desc: '版本、年度总结、统计与日历' },
     ],
   },
+  {
+    title: '服务端对齐',
+    items: [
+      { title: '服务端接口总览', path: '/server-routes', desc: '与 server 路由一一对应的全量清单、按域检索与真实调用' },
+    ],
+  },
 ];
 
 const linkTo = (path: string) => {

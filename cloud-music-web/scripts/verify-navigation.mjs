@@ -186,7 +186,10 @@ const checkLiteralRoutes = () => {
 
   let ok = 0;
   let seen = 0;
+  // 自动生成的接口清单不是页面路由，跳过（由 scripts/sync-server-routes.mjs 产出）
+  const generatedRouteFile = join(srcRoot, 'apis', 'server-coverage', 'routes.ts');
   for (const file of walk(srcRoot)) {
+    if (file === generatedRouteFile) continue;
     const text = read(file);
     // path: '/xxx'（含 router.push({ path: '/xxx' })）与 router.push('/xxx') 两类字面量
     const literals = [];

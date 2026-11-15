@@ -13,6 +13,7 @@ Vue 3（`<script setup lang="ts">`）+ TypeScript（strict）+ Vite 5 + Pinia 2�
 - 音乐发现：首页推荐、榜单、歌单、专辑、歌手、搜索、MV、评论互动。
 - 登录：二维码扫码、手机号、邮箱登录，会话凭证本地持久化。
 - 用户中心：个人资料、收藏与听歌记录。
+- 服务端接口总览：与 server 路由一一对应的全量清单，按功能域检索、填写参数并真实调用。
 
 ## 环境要求
 
@@ -37,6 +38,7 @@ npm run dev        # http://localhost:19572
 | `npm run preview` | 预览构建产物 |
 | `npm run lint` / `npm run lint:fix` | ESLint 9 flat config 检查 / 修复 |
 | `npm run verify` | 静态回归校验（`scripts/verify-navigation.mjs`，零依赖） |
+| `npm run sync:routes` | 从 `../cloud-music-server/module/` 重新生成全量接口清单（server 更新后执行） |
 
 ## 环境变量
 

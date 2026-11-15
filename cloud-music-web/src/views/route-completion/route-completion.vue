@@ -3,7 +3,7 @@
     <cm-navbar :title="'路由补齐：专辑与歌手详情'" :has-load-more="false"></cm-navbar>
 
     <p class="route-completion--intro">
-      server 侧 309 个接口中最后两个独立详情接口。两者与详情页已用的 <code>/album</code>、<code>/artists</code>
+      服务端接口清单中的两个独立详情接口。两者与详情页已用的 <code>/album</code>、<code>/artists</code>
       不是同一上游： <code>/album/detail</code> 是数字专辑详情（需数字专辑 id），<code>/artist/detail</code>
       返回歌手头部信息。 左侧列表由上游接口提供 id，点击后按该 id 请求详情。
     </p>

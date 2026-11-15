@@ -23,6 +23,13 @@ const homeRoutes: RouteRecordRaw[] = [
     meta: { name: '路由补齐' },
     component: () => import('@/views/route-completion/route-completion.vue'),
   },
+  // 服务端接口总览：按 server module 自动生成的全量清单与调用台
+  // 注意：路由不能以 /api 开头，会被 Vite 的 /api 代理按前缀拦截转发到后端
+  {
+    path: '/server-routes',
+    meta: { name: '服务端接口总览' },
+    component: () => import('@/views/api-coverage/api-coverage.vue'),
+  },
 ];
 
 export default homeRoutes;

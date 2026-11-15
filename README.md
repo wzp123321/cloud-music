@@ -12,6 +12,7 @@
 | 登录 | 二维码扫码、手机号、邮箱登录；会话凭证本地持久化，登录后获取完整音源 |
 | 用户中心 | 个人资料、收藏与听歌记录 |
 | API 服务 | 本地 NeteaseCloudMusicApi 4.33.0，400+ 接口自动注册，前端统一代理访问 |
+| 接口总览 | 与服务端路由一一对应的全量清单，按功能域检索、填写参数并真实调用；写操作二次确认 |
 
 ## 技术栈
 
@@ -73,6 +74,7 @@ GET /api/song/url?id=1  →  GET http://localhost:19830/song/url?id=1
 | `npm run preview` | 预览构建产物 |
 | `npm run lint` / `lint:fix` | ESLint 9 检查 / 自动修复 |
 | `npm run verify` | 静态回归：卡片点击、登录菜单、失效接口回流、路由死链 |
+| `npm run sync:routes` | 从服务端 `module/` 重新生成全量接口清单（server 更新后执行） |
 
 ### 环境变量
 
@@ -109,6 +111,32 @@ src/
 
 ## API 服务（cloud-music-server）
 
-- 上游 NeteaseCloudMusicApi 4.33.0，`module/` 下 439 个接口由 `server.js` 自动注册。
-- `npm start` 即 `node app.js`；`PORT=4000 npm start` 可换端口（同时需同步前端 `VITE_PROXY_URL`）。
+上游 NeteaseCloudMusicApi 4.33.0 的本地服务。`module/` 下 439 个接口由 `server.js` 自动注册为路由，前端统一通过 `/api` 代理访问。
+
+### 常用脚本
+
+| 命令 | 作用 |
+| --- | --- |
+| `npm start` | `node app.js`，启动服务（`http://localhost:19830`） |
+| `npm test` | mocha 测试 |
+| `npm run lint` / `lint-fix` | ESLint 检查 / 自动修复 |
+
+### 环境变量
+
+| 变量 | 默认值 | 说明 |
+| --- | --- | --- |
+| `PORT` | `19830` | 服务端口；改端口需同步前端 `VITE_PROXY_URL` |
+
+### 目录约定
+
+```
+module/       接口实现，server.js 自动注册为路由
+util/         工具（签名、加解密、日志等）
+plugins/      请求前置 / 后置插件
+public/       静态页面与接口文档
+data/         运行时数据
+```
+
+- 入口：`app.js`（启动）、`server.js`（Express 注册）、`main.js`（作为 npm 包引入时使用）。
+- 依赖为 vendored（随仓库提交），`npm install` 即可运行；改端口用 `PORT=4000 npm start`。
 - 接口文档：<https://neteasecloudmusicapi.js.org/#/?id=neteasecloudmusicapi>
