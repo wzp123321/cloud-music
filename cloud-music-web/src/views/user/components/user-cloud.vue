@@ -19,7 +19,7 @@ import { ref, onMounted, watch } from 'vue';
 import { useUserCenter } from '../hooks/useUserCenter';
 import { UC_CloudItem } from '@/apis/user/user.api';
 
-const userCenterService = useUserCenter();
+const { cloud$: cloudResult, loadCloud } = useUserCenter();
 
 const list = ref<UC_CloudItem[]>([]);
 const cloud = ref<{ list: UC_CloudItem[]; count: number }>({ list: [], count: 0 });
@@ -31,7 +31,7 @@ const formatSize = (size?: number) => {
 
 // 订阅云盘状态，immediate 保证首屏同步到当前值
 watch(
-  userCenterService.cloud$,
+  cloudResult,
   (v) => {
     cloud.value = v;
     list.value = v.list;
@@ -40,7 +40,7 @@ watch(
 );
 
 onMounted(() => {
-  userCenterService.loadCloud();
+  loadCloud();
 });
 </script>
 

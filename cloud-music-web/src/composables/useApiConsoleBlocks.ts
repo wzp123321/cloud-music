@@ -1,6 +1,7 @@
-import { computed, onMounted, reactive, ref, type Ref } from 'vue';
+import { sessionManager } from '@/core/session';
+import { computed, onMounted, ref, type Ref } from 'vue';
 
-import { hasLogin as checkLogin } from '@/apis/content-enhance/content-enhance.service';
+
 import {
   extractObject,
   toCardList,
@@ -36,8 +37,8 @@ export interface ApiConsoleTab {
 export interface ApiConsoleConfig {
   tabs: ApiConsoleTab[];
   panelTips?: Record<string, string>;
-  /** 共享参数（reactive）。必须由调用方创建并传入，blocks 闭包与 UI 操作指向同一对象，否则参数无法回流到接口调用 */
-  params: Record<string, string>;
+  /** 共享参数（ref）。必须由调用方创建并传入，blocks 闭包与 UI 操作指向同一对象，否则参数无法回流到接口调用 */
+  params: Ref<Record<string, string>>;
   /** 上传文件 ref。含 upload 型区块的页面必须传入，使区块闭包与 onFileChange 共用同一 ref；其余页面可省略 */
   uploadFile?: Ref<File | null>;
   /** 该页全部接口区块，run 即接口在页面的真实调用点 */
@@ -54,11 +55,11 @@ export interface ApiConsoleConfig {
 export const useApiConsoleBlocks = (config: ApiConsoleConfig) => {
   const { tabs, panelTips = {}, params, uploadFile = ref<File | null>(null), blocks, emitHint = '详情/写操作' } = config;
 
-  const hasLogin = ref<boolean>(checkLogin());
+  const hasLogin = ref<boolean>(sessionManager.isAlive());
   const activeTab = ref<string>(tabs[0]?.code ?? '');
   const toast = ref<string>('');
   const writeResult = ref<string>('');
-  const results = reactive<Record<string, CardItem[]>>({});
+  const results = ref<Record<string, CardItem[]>>({});
 
   const visibleBlocks = computed(() => blocks.filter((b) => b.tab === activeTab.value));
   const panelTip = computed(() => panelTips[activeTab.value] || '');
@@ -123,7 +124,7 @@ export const useApiConsoleBlocks = (config: ApiConsoleConfig) => {
 
   const onParamInput = (key: string | undefined, e: Event) => {
     if (!key) return;
-    params[key] = (e.target as HTMLInputElement).value;
+    params.value[key] = (e.target as HTMLInputElement).value;
   };
 
   /** 列表 → 详情参数来源：点选上游列表项把 id 填入共享参数 */
@@ -134,7 +135,7 @@ export const useApiConsoleBlocks = (config: ApiConsoleConfig) => {
       toast.value = '该条目未返回可用 id';
       return;
     }
-    params[b.emit] = String(id);
+    params.value[b.emit] = String(id);
     toast.value = `已选择 #${id}，已填入共享参数 ${b.emit}，可用于对应${emitHint}`;
   };
 
@@ -147,7 +148,7 @@ export const useApiConsoleBlocks = (config: ApiConsoleConfig) => {
       }
     }
     if (b.kind === 'login-read' && !requireLogin()) {
-      results[b.module] = [];
+      results.value[b.module] = [];
       return;
     }
     if (b.kind === 'write' || b.kind === 'upload') {
@@ -159,17 +160,17 @@ export const useApiConsoleBlocks = (config: ApiConsoleConfig) => {
     }
     try {
       const res = await b.run();
-      results[b.module] = toList(res);
+      results.value[b.module] = toList(res);
       if (b.kind === 'write' || b.kind === 'upload') {
         const obj = extractObj(res);
         writeResult.value = `${b.name} 已提交｜code=${obj?.code ?? res?.code ?? '—'}｜${obj?.message ?? res?.message ?? '无附加信息'}`;
       } else if (b.kind === 'invalid') {
         toast.value = `${b.module} 手动核验完成（已登记失效，结果按空值处理）`;
       } else {
-        toast.value = `${b.name} 已加载 ${results[b.module].length} 条`;
+        toast.value = `${b.name} 已加载 ${results.value[b.module].length} 条`;
       }
     } catch {
-      results[b.module] = [];
+      results.value[b.module] = [];
       if (b.kind === 'write' || b.kind === 'upload') writeResult.value = `${b.name} 请求失败，已按空值处理`;
       else toast.value = `${b.name} 请求失败，已返回空值`;
     }

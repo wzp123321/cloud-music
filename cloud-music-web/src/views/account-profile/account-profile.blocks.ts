@@ -1,7 +1,7 @@
 /*
  * @Description: 账号资料台 · 15 个接口区块定义（纯数据）
  * 写操作 / 账号动作：register_* / captcha_* / cellphone_existence_check / rebind / activate_init_profile /
- *   signin_progress / setting / daily_signin —— 未登录 hasLogin() 降级、点击 window.confirm 二次确认、
+ *   signin_progress / setting / daily_signin —— 未登录 sessionManager.isAlive() 降级、点击 window.confirm 二次确认、
  *   禁止 onMounted 自动调用、禁止预填真实手机号（所有输入框 def 均为空）。
  * 只读：verify_getQr / verify_qrcodestatus / countries_code_list / nickname_check / sign_happy_info。
  * 路由例外：daily_signin -> /daily_signin（下划线）。

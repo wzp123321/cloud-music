@@ -11,7 +11,7 @@ import { getRequest, postRequest } from '../../apis/request';
 export type CM_CommentType = 'music' | 'album' | 'playlist' | 'mv' | 'dj' | 'video' | 'event';
 
 /** 资源类型 → 通用评论接口(comment_like/hot/floor/new/hug_list)所需的数字 type */
-export const CM_COMMENT_TYPE_NUM: Record<CM_CommentType, number> = {
+export const cmCommentTypeNum: Record<CM_CommentType, number> = {
   music: 0,
   mv: 1,
   playlist: 2,
@@ -22,7 +22,7 @@ export const CM_COMMENT_TYPE_NUM: Record<CM_CommentType, number> = {
 };
 
 /** 资源类型 → 各类型评论列表路由（server 文件名下划线转斜杠） */
-export const CM_COMMENT_ROUTE: Record<CM_CommentType, string> = {
+export const cmCommentRoute: Record<CM_CommentType, string> = {
   music: '/comment/music',
   album: '/comment/album',
   playlist: '/comment/playlist',
@@ -130,7 +130,7 @@ export const getCommentList = (
     threadId?: string;
     [key: string]: any;
   } = {},
-): Promise<CM_CommentListRes> => getRequest(CM_COMMENT_ROUTE[type], { id, ...params });
+): Promise<CM_CommentListRes> => getRequest(cmCommentRoute[type], { id, ...params });
 //#endregion
 
 //#region 通用评论能力
@@ -145,7 +145,7 @@ export const getCommentNew = (
 ): Promise<CM_CommentNewRes> => {
   const { type, id, threadId, ...rest } = params;
   return getRequest('/comment/new', {
-    type: CM_COMMENT_TYPE_NUM[type] ?? 0,
+    type: cmCommentTypeNum[type] ?? 0,
     id,
     ...(threadId ? { threadId } : {}),
     ...rest,
@@ -158,7 +158,7 @@ export const getCommentHot = (
 ): Promise<CM_CommentListRes> => {
   const { type, id, threadId, ...rest } = params;
   return getRequest('/comment/hot', {
-    type: CM_COMMENT_TYPE_NUM[type] ?? 0,
+    type: cmCommentTypeNum[type] ?? 0,
     id,
     ...(threadId ? { threadId } : {}),
     ...rest,
@@ -175,7 +175,7 @@ export const getCommentFloor = (
 ): Promise<CM_CommentFloorRes> => {
   const { type, id, threadId, ...rest } = params;
   return getRequest('/comment/floor', {
-    type: CM_COMMENT_TYPE_NUM[type] ?? 0,
+    type: cmCommentTypeNum[type] ?? 0,
     id,
     ...(threadId ? { threadId } : {}),
     ...rest,
@@ -194,7 +194,7 @@ export const getCommentHugList = (
 ): Promise<CM_HugListRes> => {
   const { type, id, threadId, ...rest } = params;
   return getRequest('/comment/hug/list', {
-    type: CM_COMMENT_TYPE_NUM[type] ?? 0,
+    type: cmCommentTypeNum[type] ?? 0,
     sid: id,
     ...(threadId ? { threadId } : {}),
     ...rest,
@@ -207,7 +207,7 @@ export const likeComment = (
 ): Promise<any> => {
   const { type, id, threadId, ...rest } = params;
   return postRequest('/comment/like', {
-    type: CM_COMMENT_TYPE_NUM[type] ?? 0,
+    type: cmCommentTypeNum[type] ?? 0,
     id,
     ...(threadId ? { threadId } : {}),
     ...rest,
@@ -228,7 +228,7 @@ export const sendComment = (
 ): Promise<any> => {
   const { type, id, threadId, ...rest } = params;
   return postRequest('/comment', {
-    type: CM_COMMENT_TYPE_NUM[type] ?? 0,
+    type: cmCommentTypeNum[type] ?? 0,
     id,
     t: 1,
     ...(threadId ? { threadId } : {}),

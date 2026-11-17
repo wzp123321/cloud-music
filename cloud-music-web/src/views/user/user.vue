@@ -1,6 +1,6 @@
 <template>
   <div id="user" class="user">
-    <cm-loading v-if="userCenterService.loading"></cm-loading>
+    <cm-loading v-if="loading"></cm-loading>
     <div v-else-if="!uid" class="user-empty">
       <p>请先 <span class="user-link" @click="goLogin">登录</span> 后查看个人中心</p>
     </div>
@@ -65,7 +65,7 @@ import UserEvent from './components/user-event.vue';
 import UserCloud from './components/user-cloud.vue';
 import UserEditDialog from './components/user-edit-dialog.vue';
 
-const userCenterService = useUserCenter();
+const { uid, loading, recordType, reloadRecord, loadAll, init, userDetail$, playlists$, level$, subcount$, record$ } = useUserCenter();
 
 const detail = ref<UC_UserDetail>({ profile: {} as any });
 const playlists = ref<UC_Playlist[]>([]);
@@ -82,8 +82,6 @@ const subcount = ref<UC_UserSubcount>({
 });
 const record = ref<UC_Record>({ allData: [], weekData: [] });
 
-const uid = ref(0);
-const recordType = ref(1);
 const editVisible = ref(false);
 const activeTab = ref<'home' | 'record' | 'follow' | 'event' | 'cloud'>('home');
 
@@ -108,11 +106,11 @@ const goTab = (key: string) => {
 
 const onRecordSwitch = (t: number) => {
   recordType.value = t;
-  userCenterService.reloadRecord(t);
+  reloadRecord(t);
 };
 
 const onSaved = () => {
-  userCenterService.loadAll();
+  loadAll();
 };
 
 const goLogin = () => {
@@ -120,16 +118,15 @@ const goLogin = () => {
 };
 
 // 订阅用户中心各状态，immediate 保证首屏同步到当前值
-watch(userCenterService.userDetail$, (v) => (detail.value = v), { immediate: true });
-watch(userCenterService.playlists$, (v) => (playlists.value = v), { immediate: true });
-watch(userCenterService.level$, (v) => (level.value = v), { immediate: true });
-watch(userCenterService.subcount$, (v) => (subcount.value = v), { immediate: true });
-watch(userCenterService.record$, (v) => (record.value = v), { immediate: true });
+watch(userDetail$, (v) => (detail.value = v), { immediate: true });
+watch(playlists$, (v) => (playlists.value = v), { immediate: true });
+watch(level$, (v) => (level.value = v), { immediate: true });
+watch(subcount$, (v) => (subcount.value = v), { immediate: true });
+watch(record$, (v) => (record.value = v), { immediate: true });
 
 onMounted(() => {
   // 重新读取路由 uid（单例已创建，这里刷新一次）
-  userCenterService.init();
-  uid.value = userCenterService.uid;
+  init();
 });
 </script>
 

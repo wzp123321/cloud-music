@@ -30,7 +30,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, reactive, ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import message from '@/utils/message';
 import {
   createPlaylist,
@@ -57,7 +57,7 @@ const dialogVisible = computed({
 });
 
 const submitting = ref(false);
-const form = reactive({
+const form = ref({
   name: '',
   desc: '',
   tags: '',
@@ -68,10 +68,10 @@ watch(
   () => props.modelValue,
   (v) => {
     if (v) {
-      form.name = props.name ?? '';
-      form.desc = props.desc ?? '';
-      form.tags = props.tags ?? '';
-      form.privacy = 0;
+      form.value.name = props.name ?? '';
+      form.value.desc = props.desc ?? '';
+      form.value.tags = props.tags ?? '';
+      form.value.privacy = 0;
     }
   },
   { immediate: true },
@@ -83,15 +83,15 @@ const onClosed = () => {
 
 const onSubmit = async () => {
   if (props.mode === 'create') {
-    if (!form.name.trim()) {
+    if (!form.value.name.trim()) {
       message.error('请输入歌单名称');
       return;
     }
     submitting.value = true;
     try {
       const res = await createPlaylist({
-        name: form.name.trim(),
-        privacy: form.privacy,
+        name: form.value.name.trim(),
+        privacy: form.value.privacy,
       });
       if (res?.code === 200) {
         message.success('创建成功');
@@ -112,13 +112,13 @@ const onSubmit = async () => {
   const id = props.playlistId as number;
   submitting.value = true;
   try {
-    if (props.showName && form.name.trim() && form.name !== props.name) {
-      await updatePlaylistName({ id, name: form.name.trim() });
+    if (props.showName && form.value.name.trim() && form.value.name !== props.name) {
+      await updatePlaylistName({ id, name: form.value.name.trim() });
     }
-    if (form.desc !== (props.desc ?? '')) {
-      await updatePlaylistDesc({ id, desc: form.desc });
+    if (form.value.desc !== (props.desc ?? '')) {
+      await updatePlaylistDesc({ id, desc: form.value.desc });
     }
-    const tags = form.tags.trim();
+    const tags = form.value.tags.trim();
     if (tags !== (props.tags ?? '')) {
       await updatePlaylistTags({ id, tags });
     }

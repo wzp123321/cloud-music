@@ -4,7 +4,7 @@ import { getRequest } from '@/apis/request';
 import { PL_PlayVO } from '@/apis/play-list/index.api';
 
 /** 旧版本直接把队列数组写在这个 key 下，必须用自定义 serializer 保持格式兼容 */
-const LIST_STORAGE_KEY = 'cloud-music-list';
+const listStorageKey = 'cloud-music-list';
 
 enum EPath {
   查询歌曲地址 = '/song/url',
@@ -44,7 +44,7 @@ export const usePlaylistStore = defineStore(
 
     /** 手动从旧 key 读取一次（persist 已自动 hydrate，仅供特殊场景调用） */
     const loadFromStorage = () => {
-      const raw = window.localStorage.getItem(LIST_STORAGE_KEY);
+      const raw = window.localStorage.getItem(listStorageKey);
       if (!raw) {
         return;
       }
@@ -60,7 +60,7 @@ export const usePlaylistStore = defineStore(
   },
   {
     persist: {
-      key: LIST_STORAGE_KEY,
+      key: listStorageKey,
       storage: localStorage,
       pick: ['musicList'],
       // 旧格式是纯数组，不是 { musicList: [...] }，故自定义序列化

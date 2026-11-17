@@ -5,15 +5,15 @@
   <!-- 每日推荐歌曲 recommend_songs -->
   <section class="daily-recommend--section">
     <h3 class="daily-recommend--heading">每日推荐歌曲</h3>
-    <cm-error v-if="!portal.recommendSongList.length" :title="'暂无推荐歌曲'"></cm-error>
+    <cm-error v-if="! recommendSongList.length" :title="'暂无推荐歌曲'"></cm-error>
     <ul v-else class="daily-recommend--song-list">
       <li
-        v-for="(song, index) in portal.recommendSongList"
+        v-for="(song, index) in  recommendSongList"
         :key="'daily_song_' + index"
         class="daily-recommend--song-item"
       >
         <span class="cell-index">{{ index + 1 }}</span>
-        <span class="cell-name" :title="song.name || ''" @click="portal.linkToSong(song.id)">{{ song.name || '' }}</span>
+        <span class="cell-name" :title="song.name || ''" @click=" linkToSong(song.id)">{{ song.name || '' }}</span>
         <span class="cell-artists" :title="formatArtists(song)">{{ formatArtists(song) }}</span>
         <span class="cell-album" :title="song.album?.name || ''">{{ song.album?.name || '' }}</span>
         <span class="cell-dislike" @click="handleDislike(song.id)">不感兴趣</span>
@@ -24,10 +24,10 @@
   <!-- 每日推荐歌单 recommend_resource -->
   <section class="daily-recommend--section">
     <h3 class="daily-recommend--heading">每日推荐歌单</h3>
-    <cm-error v-if="!portal.recommendResourceList.length" :title="'暂无推荐歌单'"></cm-error>
+    <cm-error v-if="! recommendResourceList.length" :title="'暂无推荐歌单'"></cm-error>
     <div v-else class="daily-recommend--grid flex-row-justify-start flex-wrap">
       <cm-playlist-card
-        v-for="item in portal.recommendResourceList"
+        v-for="item in  recommendResourceList"
         :id="item.id || 0"
         :key="'rr_' + item.id"
         :title="item.name || ''"
@@ -40,10 +40,10 @@
   <!-- 个性化推荐歌单 personalized -->
   <section class="daily-recommend--section">
     <h3 class="daily-recommend--heading">猜你喜欢</h3>
-    <cm-error v-if="!portal.personalizedList.length" :title="'暂无推荐歌单'"></cm-error>
+    <cm-error v-if="! personalizedList.length" :title="'暂无推荐歌单'"></cm-error>
     <div v-else class="daily-recommend--grid flex-row-justify-start flex-wrap">
       <cm-playlist-card
-        v-for="item in portal.personalizedList"
+        v-for="item in  personalizedList"
         :id="item.id || 0"
         :key="'p_' + item.id"
         :title="item.name || ''"
@@ -56,15 +56,15 @@
   <!-- 推荐新歌 personalized_newsong -->
   <section class="daily-recommend--section">
     <h3 class="daily-recommend--heading">推荐新歌</h3>
-    <cm-error v-if="!portal.newSongList.length" :title="'暂无推荐新歌'"></cm-error>
+    <cm-error v-if="! newSongList.length" :title="'暂无推荐新歌'"></cm-error>
     <ul v-else class="daily-recommend--song-list">
       <li
-        v-for="(item, index) in portal.newSongList"
+        v-for="(item, index) in  newSongList"
         :key="'ns_' + index"
         class="daily-recommend--song-item"
       >
         <span class="cell-index">{{ index + 1 }}</span>
-        <span class="cell-name" :title="item.name || ''" @click="portal.linkToSong(item.song?.id)">{{ item.name || '' }}</span>
+        <span class="cell-name" :title="item.name || ''" @click=" linkToSong(item.song?.id)">{{ item.name || '' }}</span>
         <span class="cell-artists" :title="formatNewSongArtists(item)">{{ formatNewSongArtists(item) }}</span>
         <span class="cell-album" :title="item.song?.album?.name || ''">{{ item.song?.album?.name || '' }}</span>
       </li>
@@ -83,14 +83,14 @@ import { usePortal } from '../portal/hooks/usePortal';
 import { RecommendSongItem, PersonalizedNewSongItem } from '../../apis/portal/portal-api';
 import message from '@/utils/message';
 
-const portal = usePortal();
+const { dislikeRecommendSong, linkToSong, newSongList, personalizedList, queryNewSong, queryPersonalized, queryRecommendResource, queryRecommendSongs, recommendResourceList, recommendSongList } = usePortal();
 defineOptions({ name: 'DailyRecommend' });
 // 直接访问该路由时也保证数据可用（不依赖先经过首页 init）
     onMounted(() => {
-      portal.queryRecommendSongs();
-      portal.queryRecommendResource();
-      portal.queryPersonalized();
-      portal.queryNewSong();
+       queryRecommendSongs();
+       queryRecommendResource();
+       queryPersonalized();
+       queryNewSong();
     });
 
     const formatArtists = (song: RecommendSongItem): string => {
@@ -107,7 +107,7 @@ defineOptions({ name: 'DailyRecommend' });
         message.info('该歌曲缺少 id，无法操作');
         return;
       }
-      portal.dislikeRecommendSong(id);
+       dislikeRecommendSong(id);
     };
 
     ;

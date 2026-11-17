@@ -1,4 +1,4 @@
-import { ref, reactive } from 'vue';
+import { ref } from 'vue';
 import { getQueryParam } from '@/core/token';
 import djRadioService from '@/apis/dj-radio/dj-radio.service';
 
@@ -31,8 +31,8 @@ export interface DjProgramDetailVO {
   };
 }
 
-// 电台节目详情状态层
-const create = () => {
+// 对外直出各 ref，消费方解构后使用（脚本内 .value，模板自动解包）
+export const useDjProgramDetail = () => {
   const program = ref<DjProgramDetailVO | null>(null);
   const loading = ref<boolean>(true);
   const error = ref<boolean>(false);
@@ -60,14 +60,5 @@ const create = () => {
     }
   };
 
-  const state = reactive({
-    program,
-    loading,
-    error,
-    query,
-  });
-  return state;
+  return { program, loading, error, query };
 };
-
-/** 节目详情页状态：每次调用创建新实例，保证切换 id 后重新初始化 */
-export const useDjProgramDetail = () => create();

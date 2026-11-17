@@ -1,8 +1,9 @@
 import { onMounted, ref } from 'vue';
 
-import { hasLogin as checkLogin } from '@/apis/content-enhance/content-enhance.service';
+
 import feedService from '@/apis/feed/feed.service';
 import { extractObject, extractListByCandidates, type ApiCard } from '@/utils/api-normalize';
+import { sessionManager } from '@/core/session';
 
 type CardItem = ApiCard;
 
@@ -18,7 +19,7 @@ export const useFeed = () => {
     { code: 'c5_3', name: '5.3 相关推荐（2）' },
   ];
 
-  const hasLogin = ref<boolean>(checkLogin());
+  const hasLogin = ref<boolean>(sessionManager.isAlive());
   const activeTab = ref<string>('c5_1');
   const toast = ref<string>('');
   const writeResult = ref<string>('');

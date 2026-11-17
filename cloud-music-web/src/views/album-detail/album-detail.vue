@@ -1,36 +1,36 @@
 <template>
 <div id="album-detail">
   <div class="album-detail--left">
-    <cm-image :src="albumDetail?.info?.picUrl" alt="" />
+    <cm-image :src="info?.picUrl" alt="" />
     <h5 class="mt48 mb16">专辑简介</h5>
-    <p>{{ albumDetail?.info?.description }}</p>
+    <p>{{ info?.description }}</p>
   </div>
   <div class="album-detail--right">
-    <h5 class="mt16 mb16">{{ albumDetail?.info?.name }}</h5>
-    <p>{{albumDetail?.info?.artist?.name}}</p>
+    <h5 class="mt16 mb16">{{ info?.name }}</h5>
+    <p>{{info?.artist?.name}}</p>
     <div class="flex-row-start-center mt12">
       <label>发行时间：</label>
-      <span class="mr48">{{ formatDate(albumDetail?.info?.publishTime, 'YYYY-MM-DD') }}</span>
+      <span class="mr48">{{ formatDate(info?.publishTime, 'YYYY-MM-DD') }}</span>
       <label>评论：</label>
-      <span class="mr48">{{ albumDetail?.info?.info?.commentCount }}</span>
+      <span class="mr48">{{ info?.info?.commentCount }}</span>
       <label>分享：</label>
-      <span>{{ albumDetail?.info?.info?.shareCount }}</span>
+      <span>{{ info?.info?.shareCount }}</span>
     </div>
     <!-- 专辑动态：album_detail_dynamic；订阅：album_sub -->
     <div class="album-detail--dynamic mt12">
-      <span>动态评论 {{ albumDetail.dynamic.commentCount ?? 0 }}</span>
-      <span>点赞 {{ albumDetail.dynamic.likedCount ?? 0 }}</span>
-      <span>分享 {{ albumDetail.dynamic.shareCount ?? 0 }}</span>
-      <span>收藏 {{ albumDetail.dynamic.subCount ?? 0 }}</span>
+      <span>动态评论 {{ dynamic.commentCount ?? 0 }}</span>
+      <span>点赞 {{ dynamic.likedCount ?? 0 }}</span>
+      <span>分享 {{ dynamic.shareCount ?? 0 }}</span>
+      <span>收藏 {{ dynamic.subCount ?? 0 }}</span>
       <cm-button
         class="album-detail--sub-btn"
-        :class="albumDetail.dynamic.isSub ? 'subed' : ''"
-        :disabled="albumDetail.subLoading"
-        @click="albumDetail.toggleSub()"
+        :class="dynamic.isSub ? 'subed' : ''"
+        :disabled="subLoading"
+        @click="toggleSub()"
       >
-        {{ albumDetail.dynamic.isSub ? '已订阅' : '订阅专辑' }}
+        {{ dynamic.isSub ? '已订阅' : '订阅专辑' }}
       </cm-button>
-      <span v-if="albumDetail.actionTip" class="album-detail--tip">{{ albumDetail.actionTip }}</span>
+      <span v-if="actionTip" class="album-detail--tip">{{ actionTip }}</span>
     </div>
 
     <cm-button radius primary style="width: 180px" class="mt12">
@@ -43,11 +43,11 @@
     <!-- 已收藏专辑：album_sublist（需登录，未登录降级提示） -->
     <div class="album-detail--sublist mt36">
       <h5 class="mb16">我收藏的专辑</h5>
-      <p v-if="albumDetail.sublistNeedLogin" class="album-detail--tip">登录后查看已收藏专辑</p>
-      <cm-error v-else-if="!albumDetail.subAlbums.length" :title="'暂无收藏专辑'"></cm-error>
+      <p v-if="sublistNeedLogin" class="album-detail--tip">登录后查看已收藏专辑</p>
+      <cm-error v-else-if="!subAlbums.length" :title="'暂无收藏专辑'"></cm-error>
       <div v-else class="album-detail--sublist-grid grid-cols-6">
         <div
-          v-for="(item, index) in albumDetail.subAlbums"
+          v-for="(item, index) in subAlbums"
           :key="'sub_' + index"
           class="album-detail--sublist-item"
           @click="linkToAlbum(item.id)"
@@ -61,7 +61,7 @@
     <!-- 评论区：comment_album，支持点赞/热评/楼层/发评 -->
     <cm-comment :id="resourceId" type="album"></cm-comment>
     <!-- 相似推荐：simi_song（取专辑内歌曲） -->
-    <cm-simi :id="albumDetail?.songs?.[0]?.id" type="song" title="相似歌曲"></cm-simi>
+    <cm-simi :id="songs?.[0]?.id" type="song" title="相似歌曲"></cm-simi>
   </div>
 </div>
 
@@ -79,19 +79,19 @@ import message from '@/utils/message';
 import { formatDate } from '../../core/utils';
 import type { Common_IMusic } from '../../apis/common/index.api';
 
-const albumDetail = useAlbumDetail();
+const { info, songs, dynamic, subAlbums, sublistNeedLogin, subLoading, actionTip, query, toggleSub } = useAlbumDetail();
 defineOptions({ name: 'AlbumDetail' });
 const router = useRouter();
 
     onMounted(() => {
-      albumDetail.query();
+      query();
     });
 
     const resourceId = Number(getQueryParam('id') ?? 0);
 
     /** 接口原始歌曲结构 → cm-table / 播放器使用的扁平结构 */
     const songList = computed<Common_IMusic[]>(() =>
-      (albumDetail.songs ?? []).map((song) => ({
+      (songs.value ?? []).map((song) => ({
         id: song.id,
         name: song.name,
         dt: song.dt,

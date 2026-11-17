@@ -1,40 +1,40 @@
 <template>
   <div id="dj-program-detail" class="dj-program-detail">
-    <cm-error v-if="detail.error" :text="'节目信息加载失败'"></cm-error>
-    <div v-else-if="detail.program" class="dj-program-detail--body">
+    <cm-error v-if="error" :text="'节目信息加载失败'"></cm-error>
+    <div v-else-if="program" class="dj-program-detail--body">
       <!-- 左栏：封面 + 播放 -->
       <section class="pd-cover">
-        <cm-image :src="detail.program.coverUrl" alt="" loading="lazy" />
+        <cm-image :src="program.coverUrl" alt="" loading="lazy" />
         <cm-button primary @click="playCurrent"><cm-icon name="icon-24gf-play"></cm-icon><span>播放节目</span></cm-button>
       </section>
 
       <!-- 右栏：信息 -->
       <div class="pd-info">
-        <h5>{{ detail.program.name }}</h5>
+        <h5>{{ program.name }}</h5>
 
-        <p class="pd-radio mt16" @click="linkToRadio(detail.program.radio.id)">
-          所属电台：{{ detail.program.radio.name }}
+        <p class="pd-radio mt16" @click="linkToRadio(program.radio.id)">
+          所属电台：{{ program.radio.name }}
         </p>
-        <p class="pd-anchor mt16" @click="linkToUser(detail.program.dj.userId)">
-          主播：{{ detail.program.dj.nickname }}
+        <p class="pd-anchor mt16" @click="linkToUser(program.dj.userId)">
+          主播：{{ program.dj.nickname }}
         </p>
 
         <div class="pd-meta mt16">
           <label>分类：</label>
-          <span class="mr48">{{ detail.program.categoryName || '未知' }}</span>
+          <span class="mr48">{{ program.categoryName || '未知' }}</span>
           <label>发布：</label>
-          <span>{{ formatDate(detail.program.createTime, 'YYYY-MM-DD') }}</span>
+          <span>{{ formatDate(program.createTime, 'YYYY-MM-DD') }}</span>
         </div>
 
         <section class="flex-row-start-center mt16 pd-stats">
-          <span>收听 {{ formatCount(detail.program.listenerCount) }}</span>
-          <span class="ml24">点赞 {{ formatCount(detail.program.likedCount) }}</span>
-          <span class="ml24">评论 {{ formatCount(detail.program.commentCount) }}</span>
-          <span class="ml24">{{ formatDuration(detail.program.duration) }}</span>
+          <span>收听 {{ formatCount(program.listenerCount) }}</span>
+          <span class="ml24">点赞 {{ formatCount(program.likedCount) }}</span>
+          <span class="ml24">评论 {{ formatCount(program.commentCount) }}</span>
+          <span class="ml24">{{ formatDuration(program.duration) }}</span>
         </section>
 
         <h6 class="pd-desc-title mt36 mb16">节目简介</h6>
-        <p class="pd-desc">{{ detail.program.description || '暂无简介' }}</p>
+        <p class="pd-desc">{{ program.description || '暂无简介' }}</p>
       </div>
     </div>
   </div>
@@ -50,12 +50,12 @@ import { usePlayerStore } from '@/store/player';
 import { Common_IMusic } from '@/apis/common/index.api';
 
 defineOptions({ name: 'DjProgramDetail' });
-const detail = useDjProgramDetail();
+const { program, error, query } = useDjProgramDetail();
 const router = useRouter();
 const player = usePlayerStore();
 
 onMounted(() => {
-  detail.query();
+  query();
 });
 
 /** 大数字缩写：1.2万 / 3.4亿 */
@@ -78,7 +78,7 @@ const linkToUser = (userId?: number) => {
 
 /** 播放当前节目：节目音频即其 mainSong（歌曲），复用现有播放器 */
 const playCurrent = () => {
-  const p = detail.program;
+  const p = program.value;
   if (!p?.mainSong?.id) return;
   const music: Common_IMusic = {
     id: p.mainSong.id,

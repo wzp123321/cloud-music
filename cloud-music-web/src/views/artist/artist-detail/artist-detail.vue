@@ -1,32 +1,32 @@
 <template>
-<div v-loading="artistDetail.loading" class="artist-detail">
+<div v-loading="loading" class="artist-detail">
   <div class="artist-detail--info flex-row-start-center">
     <div class="info-bg"></div>
     <cm-skeleton
       width="230px"
       :height="'230px'"
-      :image-url="artistDetail.artistVO?.artist?.img1v1Url"
+      :image-url="artistVO?.artist?.img1v1Url"
       source-type="image"
       :border-radius="'50%'"
     >
     </cm-skeleton>
     <div class="flex-column ml42" ellipsis>
-      <h6>{{ artistDetail.artistVO?.artist?.name }}</h6>
+      <h6>{{  artistVO?.artist?.name }}</h6>
       <div class="flex-row-start-center mt16 mb16">
         <label>单曲：</label>
-        <span class="mr40 count-value">{{ artistDetail.artistVO?.artist?.musicSize }}</span>
+        <span class="mr40 count-value">{{  artistVO?.artist?.musicSize }}</span>
         <label>专辑：</label>
-        <span class="mr40 count-value">{{ artistDetail.artistVO?.artist?.albumSize }}</span>
+        <span class="mr40 count-value">{{  artistVO?.artist?.albumSize }}</span>
         <label>MV：</label>
-        <span class="mr40 count-value">{{ artistDetail.artistVO?.artist?.mvSize }}</span>
+        <span class="mr40 count-value">{{  artistVO?.artist?.mvSize }}</span>
         <!-- 粉丝数：artist_follow_count -->
         <label>粉丝：</label>
-        <span class="mr40 count-value">{{ artistDetail.followCount.data?.fansCnt ?? 0 }}</span>
+        <span class="mr40 count-value">{{  followCount.data?.fansCnt ?? 0 }}</span>
       </div>
       <div class="desc mt16">
         <label class="font16">简介：</label>
-        <span :title="artistDetail.artistVO?.artist?.briefDesc" class="font16"
-          >{{ artistDetail.artistVO?.artist?.briefDesc }}</span
+        <span :title="artistVO?.artist?.briefDesc" class="font16"
+          >{{  artistVO?.artist?.briefDesc }}</span
         >
       </div>
       <cm-button radius primary style="width: 180px" class="mt12">
@@ -36,80 +36,80 @@
       <div class="artist-detail--follow mt12">
         <cm-button
           class="artist-detail--follow-btn"
-          :class="artistDetail.followCount.data?.isFollow ? 'followed' : ''"
-          :disabled="artistDetail.subLoading"
-          @click="artistDetail.toggleSub()"
+          :class="followCount.data?.isFollow ? 'followed' : ''"
+          :disabled="subLoading"
+          @click="toggleSub()"
         >
-          {{ artistDetail.followCount.data?.isFollow ? '已关注' : '关注歌手' }}
+          {{  followCount.data?.isFollow ? '已关注' : '关注歌手' }}
         </cm-button>
-        <span v-if="artistDetail.actionTip" class="artist-detail--tip">{{ artistDetail.actionTip }}</span>
+        <span v-if="actionTip" class="artist-detail--tip">{{  actionTip }}</span>
       </div>
     </div>
   </div>
 
   <div class="artist-detail--tabs mt60">
     <cm-navbar
-      v-model:selected-code="artistDetail.selectedCode"
+      v-model:selected-code="selectedCode"
       class="mb24"
       :title="''"
-      :navs="artistDetail.navs"
+      :navs="navs"
       :font-size="22"
       :has-load-more="false"
-      @change="artistDetail.handleNavChange"
+      @change="handleNavChange"
     ></cm-navbar>
     <!-- loading -->
-    <cm-loading v-if="artistDetail.itemLoading"></cm-loading>
+    <cm-loading v-if="itemLoading"></cm-loading>
     <!-- error -->
-    <cm-error v-if="artistDetail.is_error"></cm-error>
+    <cm-error v-if="isError"></cm-error>
     <!-- 单曲 -->
     <div
-      v-show="artistDetail.selectedCode === artistDetail.navs[0].code  && !artistDetail.itemLoading  && !artistDetail.is_error"
+      v-show="selectedCode ===  navs[0].code  && ! itemLoading  && ! isError"
     >
-      <cm-table :data-source="artistDetail.songs"></cm-table>
+      <cm-table :data-source="songs"></cm-table>
 
       <!-- 热门 50 首 / 全部歌曲：artist_top_song、artist_songs -->
       <div class="artist-detail--enhance mt36">
         <div class="artist-detail--enhance-bar">
           <cm-button
-            :class="['artist-detail--switch', artistDetail.songSource === 'top' ? 'active' : '']"
-            @click="artistDetail.switchSongSource('top')"
+            :class="['artist-detail--switch',  songSource === 'top' ? 'active' : '']"
+            @click="switchSongSource('top')"
           >
             热门 50 首
           </cm-button>
           <cm-button
-            :class="['artist-detail--switch', artistDetail.songSource === 'all' ? 'active' : '']"
-            @click="artistDetail.switchSongSource('all')"
+            :class="['artist-detail--switch',  songSource === 'all' ? 'active' : '']"
+            @click="switchSongSource('all')"
           >
             全部歌曲
           </cm-button>
-          <template v-if="artistDetail.songSource === 'all'">
+          <template v-if="songSource === 'all'">
             <cm-button
-              :class="['artist-detail--switch', artistDetail.songOrder === 'hot' ? 'active' : '']"
-              @click="artistDetail.switchSongOrder('hot')"
+              :class="['artist-detail--switch',  songOrder === 'hot' ? 'active' : '']"
+              @click="switchSongOrder('hot')"
             >
               最热
             </cm-button>
             <cm-button
-              :class="['artist-detail--switch', artistDetail.songOrder === 'time' ? 'active' : '']"
-              @click="artistDetail.switchSongOrder('time')"
+              :class="['artist-detail--switch',  songOrder === 'time' ? 'active' : '']"
+              @click="switchSongOrder('time')"
             >
               最新
             </cm-button>
           </template>
         </div>
         <cm-error
-          v-if="!(artistDetail.songSource === 'top' ? artistDetail.topSongs : artistDetail.allSongs).length"
+          v-if="!( songSource === 'top' ?  topSongs :  allSongs).length"
           :title="'暂无歌曲'"
         ></cm-error>
         <ul v-else class="artist-detail--song-list">
           <li
-            v-for="(song, index) in artistDetail.songSource === 'top' ? artistDetail.topSongs : artistDetail.allSongs"
+            v-for="(song, index) in  songSource === 'top' ?  topSongs :  allSongs"
             :key="'enhance_song_' + index"
           >
             <span class="artist-detail--song-index">{{ index + 1 }}</span>
             <span class="artist-detail--song-name" :title="song.name">{{ song.name }}</span>
-            <span class="artist-detail--song-sub" :title="artistDetail.formatSongArtists(song)">
-              {{ artistDetail.formatSongArtists(song) }}
+            <span class="artist-detail--song-sub" :title="formatSongArtists(song)">
+              {{  formatSongArtists(song) }}
             </span>
             <span class="artist-detail--song-sub">{{ song.al?.name || song.album?.name || '' }}</span>
           </li>
@@ -119,11 +119,11 @@
 
     <!-- 专辑 -->
     <div
-      v-show="artistDetail.selectedCode === artistDetail.navs[1].code && !artistDetail.itemLoading && !artistDetail.is_error"
+      v-show="selectedCode ===  navs[1].code && ! itemLoading && ! isError"
       class="album-list flex-wrap"
     >
       <cm-album-card
-        v-for="(item, index) in artistDetail.albumList"
+        v-for="(item, index) in  albumList"
         :id="item.id"
         :key="'album_' + index"
         :cover-image-url="item.picUrl"
@@ -134,11 +134,11 @@
 
     <!-- MV -->
     <div
-      v-show="artistDetail.selectedCode === artistDetail.navs[2].code && !artistDetail.itemLoading && !artistDetail.is_error"
+      v-show="selectedCode ===  navs[2].code && ! itemLoading && ! isError"
       class="mv-list flex-wrap"
     >
       <cm-mv-card
-        v-for="(item, index) in artistDetail.mvList"
+        v-for="(item, index) in  mvList"
         :id="item.id"
         :key="'album_' + index"
         :cover-image-url="item.imgurl16v9"
@@ -151,14 +151,14 @@
 
     <!-- desc -->
     <div
-      v-show="artistDetail.selectedCode === artistDetail.navs[3].code && !artistDetail.itemLoading && !artistDetail.is_error"
+      v-show="selectedCode ===  navs[3].code && ! itemLoading && ! isError"
       class="desc flex-wrap"
     >
       <p class="subtitle">简介</p>
       <!-- 歌手简介是服务端富文本，只能按 HTML 渲染 -->
       <!-- eslint-disable-next-line vue/no-v-html -->
-      <div class="text" v-html="sanitizeHtml(artistDetail?.desc?.briefDesc)"></div>
-      <template v-for="(item, index) in artistDetail?.desc?.introduction" :key="'desc_' + index">
+      <div class="text" v-html="sanitizeHtml(desc?.briefDesc)"></div>
+      <template v-for="(item, index) in desc?.introduction" :key="'desc_' + index">
         <p class="subtitle">{{ item.ti }}</p>
         <!-- eslint-disable-next-line vue/no-v-html -->
         <div class="text" v-html="sanitizeHtml(item.txt)"></div>
@@ -167,11 +167,11 @@
 
     <!-- 相关视频：artist_video -->
     <div
-      v-show="artistDetail.selectedCode === artistDetail.navs[4].code && !artistDetail.itemLoading && !artistDetail.is_error"
+      v-show="selectedCode ===  navs[4].code && ! itemLoading && ! isError"
       class="artist-detail--video-list flex-wrap grid-cols-4"
     >
-      <cm-error v-if="!artistDetail.videos.length" :title="'暂无相关视频'"></cm-error>
-      <div v-for="(video, index) in artistDetail.videos" :key="'video_' + index" class="artist-detail--video-item">
+      <cm-error v-if="! videos.length" :title="'暂无相关视频'"></cm-error>
+      <div v-for="(video, index) in  videos" :key="'video_' + index" class="artist-detail--video-item">
         <cm-skeleton
           width="100%"
           :height="''"
@@ -189,9 +189,9 @@
   <!-- 粉丝列表：artist_fans -->
   <div class="artist-detail--enhance mt36">
     <h5 class="artist-detail--block-title">粉丝</h5>
-    <cm-error v-if="!artistDetail.fans.length" :title="'暂无粉丝数据'"></cm-error>
+    <cm-error v-if="! fans.length" :title="'暂无粉丝数据'"></cm-error>
     <div v-else class="artist-detail--fans">
-      <div v-for="(fan, index) in artistDetail.fans" :key="'fan_' + index" class="artist-detail--fan">
+      <div v-for="(fan, index) in  fans" :key="'fan_' + index" class="artist-detail--fan">
         <cm-image :src="fan.avatarUrl" alt="" loading="lazy" />
         <p :title="fan.nickname">{{ fan.nickname }}</p>
       </div>
@@ -199,7 +199,7 @@
   </div>
 
   <!-- 评论区：复用歌曲评论(comment_music)，取歌手热门歌曲 -->
-  <cm-comment :id="artistDetail.songs?.[0]?.id || 0" type="music"></cm-comment>
+  <cm-comment :id="songs?.[0]?.id || 0" type="music"></cm-comment>
   <!-- 相似推荐：simi_artist -->
   <cm-simi :id="artistId" type="artist"></cm-simi>
 </div>
@@ -215,9 +215,9 @@ import { sanitizeHtml } from '@/utils/sanitize';
 
 import { useArtistDetail } from './hooks/useArtistDetail';
 
-const artistDetail = useArtistDetail();
+const { actionTip, albumList, allSongs, artistVO, desc, fans, followCount, formatSongArtists, handleNavChange, init, isError, itemLoading, loading, mvList, navs, selectedCode, songOrder, songSource, songs, subLoading, switchSongOrder, switchSongSource, toggleSub, topSongs, videos } = useArtistDetail();
 defineOptions({ name: 'ArtistDetail' });
-artistDetail.init();
+init();
 
     const artistId = Number(getQueryParam('id') ?? 0);
 

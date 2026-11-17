@@ -3,7 +3,6 @@ import { ref } from 'vue';
 
 import { menus as menuTabs } from '../constant/index';
 
-import { HTabsVO } from '../header-api';
 import { getRequest } from '@/apis/request';
 import {
   getSearchHot,
@@ -39,51 +38,51 @@ const mapSuggestType = (key: string): SE_SuggestItem['type'] => {
 
 // 创建头部共享状态：响应式数据统一用 ref，行为统一为 const 箭头函数
 const create = () => {
-  const _currentTab = ref<string>('/');
-  const _keyword = ref<string>('');
-  const _username = ref<string>('');
+  const currentTab = ref<string>('/');
+  const keyword = ref<string>('');
+  const username = ref<string>('');
 
   /** 搜索框是否聚焦（控制热搜/建议面板显隐） */
-  const _searchFocus = ref<boolean>(false);
+  const searchFocus = ref<boolean>(false);
   /** 热搜榜（search_hot） */
-  const _hotList = ref<SE_HotItem[]>([]);
+  const hotList = ref<SE_HotItem[]>([]);
   /** 热搜详情（search_hot_detail） */
-  const _hotDetail = ref<SE_HotDetailItem[]>([]);
+  const hotDetail = ref<SE_HotDetailItem[]>([]);
   /** 搜索建议（search_suggest） */
-  const _suggestList = ref<SE_SuggestItem[]>([]);
+  const suggestList = ref<SE_SuggestItem[]>([]);
   /** 面板加载态 */
-  const _panelLoading = ref<boolean>(false);
+  const panelLoading = ref<boolean>(false);
   /** 建议去抖定时器（非响应式状态） */
   let suggestTimer: number | undefined;
 
   const adjustActiveTab = (url: string) => {
-    _currentTab.value = url;
+    currentTab.value = url;
   };
 
   const loadDefaultKeyword = async () => {
     const url = '/search/default';
     const res = await getRequest(url);
     if (res) {
-      _keyword.value = res?.data?.realkeyword;
+      keyword.value = res?.data?.realkeyword;
     }
   };
 
   //#region 搜索增强：热搜榜 + 搜索建议
   /** 聚焦搜索框时加载热搜榜与热搜详情 */
   const loadHot = async () => {
-    _panelLoading.value = true;
+    panelLoading.value = true;
     try {
       const [hotRes, detailRes] = await Promise.all([
         getSearchHot(),
         getSearchHotDetail(),
       ]);
-      _hotList.value = hotRes?.result?.hots ?? [];
-      _hotDetail.value = detailRes?.data ?? [];
+      hotList.value = hotRes?.result?.hots ?? [];
+      hotDetail.value = detailRes?.data ?? [];
     } catch {
-      _hotList.value = [];
-      _hotDetail.value = [];
+      hotList.value = [];
+      hotDetail.value = [];
     } finally {
-      _panelLoading.value = false;
+      panelLoading.value = false;
     }
   };
 
@@ -94,7 +93,7 @@ const create = () => {
       window.clearTimeout(suggestTimer);
     }
     if (!kw) {
-      _suggestList.value = [];
+      suggestList.value = [];
       return;
     }
     suggestTimer = window.setTimeout(async () => {
@@ -114,13 +113,13 @@ const create = () => {
         });
         // 去重，最多展示 10 条
         const seen = new Set<string>();
-        _suggestList.value = list.filter((v) => {
+        suggestList.value = list.filter((v) => {
           if (seen.has(v.keyword)) return false;
           seen.add(v.keyword);
           return true;
         }).slice(0, 10);
       } catch {
-        _suggestList.value = [];
+        suggestList.value = [];
       }
     }, 300);
   };
@@ -130,52 +129,26 @@ const create = () => {
     if (suggestTimer) {
       window.clearTimeout(suggestTimer);
     }
-    _suggestList.value = [];
+    suggestList.value = [];
   };
   //#endregion
 
-  // 返回普通对象：值字段用 getter 包装为「值」（本 service 无 $ 字段）
-  const state = {
-    get menus(): HTabsVO[] {
-      return menuTabs;
-    },
-    get currentTab(): string {
-      return _currentTab.value;
-    },
-    get keyword(): string {
-      return _keyword.value;
-    },
-    set keyword(value: string) {
-      _keyword.value = value;
-    },
-    get username(): string {
-      return _username.value;
-    },
-    get searchFocus(): boolean {
-      return _searchFocus.value;
-    },
-    set searchFocus(value: boolean) {
-      _searchFocus.value = value;
-    },
-    get hotList(): SE_HotItem[] {
-      return _hotList.value;
-    },
-    get hotDetail(): SE_HotDetailItem[] {
-      return _hotDetail.value;
-    },
-    get suggestList(): SE_SuggestItem[] {
-      return _suggestList.value;
-    },
-    get panelLoading(): boolean {
-      return _panelLoading.value;
-    },
+  return {
+    menus: menuTabs,
+    currentTab,
+    keyword,
+    username,
+    searchFocus,
+    hotList,
+    hotDetail,
+    suggestList,
+    panelLoading,
     adjustActiveTab,
     loadDefaultKeyword,
     loadHot,
     loadSuggest,
     clearSuggest,
   };
-  return state;
 };
 
 export const useHeader = () => useSingletonStore().get("useHeader", create);

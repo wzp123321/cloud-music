@@ -6,6 +6,7 @@ import { useHeader } from './useHeader';
 import { useLogin } from '../header-loginform/hooks/useLogin';
 import { HL_LoginUserVO } from '../../../apis/header-loginform/index.api';
 import message from '@/utils/message';
+import { sessionManager } from '@/core/session';
 import { useUserStore } from '@/store/user';
 
 /**
@@ -17,10 +18,10 @@ export const useHeaderView = () => {
   const route = useRoute();
   const router = useRouter();
   const userStore = useUserStore();
-  const header = useHeader();
-  const loginService = useLogin();
+  const { menus, currentTab, keyword, searchFocus, hotList, hotDetail, suggestList, panelLoading, adjustActiveTab, loadDefaultKeyword, loadHot, loadSuggest, clearSuggest } = useHeader();
+  const { show: showLogin } = useLogin();
 
-  header.loadDefaultKeyword();
+  loadDefaultKeyword();
 
   const userInfo = ref<HL_LoginUserVO>({});
 
@@ -41,31 +42,31 @@ export const useHeaderView = () => {
     router.replace({
       path: '/search',
       query: {
-        keyword: header.keyword,
+        keyword: keyword.value,
       },
     });
-    header.keyword = '';
-    header.searchFocus = false;
-    header.clearSuggest();
+    keyword.value = '';
+    searchFocus.value = false;
+    clearSuggest();
   };
 
   /** 聚焦搜索框：加载热搜榜 */
   const onSearchFocus = () => {
-    header.searchFocus = true;
-    if (!header.hotList.length) {
-      header.loadHot();
+    searchFocus.value = true;
+    if (!hotList.value.length) {
+      loadHot();
     }
   };
 
   /** 选择热搜/建议词，跳转搜索结果页 */
-  const onSelectKeyword = (keyword: string) => {
-    header.searchFocus = false;
-    header.clearSuggest();
-    header.keyword = '';
+  const onSelectKeyword = (selectedKeyword: string) => {
+    searchFocus.value = false;
+    clearSuggest();
+    keyword.value = '';
     router.replace({
       path: '/search',
       query: {
-        keyword,
+        keyword: selectedKeyword,
       },
     });
   };
@@ -89,7 +90,7 @@ export const useHeaderView = () => {
   };
 
   const handleLoginDialogShow = () => {
-    loginService.show();
+    showLogin();
   };
 
   const handleLoginOut = () => {
@@ -120,7 +121,7 @@ export const useHeaderView = () => {
   watch(
     () => route.path,
     () => {
-      header.adjustActiveTab(route.path);
+      adjustActiveTab(route.path);
     },
     {
       immediate: true,
@@ -137,14 +138,23 @@ export const useHeaderView = () => {
   );
 
   onMounted(() => {
-    if (userStore.profile) {
-      // 启动恢复会话：login_refresh -> login_status 刷新最新登录态
+    // 有本地快照或有持久化会话凭证都尝试恢复：关浏览器后快照 cookie 已失效，
+    // 仅剩凭证时也必须走一次 login_status，把 profile 与快照补回来。
+    if (userStore.profile || sessionManager.isAlive()) {
       userStore.restoreSession();
     }
   });
 
   return {
-    header,
+    menus,
+    currentTab,
+    keyword,
+    searchFocus,
+    hotList,
+    hotDetail,
+    suggestList,
+    panelLoading,
+    loadSuggest,
     userInfo,
     onLinkTo,
     linkToPortal,

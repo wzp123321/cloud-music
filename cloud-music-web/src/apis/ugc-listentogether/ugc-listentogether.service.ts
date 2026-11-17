@@ -9,7 +9,7 @@ import { getRequest } from '@/apis/request';
  * - 每个请求 try/catch，失败返回空对象 {}，避免未捕获异常；
  * - 返回体保持原始结构，由页面 normalize() 兼容 res.data / res.result / res.xxx；
  * - 写操作（devoteUgcUser / createListenRoom / *_command / heatbeat / endListenRoom）是否发出
- *   请求由页面根据 hasLogin() + window.confirm 控制，service 只负责封装，不自动触发。
+ *   请求由页面根据 sessionManager.isAlive() + window.confirm 控制，service 只负责封装，不自动触发。
  */
 const call = async (url: string, params: Record<string, unknown> = {}): Promise<any> => {
   try {

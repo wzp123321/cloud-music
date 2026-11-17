@@ -9,7 +9,7 @@ import { getRequest } from '../../apis/request';
 export type CM_SimiType = 'song' | 'playlist' | 'artist' | 'mv' | 'user';
 
 /** 相似推荐默认标题 */
-export const SIMI_TITLE: Record<CM_SimiType, string> = {
+export const simiTitle: Record<CM_SimiType, string> = {
   song: '相似歌曲',
   playlist: '相似歌单',
   artist: '相似歌手',

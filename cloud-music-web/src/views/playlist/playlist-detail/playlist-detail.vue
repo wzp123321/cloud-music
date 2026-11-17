@@ -1,6 +1,6 @@
 <template>
-  <cm-loading v-if="playListDetailService.loading"></cm-loading>
-  <div v-if="!playListDetailService.loading" id="playlist-detail" class="playlist-detail">
+  <cm-loading v-if="serviceLoading"></cm-loading>
+  <div v-if="!serviceLoading" id="playlist-detail" class="playlist-detail">
     <section class="pd-cover">
       <cm-image :src="playListDetail?.coverImgUrl" alt="" />
       <h5>歌单简介</h5>
@@ -19,10 +19,10 @@
       <!-- 操作栏：订阅 / 编辑 / 添加歌曲 -->
       <div class="pd-toolbar mb24">
         <el-button
-          :type="playListDetailService.subscribed ? 'default' : 'primary'"
+          :type="isSubscribed ? 'default' : 'primary'"
           @click="onToggleSubscribe"
         >
-          {{ playListDetailService.subscribed ? '已收藏' : '收藏' }}
+          {{ isSubscribed ? '已收藏' : '收藏' }}
         </el-button>
         <el-button @click="openEdit">编辑</el-button>
         <el-button @click="setAddVisible(true)">添加歌曲</el-button>
@@ -100,7 +100,8 @@ import PlaylistFormDialog from '../components/playlist-form-dialog.vue';
 import { usePlaylistDetailView } from './hooks/usePlaylistDetailView';
 
 const {
-  playListDetailService,
+  serviceLoading,
+  isSubscribed,
   playlistId,
   playListDetail,
   musicList,

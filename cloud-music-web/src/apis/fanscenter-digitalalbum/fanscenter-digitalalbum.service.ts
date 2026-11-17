@@ -9,7 +9,7 @@ import { getRequest } from '@/apis/request';
  * - 返回体保持原始结构，由页面 normalize() 兼容 res.data / res.result / res.xxx；
  * - 粉丝中心接口全部需登录只读（页面未登录降级不发请求）；
  * - digitalAlbum_detail / digitalAlbum_sales 需有效 id，属「待核不进主路径」，仅用户手动输入 id 点击后触发；
- * - digitalAlbum_ordering 为写操作，是否发出请求由页面根据 hasLogin() + window.confirm 控制。
+ * - digitalAlbum_ordering 为写操作，是否发出请求由页面根据 sessionManager.isAlive() + window.confirm 控制。
  */
 const call = async (url: string, params: Record<string, unknown> = {}): Promise<any> => {
   try {

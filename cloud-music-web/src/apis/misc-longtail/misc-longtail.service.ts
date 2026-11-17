@@ -7,7 +7,7 @@ import { getRequest } from '@/apis/request';
  * 统一约定：
  * - 一律 getRequest(url, params)；每个请求 try/catch，失败返回空对象 {}；
  * - 返回体保持原始结构，由页面 normalize() 兼容 res.data / res.result / res.xxx；
- * - weblog 为写操作，是否发出请求由页面根据 hasLogin() + window.confirm 控制；
+ * - weblog 为写操作，是否发出请求由页面根据 sessionManager.isAlive() + window.confirm 控制；
  * - calendar 需登录只读（页面未登录降级），时间参数用 new Date() 生成；
  * - pl_count 业务异常属「待核不进主路径」，仅用户手动点击触发，不自动加载。
  */

@@ -1,6 +1,7 @@
-import { onMounted, reactive, ref } from 'vue';
+import { sessionManager } from '@/core/session';
+import { onMounted, ref } from 'vue';
 
-import { hasLogin as checkLogin } from '@/apis/content-enhance/content-enhance.service';
+
 import messageService from '@/apis/message/message.service';
 import { extractObject, extractListByCandidates, type ApiCard } from '@/utils/api-normalize';
 
@@ -27,12 +28,12 @@ export const useMessage = () => {
     { code: 'recentcontact', module: 'msg_recentcontact', name: '最近联系人' },
   ];
 
-  const hasLogin = ref<boolean>(checkLogin());
+  const hasLogin = ref<boolean>(sessionManager.isAlive());
   const activeTab = ref<string>('c4_1');
   const toast = ref<string>('');
   const writeResult = ref<string>('');
 
-  const msgLists = reactive<Record<string, CardItem[]>>({
+  const msgLists = ref<Record<string, CardItem[]>>({
     comments: [],
     forwards: [],
     notices: [],
@@ -178,10 +179,10 @@ export const useMessage = () => {
         default:
           res = null;
       }
-      msgLists[code] = extractList(res).map(toCard);
-      toast.value = `${code} 已加载 ${msgLists[code].length} 条`;
+      msgLists.value[code] = extractList(res).map(toCard);
+      toast.value = `${code} 已加载 ${msgLists.value[code].length} 条`;
     } catch {
-      msgLists[code] = [];
+      msgLists.value[code] = [];
       toast.value = '接口请求失败，已返回空值';
     }
   };

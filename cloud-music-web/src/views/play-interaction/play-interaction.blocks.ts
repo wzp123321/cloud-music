@@ -1,7 +1,7 @@
 /*
  * @Description: 歌曲互动台 · 23 个接口区块定义（纯数据）
  * 写操作：like / resource_like / fm_trash / song_order_update / scrobble
- *   未登录用 hasLogin() 降级；点击需 window.confirm 二次确认；禁止 onMounted 自动调用。
+ *   未登录用 sessionManager.isAlive() 降级；点击需 window.confirm 二次确认；禁止 onMounted 自动调用。
  * 需登录只读：likelist / song_purchased / record_recent_* / history_recommend_*，未登录降级。
  * 详情参数来源：song_* / check_music / lyric_new 的 id ← 歌曲列表或页面输入；
  *   history_recommend_songs_detail 的 id ← history_recommend_songs。

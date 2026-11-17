@@ -1,9 +1,10 @@
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
-import contentEnhanceService, { hasLogin as checkLogin } from '@/apis/content-enhance/content-enhance.service';
+import contentEnhanceService from '@/apis/content-enhance/content-enhance.service';
 import { ContentArtistItem, ContentSongItem, ContentMvItem } from '@/apis/content-enhance/index.api';
 import message from '@/utils/message';
+import { sessionManager } from '@/core/session';
 
 export const useArtistView = () => {
   const router = useRouter();
@@ -26,7 +27,7 @@ export const useArtistView = () => {
   const activeType = ref<string>('1');
   const activeArea = ref<number>(-1);
   const loading = ref<boolean>(false);
-  const hasLogin = checkLogin();
+  const hasLogin = sessionManager.isAlive();
   const artistList = ref<ContentArtistItem[]>([]);
   const followedArtists = ref<ContentArtistItem[]>([]);
   const newSongs = ref<ContentSongItem[]>([]);

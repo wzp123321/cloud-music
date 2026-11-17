@@ -5,9 +5,9 @@
       <cm-image src="../../assets/images/portal/portal-logo.png" @click="linkToPortal" />
       <ul class="header-tabs">
         <li
-          v-for="(item, index) in header.menus"
+          v-for="(item, index) in menus"
           :key="'menus-' + index"
-          :class="{ active: header.currentTab === item.url }"
+          :class="{ active: currentTab === item.url }"
           @click="onLinkTo(item.url)"
         >
           {{ item.name }}
@@ -17,19 +17,19 @@
     <div class="flex-row-start-center">
       <div class="header-search">
         <cm-input
-          v-model="header.keyword"
+          v-model="keyword"
           placeholder="搜索音乐/歌手/歌单/MV"
           :maxlength="20"
           @focus="onSearchFocus"
-          @input="header.loadSuggest(header.keyword)"
+          @input="loadSuggest(keyword)"
           @keydown.enter="handleSearch"
-          @blur="header.searchFocus = false"
+          @blur="searchFocus = false"
         />
-        <div v-if="header.searchFocus" v-loading="header.panelLoading" class="header-search-panel">
+        <div v-if="searchFocus" v-loading="panelLoading" class="header-search-panel">
           <!-- 搜索建议 -->
-          <ul v-if="header.keyword && header.suggestList.length" class="header-suggest">
+          <ul v-if="keyword && suggestList.length" class="header-suggest">
             <li
-              v-for="(item, index) in header.suggestList"
+              v-for="(item, index) in suggestList"
               :key="'sg_' + index"
               @mousedown.prevent="onSelectKeyword(item.keyword)"
             >
@@ -39,10 +39,10 @@
           </ul>
           <!-- 热搜榜 + 热搜详情 -->
           <template v-else>
-            <div v-if="header.hotList.length" class="panel-title">热搜榜</div>
-            <ul v-if="header.hotList.length" class="header-hot">
+            <div v-if="hotList.length" class="panel-title">热搜榜</div>
+            <ul v-if="hotList.length" class="header-hot">
               <li
-                v-for="(item, index) in header.hotList"
+                v-for="(item, index) in hotList"
                 :key="'hot_' + index"
                 @mousedown.prevent="onSelectKeyword(item.first)"
               >
@@ -51,10 +51,10 @@
                 <span v-if="item.second" class="hot-sub">{{ item.second }}</span>
               </li>
             </ul>
-            <div v-if="header.hotDetail.length" class="panel-title">热搜详情</div>
-            <ul v-if="header.hotDetail.length" class="header-hot-detail">
+            <div v-if="hotDetail.length" class="panel-title">热搜详情</div>
+            <ul v-if="hotDetail.length" class="header-hot-detail">
               <li
-                v-for="(item, index) in header.hotDetail"
+                v-for="(item, index) in hotDetail"
                 :key="'hd_' + index"
                 @mousedown.prevent="onSelectKeyword(item.searchWord)"
               >
@@ -100,7 +100,15 @@ import { useHeaderView } from './hooks/useHeaderView';
 defineOptions({ name: 'AppHeader' });
 
 const {
-  header,
+  menus,
+  currentTab,
+  keyword,
+  searchFocus,
+  hotList,
+  hotDetail,
+  suggestList,
+  panelLoading,
+  loadSuggest,
   userInfo,
   onLinkTo,
   linkToPortal,

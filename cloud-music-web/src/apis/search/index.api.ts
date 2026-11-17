@@ -10,7 +10,7 @@
  * @param 视频 1014
  * @param 综合 1018
  */
-export enum SEARCH_TYPE {
+export enum SearchType {
   单曲 = '1',
   专辑 = '10',
   歌手 = '100',

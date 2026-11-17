@@ -1,7 +1,7 @@
 <template>
   <div class="cm-simi">
     <div class="cms-header">
-      <h5>{{ title || SIMI_TITLE[type] }}</h5>
+      <h5>{{ title || simiTitle[type] }}</h5>
       <span v-if="loading" class="cms-more">加载中...</span>
     </div>
 
@@ -30,7 +30,7 @@ import { useRouter } from 'vue-router';
 import {
   CM_SimiType,
   CM_SimiItem,
-  SIMI_TITLE,
+  simiTitle,
   fetchSimi,
   normalizeSimi,
 } from './cm-simi.api';
@@ -59,7 +59,7 @@ const props = defineProps({
 });
 
 /** 点击后跳转的详情页路由与 query key */
-const SIMI_ROUTE: Record<CM_SimiType, { path: string; key: string }> = {
+const simiRoute: Record<CM_SimiType, { path: string; key: string }> = {
   song: { path: '/music_detail', key: 'id' },
   playlist: { path: '/playlist_detail', key: 'id' },
   artist: { path: '/artist_detail', key: 'id' },
@@ -92,7 +92,7 @@ const load = async () => {
 }
 
 const onItemClick = (item: CM_SimiItem) => {
-  const route = SIMI_ROUTE[props.type];
+  const route = simiRoute[props.type];
   if (!route || !router) return;
   router.push({ path: route.path, query: { [route.key]: String(item.id) } });
 };

@@ -29,11 +29,12 @@
 </template>
 
 <script setup lang="ts">
+import { sessionManager } from '@/core/session';
 import ApiConsolePage from '@/components/api-console-page/api-console-page.vue';
-import { hasLogin } from '@/apis/content-enhance/content-enhance.service';
+
 import { blocks, tabs } from './discovery.blocks';
 
-const loggedIn = hasLogin();
+const loggedIn = sessionManager.isAlive();
 </script>
 
 <style lang="less">

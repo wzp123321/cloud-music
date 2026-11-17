@@ -6,10 +6,10 @@ import musicService from '@/apis/play-controller/pc.service';
 import message from '@/utils/message';
 import { usePlaylistStore } from './playlist';
 import { useLyricStore } from './lyric';
-import { EMPTY_MUSIC, PLAY_TYPE, PLAY_TYPES, PLAY_TYPE_KEYS } from '@/constant';
+import { emptyMusic, PlayType, playTypes, playTypeKeys } from '@/constant';
 
 /** 旧版本把当前索引以纯数字字符串写在这个 key 下 */
-const INDEX_STORAGE_KEY = 'cloud-play-index';
+const indexStorageKey = 'cloud-play-index';
 
 export const usePlayerStore = defineStore(
   'player',
@@ -34,10 +34,8 @@ export const usePlayerStore = defineStore(
 
     /** 当前歌曲从队列派生，不再额外维护一份副本 */
     const currentMusic = computed<Common_IMusic>(
-      () => playlist.musicList[currentIndex.value] ?? EMPTY_MUSIC,
+      () => playlist.musicList[currentIndex.value] ?? emptyMusic,
     );
-    const playTypes = PLAY_TYPES;
-
     /** 组件挂载后注入音频元素，并同步音量 / 静音态 */
     const bindAudio = (el: HTMLAudioElement | null) => {
       audioEl.value = el;
@@ -120,17 +118,17 @@ export const usePlayerStore = defineStore(
       if (!list.length) {
         return;
       }
-      const type = PLAY_TYPE_KEYS[playTypeIndex.value % PLAY_TYPE_KEYS.length];
+      const type = playTypeKeys[playTypeIndex.value % playTypeKeys.length];
       switch (type) {
-        case PLAY_TYPE.LOOP:
+        case PlayType.LOOP:
           switchMusic(direction);
           break;
-        case PLAY_TYPE.SINGLE:
+        case PlayType.SINGLE:
           playTimestamp.value = 0;
           nextTick(() => startPlayback());
           isPlaying.value = true;
           break;
-        case PLAY_TYPE.RANDOM:
+        case PlayType.RANDOM:
           currentIndex.value = Math.min(
             Math.round(Math.random() * list.length),
             list.length - 1,
@@ -342,7 +340,7 @@ export const usePlayerStore = defineStore(
   },
   {
     persist: {
-      key: INDEX_STORAGE_KEY,
+      key: indexStorageKey,
       storage: localStorage,
       pick: ['currentIndex'],
       // 旧格式是纯数字字符串（如 "3"），不是 JSON 对象

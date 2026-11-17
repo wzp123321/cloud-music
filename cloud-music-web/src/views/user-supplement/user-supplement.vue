@@ -43,10 +43,11 @@
 </template>
 
 <script setup lang="ts">
+import { sessionManager } from '@/core/session';
 import { ref } from 'vue';
 
 import { useUserStore } from '@/store/user';
-import { hasLogin as checkLogin } from '@/apis/content-enhance/content-enhance.service';
+
 
 import SupplementReadPanel from './components/supplement-read-panel.vue';
 import SupplementCloudPanel from './components/supplement-cloud-panel.vue';
@@ -62,7 +63,7 @@ const tabs = [
 /** 从登录态取当前登录 uid，取不到留空由用户手填 */
 const resolveUid = (): number => useUserStore().profile?.userId ?? 0;
 
-const hasLogin = ref<boolean>(checkLogin());
+const hasLogin = ref<boolean>(sessionManager.isAlive());
 const activeTab = ref<string>('c6_1');
 const toast = ref<string>('');
 const uid = ref<string>(String(resolveUid() || ''));

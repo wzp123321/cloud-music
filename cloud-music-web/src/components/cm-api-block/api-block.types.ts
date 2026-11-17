@@ -53,7 +53,7 @@ export interface ApiBlock {
 }
 
 /** 默认的区块类型文案 */
-export const DEFAULT_KIND_LABELS: Record<BlockKind, string> = {
+export const defaultKindLabels: Record<BlockKind, string> = {
   read: '读取',
   'login-read': '需登录只读',
   write: '写操作',

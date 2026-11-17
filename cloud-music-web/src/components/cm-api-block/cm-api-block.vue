@@ -65,7 +65,7 @@
 import { computed } from 'vue';
 
 import { pretty } from './api-block.util';
-import { DEFAULT_KIND_LABELS, type ApiBlock, type BlockCard, type BlockState } from './api-block.types';
+import { defaultKindLabels, type ApiBlock, type BlockCard, type BlockState } from './api-block.types';
 
 /** 接口调用台仅开发环境可见（见模板根节点 v-if） */
 const enableApiConsole = import.meta.env.DEV;
@@ -101,7 +101,7 @@ const inputValue = computed({
 
 /** 区块类型标签，页面未覆盖时用默认文案 */
 const kindText = computed(
-  () => props.kindLabels?.[props.block.kind] ?? DEFAULT_KIND_LABELS[props.block.kind],
+  () => props.kindLabels?.[props.block.kind] ?? defaultKindLabels[props.block.kind],
 );
 
 /** 按钮文案随类型变化：写操作要强调二次确认，失效接口仅作说明/核验入口 */

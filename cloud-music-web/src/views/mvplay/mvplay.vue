@@ -1,6 +1,6 @@
 <template>
   <div id="mv-player" class="mv-player">
-    <div v-loading="mvPlayer.loading" class="mp-container">
+    <div v-loading="playerLoading" class="mp-container">
       <cm-video :src="url" preload="auto" autoplay controls muted></cm-video>
       <div class="mp-info">
         <h5>{{ mvDetail?.name }}</h5>
@@ -55,7 +55,7 @@
 import { useMvplayView } from './hooks/useMvplayView';
 
 const {
-  mvPlayer,
+  playerLoading,
   url,
   mvDetail,
   mvStat,

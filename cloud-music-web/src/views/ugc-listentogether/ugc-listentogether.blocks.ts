@@ -1,7 +1,7 @@
 /*
  * @Description: UGC 与一起听 · 15 个接口区块定义（纯数据）
  * 写操作：ugc_user_devote / room_create / play_command / heatbeat / sync_list_command / end
- *   未登录用 hasLogin() 降级；点击需 window.confirm 二次确认；禁止 onMounted 自动调用。
+ *   未登录用 sessionManager.isAlive() 降级；点击需 window.confirm 二次确认；禁止 onMounted 自动调用。
  * 需登录只读：ugc_detail / listentogether_status，未登录降级。
  * 参数来源：ugc_*_get 的 id ← ugc_artist_search 结果或页面输入；
  *   room_check/status/sync_playlist_get 的 roomId ← room_create 返回或页面输入。

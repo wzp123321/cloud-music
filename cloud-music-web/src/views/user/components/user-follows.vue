@@ -32,29 +32,29 @@ import { ref, computed, onMounted } from 'vue';
 import { useUserStore } from '@/store/user';
 import { useUserCenter } from '../hooks/useUserCenter';
 
-const userCenterService = useUserCenter();
+const { follows$: followsRef, followeds$: followedsRef, loadFollows, loadFolloweds, toggleFollow } = useUserCenter();
 import { UC_FollowUser } from '@/apis/user/user.api';
 
 const tab = ref<'follows' | 'followeds'>('follows');
 const ownerUid = ref<number>(0);
 
-const follows = computed(() => userCenterService.followsValue);
-const followeds = computed(() => userCenterService.followedsValue);
+const follows = computed(() => followsRef.value);
+const followeds = computed(() => followedsRef.value);
 const list = computed<UC_FollowUser[]>(() => (tab.value === 'follows' ? follows.value : followeds.value));
 
 const switchTab = (t: 'follows' | 'followeds') => {
   tab.value = t;
-  if (t === 'follows') userCenterService.loadFollows();
-  else userCenterService.loadFolloweds();
+  if (t === 'follows') loadFollows();
+  else loadFolloweds();
 };
 
 const onToggle = (u: UC_FollowUser) => {
-  userCenterService.toggleFollow(u.userId, u.followed);
+  toggleFollow(u.userId, u.followed);
 };
 
 onMounted(() => {
   ownerUid.value = useUserStore().profile?.userId ?? 0;
-  userCenterService.loadFollows();
+  loadFollows();
 });
 </script>
 

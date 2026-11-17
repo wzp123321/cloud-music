@@ -1,27 +1,54 @@
 import axios, {
   AxiosInstance,
   AxiosResponse,
-  InternalAxiosRequestConfig,
   AxiosError,
 } from 'axios';
 import serviceConfig from '@/config/request';
-import { getCookie, TOKEN_KEY } from '@/core/token';
+import { sessionManager } from '@/core/session';
 import message from '@/utils/message';
 
-// 统一 axios 单例：全项目共用，拦截器集中管理（token 注入 / 错误归一）
+// 统一 axios 单例：全项目共用，拦截器只做错误归一；会话凭证在请求组装阶段显式注入
 const instance: AxiosInstance = axios.create({
-  baseURL: serviceConfig.BASE_URL,
-  timeout: serviceConfig.TIME_OUT,
+  baseURL: serviceConfig.baseUrl,
+  timeout: serviceConfig.timeout,
 });
 
-// 请求拦截：自动注入 cookie 中的登录凭证
-instance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-  const token = getCookie(TOKEN_KEY);
-  if (token) {
-    config.headers.set('Authorization', token);
+/**
+ * 显式组合会话凭证。调用点即确定 payload 形态，不依赖运行时猜测。
+ *
+ * 不用 Authorization 的原因：后端 NeteaseCloudMusicApi 只认 MUSIC_U 这类上游 cookie，
+ * 根本不读 Authorization 头。旧实现塞的是整个 profile JSON，既无效，又因含中文字符
+ * 有触发非法请求头的风险。
+ *
+ * 后端侧 server.js 用 `Object.assign({}, { cookie: req.cookies }, req.query, req.body, ...)`
+ * 组装参数，显式传入的 `cookie` 会覆盖浏览器 cookie，因此这里是「凭证自持」而非「双写」。
+ */
+const withSession = (payload?: unknown): unknown => {
+  const session = sessionManager.snapshot();
+  if (!session) {
+    return payload;
   }
-  return config;
-});
+  if (payload === undefined || payload === null) {
+    // 无 body 的 POST（如 /login/refresh、/logout）也必须带上凭证
+    return { cookie: session };
+  }
+  if (typeof FormData !== 'undefined' && payload instanceof FormData) {
+    // multipart：追加字段，由后端 fileUpload 解析进 req.body
+    payload.append('cookie', session);
+    return payload;
+  }
+  if (
+    typeof payload === 'object' &&
+    !Array.isArray(payload) &&
+    !(payload instanceof ArrayBuffer) &&
+    !(payload instanceof Blob) &&
+    !(payload instanceof URLSearchParams)
+  ) {
+    return { ...(payload as Record<string, unknown>), cookie: session };
+  }
+  // 已序列化的字符串 body 等不注入，避免破坏调用方既定的报文格式
+  return payload;
+};
 
 // 响应拦截：统一错误归一，业务层只需关心 resolve 数据 / catch 统一错误
 instance.interceptors.response.use(
@@ -73,17 +100,18 @@ const publicReq = async (params: IRequestParams) => {
             ? 'application/json; charset=utf-8'
             : 'application/json',
       };
+  const payload = withSession(param);
   return instance({
     url,
     method,
     ...options,
     headers,
-    [method === 'post' ? 'data' : 'params']: param,
+    [method === 'post' ? 'data' : 'params']: payload,
   }).then((res: AxiosResponse) => (res ? res.data : undefined));
 };
 
 // 单个请求（带超时 race）
-export const req = async (params: IRequestParams, delay = serviceConfig.TIME_OUT) => {
+export const req = async (params: IRequestParams, delay = serviceConfig.timeout) => {
   const timeout = timeoutfn(delay, params.url);
   try {
     return await Promise.race([timeout.promise, publicReq(params)]);
@@ -114,7 +142,7 @@ export const postRequest = async <T = any>(
   options?: IRequestOptions,
 ): Promise<T> => (await req({ url, method: 'post', param, options })) as T;
 
-// 文件流下载：复用统一实例（拦截器自动注入 Authorization），返回完整响应以读取 headers
+// 文件流下载：显式注入凭证，返回完整响应以读取 headers
 export const getBlobResponse = (
   url: string,
   data?: unknown,
@@ -122,7 +150,7 @@ export const getBlobResponse = (
   instance({
     url,
     method: 'post',
-    data,
+    data: withSession(data),
     responseType: 'blob',
   });
 

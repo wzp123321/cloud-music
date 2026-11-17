@@ -55,7 +55,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue';
+import { ref } from 'vue';
 
 import userSupplementService from '../../../apis/user-supplement/user-supplement.service';
 import { toList, useSupplementGuard, useWriteRunner, type SupplementCard } from '../use-supplement';
@@ -79,7 +79,7 @@ const readBlocks = [
   { code: 'commentHistory', module: 'user_comment_history', name: '评论历史' },
 ];
 
-const readLists = reactive<Record<string, SupplementCard[]>>({
+const readLists = ref<Record<string, SupplementCard[]>>({
   account: [],
   audio: [],
   dj: [],
@@ -119,10 +119,10 @@ const loadRead = async (code: string) => {
       default:
         res = null;
     }
-    readLists[code] = toList(res);
-    emit('toast', `${code} 已加载 ${readLists[code].length} 条`);
+    readLists.value[code] = toList(res);
+    emit('toast', `${code} 已加载 ${readLists.value[code].length} 条`);
   } catch {
-    readLists[code] = [];
+    readLists.value[code] = [];
     emit('toast', '接口请求失败，已返回空值');
   }
 };

@@ -6,7 +6,7 @@ import type { BlockCard } from './api-block.types';
 import { pickListBfs, prettyJson } from '@/utils/api-normalize';
 
 /** 常见列表字段名，按优先级探测（取各接口并集，命中即返回） */
-const LIST_KEYS = [
+const listKeys = [
   'data',
   'result',
   'list',
@@ -41,7 +41,7 @@ const LIST_KEYS = [
 ];
 
 /** 在响应体（含 data / result / 任意嵌套）中找出第一个数组作为列表 */
-export const pickList = (res: any): any[] => pickListBfs(res, LIST_KEYS);
+export const pickList = (res: any): any[] => pickListBfs(res, listKeys);
 
 const pickId = (raw: any, index: number): any => {
   const r = raw ?? {};

@@ -189,7 +189,7 @@ export interface DragonBallItem {
   id?: string | number;
   name?: string;
   iconUrl?: string;
-  // 跳转类型（参考 TARGET_TYPE）
+  // 跳转类型（参考 TargetType）
   actionType?: string;
   action?: { actionType?: string; data?: Record<string, any> } | string;
   url?: string;

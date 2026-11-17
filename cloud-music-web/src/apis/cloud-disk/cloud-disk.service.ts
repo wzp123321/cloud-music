@@ -8,7 +8,7 @@ import { getRequest, postFormRequest } from '@/apis/request';
  * - 每个请求 try/catch，失败返回空对象 {}；
  * - 返回体保持原始结构，由页面 normalize() 兼容 res.data / res.result / res.xxx；
  * - cloud 为上传写操作，必须用 postFormRequest(url, FormData)；是否发出请求由页面根据
- *   hasLogin() + window.confirm 控制，service 不自动触发；
+ *   sessionManager.isAlive() + window.confirm 控制，service 不自动触发；
  * - cloud_match 需登录只读（/cloud/match 实测 301），返回匹配结果并提供 songId 给 cloud 带参。
  */
 const call = async (url: string, params: Record<string, unknown> = {}): Promise<any> => {

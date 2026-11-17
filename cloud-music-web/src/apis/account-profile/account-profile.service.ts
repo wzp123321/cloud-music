@@ -11,7 +11,7 @@ import { getRequest } from '@/apis/request';
  * - 返回体保持原始结构，由页面 normalize() 兼容 res.data / res.result / res.xxx；
  * - 账号动作（register_* / captcha_* / cellphone_existence_check / rebind / activate_init_profile /
  *   signin_progress / setting / daily_signin）一律按写操作处理：是否发出请求由页面根据
- *   hasLogin() + window.confirm 控制；禁止 onMounted 自动调用、禁止预填真实手机号；
+ *   sessionManager.isAlive() + window.confirm 控制；禁止 onMounted 自动调用、禁止预填真实手机号；
  * - verify_getQr / verify_qrcodestatus / countries_code_list / nickname_check / sign_happy_info 为只读。
  */
 const call = async (url: string, params: Record<string, unknown> = {}): Promise<any> => {
