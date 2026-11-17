@@ -73,6 +73,7 @@ const groups: { title: string; items: CapabilityItem[] }[] = [
     title: '服务端对齐',
     items: [
       { title: '服务端接口总览', path: '/server-routes', desc: '与 server 路由一一对应的全量清单、按域检索与真实调用' },
+      { title: '新接口能力', path: '/new-capabilities', desc: '新增对齐的 38 个接口按业务场景接成可直接使用能力' },
     ],
   },
 ];

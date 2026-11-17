@@ -30,6 +30,12 @@ const homeRoutes: RouteRecordRaw[] = [
     meta: { name: '服务端接口总览' },
     component: () => import('@/views/api-coverage/api-coverage.vue'),
   },
+  // 新增对齐接口的业务能力页：按场景组织，非 DEV-only
+  {
+    path: '/new-capabilities',
+    meta: { name: '新接口能力' },
+    component: () => import('@/views/new-capabilities/new-capabilities.vue'),
+  },
 ];
 
 export default homeRoutes;

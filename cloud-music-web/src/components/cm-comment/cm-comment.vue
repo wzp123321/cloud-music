@@ -27,6 +27,7 @@
       @like="onLike"
       @toggle-floor="onToggleFloor"
       @toggle-hug="onToggleHug"
+      @report="onReport"
     />
 
     <div v-if="isContainer && !loading && !renderList.length" class="cmc-empty">
@@ -78,6 +79,7 @@ const {
   switchTab,
   onSubmit,
   onLike,
+  onReport,
   floorOpenId,
   floorMap,
   onToggleFloor,

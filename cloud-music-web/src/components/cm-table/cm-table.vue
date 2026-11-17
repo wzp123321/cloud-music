@@ -28,8 +28,13 @@
         <div class="op-btn flex-row-start-center">
           <cm-icon name="icon-24gf-play" title="播放" @click="onPlay(item)"></cm-icon>
           <cm-icon name="icon-tianjia" title="添加到歌单" @click="handleAddPlayItem(item)"></cm-icon>
-          <cm-icon name="icon-jushoucang" title="收藏" @click="message.info('该功能暂未开放')"></cm-icon>
-          <cm-icon name="icon-xiazai" title="下载" @click="message.info('该功能暂未开放')"></cm-icon>
+          <cm-icon
+            name="icon-jushoucang"
+            :title="likedMap[item.id] ? '取消红心' : '加入红心'"
+            :class="{ 'is-liked': likedMap[item.id] }"
+            @click="onLike(item)"
+          ></cm-icon>
+          <cm-icon name="icon-xiazai" title="下载" @click="onDownload(item)"></cm-icon>
           <cm-icon name="icon-xiangqing" title="详情" @click="linkToDetailPage(item.id)"></cm-icon>
           <cm-icon
             v-if="showRemove"
@@ -51,10 +56,13 @@
 <script setup lang="ts">
 
 // 表格
-import {  PropType, ref, computed } from 'vue';
+import { PropType, ref, computed, reactive, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { formatDuration } from '@/core/utils';
+import { hasLogin } from '@/apis/content-enhance/content-enhance.service';
+import { highValueSong } from '@/apis/server-coverage/high-value.service';
+import { downloadFileByUrl } from '@/apis/file-download-upload/util';
 
 import { usePlayerStore } from '@/store/player';
 import { usePlaylistStore } from '@/store/playlist';
@@ -109,6 +117,50 @@ const page = ref<number>(1);
 
       message.success('添加成功');
     };
+
+    /** 红心状态：登录后才批量查询，避免游客态刷出 400 */
+    const likedMap = reactive<Record<number, boolean>>({});
+    const loadLikeState = async () => {
+      if (!hasLogin() || !props.dataSource.length) return;
+      const ids = props.dataSource.map((item) => item?.id).filter(Boolean).join(',');
+      if (!ids) return;
+      const res = await highValueSong.likeCheck(ids);
+      const raw = res?.ids ?? (res?.data as { ids?: unknown } | undefined)?.ids;
+      if (!Array.isArray(raw)) return;
+      for (const id of raw) likedMap[Number(id)] = true;
+    };
+
+    /** 收藏 / 取消红心：写操作，登录 + 二次确认后才发出 */
+    const onLike = async (item: Common_IMusic) => {
+      if (!item?.id) return;
+      if (!hasLogin()) {
+        message.info('请先登录后再收藏歌曲');
+        return;
+      }
+      const next = !likedMap[item.id];
+      const action = next ? '加入' : '移出';
+      if (!window.confirm(`确认把《${item.name}》${action}红心吗？`)) return;
+      const res = await highValueSong.like(item.id, next);
+      if (!res) return;
+      likedMap[item.id] = next;
+      message.success(`已${action}红心`);
+    };
+
+    /** 下载：拿直链后触发浏览器下载；无权限时给明确提示 */
+    const onDownload = async (item: Common_IMusic) => {
+      if (!item?.id) return;
+      const res = await highValueSong.downloadUrl(item.id);
+      const payload = (res?.data ?? res) as { url?: string } | null;
+      if (!payload?.url) {
+        message.info('暂无下载权限，请登录后重试或检查版权限制');
+        return;
+      }
+      await downloadFileByUrl(payload.url, `${item.name || 'song'}.mp3`);
+      message.success('已开始下载');
+    };
+
+    onMounted(loadLikeState);
+    watch(() => props.dataSource.map((item) => item?.id).join(','), loadLikeState);
 
     /** 点歌名/详情 → 先播放该歌曲，再打开播放页（与主流播放器一致） */
     const linkToDetailPage = (id: number) => {
@@ -213,6 +265,10 @@ table {
   tbody tr td .op-btn i.iconfont + i.iconfont {
     font-size: 16px;
     margin-left: 24px;
+  }
+
+  tbody tr td .op-btn :deep(.is-liked) {
+    color: var(--color-primary, #c20c0c);
   }
 
   tbody tr:hover td span.duration-text {
