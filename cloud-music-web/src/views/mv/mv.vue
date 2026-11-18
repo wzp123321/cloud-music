@@ -113,13 +113,13 @@ const {
     border: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: 18px;
     background: var(--color-default, #fff);
-    color: #666;
+    color: var(--color-text-secondary);
     font-size: 14px;
     cursor: pointer;
 
     &.active {
-      border-color: var(--color-primary, #c20c0c);
-      color: var(--color-primary, #c20c0c);
+      border-color: var(--color-primary);
+      color: var(--color-primary);
       background: rgba(194, 12, 12, 0.06);
     }
   }
@@ -137,7 +137,7 @@ const {
 
   &--filter-label {
     font-size: 13px;
-    color: #999;
+    color: var(--color-text-secondary);
   }
 
   &--filter {
@@ -145,13 +145,13 @@ const {
     border: none;
     border-radius: 12px;
     background: rgba(0, 0, 0, 0.04);
-    color: #666;
+    color: var(--color-text-secondary);
     font-size: 13px;
     cursor: pointer;
 
     &.active {
       color: #fff;
-      background: var(--color-primary, #c20c0c);
+      background: var(--color-primary);
     }
   }
 
@@ -165,14 +165,14 @@ const {
   &--heading {
     font-size: 20px;
     font-weight: 600;
-    color: #333;
+    color: var(--color-text-primary);
   }
 
   &--status,
   &--tip {
     margin-top: 16px;
     font-size: 13px;
-    color: #999;
+    color: var(--color-text-secondary);
   }
 
   &--grid {
@@ -199,7 +199,7 @@ const {
   &--name {
     margin-top: 10px;
     font-size: 14px;
-    color: #333;
+    color: var(--color-text-primary);
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -208,7 +208,7 @@ const {
   &--sub {
     margin-top: 4px;
     font-size: 12px;
-    color: #999;
+    color: var(--color-text-secondary);
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;

@@ -19,7 +19,7 @@ import { ref, onMounted, watch } from 'vue';
 import { useUserCenter } from '../hooks/useUserCenter';
 import { UC_CloudItem } from '@/apis/user/user.api';
 
-const userCenterService = useUserCenter();
+const { cloud$: cloudResult, loadCloud } = useUserCenter();
 
 const list = ref<UC_CloudItem[]>([]);
 const cloud = ref<{ list: UC_CloudItem[]; count: number }>({ list: [], count: 0 });
@@ -31,7 +31,7 @@ const formatSize = (size?: number) => {
 
 // 订阅云盘状态，immediate 保证首屏同步到当前值
 watch(
-  userCenterService.cloud$,
+  cloudResult,
   (v) => {
     cloud.value = v;
     list.value = v.list;
@@ -40,7 +40,7 @@ watch(
 );
 
 onMounted(() => {
-  userCenterService.loadCloud();
+  loadCloud();
 });
 </script>
 
@@ -51,7 +51,7 @@ onMounted(() => {
   .up-block-title {
     font-size: 18px;
     font-weight: 600;
-    color: #333;
+    color: var(--color-text-primary);
     margin-bottom: 16px;
   }
 
@@ -66,13 +66,13 @@ onMounted(() => {
 
       .up-cloud-name {
         font-size: 14px;
-        color: #333;
+        color: var(--color-text-primary);
       }
 
       .up-cloud-artist {
         margin-top: 4px;
         font-size: 12px;
-        color: #999;
+        color: var(--color-text-secondary);
       }
     }
 
@@ -85,7 +85,7 @@ onMounted(() => {
   .up-empty {
     padding: 40px 0;
     text-align: center;
-    color: #999;
+    color: var(--color-text-secondary);
   }
 }
 </style>

@@ -1,5 +1,8 @@
 <template>
-  <api-console-page title="个性化发现与风格分类" :blocks="blocks" :tabs="tabs"
+  <api-console-page
+    title="个性化发现与风格分类"
+    :blocks="blocks"
+    :tabs="tabs"
     root-class="discovery"
   >
     <template #intro>
@@ -29,11 +32,12 @@
 </template>
 
 <script setup lang="ts">
+import { sessionManager } from '@/core/session';
 import ApiConsolePage from '@/components/api-console-page/api-console-page.vue';
-import { hasLogin } from '@/apis/content-enhance/content-enhance.service';
+
 import { blocks, tabs } from './discovery.blocks';
 
-const loggedIn = hasLogin();
+const loggedIn = sessionManager.isAlive();
 </script>
 
 <style lang="less">
@@ -48,10 +52,10 @@ const loggedIn = hasLogin();
     margin-top: 20px;
     font-size: 13px;
     line-height: 1.8;
-    color: #888;
+    color: var(--color-text-secondary);
 
     b {
-      color: var(--color-primary, #c20c0c);
+      color: var(--color-primary);
     }
   }
 
@@ -71,7 +75,7 @@ const loggedIn = hasLogin();
     align-items: center;
     gap: 8px;
     font-size: 13px;
-    color: #666;
+    color: var(--color-text-secondary);
 
     input {
       width: 240px;
@@ -95,13 +99,13 @@ const loggedIn = hasLogin();
     border: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: 18px;
     background: var(--color-default, #fff);
-    color: #666;
+    color: var(--color-text-secondary);
     font-size: 14px;
     cursor: pointer;
 
     &.active {
-      border-color: var(--color-primary, #c20c0c);
-      color: var(--color-primary, #c20c0c);
+      border-color: var(--color-primary);
+      color: var(--color-primary);
       background: rgba(194, 12, 12, 0.06);
     }
   }

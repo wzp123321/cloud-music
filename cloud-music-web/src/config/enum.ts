@@ -1,7 +1,7 @@
 /**
  * 跳转类型
  */
-export enum TARGET_TYPE {
+export enum TargetType {
   单曲 = 1,
   专辑 = 10,
   歌手 = 100,

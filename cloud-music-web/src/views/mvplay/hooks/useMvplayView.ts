@@ -1,14 +1,16 @@
+import { sessionManager } from '@/core/session';
+import type { ApiRawResponse } from '@/apis/types';
 import { onMounted, ref, watch } from 'vue';
 
 import { getQueryParam } from '@/core/token';
 import { useMvPlayer } from './useMvPlayer';
 import { MP_MvDetail, MP_MVCommentRes } from '../../../apis/mvplay/index.api';
-import contentEnhanceService, { hasLogin } from '@/apis/content-enhance/content-enhance.service';
+import contentEnhanceService from '@/apis/content-enhance/content-enhance.service';
 import { MvDetailInfoRes } from '@/apis/content-enhance/index.api';
 import { useRequest } from '@/hooks/useRequest';
 
 export const useMvplayView = () => {
-  const mvPlayer = useMvPlayer();
+  const { mvDetailResult$, mvUrlResult$, mvCommentResult$, loading: playerLoading } = useMvPlayer();
   // 互动数据请求统一走 useRequest（箭头体内延迟引用 loadMvStat，无 TDZ 问题）
   const { run: runMvStat } = useRequest(() => loadMvStat());
 
@@ -63,10 +65,10 @@ export const useMvplayView = () => {
 
   /** 收藏状态：mv_sublist（需登录，未登录时不请求） */
   const loadSubState = async () => {
-    if (!mvid || !hasLogin()) return;
+    if (!mvid || !sessionManager.isAlive()) return;
     try {
       const res = await contentEnhanceService.getMvSublist({ limit: 100 });
-      isSubed.value = (res?.data || []).some((item: any) => Number(item.id || item.mvid) === mvid);
+      isSubed.value = (res?.data || []).some((item: ApiRawResponse) => Number(item.id || item.mvid) === mvid);
     } catch {
       isSubed.value = false;
     }
@@ -74,7 +76,7 @@ export const useMvplayView = () => {
 
   /** 收藏/取消收藏 MV：mv_sub（需登录，成功后刷新收藏状态） */
   const toggleMvSub = async () => {
-    if (!hasLogin()) {
+    if (!sessionManager.isAlive()) {
       subTip.value = '登录后可收藏 MV';
       return;
     }
@@ -99,9 +101,9 @@ export const useMvplayView = () => {
   };
 
   // 订阅 MV 详情 / 地址 / 评论状态，immediate 保证首屏同步到当前值
-  watch(mvPlayer.mvDetailResult$, (v) => (mvDetail.value = v), { immediate: true });
-  watch(mvPlayer.mvUrlResult$, (v) => (url.value = v), { immediate: true });
-  watch(mvPlayer.mvCommentResult$, (v) => (commentRes.value = v), { immediate: true });
+  watch(mvDetailResult$, (v) => (mvDetail.value = v), { immediate: true });
+  watch(mvUrlResult$, (v) => (url.value = v), { immediate: true });
+  watch(mvCommentResult$, (v) => (commentRes.value = v), { immediate: true });
 
   onMounted(() => {
     runMvStat();
@@ -109,7 +111,7 @@ export const useMvplayView = () => {
   });
 
   return {
-    mvPlayer,
+    playerLoading,
     url,
     mvDetail,
     mvStat,

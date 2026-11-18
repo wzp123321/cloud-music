@@ -133,7 +133,7 @@ const {
       width: 56px;
       flex-shrink: 0;
       font-size: 14px;
-      color: #666;
+      color: var(--color-text-secondary);
       line-height: 28px;
     }
   }
@@ -156,7 +156,7 @@ const {
       }
 
       &.active {
-        background-color: var(--color-primary, #c20c0c);
+        background-color: var(--color-primary);
         color: #fff;
       }
     }
@@ -196,7 +196,7 @@ const {
       width: 72px;
       flex-shrink: 0;
       font-size: 14px;
-      color: #999;
+      color: var(--color-text-secondary);
       line-height: 28px;
     }
   }
@@ -208,16 +208,16 @@ const {
 
     .pb-cat-item {
       font-size: 14px;
-      color: #333;
+      color: var(--color-text-primary);
       cursor: pointer;
       line-height: 28px;
 
       &:hover {
-        color: var(--color-primary, #c20c0c);
+        color: var(--color-primary);
       }
 
       &.active {
-        color: var(--color-primary, #c20c0c);
+        color: var(--color-primary);
         font-weight: 600;
       }
     }

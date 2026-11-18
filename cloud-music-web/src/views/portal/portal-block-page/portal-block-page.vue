@@ -39,16 +39,14 @@
 <script setup lang="ts">
 
 // 首页区块瀑布流（homepage_block_page）
-import { toRef, ref, computed } from 'vue';
+import { ref, computed } from 'vue';
 
 import router from '@/router';
 import { usePortal } from '../hooks/usePortal';
 import { HomepageBlock, HomepageBlockResource } from '../../../apis/portal/portal-api';
 
-const portal = usePortal();
+const { linkToAlbum, linkToArtistDetail, linkToDjProgram, linkToDjRadio, linkToMv, linkToPlaylist, linkToSong, blockPageList, blockPageError } = usePortal();
 defineOptions({ name: 'PortalBlockPage' });
-const blockPageList = toRef(portal, 'blockPageList');
-    const blockPageError = toRef(portal, 'blockPageError');
 
     // 归集区块内所有资源（兼容 creatives 嵌套与 resources 平铺）
     const collectResources = (block: HomepageBlock): HomepageBlockResource[] => {
@@ -59,7 +57,7 @@ const blockPageList = toRef(portal, 'blockPageList');
     // 可导航的资源类型：均对应前端已存在的详情/列表页（server 也都有对应接口）。
     // VOICE（播客节目）→ 节目详情；VOICELIST/RADIO/DJ（电台）→ 电台详情。
     // 其余类型（话题 / 活动等暂无详情页）一律不渲染卡片，避免「点了没反应」
-    const NAVIGABLE_TYPE =
+    const navigableType =
       /PLAYLIST|LIST|ALBUM|SONG|VIDEO|MV|ARTIST|SINGER|USER|RADIO|DJ|VOICELIST|VOICE|TOPLIST/;
     const isExternalUrl = (s?: string): boolean => !!s && /^https?:\/\//i.test(s);
 
@@ -70,7 +68,7 @@ const blockPageList = toRef(portal, 'blockPageList');
       if (resId(r) == null) return false;
       const type = (r?.resourceType || '').toString().toUpperCase();
       const action = (r?.action?.actionType || '').toString().toUpperCase();
-      if (NAVIGABLE_TYPE.test(type) || NAVIGABLE_TYPE.test(action)) return true;
+      if (navigableType.test(type) || navigableType.test(action)) return true;
       // 外链（resourceUrl 或 action 里的网页地址）也能在新标签打开
       if (isExternalUrl(r?.resourceUrl) || isExternalUrl(r?.action?.actionType)) return true;
       return false;
@@ -80,20 +78,20 @@ const blockPageList = toRef(portal, 'blockPageList');
       list.filter(canNavigate);
 
     // 首屏只展开 3 个有内容的区块、每区块 5 张卡，其余由用户主动展开
-    const VISIBLE_BLOCK_COUNT = 3;
-    const MAX_CARDS_PER_BLOCK = 5;
+    const visibleBlockCount = 3;
+    const maxCardsPerBlock = 5;
     const expanded = ref<boolean>(false);
     // 上游会返回「无资源」或「资源全部不可跳转」的空区块，渲染出来只会留下空白
     const populatedBlocks = computed<HomepageBlock[]>(() =>
       blockPageList.value.filter((block) => filterNavigable(collectResources(block)).length > 0),
     );
-    const hasMore = computed(() => populatedBlocks.value.length > VISIBLE_BLOCK_COUNT);
+    const hasMore = computed(() => populatedBlocks.value.length > visibleBlockCount);
     const visibleBlocks = computed<HomepageBlock[]>(() =>
-      expanded.value ? populatedBlocks.value : populatedBlocks.value.slice(0, VISIBLE_BLOCK_COUNT),
+      expanded.value ? populatedBlocks.value : populatedBlocks.value.slice(0, visibleBlockCount),
     );
 
     const visibleResources = (block: HomepageBlock): HomepageBlockResource[] =>
-      filterNavigable(collectResources(block)).slice(0, MAX_CARDS_PER_BLOCK);
+      filterNavigable(collectResources(block)).slice(0, maxCardsPerBlock);
 
     const blockTitle = (block: HomepageBlock): string => {
       return block?.uiElement?.title?.title || '';
@@ -112,23 +110,23 @@ const blockPageList = toRef(portal, 'blockPageList');
       const id = resId(r) as number | string;
       const type = (r?.resourceType || '').toString().toUpperCase();
       const action = (r?.action?.actionType || '').toString().toUpperCase();
-      if (/PLAYLIST|LIST/.test(type) || /PLAYLIST|LIST/.test(action)) return portal.linkToPlaylist(id);
-      if (/ALBUM/.test(type)) return portal.linkToAlbum(id);
-      if (/SONG/.test(type)) return portal.linkToSong(id);
-      if (/VIDEO|MV/.test(type)) return portal.linkToMv(id);
-      if (/ARTIST|SINGER/.test(type)) return portal.linkToArtistDetail(Number(id));
+      if (/PLAYLIST|LIST/.test(type) || /PLAYLIST|LIST/.test(action)) return  linkToPlaylist(id);
+      if (/ALBUM/.test(type)) return  linkToAlbum(id);
+      if (/SONG/.test(type)) return  linkToSong(id);
+      if (/VIDEO|MV/.test(type)) return  linkToMv(id);
+      if (/ARTIST|SINGER/.test(type)) return  linkToArtistDetail(Number(id));
       if (/USER/.test(type) || /USER/.test(action)) {
         return router.push({ path: '/user', query: { id: String(id) } });
       }
       // 电台（VOICELIST / RADIO / DJ）→ 电台详情
       if (/RADIO|DJ|VOICELIST/.test(type) || /RADIO|DJ|VOICELIST/.test(action)) {
-        return portal.linkToDjRadio(id);
+        return  linkToDjRadio(id);
       }
       // 播客节目（VOICE）→ 节目详情
-      if (/VOICE/.test(type)) return portal.linkToDjProgram(id);
+      if (/VOICE/.test(type)) return  linkToDjProgram(id);
       // 榜单（TOPLIST）本质是一张歌单，统一走歌单详情页
       if (/TOPLIST/.test(type)) {
-        return portal.linkToPlaylist(id);
+        return  linkToPlaylist(id);
       }
       // 外链：新标签打开
       const url = r?.resourceUrl || r?.action?.actionType;
@@ -169,7 +167,7 @@ const blockPageList = toRef(portal, 'blockPageList');
 
     .title {
       font-size: 13px;
-      color: #333;
+      color: var(--color-text-primary);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -186,14 +184,14 @@ const blockPageList = toRef(portal, 'blockPageList');
     padding: 8px 28px;
     border: 1px solid #e0e0e0;
     border-radius: 20px;
-    background: #fff;
-    color: #666;
+    background: var(--color-default);
+    color: var(--color-text-secondary);
     font-size: 14px;
     cursor: pointer;
     transition: color 233ms, border-color 233ms;
 
     &:hover {
-      color: #333;
+      color: var(--color-text-primary);
       border-color: #bbb;
     }
   }

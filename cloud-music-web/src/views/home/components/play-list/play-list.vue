@@ -8,7 +8,8 @@
       title="播放列表"
       :width="400"
       :show-arrow="false"
-      trigger="hover"
+      trigger="click"
+      :persistent="false"
     >
       <template #reference>
         <div class="pl-poppver-trigger">
@@ -49,20 +50,44 @@ const handlePlay = (item: PL_PlayVO) => {
 <style scoped lang="less">
 #play-list {
   position: fixed;
-  bottom: 100px;
+  bottom: 116px;
   right: 48px;
+  z-index: 100;
 
   i.iconfont.icon-yinleyule {
     cursor: pointer;
     font-size: 32px;
   }
 
-  &.playing {
-    .pl-poppver-trigger {
-      animation-name: play_rotate;
-      animation-duration: 2s;
-      animation-timing-function: linear;
-      animation-iteration-count: infinite;
+  .pl-poppver-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    border: 1px solid rgb(255 255 255 / 60%);
+    border-radius: 50%;
+    background: rgb(255 255 255 / 78%);
+    box-shadow: var(--shadow-md);
+    backdrop-filter: blur(8px);
+    transition: transform var(--param-transition-time), box-shadow var(--param-transition-time);
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .iconfont {
+      color: var(--color-primary);
+      font-size: 26px;
+    }
+  }
+
+  &.playing .pl-poppver-trigger {
+    border-color: var(--color-primary);
+
+    .iconfont {
+      animation: play_rotate 4s linear infinite;
     }
   }
 }
@@ -81,5 +106,17 @@ const handlePlay = (item: PL_PlayVO) => {
 .pl-poppver.el-popper {
   overflow: hidden;
   z-index: 9999 !important;
+  padding: 12px;
+  border: 1px solid var(--color-text-divider);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg) !important;
+
+  .el-popper__arrow {
+    display: none;
+  }
+
+  .common-table-empty {
+    height: 140px;
+  }
 }
 </style>

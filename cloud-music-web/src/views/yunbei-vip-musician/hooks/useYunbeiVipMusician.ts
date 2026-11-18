@@ -1,4 +1,4 @@
-import { reactive } from 'vue';
+import { ref } from 'vue';
 
 import yunbeiVipMusicianService from '@/apis/yunbei-vip-musician/yunbei-vip-musician.service';
 import { Block, useApiConsoleBlocks } from '@/composables/useApiConsoleBlocks';
@@ -21,7 +21,7 @@ export const useYunbeiVipMusician = () => {
     c3_3: '7 个音乐人接口，每接口一个可交互区块；musician_sign 为写操作（需登录 + 二次确认 + 不自动），其余需登录只读降级。',
   };
 
-  const params = reactive<Record<string, string>>({
+  const params = ref<Record<string, string>>({
     taskId: '',
     songId: '',
   });
@@ -35,9 +35,9 @@ export const useYunbeiVipMusician = () => {
     { module: 'yunbei_receipt', name: '云贝收入', tab: 'c3_1', kind: 'login-read', run: () => yunbeiVipMusicianService.getYunbeiReceipt() },
     { module: 'yunbei_sign', name: '云贝签到（写）', tab: 'c3_1', kind: 'write', buttonText: '签到', note: '写操作：未登录降级 + window.confirm 二次确认，禁止 onMounted 自动调用', run: () => yunbeiVipMusicianService.setYunbeiSign() },
     { module: 'yunbei_today', name: '今日云贝', tab: 'c3_1', kind: 'login-read', run: () => yunbeiVipMusicianService.getYunbeiToday() },
-    { module: 'yunbei_rcmd_song', name: '推荐歌曲（写）', tab: 'c3_1', kind: 'write', inputKey: 'songId', inputLabel: '歌曲 id', buttonText: '推荐', run: () => yunbeiVipMusicianService.setYunbeiRcmdSong({ id: params.songId, songId: params.songId }) },
+    { module: 'yunbei_rcmd_song', name: '推荐歌曲（写）', tab: 'c3_1', kind: 'write', inputKey: 'songId', inputLabel: '歌曲 id', buttonText: '推荐', run: () => yunbeiVipMusicianService.setYunbeiRcmdSong({ id: params.value.songId, songId: params.value.songId }) },
     { module: 'yunbei_rcmd_song_history', name: '推荐歌曲历史', tab: 'c3_1', kind: 'login-read', run: () => yunbeiVipMusicianService.getYunbeiRcmdSongHistory() },
-    { module: 'yunbei_task_finish', name: '完成任务（写）', tab: 'c3_1', kind: 'write', inputKey: 'taskId', inputLabel: '任务 id', buttonText: '完成任务', run: () => yunbeiVipMusicianService.setYunbeiTaskFinish({ id: params.taskId, userTaskId: params.taskId, taskId: params.taskId }) },
+    { module: 'yunbei_task_finish', name: '完成任务（写）', tab: 'c3_1', kind: 'write', inputKey: 'taskId', inputLabel: '任务 id', buttonText: '完成任务', run: () => yunbeiVipMusicianService.setYunbeiTaskFinish({ id: params.value.taskId, userTaskId: params.value.taskId, taskId: params.value.taskId }) },
     { module: 'yunbei_tasks', name: '云贝任务（taskId 来源）', tab: 'c3_1', kind: 'login-read', emit: 'taskId', wide: true, run: () => yunbeiVipMusicianService.getYunbeiTasks() },
     { module: 'yunbei_tasks_todo', name: '待办云贝任务（taskId 来源）', tab: 'c3_1', kind: 'login-read', emit: 'taskId', run: () => yunbeiVipMusicianService.getYunbeiTasksTodo() },
     // 3.2 会员成长（7）

@@ -30,6 +30,6 @@ export const recommendPlayListNavs: ICodeName<string>[] = [
 
 // 首页排行榜展示的 5 个官方榜单 id（顺序与首页飙升/新歌/热歌/欧美/韩语五张榜单卡片一一对应）：
 // 飙升榜 19723756 / 新歌榜 3779629 / 热歌榜 3778678 / 欧美榜 2809513713 / 韩语榜 745956260
-export const HOME_RANK_IDS: readonly number[] = [
+export const homeRankIds: readonly number[] = [
   19723756, 3779629, 3778678, 2809513713, 745956260,
 ];

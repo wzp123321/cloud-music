@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* eslint-disable no-console, no-undef, no-useless-escape */
+/* eslint-disable no-console, no-undef */
 /**
  * 静态回归校验（零依赖 Node ESM）
  *

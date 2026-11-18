@@ -63,9 +63,10 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
+import type { ApiRawResponse } from '@/apis/types';
 
 import { pretty } from './api-block.util';
-import { DEFAULT_KIND_LABELS, type ApiBlock, type BlockCard, type BlockState } from './api-block.types';
+import { defaultKindLabels, type ApiBlock, type BlockCard, type BlockState } from './api-block.types';
 
 /** 接口调用台仅开发环境可见（见模板根节点 v-if） */
 const enableApiConsole = import.meta.env.DEV;
@@ -79,7 +80,7 @@ const props = defineProps<{
   /** 该区块的请求态 */
   state: BlockState;
   /** 全局参数池，透传用于展示当前上游 id */
-  sel: Record<string, any>;
+  sel: Record<string, ApiRawResponse>;
   /** 该区块输入框的值 */
   inputValue: string;
   /** 区块类型文案，页面可按业务改写（如账号动作类） */
@@ -101,7 +102,7 @@ const inputValue = computed({
 
 /** 区块类型标签，页面未覆盖时用默认文案 */
 const kindText = computed(
-  () => props.kindLabels?.[props.block.kind] ?? DEFAULT_KIND_LABELS[props.block.kind],
+  () => props.kindLabels?.[props.block.kind] ?? defaultKindLabels[props.block.kind],
 );
 
 /** 按钮文案随类型变化：写操作要强调二次确认，失效接口仅作说明/核验入口 */
@@ -155,7 +156,7 @@ const onFileChange = (event: Event) => {
     padding: 2px 10px;
     border-radius: 4px;
     background: rgba(194, 12, 12, 0.08);
-    color: var(--color-primary, #c20c0c);
+    color: var(--color-primary);
     font-family: monospace;
     font-size: 12px;
   }
@@ -163,14 +164,14 @@ const onFileChange = (event: Event) => {
   &--title {
     font-size: 18px;
     font-weight: 600;
-    color: #333;
+    color: var(--color-text-primary);
   }
 
   &--kind {
     padding: 2px 10px;
     border-radius: 12px;
     font-size: 12px;
-    color: #666;
+    color: var(--color-text-secondary);
     background: rgba(0, 0, 0, 0.05);
 
     &.kind-login-read {
@@ -179,12 +180,12 @@ const onFileChange = (event: Event) => {
     }
 
     &.kind-write {
-      color: #c20c0c;
+      color: var(--color-primary);
       background: rgba(194, 12, 12, 0.12);
     }
 
     &.kind-invalid {
-      color: #999;
+      color: var(--color-text-secondary);
       background: rgba(0, 0, 0, 0.06);
       text-decoration: line-through;
     }
@@ -193,7 +194,7 @@ const onFileChange = (event: Event) => {
   &--desc {
     margin-top: 8px;
     font-size: 13px;
-    color: #999;
+    color: var(--color-text-secondary);
   }
 
   &--url {
@@ -203,7 +204,7 @@ const onFileChange = (event: Event) => {
     background: rgba(0, 0, 0, 0.04);
     font-family: monospace;
     font-size: 12px;
-    color: #666;
+    color: var(--color-text-secondary);
   }
 
   &--controls {
@@ -231,7 +232,7 @@ const onFileChange = (event: Event) => {
     padding: 7px 18px;
     border: none;
     border-radius: 6px;
-    background: var(--color-primary, #c20c0c);
+    background: var(--color-primary);
     color: #fff;
     font-size: 13px;
     cursor: pointer;
@@ -240,10 +241,10 @@ const onFileChange = (event: Event) => {
   &--chain,
   &--provides {
     font-size: 12px;
-    color: #999;
+    color: var(--color-text-secondary);
 
     b {
-      color: var(--color-primary, #c20c0c);
+      color: var(--color-primary);
     }
   }
 
@@ -261,7 +262,7 @@ const onFileChange = (event: Event) => {
   &--tip {
     margin-top: 14px;
     font-size: 13px;
-    color: #999;
+    color: var(--color-text-secondary);
   }
 
   &--tip {
@@ -271,7 +272,7 @@ const onFileChange = (event: Event) => {
   &--card-sub {
     margin-top: 4px;
     font-size: 11px;
-    color: #999;
+    color: var(--color-text-secondary);
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -283,7 +284,7 @@ const onFileChange = (event: Event) => {
 
     summary {
       cursor: pointer;
-      color: #888;
+      color: var(--color-text-secondary);
     }
 
     pre {

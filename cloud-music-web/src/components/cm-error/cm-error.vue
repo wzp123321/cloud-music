@@ -9,7 +9,7 @@
 <script setup lang="ts">
 
 // 缺省
-defineOptions({ name: 'CmSkeleton' });
+defineOptions({ name: 'CmError' });
 defineProps({
     title: {
       type: String,

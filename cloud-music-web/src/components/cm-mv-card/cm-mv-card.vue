@@ -131,7 +131,7 @@ const router = useRouter();
 
     span,
     .iconfont {
-      color: #999;
+      color: var(--color-text-secondary);
     }
   }
 

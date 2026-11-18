@@ -1,12 +1,13 @@
 /*
  * @Description: 歌曲互动台 · 23 个接口区块定义（纯数据）
  * 写操作：like / resource_like / fm_trash / song_order_update / scrobble
- *   未登录用 hasLogin() 降级；点击需 window.confirm 二次确认；禁止 onMounted 自动调用。
+ *   未登录用 sessionManager.isAlive() 降级；点击需 window.confirm 二次确认；禁止 onMounted 自动调用。
  * 需登录只读：likelist / song_purchased / record_recent_* / history_recommend_*，未登录降级。
  * 详情参数来源：song_* / check_music / lyric_new 的 id ← 歌曲列表或页面输入；
  *   history_recommend_songs_detail 的 id ← history_recommend_songs。
  */
 import playInteractionService from '../../apis/play-interaction/play-interaction.service';
+import type { ApiRawResponse } from '@/apis/types';
 import type { ApiBlock } from '@/components/cm-api-block/api-block.types';
 
 /** 分组 tab：code 与区块的 tab 字段对应 */
@@ -19,7 +20,7 @@ export const tabs: { code: string; name: string }[] = [
 ];
 
 const songInput = { label: '歌曲 id（默认取上方「当前歌曲 ID」，可手动输入）', def: '' };
-const songParams = (s: Record<string, any>, v: string): Record<string, any> => ({
+const songParams = (s: Record<string, ApiRawResponse>, v: string): Record<string, ApiRawResponse> => ({
   id: Number(v) || s.songId || 0,
 });
 

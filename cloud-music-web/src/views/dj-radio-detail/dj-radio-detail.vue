@@ -1,49 +1,49 @@
 <template>
   <div id="dj-radio-detail" class="dj-radio-detail">
-    <cm-error v-if="detail.error" :text="'电台信息加载失败'"></cm-error>
-    <div v-else-if="detail.radio" class="dj-radio-detail--body">
+    <cm-error v-if="error" :text="'电台信息加载失败'"></cm-error>
+    <div v-else-if="radio" class="dj-radio-detail--body">
       <!-- 左栏：封面 + 简介 -->
       <div class="dj-radio-detail--left">
-        <cm-image :src="detail.radio.picUrl" alt="" loading="lazy" />
+        <cm-image :src="radio.picUrl" alt="" loading="lazy" />
         <h5 class="mt48 mb16">电台简介</h5>
-        <p>{{ detail.radio.desc || '暂无简介' }}</p>
+        <p>{{ radio.desc || '暂无简介' }}</p>
       </div>
 
       <!-- 右栏：信息 + 节目列表 -->
       <div class="dj-radio-detail--right">
-        <h5 class="mt16 mb16">{{ detail.radio.name }}</h5>
-        <div class="dj-radio-detail--anchor" @click="linkToUser(detail.radio.dj.userId)">
-          <cm-image :src="detail.radio.dj.avatarUrl" alt="" />
-          <span>{{ detail.radio.dj.nickname }}</span>
+        <h5 class="mt16 mb16">{{ radio.name }}</h5>
+        <div class="dj-radio-detail--anchor" @click="linkToUser(radio.dj.userId)">
+          <cm-image :src="radio.dj.avatarUrl" alt="" />
+          <span>{{ radio.dj.nickname }}</span>
         </div>
 
         <div class="dj-radio-detail--meta">
           <label>分类：</label>
-          <span class="mr48">{{ detail.radio.category }}{{ detail.radio.secondCategory ? ' / ' + detail.radio.secondCategory : '' }}</span>
+          <span class="mr48">{{ radio.category }}{{ radio.secondCategory ? ' / ' + radio.secondCategory : '' }}</span>
           <label>创建：</label>
-          <span>{{ formatDate(detail.radio.createTime, 'YYYY-MM-DD') }}</span>
+          <span>{{ formatDate(radio.createTime, 'YYYY-MM-DD') }}</span>
         </div>
 
         <div class="dj-radio-detail--stats">
-          <span>订阅 {{ formatCount(detail.radio.subCount) }}</span>
-          <span>节目 {{ detail.radio.programCount }}</span>
-          <span>评论 {{ formatCount(detail.radio.commentCount) }}</span>
-          <span>播放 {{ formatCount(detail.radio.playCount) }}</span>
+          <span>订阅 {{ formatCount(radio.subCount) }}</span>
+          <span>节目 {{ radio.programCount }}</span>
+          <span>评论 {{ formatCount(radio.commentCount) }}</span>
+          <span>播放 {{ formatCount(radio.playCount) }}</span>
         </div>
 
         <cm-button
           class="dj-radio-detail--sub-btn"
-          :class="detail.isSub ? 'subed' : ''"
-          :disabled="detail.subLoading"
+          :class="isSub ? 'subed' : ''"
+          :disabled="subLoading"
           @click="onSub"
         >
-          {{ detail.isSub ? '已订阅' : '订阅电台' }}
+          {{ isSub ? '已订阅' : '订阅电台' }}
         </cm-button>
 
-        <h6 class="dj-radio-detail--list-title mt36 mb16">节目列表（{{ detail.programs.length }}）</h6>
+        <h6 class="dj-radio-detail--list-title mt36 mb16">节目列表（{{ programs.length }}）</h6>
         <ul class="dj-radio-detail--programs">
           <li
-            v-for="(p, idx) in detail.programs"
+            v-for="(p, idx) in programs"
             :key="'program_' + p.id"
             class="dj-radio-detail--program"
             @click="linkToProgram(p.id)"
@@ -59,7 +59,7 @@
             </div>
             <cm-icon name="icon-24gf-play" class="play" @click.stop="playProgram(p)"></cm-icon>
           </li>
-          <li v-if="!detail.programs.length" class="dj-radio-detail--empty">该电台暂无节目</li>
+          <li v-if="!programs.length" class="dj-radio-detail--empty">该电台暂无节目</li>
         </ul>
       </div>
     </div>
@@ -75,16 +75,17 @@ import { formatDate, formatDuration } from '../../core/utils';
 import { usePlayerStore } from '@/store/player';
 import { Common_IMusic } from '@/apis/common/index.api';
 import message from '@/utils/message';
+import { sessionManager } from '@/core/session';
 
-import { hasLogin } from '@/apis/content-enhance/content-enhance.service';
+
 
 defineOptions({ name: 'DjRadioDetail' });
-const detail = useDjRadioDetail();
+const { radio, programs, error, subLoading, isSub, query, toggleSub } = useDjRadioDetail();
 const router = useRouter();
 const player = usePlayerStore();
 
 onMounted(() => {
-  detail.query();
+  query();
 });
 
 /** 大数字缩写：1.2万 / 3.4亿 */
@@ -116,19 +117,19 @@ const playProgram = (p: { id: number; name: string; coverUrl: string; duration: 
     name: p.name,
     dt: p.mainSong.duration,
     url: '',
-    alName: detail.radio?.name ?? '',
-    artist: detail.radio?.dj?.nickname ?? '',
+    alName: radio.value?.name ?? '',
+    artist: radio.value?.dj?.nickname ?? '',
     picUrl: p.coverUrl,
   };
   player.play(music);
 };
 
 const onSub = () => {
-  if (!hasLogin()) {
+  if (!sessionManager.isAlive()) {
     message.info('登录后可使用订阅功能');
     return;
   }
-  detail.toggleSub();
+  toggleSub();
 };
 </script>
 
@@ -165,7 +166,7 @@ const onSub = () => {
 
     > p {
       font-size: 14px;
-      color: #666;
+      color: var(--color-text-secondary);
       line-height: 21px;
       text-indent: 2em;
       white-space: pre-wrap;
@@ -201,7 +202,7 @@ const onSub = () => {
       }
 
       &:hover span {
-        color: var(--color-primary, #c20c0c);
+        color: var(--color-primary);
       }
     }
 
@@ -229,16 +230,16 @@ const onSub = () => {
     .dj-radio-detail--sub-btn {
       margin-top: 16px;
       padding: 5px 16px;
-      border: 1px solid var(--color-primary, #c20c0c);
+      border: 1px solid var(--color-primary);
       border-radius: 16px;
-      background: var(--color-primary, #c20c0c);
+      background: var(--color-primary);
       color: #fff;
       font-size: 14px;
       cursor: pointer;
 
       &.subed {
         background: transparent;
-        color: var(--color-primary, #c20c0c);
+        color: var(--color-primary);
       }
 
       &:disabled {
@@ -295,7 +296,7 @@ const onSub = () => {
 
       .name {
         font-size: 15px;
-        color: #333;
+        color: var(--color-text-primary);
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
@@ -304,13 +305,13 @@ const onSub = () => {
       .sub {
         margin-top: 6px;
         font-size: 12px;
-        color: #999;
+        color: var(--color-text-secondary);
       }
     }
 
     .play {
       font-size: 20px;
-      color: var(--color-primary, #c20c0c);
+      color: var(--color-primary);
       opacity: 0.55;
       cursor: pointer;
       transition: opacity 233ms;

@@ -1,4 +1,5 @@
 import { computed, onMounted, ref } from 'vue';
+import type { ApiRawResponse } from '@/apis/types';
 import { useRouter } from 'vue-router';
 
 import contentEnhanceService from '@/apis/content-enhance/content-enhance.service';
@@ -64,7 +65,7 @@ export const useAlbumDiscovery = () => {
     activeTab.value === 'style' ? styleAreaOptions : areaOptions,
   );
 
-  const toCard = (raw: any, source: TabCode): AlbumCardItem => {
+  const toCard = (raw: ApiRawResponse, source: TabCode): AlbumCardItem => {
     const isProduct = source === 'list' || source === 'style' || source === 'saleboard';
     const id = Number(isProduct ? raw?.albumId : raw?.id) || 0;
     const cover = (isProduct ? raw?.coverUrl : raw?.picUrl) || '';
@@ -80,7 +81,7 @@ export const useAlbumDiscovery = () => {
     loading.value = true;
     albumList.value = [];
     try {
-      let raw: any[] = [];
+      let raw: ApiRawResponse[] = [];
       switch (activeTab.value) {
         case 'new': {
           const res = await contentEnhanceService.getAlbumNew({ area: activeArea.value, limit: 30 });

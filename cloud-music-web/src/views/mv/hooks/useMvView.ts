@@ -2,9 +2,10 @@ import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { formatPlayCount } from '@/core/utils';
-import contentEnhanceService, { hasLogin as checkLogin } from '@/apis/content-enhance/content-enhance.service';
+import contentEnhanceService from '@/apis/content-enhance/content-enhance.service';
 import { ContentMvItem } from '@/apis/content-enhance/index.api';
 import message from '@/utils/message';
+import { sessionManager } from '@/core/session';
 
 type TabCode = 'all' | 'exclusive' | 'first';
 
@@ -25,7 +26,7 @@ export const useMvView = () => {
   const activeArea = ref<string>('全部');
   const activeOrder = ref<string>('上升最快');
   const loading = ref<boolean>(false);
-  const hasLogin = checkLogin();
+  const hasLogin = sessionManager.isAlive();
   const mvList = ref<ContentMvItem[]>([]);
   const subMvList = ref<ContentMvItem[]>([]);
 

@@ -111,7 +111,7 @@ export const getSearchSuggest = (
 /**
  * 多类型搜索概览（歌手/歌单/专辑/歌曲/MV 等匹配数量）
  * @param keywords 关键词
- * @param type 搜索类型，默认 1（单曲），可传对应 SEARCH_TYPE 数值串
+ * @param type 搜索类型，默认 1（单曲），可传对应 SearchType 数值串
  */
 export const getSearchMultimatch = (params: {
   keywords: string;

@@ -1,20 +1,20 @@
-const TIME_OUT = 60 * 1000; // 接口超时时长
+const timeout = 60 * 1000; // 接口超时时长
 const env = (import.meta.env.VITE_NODE_ENV as string) || 'production';
-const BASE_URL = (import.meta.env.VITE_BASE_URL as string) || '/';
+const baseUrl = (import.meta.env.VITE_BASE_URL as string) || '/';
 /**
  * 网关配置
  */
 const gateWayConfig: {
-  [key: string]: { BASE_URL: string; PUBLIC_PATH: string };
+  [key: string]: { baseUrl: string; publicPath: string };
 } = {
   development: {
-    BASE_URL,
-    PUBLIC_PATH: '/',
+    baseUrl,
+    publicPath: '/',
   },
   production: {
-    BASE_URL,
-    PUBLIC_PATH: '/imsManage',
+    baseUrl,
+    publicPath: '/imsManage',
   },
 };
 
-export default { ...gateWayConfig[env], TIME_OUT };
+export default { ...gateWayConfig[env], timeout };

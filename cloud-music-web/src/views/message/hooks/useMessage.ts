@@ -1,6 +1,8 @@
-import { onMounted, reactive, ref } from 'vue';
+import { sessionManager } from '@/core/session';
+import type { ApiRawResponse } from '@/apis/types';
+import { onMounted, ref } from 'vue';
 
-import { hasLogin as checkLogin } from '@/apis/content-enhance/content-enhance.service';
+import { useApiConsoleGuard } from '@/composables/useApiConsoleGuard';
 import messageService from '@/apis/message/message.service';
 import { extractObject, extractListByCandidates, type ApiCard } from '@/utils/api-normalize';
 
@@ -27,12 +29,14 @@ export const useMessage = () => {
     { code: 'recentcontact', module: 'msg_recentcontact', name: '最近联系人' },
   ];
 
-  const hasLogin = ref<boolean>(checkLogin());
+  const hasLogin = ref<boolean>(sessionManager.isAlive());
   const activeTab = ref<string>('c4_1');
   const toast = ref<string>('');
   const writeResult = ref<string>('');
 
-  const msgLists = reactive<Record<string, CardItem[]>>({
+  const { requireLogin, writeGuard } = useApiConsoleGuard(hasLogin, toast);
+
+  const msgLists = ref<Record<string, CardItem[]>>({
     comments: [],
     forwards: [],
     notices: [],
@@ -74,7 +78,7 @@ export const useMessage = () => {
   };
 
   /** 候选字段优先级：消息类接口以 comments / notices / msgs 为主 */
-  const listCandidates = (res: any): any[] => [
+  const listCandidates = (res: ApiRawResponse): ApiRawResponse[] => [
     res.data, res.result, res.list, res.comments, res.notices, res.msgs, res.messages,
     res.records, res.events, res.playlist, res.playlists, res.topics, res.hot,
     res.songs, res.albums, res.videos, res.data?.list, res.result?.list,
@@ -82,13 +86,13 @@ export const useMessage = () => {
   ];
 
   /** 兼容 res.data / res.result / res.list / res.xxx / res.data.list 等多种结构 */
-  const extractList = (res: any): any[] => extractListByCandidates(res, listCandidates);
+  const extractList = (res: ApiRawResponse): ApiRawResponse[] => extractListByCandidates(res, listCandidates);
 
   /** 详情 / 写操作返回兼容 res.data / res.result / res 本身 */
   const extractObj = extractObject;
 
   /** 归一为统一卡片模型 */
-  const toCard = (raw: any): CardItem => {
+  const toCard = (raw: ApiRawResponse): CardItem => {
     const r = raw || {};
     const id = Number(
       r.id ?? r.songId ?? r.commentId ?? r.userId ?? r.uid ?? r.actid ?? r.eventId ?? r.vid ?? r.mvid ?? 0,
@@ -104,46 +108,24 @@ export const useMessage = () => {
     return { id, title, cover, subtitle, raw: r };
   };
 
-  const pickUid = (raw: any): number => {
+  const pickUid = (raw: ApiRawResponse): number => {
     const r = raw || {};
     return Number(r.uid ?? r.userId ?? r.userid ?? r.id ?? r.fromUserid ?? r.fromUserId ??
       r.fromUser?.userId ?? r.user?.userId ?? 0) || 0;
   };
 
-  const pickCommentId = (raw: any): number => {
+  const pickCommentId = (raw: ApiRawResponse): number => {
     const r = raw || {};
     return Number(r.commentId ?? r.cid ?? r.id ?? 0) || 0;
   };
 
-  const pickResourceId = (raw: any): number => {
+  const pickResourceId = (raw: ApiRawResponse): number => {
     const r = raw || {};
     return Number(r.resourceId ?? r.id ?? r.threadId ?? 0) || 0;
   };
 
-  /** 需登录只读接口：未登录降级提示，不请求 */
-  const requireLogin = (): boolean => {
-    if (!hasLogin.value) {
-      toast.value = '该接口需要登录后才能查看（已降级，不发请求）';
-      return false;
-    }
-    return true;
-  };
-
-  /** 写操作前置：未登录降级不发请求；用户点击后二次确认 */
-  const writeGuard = (confirmText: string): boolean => {
-    if (!hasLogin.value) {
-      toast.value = '请先登录后再执行该写操作（已降级，不发请求）';
-      return false;
-    }
-    if (!window.confirm(confirmText)) {
-      toast.value = '已取消操作';
-      return false;
-    }
-    return true;
-  };
-
   /** 写操作统一包装：confirm + try/catch + 失败给空值 + 展示多结构返回 */
-  const runWrite = async (label: string, fn: () => Promise<any>) => {
+  const runWrite = async (label: string, fn: () => Promise<ApiRawResponse>) => {
     if (!writeGuard(`确定执行「${label}」吗？该操作会向服务端提交数据。`)) return;
     try {
       const res = await fn();
@@ -158,7 +140,7 @@ export const useMessage = () => {
   const loadMsg = async (code: string) => {
     if (!requireLogin()) return;
     try {
-      let res: any = null;
+      let res: ApiRawResponse = null;
       switch (code) {
         case 'comments':
           res = await messageService.getMsgComments({ limit: 30 });
@@ -178,10 +160,10 @@ export const useMessage = () => {
         default:
           res = null;
       }
-      msgLists[code] = extractList(res).map(toCard);
-      toast.value = `${code} 已加载 ${msgLists[code].length} 条`;
+      msgLists.value[code] = extractList(res).map(toCard);
+      toast.value = `${code} 已加载 ${msgLists.value[code].length} 条`;
     } catch {
-      msgLists[code] = [];
+      msgLists.value[code] = [];
       toast.value = '接口请求失败，已返回空值';
     }
   };

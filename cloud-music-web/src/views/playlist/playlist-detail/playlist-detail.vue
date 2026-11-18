@@ -1,6 +1,6 @@
 <template>
-  <cm-loading v-if="playListDetailService.loading"></cm-loading>
-  <div v-if="!playListDetailService.loading" id="playlist-detail" class="playlist-detail">
+  <cm-loading v-if="serviceLoading"></cm-loading>
+  <div v-if="!serviceLoading" id="playlist-detail" class="playlist-detail">
     <section class="pd-cover">
       <cm-image :src="playListDetail?.coverImgUrl" alt="" />
       <h5>歌单简介</h5>
@@ -22,10 +22,10 @@
           <cm-icon name="icon-24gf-play" class="mr6"></cm-icon>播放全部
         </el-button>
         <el-button
-          :type="playListDetailService.subscribed ? 'default' : 'primary'"
+          :type="isSubscribed ? 'default' : 'primary'"
           @click="onToggleSubscribe"
         >
-          {{ playListDetailService.subscribed ? '已收藏' : '收藏' }}
+          {{ isSubscribed ? '已收藏' : '收藏' }}
         </el-button>
         <el-button @click="openEdit">编辑</el-button>
         <el-button @click="setAddVisible(true)">添加歌曲</el-button>
@@ -40,6 +40,7 @@
       <cm-table
         :data-source="musicList"
         :show-remove="true"
+        empty-text="歌单里还没有歌曲"
         @remove="onRemove"
       ></cm-table>
 
@@ -104,7 +105,8 @@ import { usePlaylistDetailView } from './hooks/usePlaylistDetailView';
 import { usePlayerStore } from '@/store/player';
 
 const {
-  playListDetailService,
+  serviceLoading,
+  isSubscribed,
   playlistId,
   playListDetail,
   musicList,
@@ -169,7 +171,7 @@ const playAll = () => {
     p {
       width: 100%;
       font-size: 14px;
-      color: #666;
+      color: var(--color-text-secondary);
       line-height: 21px;
     }
   }
@@ -203,7 +205,7 @@ const playAll = () => {
       span {
         font-size: 18px;
         height: 25px;
-        color: #666;
+        color: var(--color-text-secondary);
         line-height: 25px;
         font-weight: 400;
 
@@ -250,7 +252,7 @@ const playAll = () => {
     .pd-stat {
       margin-left: 16px;
       font-size: 13px;
-      color: #999;
+      color: var(--color-text-secondary);
 
       .iconfont {
         margin-right: 2px;

@@ -1,4 +1,5 @@
-import { computed, reactive, ref } from 'vue';
+import { ref } from 'vue';
+import type { ApiRawResponse } from '@/apis/types';
 
 import { getQueryParam } from '@/core/token';
 import { PD_PlaylistDetail } from '../../../../apis/playlist-detail/index.api';
@@ -25,7 +26,7 @@ const create = () => {
   const playlistId = idParam ? Number(idParam) : 0;
 
   //#region
-  const _playListResult = ref<PD_PlaylistDetail>({
+  const playListResult$ = ref<PD_PlaylistDetail>({
     backgroundCoverUrl: '',
     bannedTrackIds: '',
     cloudTrackCount: '',
@@ -59,45 +60,24 @@ const create = () => {
     tracks: [],
   });
 
-  const _playListCommentResult = ref<MP_MVCommentRes>({
+  const playListCommentResult$ = ref<MP_MVCommentRes>({
     comments: [],
     hotComments: [],
   });
 
-  const _playListMusicListResult = ref<Common_IMusic[]>([]);
+  const playListMusicListResult$ = ref<Common_IMusic[]>([]);
 
-  const _dynamic = ref<PM_DynamicRes>({ code: 0 });
+  const dynamic$ = ref<PM_DynamicRes>({ code: 0 });
 
-  const _subscribed = ref<boolean>(false);
-
-  /**
-   * $ 后缀字段保持为 Ref：computed 包一层后放进 reactive 只解包一层，
-   * 组件里 watch(svc.playListResult$, ...) 等订阅拿到的仍是 Ref。
-   */
-  const playListResult$ = computed(() => _playListResult);
-  const playListCommentResult$ = computed(() => _playListCommentResult);
-  const playListMusicListResult$ = computed(() => _playListMusicListResult);
-  const dynamic$ = computed(() => _dynamic);
-
-  // subscribed 原为可读写 getter/setter，这里用可写 computed 保持读值、写入语义。
-  const subscribed = computed({
-    get: () => _subscribed.value,
-    set: (v: boolean) => {
-      _subscribed.value = v;
-    },
-  });
-  //#region
-  const _loading = ref<boolean>(true);
-
-  // loading 为普通取值字段，经 reactive 解包后模板拿到布尔值。
-  const loading = computed(() => _loading.value);
+  const subscribed = ref<boolean>(false);
+  const loading = ref<boolean>(true);
   //#endregion
 
   const queryCommentList = async () => {
     const id = Number(getQueryParam('id'));
     const commonService = new CommonService();
     const res = await commonService.getPlayListCommentList(id);
-    _playListCommentResult.value = {
+    playListCommentResult$.value = {
       comments: res?.comments ?? [],
       hotComments: res?.hotComments ?? [],
     };
@@ -110,7 +90,7 @@ const create = () => {
     try {
       const res = await getPlaylistTrackAll({ id: playlistId, limit: 1000 });
       const songs = res?.songs || [];
-      _playListMusicListResult.value = songs.map((item: any) => ({
+      playListMusicListResult$.value = songs.map((item: ApiRawResponse) => ({
         dt: item.dt,
         url: '',
         name: item.name,
@@ -123,10 +103,10 @@ const create = () => {
       // 失败回退到原逻辑
       try {
         const res = await getRequest(EPath.查询歌单详情, { id: playlistId });
-        const ids = res?.playlist?.trackIds?.map((item: any) => item?.id)?.join(',');
+        const ids = res?.playlist?.trackIds?.map((item: ApiRawResponse) => item?.id)?.join(',');
         const commonService = new CommonService();
         const songRes = await commonService.getMusicDetailByIds(ids);
-        _playListMusicListResult.value = (songRes?.songs || []).map((item) => ({
+        playListMusicListResult$.value = (songRes?.songs || []).map((item) => ({
           dt: item.dt,
           url: '',
           name: item.name,
@@ -148,7 +128,7 @@ const create = () => {
     try {
       const res = await getPlaylistDetailDynamic({ id: playlistId });
       if (res) {
-        _dynamic.value = res;
+        dynamic$.value = res;
       }
     } catch {
       // 动态数据拉取失败时保留默认值，不阻断页面
@@ -157,12 +137,12 @@ const create = () => {
 
   const init = async () => {
     const id = getQueryParam('id');
-    _loading.value = true;
+    loading.value = true;
     try {
       const res = await getRequest(EPath.查询歌单详情, {
         id,
       });
-      _playListResult.value = res?.playlist;
+      playListResult$.value = res?.playlist;
 
       refreshTracks();
 
@@ -171,7 +151,7 @@ const create = () => {
     } catch {
       // 详情拉取失败时保留上一帧数据，仅结束 loading
     } finally {
-      _loading.value = false;
+      loading.value = false;
     }
   };
 
@@ -182,7 +162,7 @@ const create = () => {
   const subscribe = async (t: number) => {
     const res = await subscribePlaylist({ id: playlistId, t });
     if (res?.code === 200) {
-      _subscribed.value = t === 1;
+      subscribed.value = t === 1;
       queryDynamic();
     } else {
       throw new Error('操作失败');
@@ -218,7 +198,7 @@ const create = () => {
   // 进入页面即初始化拉取。
   init();
 
-  return reactive({
+  return {
     playListResult$,
     playListCommentResult$,
     playListMusicListResult$,
@@ -232,7 +212,7 @@ const create = () => {
     subscribe,
     addTrack,
     removeTrack,
-  });
+  };
 };
 
 /** 歌单详情页状态：每次调用创建新实例，保证切换 id 后重新拉数据 */

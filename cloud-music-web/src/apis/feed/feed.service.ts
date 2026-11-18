@@ -1,4 +1,5 @@
 import { getRequest } from '@/apis/request';
+import type { ApiRawResponse } from '@/apis/types';
 
 /**
  * P1 5.x 动态与话题（feed-topic）接口封装。
@@ -13,34 +14,34 @@ import { getRequest } from '@/apis/request';
  * - hot_topic 在本页 5.2 有独立调用点（与 P1 2.4 重复但不共用）
  */
 
-type Params = Record<string, any>;
+type Params = Record<string, unknown>;
 
 const feedService = {
   //#region 5.1 动态流
   /** 动态列表（需登录只读） */
-  getEvent: (params: Params = {}): Promise<any> => getRequest('/event', params),
+  getEvent: (params: Params = {}): Promise<ApiRawResponse> => getRequest('/event', params),
   /** 删除动态（写操作） */
-  delEvent: (params: Params): Promise<any> => getRequest('/event/del', params),
+  delEvent: (params: Params): Promise<ApiRawResponse> => getRequest('/event/del', params),
   /** 转发动态（写操作） */
-  forwardEvent: (params: Params): Promise<any> => getRequest('/event/forward', params),
+  forwardEvent: (params: Params): Promise<ApiRawResponse> => getRequest('/event/forward', params),
   //#endregion
 
   //#region 5.2 话题
   /** 话题详情：actid ← hot_topic 点选或输入 */
-  getTopicDetail: (params: Params = {}): Promise<any> => getRequest('/topic/detail', params),
+  getTopicDetail: (params: Params = {}): Promise<ApiRawResponse> => getRequest('/topic/detail', params),
   /** 话题热门动态：actid ← hot_topic 点选或输入 */
-  getTopicDetailEventHot: (params: Params = {}): Promise<any> => getRequest('/topic/detail/event/hot', params),
+  getTopicDetailEventHot: (params: Params = {}): Promise<ApiRawResponse> => getRequest('/topic/detail/event/hot', params),
   /** 已订阅话题（需登录只读） */
-  getTopicSublist: (params: Params = {}): Promise<any> => getRequest('/topic/sublist', params),
+  getTopicSublist: (params: Params = {}): Promise<ApiRawResponse> => getRequest('/topic/sublist', params),
   /** 热门话题（本页独立调用点） */
-  getHotTopic: (params: Params = {}): Promise<any> => getRequest('/hot/topic', params),
+  getHotTopic: (params: Params = {}): Promise<ApiRawResponse> => getRequest('/hot/topic', params),
   //#endregion
 
   //#region 5.3 相关推荐
   /** 相关视频：id ← 页面输入或列表项 */
-  getRelatedAllvideo: (params: Params = {}): Promise<any> => getRequest('/related/allvideo', params),
+  getRelatedAllvideo: (params: Params = {}): Promise<ApiRawResponse> => getRequest('/related/allvideo', params),
   /** 相关歌单：id ← 页面输入或列表项 */
-  getRelatedPlaylist: (params: Params = {}): Promise<any> => getRequest('/related/playlist', params),
+  getRelatedPlaylist: (params: Params = {}): Promise<ApiRawResponse> => getRequest('/related/playlist', params),
   //#endregion
 };
 

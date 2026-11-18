@@ -1,5 +1,4 @@
 import { getRequest } from '@/apis/request';
-import { getCookie, TOKEN_KEY } from '@/core/token';
 import {
   AlbumNewRes,
   AlbumNewestRes,
@@ -37,12 +36,6 @@ import {
  * - mv_detail_info / mv_sub 的 mvid ← mv_all / mv_first / mv_exclusive_rcmd 的 data[].id
  * - 订阅列表型接口（*_sublist）只需分页参数，需登录态，未登录时页面降级展示
  */
-
-/** 是否已有登录态（用于写操作/需登录接口的 UI 降级）
- *  登录态以凭证 cookie 为准（登录时写入、退出时清空），与用户 store 的 isLogin 一致 */
-export const hasLogin = (): boolean => {
-  return !!getCookie(TOKEN_KEY);
-}
 
 const contentEnhanceService = {
   //#region 1.1 新碟 / 榜单 / 风格浏览（匿名可用）

@@ -1,4 +1,5 @@
 import { ref, watch } from 'vue';
+import type { ApiRawResponse } from '@/apis/types';
 
 import { usePlayListDetail } from './usePlayListDetail';
 import { PD_PlaylistDetail } from '../../../../apis/playlist-detail/index.api';
@@ -46,7 +47,18 @@ const createEmptyDetail = (): PD_PlaylistDetail => ({
  * 歌单详情页：订阅、歌曲增删、编辑弹窗与统计格式化编排。
  */
 export const usePlaylistDetailView = () => {
-  const playListDetailService = usePlayListDetail();
+  const {
+    playListResult$,
+    playListCommentResult$,
+    playListMusicListResult$,
+    dynamic$: serviceDynamic$,
+    subscribed,
+    loading: serviceLoading,
+    init,
+    subscribe,
+    addTrack,
+    removeTrack,
+  } = usePlayListDetail();
 
   const playlistId = Number(new URLSearchParams(window.location.search).get('id') || '0');
 
@@ -56,7 +68,7 @@ export const usePlaylistDetailView = () => {
     comments: [],
     hotComments: [],
   });
-  const dynamic = ref<any>(null);
+  const dynamic = ref<ApiRawResponse>(null);
 
   const addVisible = ref(false);
   const addSongIds = ref('');
@@ -64,10 +76,10 @@ export const usePlaylistDetailView = () => {
   const editVisible = ref(false);
 
   // 订阅歌单详情 / 评论 / 歌曲列表 / 动态，immediate 保证首屏同步到当前值
-  watch(playListDetailService.playListResult$, (v) => (playListDetail.value = v), { immediate: true });
-  watch(playListDetailService.playListCommentResult$, (v) => (commentRes.value = v), { immediate: true });
+  watch(playListResult$, (v) => (playListDetail.value = v), { immediate: true });
+  watch(playListCommentResult$, (v) => (commentRes.value = v), { immediate: true });
   watch(
-    playListDetailService.playListMusicListResult$,
+    playListMusicListResult$,
     (v) => {
       musicList.value = v?.map((item) => {
         return {
@@ -83,12 +95,12 @@ export const usePlaylistDetailView = () => {
     },
     { immediate: true },
   );
-  watch(playListDetailService.dynamic$, (v) => (dynamic.value = v), { immediate: true });
+  watch(serviceDynamic$, (v) => (dynamic.value = v), { immediate: true });
 
   const onToggleSubscribe = async () => {
     try {
-      await playListDetailService.subscribe(playListDetailService.subscribed ? 2 : 1);
-      message.success(playListDetailService.subscribed ? '收藏成功' : '已取消收藏');
+      await subscribe(subscribed.value ? 2 : 1);
+      message.success(subscribed.value ? '收藏成功' : '已取消收藏');
     } catch {
       message.error('操作失败，请确认已登录');
     }
@@ -96,7 +108,7 @@ export const usePlaylistDetailView = () => {
 
   const onRemove = async (item: Common_IMusic) => {
     try {
-      await playListDetailService.removeTrack(String(item.id));
+      await removeTrack(String(item.id));
       message.success('已移除');
     } catch {
       message.error('移除失败，请确认已登录');
@@ -111,7 +123,7 @@ export const usePlaylistDetailView = () => {
     }
     adding.value = true;
     try {
-      await playListDetailService.addTrack(ids);
+      await addTrack(ids);
       message.success('添加成功');
       addVisible.value = false;
       addSongIds.value = '';
@@ -132,7 +144,7 @@ export const usePlaylistDetailView = () => {
   };
 
   const onEdited = () => {
-    playListDetailService.init();
+    init();
   };
 
   const formatStat = (val?: number) => {
@@ -144,7 +156,8 @@ export const usePlaylistDetailView = () => {
   };
 
   return {
-    playListDetailService,
+    serviceLoading,
+    isSubscribed: subscribed,
     playlistId,
     playListDetail,
     musicList,

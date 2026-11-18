@@ -1,13 +1,13 @@
 <template>
   <div v-loading="isLoading" class="search">
     <!-- 多重匹配概览：各类型匹配数量入口 -->
-    <div v-if="search.multimatch.length" class="search-multimatch">
+    <div v-if="multimatch.length" class="search-multimatch">
       <span class="mm-label">多重匹配</span>
       <span
-        v-for="(item, index) in search.multimatch"
+        v-for="(item, index) in multimatch"
         :key="'mm_' + index"
         class="mm-item"
-        :class="{ active: search.type === item.code }"
+        :class="{ active: type === item.code }"
         @click="onMultimatchClick(item)"
       >
         {{ item.name }}
@@ -15,19 +15,23 @@
       </span>
     </div>
     <cm-navbar
-      v-model:selected-code="search.type"
+      v-model:selected-code="type"
       :title="'搜索结果'"
       :navs="navs"
       :has-load-more="false"
-      @change="search.handleTypeChange"
+      @change="handleTypeChange"
     >
     </cm-navbar>
     <!-- 单曲 -->
-    <cm-table v-if="search.type === SEARCH_TYPE.单曲" :data-source="search.songs"></cm-table>
+    <cm-table
+      v-if="type === SearchType.单曲"
+      :data-source="songs"
+      empty-text="没有找到相关歌曲"
+    ></cm-table>
     <!-- 专辑 -->
-    <div v-if="search.type === SEARCH_TYPE.专辑" class="search-album">
+    <div v-if="type === SearchType.专辑" class="search-album">
       <cm-album-card
-        v-for="(item, index) in search.albums"
+        v-for="(item, index) in albums"
         :id="item.id"
         :key="'album_' + index"
         :title="item.title"
@@ -36,9 +40,9 @@
       ></cm-album-card>
     </div>
     <!-- mv -->
-    <div v-if="search.type === SEARCH_TYPE.MV" class="search-album">
+    <div v-if="type === SearchType.MV" class="search-album">
       <cm-mv-card
-        v-for="(item, index) in search.mvs"
+        v-for="(item, index) in mvs"
         :id="item.id"
         :key="'mv_' + index"
         :cover-image-url="item.imgurl"
@@ -55,21 +59,21 @@ import { ref, computed, watch } from 'vue';
 import { getQueryParam } from '@/core/token';
 import { useSearch, SEARCH_MultimatchEntry } from './hooks/useSearch';
 
-import { SEARCH_TYPE } from '../../apis/search/index.api';
+import { SearchType } from '../../apis/search/index.api';
 
-const keyword = computed(() => {
+const urlKeyword = computed(() => {
   return getQueryParam('keyword') as string;
 });
-const search = useSearch();
+const { type, songs, albums, mvs, multimatch, loadingResult$, query, queryMultimatch, handleTypeChange } = useSearch();
 
-search.query();
-search.queryMultimatch();
+query();
+queryMultimatch();
 const isLoading = ref<boolean>(false);
 
 const navs = computed(() => {
-  return Object.keys(SEARCH_TYPE).map((v) => {
+  return Object.keys(SearchType).map((v) => {
     return {
-      code: SEARCH_TYPE[v as keyof typeof SEARCH_TYPE],
+      code: SearchType[v as keyof typeof SearchType],
       name: v,
     };
   });
@@ -78,22 +82,22 @@ const navs = computed(() => {
 /** 点击多重匹配入口：切换类型并重新查询 */
 const onMultimatchClick = (item: SEARCH_MultimatchEntry) => {
   if (item.code) {
-    search.type = item.code;
-    search.query();
+    type.value = item.code;
+    query();
   }
 };
 
 watch(
-  () => keyword.value,
+  () => urlKeyword.value,
   () => {
-    search.query();
-    search.queryMultimatch();
+    query();
+    queryMultimatch();
   },
 );
 
 // 订阅搜索 loading 状态，immediate 保证首屏同步到当前值
 watch(
-  search.loadingResult$,
+  loadingResult$,
   (v) => {
     isLoading.value = v ?? false;
   },

@@ -61,7 +61,7 @@ const props = withDefaults(
     rootClass?: string;
     kindLabels?: Partial<Record<ApiBlock['kind'], string>>;
   }>(),
-  { rootClass: 'api-console-page' },
+  { rootClass: 'api-console-page', kindLabels: () => ({}) },
 );
 
 const { activeTab, activeBlocks, sel, selKeys, inputs, states, runBlock, onCardClick, onFileChange, switchTab } =

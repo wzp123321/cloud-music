@@ -110,7 +110,7 @@ const router = useRouter();
       bottom: 1px;
       width: 100%;
       height: 6px;
-      background: #c20c0c;
+      background: var(--color-primary);
       z-index: -1;
     }
   }

@@ -1,6 +1,6 @@
 import { useSingletonStore } from "@/store/singletons";
 // 首页服务
-import { ref, reactive } from 'vue';
+import { ref } from 'vue';
 import router from '@/router';
 
 import {
@@ -28,10 +28,10 @@ import {
 
 import portalService from '../../../apis/portal/portal-request.service';
 
-import { TARGET_TYPE } from '@/config/enum';
+import { TargetType } from '@/config/enum';
 import message from '@/utils/message';
 
-import { recommendPlayListNavs, HOME_RANK_IDS } from '../constant/index';
+import { recommendPlayListNavs, homeRankIds } from '../constant/index';
 
 // 首页状态层：以 composable 形式组织，内部用 ref + const 箭头函数
 const create = () => {
@@ -111,20 +111,20 @@ const create = () => {
       router.push({ path, query: { [key]: String(targetId) } });
     };
     switch (targetType) {
-      case TARGET_TYPE.单曲:
+      case TargetType.单曲:
         return go('/music_detail', 'id');
-      case TARGET_TYPE.专辑:
+      case TargetType.专辑:
         return go('/album_detail', 'id');
-      case TARGET_TYPE.歌单:
+      case TargetType.歌单:
         return go('/playlist_detail', 'id');
-      case TARGET_TYPE.MV:
-      case TARGET_TYPE.视频:
+      case TargetType.MV:
+      case TargetType.视频:
         return go('/mvplay', 'mvid');
-      case TARGET_TYPE.歌手:
+      case TargetType.歌手:
         return go('/artist_detail', 'id');
-      case TARGET_TYPE.用户:
+      case TargetType.用户:
         return go('/user', 'id');
-      case TARGET_TYPE.电台:
+      case TargetType.电台:
         return router.push({ path: '/dj-radio-detail', query: { rid: String(targetId) } });
       default:
         // 歌词 / 综合 / 声音 / 独家规划 / 网页 等：有外链则打开，否则提示
@@ -168,7 +168,7 @@ const create = () => {
   //#region 新碟
   const getSomeRankList = async () => {
     try {
-      const promiseArr = HOME_RANK_IDS.map((item) => {
+      const promiseArr = homeRankIds.map((item) => {
         return portalService.getRankDetailById({ id: item });
       });
       const resArr = await Promise.all(promiseArr);
@@ -366,34 +366,18 @@ const create = () => {
   };
   //#endregion
   //#region 推荐流跳转
-  const linkToPlaylist = (id?: number | string) => {
+  /** 六个带 id 的跳转仅路由与 query key 不同，统一在此降级并携带参数 */
+  const goDetail = (path: string, key: string, id?: number | string) => {
     if (id == null) {
       message.info('该内容暂无详情信息');
       return;
     }
-    router.push({ path: '/playlist_detail', query: { id: String(id) } });
+    router.push({ path, query: { [key]: String(id) } });
   };
-  const linkToSong = (id?: number | string) => {
-    if (id == null) {
-      message.info('该内容暂无详情信息');
-      return;
-    }
-    router.push({ path: '/music_detail', query: { id: String(id) } });
-  };
-  const linkToMv = (id?: number | string) => {
-    if (id == null) {
-      message.info('该内容暂无详情信息');
-      return;
-    }
-    router.push({ path: '/mvplay', query: { mvid: String(id) } });
-  };
-  const linkToAlbum = (id?: number | string) => {
-    if (id == null) {
-      message.info('该内容暂无详情信息');
-      return;
-    }
-    router.push({ path: '/album_detail', query: { id: String(id) } });
-  };
+  const linkToPlaylist = (id?: number | string) => goDetail('/playlist_detail', 'id', id);
+  const linkToSong = (id?: number | string) => goDetail('/music_detail', 'id', id);
+  const linkToMv = (id?: number | string) => goDetail('/mvplay', 'mvid', id);
+  const linkToAlbum = (id?: number | string) => goDetail('/album_detail', 'id', id);
   const linkToDailyRecommend = () => {
     router.push({ path: '/daily_recommend' });
   };
@@ -412,26 +396,13 @@ const create = () => {
   };
   //#endregion
   //#region 电台 / 节目跳转
-  const linkToDjRadio = (rid?: number | string) => {
-    if (rid == null) {
-      message.info('该内容暂无详情信息');
-      return;
-    }
-    router.push({ path: '/dj-radio-detail', query: { rid: String(rid) } });
-  };
-  const linkToDjProgram = (id?: number | string) => {
-    if (id == null) {
-      message.info('该内容暂无详情信息');
-      return;
-    }
-    router.push({ path: '/dj-program-detail', query: { id: String(id) } });
-  };
+  const linkToDjRadio = (rid?: number | string) => goDetail('/dj-radio-detail', 'rid', rid);
+  const linkToDjProgram = (id?: number | string) => goDetail('/dj-program-detail', 'id', id);
   //#endregion
 
-  // reactive 包装：ref 自动解包，svc.xxx 仍是「值」，与旧 getter 行为一致；
-  // 原带 setter 的字段（如 selectedRecommendPlayListType）经 reactive 写回仍可赋值
-  const state = reactive({
-    // 状态字段（对应原 public getter / readonly 字段）
+  // 对外直出各 ref / 方法，消费方解构后使用（脚本内 .value，模板自动解包）
+  return {
+    // 状态字段
     loading,
     bannerList,
     recommendPlayListNavs, // 推荐歌单类型
@@ -459,7 +430,7 @@ const create = () => {
     highqualityList,
     topSongList,
     topMvList,
-    // 方法（对应原 public 方法，签名不变）
+    // 方法
     init,
     queryBannerList,
     handleBannerLinkTo,
@@ -490,8 +461,7 @@ const create = () => {
     linkToArtistDetail,
     linkToDjRadio,
     linkToDjProgram,
-  });
-  return state;
+  };
 };
 
 export const usePortal = () => useSingletonStore().get("usePortal", create);

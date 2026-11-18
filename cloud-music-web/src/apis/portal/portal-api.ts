@@ -1,4 +1,5 @@
 import { Common_IUserVO } from '@/apis/common/user.api';
+import type { ApiRawResponse } from '@/apis/types';
 
 /**
  * 首页banner
@@ -142,7 +143,7 @@ export interface HomepageBlockResource {
   uiElement?: HomepageBlockResourceUI;
   action?: { actionType?: string; businessId?: number };
   // 兼容专辑/歌曲等嵌套资源
-  resourceExtInfo?: Record<string, any>;
+  resourceExtInfo?: Record<string, ApiRawResponse>;
 }
 
 /**
@@ -166,7 +167,7 @@ export interface HomepageBlock {
   creatives?: HomepageBlockCreative[];
   // 部分区块（如 BANNER）直接平铺资源
   resources?: HomepageBlockResource[];
-  extInfo?: Record<string, any>;
+  extInfo?: Record<string, ApiRawResponse>;
 }
 
 /**
@@ -189,9 +190,9 @@ export interface DragonBallItem {
   id?: string | number;
   name?: string;
   iconUrl?: string;
-  // 跳转类型（参考 TARGET_TYPE）
+  // 跳转类型（参考 TargetType）
   actionType?: string;
-  action?: { actionType?: string; data?: Record<string, any> } | string;
+  action?: { actionType?: string; data?: Record<string, ApiRawResponse> } | string;
   url?: string;
 }
 
@@ -395,7 +396,7 @@ export interface TopListItem {
 export interface ToplistRes {
   code?: number;
   list?: TopListItem[];
-  artistToplist?: Record<string, any>;
+  artistToplist?: Record<string, ApiRawResponse>;
 }
 
 /**
