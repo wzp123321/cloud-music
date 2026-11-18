@@ -8,12 +8,31 @@ import { getRequest } from '@/apis/request';
 import {
   getSearchMultimatch,
 } from '@/apis/search-enhance/index.api';
+import { highValueSearch } from '@/apis/server-coverage/high-value.service';
 import { Common_IMusic, Common_IAlbumVO } from '@/apis/common/index.api';
 import { MvVO } from '../../../apis/artist-detail/artist-detail-api';
 import { SearchType } from '../../../apis/search/index.api';
 
 enum EPath {
   搜索 = '/search',
+}
+
+/** 歌词搜索命中项（/search/lyric） */
+export interface SEARCH_LyricHit {
+  id: number;
+  name: string;
+  artist: string;
+  /** 命中的歌词片段 */
+  matched: string;
+  cover: string;
+}
+
+/** 其它搜索类型的通用展示项 */
+export interface SEARCH_GenericHit {
+  id: number;
+  name: string;
+  sub: string;
+  cover: string;
 }
 
 // 请求序号：模块级递增，用于丢弃过期响应，防止旧请求覆盖新结果。
@@ -34,6 +53,10 @@ const create = () => {
 
   const mvs = ref<MvVO[]>([]);
 
+  /** 歌词搜索结果（/search/lyric）与其余类型的通用结果 */
+  const _lyrics = ref<SEARCH_LyricHit[]>([]);
+  const _generic = ref<SEARCH_GenericHit[]>([]);
+
   /** 多重匹配概览（各类型匹配数量入口） */
   const multimatch = ref<SEARCH_MultimatchEntry[]>([]);
 
@@ -49,7 +72,23 @@ const create = () => {
       keywords: requestKeyword,
       type: Number(requestType),
     };
+    _lyrics.value = [];
+    _generic.value = [];
     try {
+      // 歌词搜索走专用接口：data.resources[].song / matchedLyric
+      if (requestType === SEARCH_TYPE.歌词) {
+        const res = await highValueSearch.lyric(requestKeyword);
+        if (mySeq !== seq) return;
+        const resources = ((res?.data as { resources?: unknown })?.resources ?? []) as any[];
+        _lyrics.value = resources.map((entry: any) => ({
+          id: entry?.song?.id,
+          name: entry?.song?.name ?? '',
+          artist: entry?.song?.ar?.map((a: any) => a?.name).filter(Boolean).join('、') ?? '',
+          matched: entry?.matchedLyric ?? entry?.highlightText ?? String(entry?.lyric ?? '').slice(0, 120),
+          cover: entry?.song?.al?.picUrl ?? '',
+        }));
+        return;
+      }
       const res = await getRequest(EPath.搜索, params);
       // 已有更新的请求发出，丢弃本次过期响应
       if (mySeq !== seq) return;
@@ -98,6 +137,26 @@ const create = () => {
             };
           });
           break;
+        default: {
+          // 歌手 / 歌单 / 用户 / 电台 / 视频 / 综合：统一渲染成通用卡片，避免 tab 空白
+          const keyMap: Record<string, string> = {
+            [SEARCH_TYPE.歌手]: 'artists',
+            [SEARCH_TYPE.歌单]: 'playlists',
+            [SEARCH_TYPE.用户]: 'userprofiles',
+            [SEARCH_TYPE.电台]: 'djRadios',
+            [SEARCH_TYPE.视频]: 'videos',
+            [SEARCH_TYPE.综合]: 'songs',
+          };
+          const result = res?.result ?? {};
+          const list = result[keyMap[requestType] ?? ''] ?? [];
+          _generic.value = (Array.isArray(list) ? list : []).map((entry: any) => ({
+            id: entry?.id,
+            name: entry?.name ?? entry?.nickname ?? entry?.title ?? '',
+            sub: entry?.artist?.name ?? entry?.creator?.nickname ?? entry?.description ?? '',
+            cover: entry?.coverImgUrl ?? entry?.picUrl ?? entry?.avatarUrl ?? entry?.imgurl ?? '',
+          }));
+          break;
+        }
       }
     } catch {
       // 过期请求的失败同样不得清空新结果
@@ -146,6 +205,8 @@ const create = () => {
     songs,
     albums,
     mvs,
+    lyrics,
+    generic,
     multimatch,
     loadingResult$,
     keyword,

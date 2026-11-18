@@ -50,6 +50,9 @@ import { PropType, ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { formatDuration } from '@/core/utils';
+import { hasLogin } from '@/apis/content-enhance/content-enhance.service';
+import { highValueSong } from '@/apis/server-coverage/high-value.service';
+import { downloadFileByUrl } from '@/apis/file-download-upload/util';
 
 import { usePlayerStore } from '@/store/player';
 import { usePlaylistStore } from '@/store/playlist';
@@ -269,6 +272,10 @@ table {
   tbody tr td .op-btn i.iconfont + i.iconfont {
     font-size: 16px;
     margin-left: 24px;
+  }
+
+  tbody tr td .op-btn :deep(.is-liked) {
+    color: var(--color-primary, #c20c0c);
   }
 
   tbody tr:hover td span.duration-text {

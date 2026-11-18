@@ -11,6 +11,8 @@ import {
   likeComment,
   sendComment,
 } from '../cm-comment.api';
+import { hasLogin } from '@/apis/content-enhance/content-enhance.service';
+import { highValueComment } from '@/apis/server-coverage/high-value.service';
 
 /** cm-comment 的 props 形状（.vue 内 defineProps 传入，保持单一数据源） */
 export interface CommentProps {
@@ -167,6 +169,18 @@ export const useComment = (props: CommentProps) => {
     }
   }
 
+  /** 举报评论（/comment/report）：登录 + 二次确认后才提交 */
+  const onReport = async (item: CM_CommentVO) => {
+    if (!canInteract.value || !item?.commentId) return;
+    if (!hasLogin()) {
+      editorTip.value = '请先登录后再举报';
+      return;
+    }
+    if (!window.confirm('确认举报这条评论吗？')) return;
+    const res = await highValueComment.report(props.id!, item.commentId, 0);
+    editorTip.value = res ? '举报已提交' : '举报失败，请稍后重试';
+  };
+
   // 楼层评论
   const floorOpenId = ref<number | null>(null);
   const floorMap = ref<Record<string, CM_CommentVO[]>>({});
@@ -235,6 +249,7 @@ export const useComment = (props: CommentProps) => {
     switchTab,
     onSubmit,
     onLike,
+    onReport,
     floorOpenId,
     floorMap,
     onToggleFloor,

@@ -5,21 +5,27 @@
     <header class="api-coverage--header">
       <div class="api-coverage--stats">
         <div class="api-coverage--stat">
-          <b>{{ ROUTE_STATS.total }}</b><span>服务端接口</span>
+          <b>{{ ROUTE_STATS.total }}</b
+          ><span>服务端接口</span>
         </div>
         <div class="api-coverage--stat">
-          <b>{{ ROUTE_STATS.existing }}</b><span>已有页面接入</span>
+          <b>{{ ROUTE_STATS.existing }}</b
+          ><span>已有页面接入</span>
         </div>
         <div class="api-coverage--stat is-highlight">
-          <b>{{ ROUTE_STATS.added }}</b><span>本次对齐新增</span>
+          <b>{{ ROUTE_STATS.added }}</b
+          ><span>本次对齐新增</span>
         </div>
         <div class="api-coverage--stat">
-          <b>{{ ROUTE_STATS.domains }}</b><span>功能域</span>
+          <b>{{ ROUTE_STATS.domains }}</b
+          ><span>功能域</span>
         </div>
       </div>
       <p class="api-coverage--intro">
         清单由 <code>npm run sync:routes</code> 从服务端 <code>module/</code> 目录生成，与服务端自动注册的路由一一对应。
-        点击任一接口可填写参数并真实发起请求；写操作需二次确认，页面不会自动发请求。
+        参数表单由 <code>interface.d.ts</code> 解析而来（{{ ROUTE_STATS.withParams }} 条接口 /
+        {{ ROUTE_STATS.paramCount }} 个参数 / {{ ROUTE_STATS.enums }} 组枚举）， 缺失部分由 module
+        源码补齐。写操作需二次确认，页面不会自动发请求。
       </p>
     </header>
 
@@ -35,11 +41,7 @@
 
     <div class="api-coverage--body">
       <aside class="api-coverage--aside">
-        <button
-          class="api-coverage--domain"
-          :class="{ active: activeDomain === 'all' }"
-          @click="activeDomain = 'all'"
-        >
+        <button class="api-coverage--domain" :class="{ active: activeDomain === 'all' }" @click="activeDomain = 'all'">
           <span>全部接口</span><em>{{ ROUTE_STATS.total }}</em>
         </button>
         <button
@@ -49,7 +51,8 @@
           :class="{ active: activeDomain === domain.name }"
           @click="activeDomain = domain.name"
         >
-          <span>{{ domain.name }}</span><em>{{ domain.total }}</em>
+          <span>{{ domain.name }}</span
+          ><em>{{ domain.total }}</em>
         </button>
       </aside>
 
@@ -81,14 +84,40 @@
                   <el-option value="get" label="GET" />
                 </el-select>
               </label>
+              <div v-if="paramsFor(route.path).length" class="api-coverage--schema">
+                <div class="api-coverage--schema-head">
+                  <span>参数表单</span>
+                  <em>{{ paramsFor(route.path).length }} 项 · 必填项留空会提示</em>
+                </div>
+                <div class="api-coverage--schema-grid">
+                  <label v-for="param in paramsFor(route.path)" :key="param.name" class="api-coverage--field">
+                    <span class="api-coverage--param-label">
+                      <b>{{ param.name }}</b>
+                      <i v-if="param.required">必填</i>
+                      <small>{{ param.raw }}</small>
+                    </span>
+                    <select
+                      v-if="param.type === 'enum' || param.type === 'boolean'"
+                      v-model="paramValues[route.path][param.name]"
+                      class="api-coverage--select"
+                    >
+                      <option value="">不传</option>
+                      <option v-for="opt in enumOptions(param)" :key="opt" :value="opt">{{ opt }}</option>
+                    </select>
+                    <input
+                      v-else
+                      v-model="paramValues[route.path][param.name]"
+                      class="api-coverage--input"
+                      :type="param.type === 'number' ? 'number' : 'text'"
+                      :placeholder="param.hint ? '默认 ' + param.hint : '可选'"
+                    />
+                  </label>
+                </div>
+              </div>
+              <div v-else class="api-coverage--schema-empty">该接口无需业务参数</div>
               <label class="api-coverage--field is-wide">
-                <span>参数（JSON 对象，登录凭证由请求层自动注入）</span>
-                <cm-textarea
-                  v-model="paramTexts[route.path]"
-                  class="api-coverage--textarea"
-                  rows="3"
-                  spellcheck="false"
-                />
+                <span>附加参数（JSON 对象，覆盖同名表单项；登录凭证由请求层自动注入）</span>
+                <textarea v-model="paramTexts[route.path]" class="api-coverage--textarea" rows="3" spellcheck="false" />
               </label>
               <label v-if="route.file" class="api-coverage--field is-wide">
                 <span>上传文件（FormData 提交）</span>
@@ -108,7 +137,8 @@
               v-if="results[route.path]"
               class="api-coverage--result"
               :class="{ 'is-error': results[route.path].error }"
-            >{{ results[route.path].text }}</pre>
+              >{{ results[route.path].text }}</pre
+            >
           </div>
         </article>
 
@@ -126,14 +156,13 @@ import { computed, reactive, ref, watch } from 'vue';
 
 import {
   ROUTE_DOMAINS,
+  ROUTE_PARAMS,
   ROUTE_STATS,
   SERVER_ROUTES,
   type ServerRoute,
+  type ServerRouteParam,
 } from '@/apis/server-coverage/routes';
-import {
-  callServerRoute,
-  type RouteMethod,
-} from '@/apis/server-coverage/server-coverage.service';
+import { callServerRoute, type RouteMethod } from '@/apis/server-coverage/server-coverage.service';
 
 interface CallResult {
   loading: boolean;
@@ -147,8 +176,59 @@ const limit = ref(60);
 const expanded = ref('');
 const methods = reactive<Record<string, RouteMethod>>({});
 const paramTexts = reactive<Record<string, string>>({});
+const paramValues = reactive<Record<string, Record<string, string>>>({});
 const files = reactive<Record<string, File | null>>({});
 const results = reactive<Record<string, CallResult>>({});
+
+/** 文件类参数由统一上传控件处理，不重复放进表单 */
+const paramsFor = (routePath: string): ServerRouteParam[] =>
+  (ROUTE_PARAMS[routePath] || []).filter((param) => param.type !== 'file');
+
+const enumOptions = (param: ServerRouteParam): string[] =>
+  param.options || (param.type === 'boolean' ? ['true', 'false'] : []);
+
+const coerceValue = (param: ServerRouteParam, raw: string): unknown => {
+  if (param.type === 'number') {
+    const value = Number(raw);
+    return Number.isNaN(value) ? raw : value;
+  }
+  if (param.type === 'boolean') return raw === 'true' || raw === '1';
+  if (param.type === 'object') {
+    try {
+      return JSON.parse(raw);
+    } catch {
+      return raw;
+    }
+  }
+  return raw;
+};
+
+/** 表单值覆盖附加 JSON 的同名字段，并校验必填项 */
+const collectParams = (route: ServerRoute): { params?: Record<string, unknown>; error?: string } => {
+  let params: Record<string, unknown> = {};
+  try {
+    const parsed: unknown = JSON.parse(paramTexts[route.path]?.trim() || '{}');
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+      throw new Error('参数必须是 JSON 对象');
+    }
+    params = parsed as Record<string, unknown>;
+  } catch (error) {
+    return { error: `参数解析失败：${(error as Error).message}` };
+  }
+
+  const values = paramValues[route.path] || {};
+  for (const param of paramsFor(route.path)) {
+    const raw = (values[param.name] || '').trim();
+    if (!raw) continue;
+    params[param.name] = coerceValue(param, raw);
+  }
+
+  const missing = paramsFor(route.path)
+    .filter((param) => param.required && (params[param.name] === undefined || params[param.name] === ''))
+    .map((param) => param.name);
+  if (missing.length) return { error: `缺少必填参数：${missing.join('、')}` };
+  return { params };
+};
 
 const filtered = computed<ServerRoute[]>(() => {
   const kw = keyword.value.trim().toLowerCase();
@@ -174,6 +254,7 @@ const toggle = (routePath: string) => {
   expanded.value = expanded.value === routePath ? '' : routePath;
   if (!paramTexts[routePath]) paramTexts[routePath] = '{}';
   if (!methods[routePath]) methods[routePath] = 'post';
+  if (!paramValues[routePath]) paramValues[routePath] = {};
 };
 
 const onFile = (routePath: string, event: Event) => {
@@ -181,26 +262,13 @@ const onFile = (routePath: string, event: Event) => {
 };
 
 const run = async (route: ServerRoute) => {
-  if (
-    route.kind === 'write' &&
-    !window.confirm(`确认调用写操作【${route.path}】吗？该请求会向服务端提交数据。`)
-  ) {
+  if (route.kind === 'write' && !window.confirm(`确认调用写操作【${route.path}】吗？该请求会向服务端提交数据。`)) {
     return;
   }
 
-  let params: Record<string, unknown> = {};
-  try {
-    const parsed: unknown = JSON.parse(paramTexts[route.path]?.trim() || '{}');
-    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
-      throw new Error('参数必须是 JSON 对象');
-    }
-    params = parsed as Record<string, unknown>;
-  } catch (error) {
-    results[route.path] = {
-      loading: false,
-      text: `参数解析失败：${(error as Error).message}`,
-      error: true,
-    };
+  const { params, error: paramError } = collectParams(route);
+  if (paramError) {
+    results[route.path] = { loading: false, text: paramError, error: true };
     return;
   }
 
@@ -208,7 +276,7 @@ const run = async (route: ServerRoute) => {
   try {
     const res = await callServerRoute(route.path, {
       method: methods[route.path] || 'post',
-      params,
+      params: params || {},
       file: route.file ? files[route.path] : null,
     });
     results[route.path] = {
@@ -467,11 +535,78 @@ const run = async (route: ServerRoute) => {
     color: #888;
 
     &.is-wide {
-      grid-column: 2;
+      grid-column: 1 / -1;
+    }
+  }
+
+  &--schema {
+    grid-column: 1 / -1;
+    padding: 12px;
+    box-sizing: border-box;
+    border: 1px solid rgba(0, 0, 0, 0.07);
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.015);
+  }
+
+  &--schema-head {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 10px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #666;
+
+    em {
+      font-style: normal;
+      font-weight: 400;
+      color: #aaa;
+    }
+  }
+
+  &--schema-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px 12px;
+  }
+
+  &--schema-empty {
+    grid-column: 1 / -1;
+    font-size: 12px;
+    color: #aaa;
+  }
+
+  &--param-label {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    min-width: 0;
+
+    b {
+      font-family: Consolas, Monaco, monospace;
+      font-size: 12px;
+      font-weight: 600;
+      color: #444;
+    }
+
+    i {
+      flex-shrink: 0;
+      font-style: normal;
+      font-size: 10px;
+      color: var(--color-primary, #c20c0c);
+    }
+
+    small {
+      overflow: hidden;
+      font-size: 10px;
+      color: #bbb;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
   }
 
   &--select,
+  &--input,
   &--textarea {
     box-sizing: border-box;
     width: 100%;
@@ -570,6 +705,10 @@ const run = async (route: ServerRoute) => {
   .api-coverage {
     &--stats {
       grid-template-columns: repeat(2, 1fr);
+    }
+
+    &--schema-grid {
+      grid-template-columns: 1fr;
     }
 
     &--body {

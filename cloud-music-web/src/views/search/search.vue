@@ -52,10 +52,36 @@
         :publish-time="item.publishTime"
       ></cm-mv-card>
     </div>
+    <!-- 歌词：/search/lyric 命中片段 -->
+    <div v-if="search.type === SEARCH_TYPE.歌词" class="search-lyric">
+      <div
+        v-for="hit in search.lyrics"
+        :key="'lyric_' + hit.id"
+        class="lyric-card"
+        @click="onLyricClick(hit.id)"
+      >
+        <cm-image class="lyric-cover" :src="hit.cover" alt="" />
+        <div class="lyric-body">
+          <p class="lyric-title"><b>{{ hit.name }}</b><span>{{ hit.artist }}</span></p>
+          <p class="lyric-text">{{ hit.matched }}</p>
+        </div>
+      </div>
+      <p v-if="!search.lyrics.length" class="search-empty">暂无歌词匹配结果</p>
+    </div>
+    <!-- 歌手 / 歌单 / 用户 / 电台 / 视频 / 综合：通用卡片 -->
+    <div v-else-if="showGeneric" class="search-generic">
+      <div v-for="hit in search.generic" :key="'gen_' + hit.id" class="generic-card">
+        <cm-image class="generic-cover" :src="hit.cover" alt="" />
+        <p class="generic-name">{{ hit.name }}</p>
+        <p class="generic-sub">{{ hit.sub }}</p>
+      </div>
+      <p v-if="!search.generic.length" class="search-empty">暂无匹配结果</p>
+    </div>
   </div>
 </template>
 <script lang="ts" setup>
 import { ref, computed, watch } from 'vue';
+import { useRouter } from 'vue-router';
 import { getQueryParam } from '@/core/token';
 import { useSearch, SEARCH_MultimatchEntry } from './hooks/useSearch';
 
@@ -69,6 +95,15 @@ const { type, songs, albums, mvs, multimatch, loadingResult$, query, queryMultim
 query();
 queryMultimatch();
 const isLoading = ref<boolean>(false);
+
+/** 已有专属渲染的类型；其余 tab 走通用卡片 */
+const plainTypes: string[] = [SEARCH_TYPE.单曲, SEARCH_TYPE.专辑, SEARCH_TYPE.MV, SEARCH_TYPE.歌词];
+const showGeneric = computed(() => !plainTypes.includes(search.type as string));
+
+/** 歌词命中项 → 打开歌曲详情 */
+const onLyricClick = (id: number) => {
+  if (id) router.push({ path: '/music_detail', query: { id } });
+};
 
 const navs = computed(() => {
   return Object.keys(SearchType).map((v) => {
@@ -164,6 +199,109 @@ watch(
     grid-template-columns: repeat(4, auto);
 
     gap: 16px;
+  }
+
+  &-lyric {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .lyric-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 14px;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 8px;
+    cursor: pointer;
+
+    &:hover {
+      border-color: var(--color-primary, #c20c0c);
+    }
+  }
+
+  .lyric-cover {
+    width: 54px;
+    height: 54px;
+    flex-shrink: 0;
+    border-radius: 6px;
+    object-fit: cover;
+  }
+
+  .lyric-body {
+    min-width: 0;
+  }
+
+  .lyric-title {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin: 0 0 4px;
+
+    b {
+      font-size: 14px;
+      color: #333;
+    }
+
+    span {
+      font-size: 12px;
+      color: #999;
+    }
+  }
+
+  .lyric-text {
+    margin: 0;
+    font-size: 12px;
+    line-height: 20px;
+    color: #777;
+    white-space: pre-line;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  &-generic {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .generic-card {
+    min-width: 0;
+  }
+
+  .generic-cover {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 8px;
+    object-fit: cover;
+  }
+
+  .generic-name {
+    margin: 8px 0 2px;
+    font-size: 13px;
+    color: #333;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .generic-sub {
+    margin: 0;
+    font-size: 11px;
+    color: #aaa;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .search-empty {
+    padding: 40px 0;
+    text-align: center;
+    font-size: 13px;
+    color: #aaa;
   }
 }
 </style>

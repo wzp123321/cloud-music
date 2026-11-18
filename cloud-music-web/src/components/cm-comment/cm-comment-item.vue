@@ -36,6 +36,7 @@
         <span v-if="canInteract" class="cmc-op" @click="emit('toggle-hug', item)">
           {{ hugOpen ? '收起' : '赞过的人' }}
         </span>
+        <span v-if="canInteract" class="cmc-op" @click="emit('report', item)">举报</span>
       </div>
 
       <!-- 楼层回复 -->
@@ -107,6 +108,7 @@ const emit = defineEmits<{
   (e: 'like', item: CM_CommentVO): void;
   (e: 'toggle-floor', item: CM_CommentVO): void;
   (e: 'toggle-hug', item: CM_CommentVO): void;
+  (e: 'report', item: CM_CommentVO): void;
 }>();
 </script>
 
