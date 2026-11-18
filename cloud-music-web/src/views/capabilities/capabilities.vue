@@ -53,7 +53,10 @@ const groups: { title: string; items: CapabilityItem[] }[] = [
       { title: '消息中心', path: '/message', desc: '评论/@我/通知/私信、分享与发评论' },
       { title: '动态与话题', path: '/feed', desc: '动态流、话题页、相关视频与歌单' },
       { title: '用户与歌单补充', path: '/user-supplement', desc: '账号资料、云盘浏览删除、歌单编辑' },
-      { title: '路由补齐', path: '/route-completion', desc: '数字专辑详情与歌手详情补充信息' },
+      // 接口调试页只在开发环境暴露入口，路由本身保留供调试使用
+      ...(import.meta.env.DEV
+        ? [{ title: '路由补齐', path: '/route-completion', desc: '数字专辑详情与歌手详情补充信息' }]
+        : []),
     ],
   },
   {
@@ -95,7 +98,7 @@ const linkTo = (path: string) => {
     margin-top: 16px;
     font-size: 13px;
     line-height: 22px;
-    color: #999;
+    color: var(--color-text-secondary);
   }
 
   &--section {
@@ -108,7 +111,7 @@ const linkTo = (path: string) => {
   &--heading {
     font-size: 20px;
     font-weight: 600;
-    color: #333;
+    color: var(--color-text-primary);
   }
 
   &--grid {
@@ -125,28 +128,28 @@ const linkTo = (path: string) => {
     transition: all 0.2s;
 
     &:hover {
-      border-color: var(--color-primary, #c20c0c);
+      border-color: var(--color-primary);
       transform: translateY(-2px);
     }
 
     h5 {
       font-size: 15px;
       font-weight: 600;
-      color: #333;
+      color: var(--color-text-primary);
     }
   }
 
   &--path {
     margin-top: 4px;
     font-size: 12px;
-    color: var(--color-primary, #c20c0c);
+    color: var(--color-primary);
   }
 
   &--desc {
     margin-top: 8px;
     font-size: 12px;
     line-height: 18px;
-    color: #999;
+    color: var(--color-text-secondary);
   }
 }
 </style>

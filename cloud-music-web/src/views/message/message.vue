@@ -232,7 +232,7 @@ const {
     padding: 1px 5px;
     border-radius: 4px;
     background: rgba(194, 12, 12, 0.08);
-    color: var(--color-primary, #c20c0c);
+    color: var(--color-primary);
     font-size: 12px;
   }
 
@@ -267,13 +267,13 @@ const {
     border: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: 18px;
     background: var(--color-default, #fff);
-    color: #666;
+    color: var(--color-text-secondary);
     font-size: 14px;
     cursor: pointer;
 
     &.active {
-      border-color: var(--color-primary, #c20c0c);
-      color: var(--color-primary, #c20c0c);
+      border-color: var(--color-primary);
+      color: var(--color-primary);
       background: rgba(194, 12, 12, 0.06);
     }
   }
@@ -284,7 +284,7 @@ const {
 
   &--panel-tip {
     margin-bottom: 16px;
-    color: #999;
+    color: var(--color-text-secondary);
     font-size: 13px;
     line-height: 1.7;
   }
@@ -308,7 +308,7 @@ const {
   &--block-title {
     font-size: 15px;
     font-weight: 600;
-    color: #333;
+    color: var(--color-text-primary);
   }
 
   &--module {
@@ -329,7 +329,7 @@ const {
   }
 
   &--count {
-    color: #999;
+    color: var(--color-text-secondary);
     font-size: 12px;
   }
 
@@ -343,15 +343,15 @@ const {
     cursor: pointer;
 
     &:hover {
-      border-color: var(--color-primary, #c20c0c);
-      color: var(--color-primary, #c20c0c);
+      border-color: var(--color-primary);
+      color: var(--color-primary);
     }
   }
 
   &--btn--write {
     margin-top: 12px;
-    border-color: var(--color-primary, #c20c0c);
-    color: var(--color-primary, #c20c0c);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
   }
 
   &--form {
@@ -362,7 +362,7 @@ const {
       align-items: center;
       gap: 10px;
       margin-bottom: 8px;
-      color: #666;
+      color: var(--color-text-secondary);
       font-size: 13px;
       white-space: nowrap;
     }
@@ -377,7 +377,7 @@ const {
       outline: none;
 
       &:focus {
-        border-color: var(--color-primary, #c20c0c);
+        border-color: var(--color-primary);
       }
     }
   }
@@ -403,7 +403,7 @@ const {
 
   &--item-title {
     flex: 1;
-    color: #333;
+    color: var(--color-text-primary);
     font-size: 13px;
     overflow: hidden;
     white-space: nowrap;

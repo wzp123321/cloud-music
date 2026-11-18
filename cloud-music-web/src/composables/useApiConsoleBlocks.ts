@@ -1,6 +1,8 @@
-import { computed, onMounted, reactive, ref, type Ref } from 'vue';
+import { sessionManager } from '@/core/session';
+import type { ApiRawResponse } from '@/apis/types';
+import { computed, onMounted, ref, type Ref } from 'vue';
 
-import { hasLogin as checkLogin } from '@/apis/content-enhance/content-enhance.service';
+import { useApiConsoleGuard } from './useApiConsoleGuard';
 import {
   extractObject,
   toCardList,
@@ -17,7 +19,7 @@ export interface Block {
   name: string;
   tab: string;
   kind: BlockKind;
-  run: () => Promise<any>;
+  run: () => Promise<ApiRawResponse>;
   inputKey?: string;
   inputLabel?: string;
   inputHint?: string;
@@ -36,8 +38,8 @@ export interface ApiConsoleTab {
 export interface ApiConsoleConfig {
   tabs: ApiConsoleTab[];
   panelTips?: Record<string, string>;
-  /** 共享参数（reactive）。必须由调用方创建并传入，blocks 闭包与 UI 操作指向同一对象，否则参数无法回流到接口调用 */
-  params: Record<string, string>;
+  /** 共享参数（ref）。必须由调用方创建并传入，blocks 闭包与 UI 操作指向同一对象，否则参数无法回流到接口调用 */
+  params: Ref<Record<string, string>>;
   /** 上传文件 ref。含 upload 型区块的页面必须传入，使区块闭包与 onFileChange 共用同一 ref；其余页面可省略 */
   uploadFile?: Ref<File | null>;
   /** 该页全部接口区块，run 即接口在页面的真实调用点 */
@@ -54,17 +56,19 @@ export interface ApiConsoleConfig {
 export const useApiConsoleBlocks = (config: ApiConsoleConfig) => {
   const { tabs, panelTips = {}, params, uploadFile = ref<File | null>(null), blocks, emitHint = '详情/写操作' } = config;
 
-  const hasLogin = ref<boolean>(checkLogin());
+  const hasLogin = ref<boolean>(sessionManager.isAlive());
   const activeTab = ref<string>(tabs[0]?.code ?? '');
   const toast = ref<string>('');
   const writeResult = ref<string>('');
-  const results = reactive<Record<string, CardItem[]>>({});
+  const results = ref<Record<string, CardItem[]>>({});
+
+  const { requireLogin, writeGuard } = useApiConsoleGuard(hasLogin, toast);
 
   const visibleBlocks = computed(() => blocks.filter((b) => b.tab === activeTab.value));
   const panelTip = computed(() => panelTips[activeTab.value] || '');
 
   /** 候选字段优先级：此组接口以 programs / djRadios / voices / tasks 等为主 */
-  const listCandidates = (res: any): any[] => [
+  const listCandidates = (res: ApiRawResponse): ApiRawResponse[] => [
     res.data, res.result, res.list, res.data?.list, res.result?.list, res.data?.data, res.data?.records,
     res.programs, res.data?.programs, res.result?.programs, res.djRadios, res.data?.djRadios,
     res.categories, res.data?.categories, res.radios, res.data?.radios, res.toplist, res.data?.toplist,
@@ -74,7 +78,7 @@ export const useApiConsoleBlocks = (config: ApiConsoleConfig) => {
 
   const extractObj = extractObject;
 
-  const toCard = (raw: any): CardItem => {
+  const toCard = (raw: ApiRawResponse): CardItem => {
     const r = raw || {};
     const id = Number(r.id ?? r.rid ?? r.vid ?? r.cateId ?? r.categoryId ?? r.voiceId ?? r.voiceListId ?? r.programId ?? r.taskId ?? r.songId ?? r.userId ?? 0) || 0;
     const title = String(r.title ?? r.name ?? r.radioName ?? r.djName ?? r.nickname ?? r.content ?? r.msg ?? r.desc ?? '未命名');
@@ -83,7 +87,7 @@ export const useApiConsoleBlocks = (config: ApiConsoleConfig) => {
     return { id, title, cover, subtitle, raw: r };
   };
 
-  const toList = (res: any): CardItem[] =>
+  const toList = (res: ApiRawResponse): CardItem[] =>
     toCardList<CardItem>(
       res,
       listCandidates,
@@ -92,30 +96,10 @@ export const useApiConsoleBlocks = (config: ApiConsoleConfig) => {
       true,
     );
 
-  const pickId = (raw: any): number =>
+  const pickId = (raw: ApiRawResponse): number =>
     pickNumberId(raw, [
       'id', 'rid', 'vid', 'cateId', 'categoryId', 'voiceId', 'voiceListId', 'programId', 'mainSongId',
     ]);
-
-  const requireLogin = (): boolean => {
-    if (!hasLogin.value) {
-      toast.value = '该接口需要登录后才能查看（已降级，不发请求）';
-      return false;
-    }
-    return true;
-  };
-
-  const writeGuard = (confirmText: string): boolean => {
-    if (!hasLogin.value) {
-      toast.value = '请先登录后再执行该写操作（已降级，不发请求）';
-      return false;
-    }
-    if (!window.confirm(confirmText)) {
-      toast.value = '已取消操作';
-      return false;
-    }
-    return true;
-  };
 
   const onFileChange = (e: Event) => {
     uploadFile.value = (e.target as HTMLInputElement).files?.[0] ?? null;
@@ -123,7 +107,7 @@ export const useApiConsoleBlocks = (config: ApiConsoleConfig) => {
 
   const onParamInput = (key: string | undefined, e: Event) => {
     if (!key) return;
-    params[key] = (e.target as HTMLInputElement).value;
+    params.value[key] = (e.target as HTMLInputElement).value;
   };
 
   /** 列表 → 详情参数来源：点选上游列表项把 id 填入共享参数 */
@@ -134,7 +118,7 @@ export const useApiConsoleBlocks = (config: ApiConsoleConfig) => {
       toast.value = '该条目未返回可用 id';
       return;
     }
-    params[b.emit] = String(id);
+    params.value[b.emit] = String(id);
     toast.value = `已选择 #${id}，已填入共享参数 ${b.emit}，可用于对应${emitHint}`;
   };
 
@@ -147,7 +131,7 @@ export const useApiConsoleBlocks = (config: ApiConsoleConfig) => {
       }
     }
     if (b.kind === 'login-read' && !requireLogin()) {
-      results[b.module] = [];
+      results.value[b.module] = [];
       return;
     }
     if (b.kind === 'write' || b.kind === 'upload') {
@@ -159,17 +143,17 @@ export const useApiConsoleBlocks = (config: ApiConsoleConfig) => {
     }
     try {
       const res = await b.run();
-      results[b.module] = toList(res);
+      results.value[b.module] = toList(res);
       if (b.kind === 'write' || b.kind === 'upload') {
         const obj = extractObj(res);
         writeResult.value = `${b.name} 已提交｜code=${obj?.code ?? res?.code ?? '—'}｜${obj?.message ?? res?.message ?? '无附加信息'}`;
       } else if (b.kind === 'invalid') {
         toast.value = `${b.module} 手动核验完成（已登记失效，结果按空值处理）`;
       } else {
-        toast.value = `${b.name} 已加载 ${results[b.module].length} 条`;
+        toast.value = `${b.name} 已加载 ${results.value[b.module].length} 条`;
       }
     } catch {
-      results[b.module] = [];
+      results.value[b.module] = [];
       if (b.kind === 'write' || b.kind === 'upload') writeResult.value = `${b.name} 请求失败，已按空值处理`;
       else toast.value = `${b.name} 请求失败，已返回空值`;
     }

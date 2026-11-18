@@ -32,29 +32,29 @@ import { ref, computed, onMounted } from 'vue';
 import { useUserStore } from '@/store/user';
 import { useUserCenter } from '../hooks/useUserCenter';
 
-const userCenterService = useUserCenter();
+const { follows$: followsRef, followeds$: followedsRef, loadFollows, loadFolloweds, toggleFollow } = useUserCenter();
 import { UC_FollowUser } from '@/apis/user/user.api';
 
 const tab = ref<'follows' | 'followeds'>('follows');
 const ownerUid = ref<number>(0);
 
-const follows = computed(() => userCenterService.followsValue);
-const followeds = computed(() => userCenterService.followedsValue);
+const follows = computed(() => followsRef.value);
+const followeds = computed(() => followedsRef.value);
 const list = computed<UC_FollowUser[]>(() => (tab.value === 'follows' ? follows.value : followeds.value));
 
 const switchTab = (t: 'follows' | 'followeds') => {
   tab.value = t;
-  if (t === 'follows') userCenterService.loadFollows();
-  else userCenterService.loadFolloweds();
+  if (t === 'follows') loadFollows();
+  else loadFolloweds();
 };
 
 const onToggle = (u: UC_FollowUser) => {
-  userCenterService.toggleFollow(u.userId, u.followed);
+  toggleFollow(u.userId, u.followed);
 };
 
 onMounted(() => {
   ownerUid.value = useUserStore().profile?.userId ?? 0;
-  userCenterService.loadFollows();
+  loadFollows();
 });
 </script>
 
@@ -69,13 +69,13 @@ onMounted(() => {
     span {
       cursor: pointer;
       font-size: 15px;
-      color: #666;
+      color: var(--color-text-secondary);
       padding-bottom: 10px;
 
       &.active {
-        color: #c20c0c;
+        color: var(--color-primary);
         font-weight: 600;
-        border-bottom: 2px solid #c20c0c;
+        border-bottom: 2px solid var(--color-primary);
       }
     }
   }
@@ -97,13 +97,13 @@ onMounted(() => {
 
       .up-item-name {
         font-size: 14px;
-        color: #333;
+        color: var(--color-text-primary);
       }
 
       .up-item-sign {
         margin-top: 4px;
         font-size: 12px;
-        color: #999;
+        color: var(--color-text-secondary);
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -115,7 +115,7 @@ onMounted(() => {
   .up-empty {
     padding: 40px 0;
     text-align: center;
-    color: #999;
+    color: var(--color-text-secondary);
   }
 }
 </style>

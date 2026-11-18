@@ -56,6 +56,74 @@
   --param-font-medium: 500;
   --param-font-bold: 600;
 
+  /* 字号：4px 基线，覆盖页面实际使用的 12/14/16/18/20/22/24 */
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-base: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 20px;
+  --font-size-2xl: 24px;
+
+  /* 圆角：统一 4/8/16，替代散落的 3/4/6/8/12/16/18 */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+
+  /* 阴影：三层语义，替代 12 处各写各的 box-shadow */
+  --shadow-sm: 0 1px 4px rgb(0 0 0 / 6%);
+  --shadow-md: 0 4px 12px rgb(0 0 0 / 10%);
+  --shadow-lg: 0 8px 24px rgb(0 0 0 / 14%);
+
   /* 过渡 */
   --param-transition-time: 233ms;
+}
+
+/*
+ * 深色主题：只覆盖语义变量，不改组件代码。
+ * 原变量带 !important，这里同样保留并靠 :root[data-theme] 的更高特异性取胜。
+ * 深浅切换由 setting store 写 <html data-theme> 驱动。
+ */
+:root[data-theme='dark'] {
+  --el-color-primary-light-9: #2a1618 !important;
+  --el-color-primary-light-8: #3a1c1e !important;
+  --el-color-primary-light-7: #552426 !important;
+
+  --color-default: #16161a !important;
+  --color-hover: rgba(255, 255, 255, 0.06) !important;
+  --color-active: rgba(255, 255, 255, 0.1) !important;
+  --color-btn-primary: #c20c0c !important;
+
+  --color-text: rgba(255, 255, 255, 0.88) !important;
+  --color-text-title: rgba(255, 255, 255, 0.92) !important;
+  --color-text-primary: rgba(255, 255, 255, 0.72) !important;
+  --color-text-secondary: rgba(255, 255, 255, 0.52) !important;
+  --color-text-disable: rgba(255, 255, 255, 0.32) !important;
+  --color-text-border: rgba(255, 255, 255, 0.12) !important;
+  --color-text-divider: rgba(255, 255, 255, 0.08) !important;
+  --color-text-background: rgba(255, 255, 255, 0.06) !important;
+
+  --color-box-focus: rgba(194, 12, 12, 0.35) !important;
+
+  --color-table-header: #1d1d22 !important;
+  --color-table-body: #16161a !important;
+  --color-table-td-hover: #232329 !important;
+
+  --color-scrollbar: rgba(255, 255, 255, 0.22) !important;
+  --color-scrollbar-hover: rgba(255, 255, 255, 0.4) !important;
+  --color-scrollbar-active: rgba(255, 255, 255, 0.58) !important;
+
+  /* Element Plus 暗色映射：弹层、输入框、分页、滑块都靠这组变量 */
+  --el-bg-color: #1d1d22;
+  --el-bg-color-overlay: #1d1d22;
+  --el-bg-color-page: #16161a;
+  --el-text-color-primary: rgba(255, 255, 255, 0.9);
+  --el-text-color-regular: rgba(255, 255, 255, 0.72);
+  --el-text-color-secondary: rgba(255, 255, 255, 0.52);
+  --el-text-color-placeholder: rgba(255, 255, 255, 0.32);
+  --el-border-color: rgba(255, 255, 255, 0.16);
+  --el-border-color-light: rgba(255, 255, 255, 0.12);
+  --el-border-color-lighter: rgba(255, 255, 255, 0.08);
+  --el-fill-color-blank: #16161a;
+  --el-fill-color-light: rgba(255, 255, 255, 0.06);
+  --el-mask-color: rgba(0, 0, 0, 0.6);
 }

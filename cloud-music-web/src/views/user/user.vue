@@ -1,6 +1,6 @@
 <template>
   <div id="user" class="user">
-    <cm-loading v-if="userCenterService.loading"></cm-loading>
+    <cm-loading v-if="loading"></cm-loading>
     <div v-else-if="!uid" class="user-empty">
       <p>请先 <span class="user-link" @click="goLogin">登录</span> 后查看个人中心</p>
     </div>
@@ -51,6 +51,7 @@
 
 <script lang="ts" setup>
 import { ref, computed, onMounted, watch } from 'vue';
+import type { ApiRawResponse } from '@/apis/types';
 
 import { useUserCenter } from './hooks/useUserCenter';
 import { UC_UserDetail, UC_Playlist, UC_UserLevel, UC_UserSubcount, UC_Record } from '@/apis/user/user.api';
@@ -65,9 +66,9 @@ import UserEvent from './components/user-event.vue';
 import UserCloud from './components/user-cloud.vue';
 import UserEditDialog from './components/user-edit-dialog.vue';
 
-const userCenterService = useUserCenter();
+const { uid, loading, recordType, reloadRecord, loadAll, init, userDetail$, playlists$, level$, subcount$, record$ } = useUserCenter();
 
-const detail = ref<UC_UserDetail>({ profile: {} as any });
+const detail = ref<UC_UserDetail>({ profile: {} as ApiRawResponse });
 const playlists = ref<UC_Playlist[]>([]);
 const level = ref<UC_UserLevel>({ level: 0, progress: 0 });
 const subcount = ref<UC_UserSubcount>({
@@ -82,8 +83,6 @@ const subcount = ref<UC_UserSubcount>({
 });
 const record = ref<UC_Record>({ allData: [], weekData: [] });
 
-const uid = ref(0);
-const recordType = ref(1);
 const editVisible = ref(false);
 const activeTab = ref<'home' | 'record' | 'follow' | 'event' | 'cloud'>('home');
 
@@ -102,17 +101,17 @@ const canEdit = computed(() => {
 
 const goTab = (key: string) => {
   if (key === 'event' || key === 'follow' || key === 'cloud' || key === 'record' || key === 'home') {
-    activeTab.value = key as any;
+    activeTab.value = key as ApiRawResponse;
   }
 };
 
 const onRecordSwitch = (t: number) => {
   recordType.value = t;
-  userCenterService.reloadRecord(t);
+  reloadRecord(t);
 };
 
 const onSaved = () => {
-  userCenterService.loadAll();
+  loadAll();
 };
 
 const goLogin = () => {
@@ -120,16 +119,15 @@ const goLogin = () => {
 };
 
 // 订阅用户中心各状态，immediate 保证首屏同步到当前值
-watch(userCenterService.userDetail$, (v) => (detail.value = v), { immediate: true });
-watch(userCenterService.playlists$, (v) => (playlists.value = v), { immediate: true });
-watch(userCenterService.level$, (v) => (level.value = v), { immediate: true });
-watch(userCenterService.subcount$, (v) => (subcount.value = v), { immediate: true });
-watch(userCenterService.record$, (v) => (record.value = v), { immediate: true });
+watch(userDetail$, (v) => (detail.value = v), { immediate: true });
+watch(playlists$, (v) => (playlists.value = v), { immediate: true });
+watch(level$, (v) => (level.value = v), { immediate: true });
+watch(subcount$, (v) => (subcount.value = v), { immediate: true });
+watch(record$, (v) => (record.value = v), { immediate: true });
 
 onMounted(() => {
   // 重新读取路由 uid（单例已创建，这里刷新一次）
-  userCenterService.init();
-  uid.value = userCenterService.uid;
+  init();
 });
 </script>
 
@@ -141,11 +139,11 @@ onMounted(() => {
   .user-empty {
     padding: 120px 0;
     text-align: center;
-    color: #999;
+    color: var(--color-text-secondary);
     font-size: 15px;
 
     .user-link {
-      color: #c20c0c;
+      color: var(--color-primary);
       cursor: pointer;
     }
   }
@@ -163,13 +161,13 @@ onMounted(() => {
     span {
       cursor: pointer;
       font-size: 16px;
-      color: #666;
+      color: var(--color-text-secondary);
       padding-bottom: 12px;
 
       &.active {
-        color: #c20c0c;
+        color: var(--color-primary);
         font-weight: 600;
-        border-bottom: 2px solid #c20c0c;
+        border-bottom: 2px solid var(--color-primary);
       }
     }
   }

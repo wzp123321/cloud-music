@@ -1,4 +1,4 @@
-import { ref, reactive } from 'vue';
+import { ref } from 'vue';
 import { getQueryParam } from '@/core/token';
 import djRadioService from '@/apis/dj-radio/dj-radio.service';
 
@@ -52,13 +52,13 @@ const create = () => {
   const programs = ref<DjProgramVO[]>([]);
   const loading = ref<boolean>(true);
   const error = ref<boolean>(false);
-  const _rid = ref<number>(0);
+  const currentRid = ref<number>(0);
   const subLoading = ref<boolean>(false);
   const isSub = ref<boolean>(false);
 
   const query = async () => {
     const rid = Number(getQueryParam('rid')) || 0;
-    _rid.value = rid;
+    currentRid.value = rid;
     if (!rid) {
       error.value = true;
       loading.value = false;
@@ -90,11 +90,11 @@ const create = () => {
 
   /** 订阅 / 取消订阅电台（写操作）：t=1 订阅，t=0 取消 */
   const toggleSub = async () => {
-    if (!_rid.value || subLoading.value) return;
+    if (!currentRid.value || subLoading.value) return;
     const t = isSub.value ? 0 : 1;
     subLoading.value = true;
     try {
-      const res = await djRadioService.setDjSub({ rid: _rid.value, t: t as 1 | 0 });
+      const res = await djRadioService.setDjSub({ rid: currentRid.value, t: t as 1 | 0 });
       if (res?.code === 200) {
         isSub.value = !isSub.value;
       }
@@ -103,7 +103,7 @@ const create = () => {
     }
   };
 
-  const state = reactive({
+  return {
     radio,
     programs,
     loading,
@@ -112,8 +112,7 @@ const create = () => {
     isSub,
     query,
     toggleSub,
-  });
-  return state;
+  };
 };
 
 /** 电台详情页状态：每次调用创建新实例，保证切换 rid 后重新初始化 */

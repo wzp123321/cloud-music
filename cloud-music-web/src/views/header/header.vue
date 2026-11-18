@@ -5,9 +5,9 @@
       <cm-image src="../../assets/images/portal/portal-logo.png" @click="linkToPortal" />
       <ul class="header-tabs">
         <li
-          v-for="(item, index) in header.menus"
+          v-for="(item, index) in menus"
           :key="'menus-' + index"
-          :class="{ active: header.currentTab === item.url }"
+          :class="{ active: currentTab === item.url }"
           @click="onLinkTo(item.url)"
         >
           {{ item.name }}
@@ -17,19 +17,19 @@
     <div class="flex-row-start-center">
       <div class="header-search">
         <cm-input
-          v-model="header.keyword"
+          v-model="keyword"
           placeholder="搜索音乐/歌手/歌单/MV"
           :maxlength="20"
           @focus="onSearchFocus"
-          @input="header.loadSuggest(header.keyword)"
+          @input="loadSuggest(keyword)"
           @keydown.enter="handleSearch"
-          @blur="header.searchFocus = false"
+          @blur="searchFocus = false"
         />
-        <div v-if="header.searchFocus" v-loading="header.panelLoading" class="header-search-panel">
+        <div v-if="searchFocus" v-loading="panelLoading" class="header-search-panel">
           <!-- 搜索建议 -->
-          <ul v-if="header.keyword && header.suggestList.length" class="header-suggest">
+          <ul v-if="keyword && suggestList.length" class="header-suggest">
             <li
-              v-for="(item, index) in header.suggestList"
+              v-for="(item, index) in suggestList"
               :key="'sg_' + index"
               @mousedown.prevent="onSelectKeyword(item.keyword)"
             >
@@ -39,10 +39,10 @@
           </ul>
           <!-- 热搜榜 + 热搜详情 -->
           <template v-else>
-            <div v-if="header.hotList.length" class="panel-title">热搜榜</div>
-            <ul v-if="header.hotList.length" class="header-hot">
+            <div v-if="hotList.length" class="panel-title">热搜榜</div>
+            <ul v-if="hotList.length" class="header-hot">
               <li
-                v-for="(item, index) in header.hotList"
+                v-for="(item, index) in hotList"
                 :key="'hot_' + index"
                 @mousedown.prevent="onSelectKeyword(item.first)"
               >
@@ -51,10 +51,10 @@
                 <span v-if="item.second" class="hot-sub">{{ item.second }}</span>
               </li>
             </ul>
-            <div v-if="header.hotDetail.length" class="panel-title">热搜详情</div>
-            <ul v-if="header.hotDetail.length" class="header-hot-detail">
+            <div v-if="hotDetail.length" class="panel-title">热搜详情</div>
+            <ul v-if="hotDetail.length" class="header-hot-detail">
               <li
-                v-for="(item, index) in header.hotDetail"
+                v-for="(item, index) in hotDetail"
                 :key="'hd_' + index"
                 @mousedown.prevent="onSelectKeyword(item.searchWord)"
               >
@@ -66,6 +66,12 @@
           </template>
         </div>
       </div>
+      <cm-icon
+        name="icon-shezhi"
+        class="header-setting"
+        title="设置与快捷键（?）"
+        @click="setting.openPanel()"
+      ></cm-icon>
       <div v-if="!userInfo?.profile?.nickname" class="header-username font14 ml16" @click="handleLoginDialogShow">
         登录/注册
       </div>
@@ -88,6 +94,7 @@
   </div>
 
   <login-form></login-form>
+  <cm-settings></cm-settings>
 </div>
 
 </template>
@@ -96,11 +103,23 @@
 import { ElPopover } from 'element-plus';
 import LoginForm from './header-loginform/header-loginform.vue';
 import { useHeaderView } from './hooks/useHeaderView';
+import CmSettings from '@/components/cm-settings/cm-settings.vue';
+import { useSettingStore } from '@/store/setting';
 
 defineOptions({ name: 'AppHeader' });
 
+const setting = useSettingStore();
+
 const {
-  header,
+  menus,
+  currentTab,
+  keyword,
+  searchFocus,
+  hotList,
+  hotDetail,
+  suggestList,
+  panelLoading,
+  loadSuggest,
   userInfo,
   onLinkTo,
   linkToPortal,
@@ -128,6 +147,18 @@ const {
     padding-left: 24px;
     padding-right: 24px;
 
+    .header-setting {
+      margin-left: 16px;
+      font-size: 18px;
+      color: var(--color-text-secondary);
+      cursor: pointer;
+      transition: color 233ms;
+
+      &:hover {
+        color: var(--color-primary);
+      }
+    }
+
     .header-tabs {
       li {
         cursor: pointer;
@@ -143,7 +174,7 @@ const {
       }
 
       li.active {
-        background-color: #c20c0c;
+        background-color: var(--color-primary);
         color: #fff;
         font-weight: 600;
       }
@@ -169,7 +200,7 @@ const {
         color: var(--color-text-title);
 
         &:focus {
-          background: #fff;
+          background: var(--color-default);
           border-color: rgba(194, 12, 12, 0.45);
         }
       }
@@ -184,7 +215,7 @@ const {
         overflow-y: auto;
         padding: 8px 0;
         border-radius: 8px;
-        background: #fff;
+        background: var(--color-default);
         box-shadow: 0 6px 24px rgba(0, 0, 0, 0.14);
 
         .panel-title {

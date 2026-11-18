@@ -6,6 +6,17 @@
  * 故统一以「可选字段 + 宽松泛型」表达，避免渲染期因缺字段报错。
  */
 
+/**
+ * 上游原始响应边界类型。
+ *
+ * 网易云 API 各接口返回结构不统一（{ code, data } / 裸数据 / 字段常缺），
+ * 且在 API 调试台场景下需原样透传给 normalize 层做动态抽取。
+ * 这里作为全项目唯一的 any 收口点：业务代码拿到后应尽快用
+ * extractObject / unwrapData / as XxxVO 收窄为具体类型，不要在下游继续透传 any。
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type ApiRawResponse = any;
+
 /** 标准响应包裹（四个字段齐全的场景） */
 export interface IResTemplate<T> {
   code: number;

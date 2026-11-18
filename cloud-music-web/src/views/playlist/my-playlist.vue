@@ -84,10 +84,10 @@ onMounted(() => {
   .mp-tip {
     margin-top: 40px;
     font-size: 15px;
-    color: #999;
+    color: var(--color-text-secondary);
 
     a {
-      color: var(--color-primary, #c20c0c);
+      color: var(--color-primary);
     }
   }
 

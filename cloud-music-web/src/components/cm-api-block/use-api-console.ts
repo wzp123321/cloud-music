@@ -1,3 +1,5 @@
+import { sessionManager } from '@/core/session';
+import type { ApiRawResponse } from '@/apis/types';
 /*
  * @Description: 接口调用台 · 通用状态与请求编排
  * 三个「接口清单」页面（账号资料 / 歌曲互动 / UGC 一起听）结构一致：
@@ -7,9 +9,9 @@
  * - 需登录只读 / 写操作：未登录直接降级，不发请求
  * - 写操作：必须用户点击 + window.confirm 二次确认，且绝不在 onMounted 自动调用
  */
-import { computed, onMounted, reactive, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
-import { hasLogin as checkLogin } from '@/apis/content-enhance/content-enhance.service';
+
 
 import { captureProvided, normalize } from './api-block.util';
 import type { ApiBlock, BlockCard, BlockState } from './api-block.types';
@@ -20,41 +22,41 @@ export interface ApiConsoleOptions {
 }
 
 export const useApiConsole = (blocks: ApiBlock[], options: ApiConsoleOptions = {}) => {
-  const loggedIn = checkLogin();
+  const loggedIn = sessionManager.isAlive();
   const activeTab = ref<string>(options.initialTab ?? blocks[0]?.tab ?? '');
 
   // 参数池：自动收集所有 needs / provides 的 key，值来自上游列表点击项或手动输入
-  const sel = reactive<Record<string, any>>({});
+  const sel = ref<Record<string, ApiRawResponse>>({});
   blocks.forEach((block) => {
-    if (block.needs) sel[block.needs] = 0;
+    if (block.needs) sel.value[block.needs] = 0;
     (block.provides || []).forEach((key) => {
-      if (!(key in sel)) sel[key] = 0;
+      if (!(key in sel.value)) sel.value[key] = 0;
     });
   });
-  const selKeys = Object.keys(sel);
+  const selKeys = Object.keys(sel.value);
 
   /** 每个区块独立的输入框值 */
-  const inputs = reactive<Record<string, string>>({});
+  const inputs = ref<Record<string, string>>({});
   /** 每个区块独立的文件选择值（上传类接口用） */
-  const files = reactive<Record<string, File | null>>({});
+  const files = ref<Record<string, File | null>>({});
   /** 每个区块独立的请求结果 */
-  const states = reactive<Record<string, BlockState>>({});
+  const states = ref<Record<string, BlockState>>({});
 
   blocks.forEach((block) => {
-    states[block.module] = { loading: false, loaded: false, cards: [], raw: null, tip: '' };
-    if (block.input) inputs[block.module] = block.input.def ?? '';
-    if (block.file) files[block.module] = null;
+    states.value[block.module] = { loading: false, loaded: false, cards: [], raw: null, tip: '' };
+    if (block.input) inputs.value[block.module] = block.input.def ?? '';
+    if (block.file) files.value[block.module] = null;
   });
 
   const activeBlocks = computed(() => blocks.filter((block) => block.tab === activeTab.value));
 
   /** 执行一个区块的接口调用：登录降级 / 写操作二次确认 / 失败降级空值 / 归一化 */
   const runBlock = async (block: ApiBlock): Promise<void> => {
-    const st = states[block.module];
+    const st = states.value[block.module];
     if (!st || st.loading) return;
 
     // 需登录只读 / 写操作：未登录降级，不发请求
-    if ((block.kind === 'write' || block.kind === 'login-read') && !checkLogin()) {
+    if ((block.kind === 'write' || block.kind === 'login-read') && !sessionManager.isAlive()) {
       st.tip = '登录后可用（未登录，已降级，未发送请求）';
       return;
     }
@@ -69,18 +71,18 @@ export const useApiConsole = (blocks: ApiBlock[], options: ApiConsoleOptions = {
       }
     }
 
-    const inputVal = inputs[block.module] ?? '';
-    let payload: any;
+    const inputVal = inputs.value[block.module] ?? '';
+    let payload: ApiRawResponse;
     if (block.file) {
       // 上传类接口：参数平铺进 FormData
       const formData = new FormData();
-      const base = block.params ? block.params(sel, inputVal) || {} : {};
+      const base = block.params ? block.params(sel.value, inputVal) || {} : {};
       Object.keys(base).forEach((key) => formData.append(key, String(base[key])));
-      const file = files[block.module];
+      const file = files.value[block.module];
       if (file) formData.append(block.fileField || 'songFile', file);
       payload = formData;
     } else {
-      payload = block.params ? block.params(sel, inputVal) || {} : {};
+      payload = block.params ? block.params(sel.value, inputVal) || {} : {};
     }
 
     st.loading = true;
@@ -91,7 +93,7 @@ export const useApiConsole = (blocks: ApiBlock[], options: ApiConsoleOptions = {
       st.raw = res ?? {};
       st.cards = normalize(res);
       // 上游接口的 id 自动进参数池，下游详情接口即可带参
-      captureProvided(block.provides, st.cards, st.raw, sel);
+      captureProvided(block.provides, st.cards, st.raw, sel.value);
       if (!st.cards.length) {
         st.tip =
           block.kind === 'write'
@@ -113,14 +115,14 @@ export const useApiConsole = (blocks: ApiBlock[], options: ApiConsoleOptions = {
   const onCardClick = (block: ApiBlock, card: BlockCard): void => {
     if (!block.provides || !block.provides.length) return;
     block.provides.forEach((key) => {
-      sel[key] = card.id;
+      sel.value[key] = card.id;
     });
-    states[block.module].tip = `已选中 id=${card.id}（${block.provides.join(' / ')}），现在可点击下游详情接口按钮带参请求`;
+    states.value[block.module].tip = `已选中 id=${card.id}（${block.provides.join(' / ')}），现在可点击下游详情接口按钮带参请求`;
   };
 
   /** 上传类文件选择 */
   const onFileChange = (block: ApiBlock, file: File | null): void => {
-    files[block.module] = file;
+    files.value[block.module] = file;
   };
 
   /** 切到某分组时，仅自动加载该分组的读取型「来源列表」区块 */

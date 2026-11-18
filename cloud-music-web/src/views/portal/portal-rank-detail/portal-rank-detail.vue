@@ -110,7 +110,7 @@ const router = useRouter();
   }
 
   .info > p.artist {
-    color: #999;
+    color: var(--color-text-secondary);
     transition: all 233ms;
   }
 
@@ -121,7 +121,7 @@ const router = useRouter();
 
   .info > p.artist:hover {
     transition: all 233ms;
-    color: #333;
+    color: var(--color-text-primary);
   }
 }
 

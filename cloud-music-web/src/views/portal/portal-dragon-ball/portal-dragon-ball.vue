@@ -24,17 +24,16 @@
 <script setup lang="ts">
 
 // 首页金刚区入口
-import {  toRef } from 'vue';
 import { useRouter } from 'vue-router';
 
 import message from '@/utils/message';
 import { usePortal } from '../hooks/usePortal';
 import { DragonBallItem } from '../../../apis/portal/portal-api';
 
-const portal = usePortal();
+const { linkToDailyRecommend, linkToRank, dragonBallList } = usePortal();
 
 // 未登录/接口返回空时的兜底入口，保证首页金刚区始终可见可验证
-const FALLBACK_BALLS: DragonBallItem[] = [
+const fallbackBalls: DragonBallItem[] = [
   { id: 'daily', name: '每日推荐', actionType: 'daily_recommend' },
   { id: 'playlist', name: '歌单', actionType: 'playlist' },
   { id: 'rank', name: '排行榜', actionType: 'rank' },
@@ -43,7 +42,7 @@ const FALLBACK_BALLS: DragonBallItem[] = [
 ];
 
 // 上游金刚区只给 orpheus:// scheme，站内按语义就近映射到已有页面
-const NAME_ROUTES: Record<string, string> = {
+const nameRoutes: Record<string, string> = {
   私人FM: '/play-interaction',
   有声书: '/dj-radio',
   数字专辑: '/album',
@@ -52,11 +51,10 @@ const NAME_ROUTES: Record<string, string> = {
 };
 defineOptions({ name: 'PortalDragonBall' });
 const router = useRouter();
-    const dragonBallList = toRef(portal, 'dragonBallList');
 
     const balls = () => {
       const api = dragonBallList.value;
-      return api && api.length ? api : FALLBACK_BALLS;
+      return api && api.length ? api : fallbackBalls;
     };
 
     // 先按 actionType、再按名称映射、最后按中文关键词；都不命中只提示，不跳错页
@@ -66,11 +64,11 @@ const router = useRouter();
       const keyword = type || name;
 
       if (keyword.includes('daily')) {
-        portal.linkToDailyRecommend();
+         linkToDailyRecommend();
         return;
       }
       if (keyword.includes('rank')) {
-        portal.linkToRank();
+         linkToRank();
         return;
       }
       if (keyword.includes('artist')) {
@@ -82,22 +80,22 @@ const router = useRouter();
         return;
       }
       if (keyword.includes('new')) {
-        portal.linkToRank();
+         linkToRank();
         return;
       }
 
-      const mapped = NAME_ROUTES[name];
+      const mapped = nameRoutes[name];
       if (mapped) {
         router.push({ path: mapped });
         return;
       }
 
       if (name.includes('每日') || name.includes('推荐')) {
-        portal.linkToDailyRecommend();
+         linkToDailyRecommend();
         return;
       }
       if (name.includes('榜')) {
-        portal.linkToRank();
+         linkToRank();
         return;
       }
       if (name.includes('歌手')) {
@@ -147,7 +145,7 @@ const router = useRouter();
     .name {
       max-width: 100%;
       font-size: 13px;
-      color: #333;
+      color: var(--color-text-primary);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;

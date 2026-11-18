@@ -4,7 +4,7 @@ import { Common_IUserVO } from '@/apis/common/user.api';
 /**
  * 用户中心与登录增强接口路由枚举
  * 规则：server 端文件名下划线转斜杠（如 login_qr_key -> /login/qr/key），
- * BASE_URL(/api/) 由 request.ts 统一拼接，这里只写相对路径。
+ * baseUrl(/api/) 由 request.ts 统一拼接，这里只写相对路径。
  */
 export enum EUserPath {
   // 用户资料与资产

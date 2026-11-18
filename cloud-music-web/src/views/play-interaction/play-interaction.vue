@@ -1,5 +1,8 @@
 <template>
-  <api-console-page title="歌曲互动与播放记录" :blocks="blocks" :tabs="tabs"
+  <api-console-page
+    title="歌曲互动与播放记录"
+    :blocks="blocks"
+    :tabs="tabs"
     root-class="pi"
   >
     <template #intro>
@@ -39,9 +42,10 @@
 </template>
 
 <script setup lang="ts">
+import { sessionManager } from '@/core/session';
 import ApiConsolePage from '@/components/api-console-page/api-console-page.vue';
-import { hasLogin } from '@/apis/content-enhance/content-enhance.service';
+
 import { blocks, tabs } from './play-interaction.blocks';
 
-const loggedIn = hasLogin();
+const loggedIn = sessionManager.isAlive();
 </script>

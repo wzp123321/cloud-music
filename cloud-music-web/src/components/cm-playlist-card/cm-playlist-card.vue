@@ -115,7 +115,7 @@ const router = useRouter();
 
     span,
     .iconfont {
-      color: #999;
+      color: var(--color-text-secondary);
     }
   }
 
@@ -132,7 +132,7 @@ const router = useRouter();
   &--creator {
     margin-top: 6px;
     font-size: 12px;
-    color: #999;
+    color: var(--color-text-secondary);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

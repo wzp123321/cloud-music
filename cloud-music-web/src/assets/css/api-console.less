@@ -14,10 +14,10 @@
     margin-top: 20px;
     font-size: 13px;
     line-height: 1.8;
-    color: #888;
+    color: var(--color-text-secondary);
 
     b {
-      color: var(--color-primary, #c20c0c);
+      color: var(--color-primary);
     }
 
     code {
@@ -25,7 +25,7 @@
       border-radius: 4px;
       background: rgba(0, 0, 0, 0.04);
       font-family: monospace;
-      color: #666;
+      color: var(--color-text-secondary);
     }
   }
 
@@ -45,7 +45,7 @@
     align-items: center;
     gap: 8px;
     font-size: 13px;
-    color: #666;
+    color: var(--color-text-secondary);
 
     input {
       width: 220px;
@@ -69,13 +69,13 @@
     border: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: 18px;
     background: var(--color-default, #fff);
-    color: #666;
+    color: var(--color-text-secondary);
     font-size: 14px;
     cursor: pointer;
 
     &.active {
-      border-color: var(--color-primary, #c20c0c);
-      color: var(--color-primary, #c20c0c);
+      border-color: var(--color-primary);
+      color: var(--color-primary);
       background: rgba(194, 12, 12, 0.06);
     }
   }

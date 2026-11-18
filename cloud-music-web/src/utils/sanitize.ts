@@ -5,7 +5,7 @@
  * 注意：自研清洗仅作兜底。已覆盖 formaction / xlink:href / style / vbscript: 等
  * 常见绕过面；如条件允许，建议直接引入 DOMPurify 替代本实现。
  */
-const FORBIDDEN_TAGS = new Set([
+const forbiddenTags = new Set([
   'SCRIPT',
   'IFRAME',
   'OBJECT',
@@ -23,9 +23,9 @@ const FORBIDDEN_TAGS = new Set([
 ]);
 
 // 需要整属性移除的高危属性（无论取值）
-const DANGEROUS_ATTR_NAMES = new Set(['formaction', 'xlink:href', 'style']);
+const dangerousAttrNames = new Set(['formaction', 'xlink:href', 'style']);
 // 承载 URL、需要做协议检测的属性白名单（含 srcset 等多候选值属性）
-const URL_ATTR_NAMES = new Set([
+const urlAttrNames = new Set([
   'href',
   'src',
   'xlink:href',
@@ -39,10 +39,10 @@ const URL_ATTR_NAMES = new Set([
   'formaction',
 ]);
 // 危险协议前缀
-const DANGEROUS_PROTOCOL = /^(javascript|vbscript|data):/i;
+const dangerousProtocol = /^(javascript|vbscript|data):/i;
 
 // 常见命名实体：覆盖 &colon; / &Tab; / &NewLine; 等拆分协议关键字的混淆写法
-const NAMED_ENTITIES: Record<string, string> = {
+const namedEntities: Record<string, string> = {
   colon: ':',
   Tab: '\t',
   NewLine: '\n',
@@ -59,7 +59,7 @@ const decodeHtmlEntities = (value: string): string =>
       String.fromCharCode(parseInt(dec, 10)),
     )
     .replace(/&([a-zA-Z]+);/g, (m: string, name: string) =>
-      Object.prototype.hasOwnProperty.call(NAMED_ENTITIES, name) ? NAMED_ENTITIES[name] : m,
+      Object.prototype.hasOwnProperty.call(namedEntities, name) ? namedEntities[name] : m,
     );
 
 // 协议归一化：先解码 HTML 实体，再剔除 \x00-\x20 控制字符，
@@ -68,7 +68,7 @@ const normalizeProtocolValue = (value: string): string =>
   decodeHtmlEntities(value).replace(/[\x00-\x20]/g, ''); // eslint-disable-line no-control-regex
 
 const hasDangerousProtocol = (value: string): boolean =>
-  DANGEROUS_PROTOCOL.test(normalizeProtocolValue(value));
+  dangerousProtocol.test(normalizeProtocolValue(value));
 
 // srcset 以逗号分隔多个候选（url + 描述符），任一项命中危险协议即整属性移除
 const hasDangerousSrcset = (value: string): boolean =>
@@ -80,16 +80,16 @@ export const sanitizeHtml = (html: unknown): string => {
 
   const doc = new DOMParser().parseFromString(html, 'text/html');
   doc.querySelectorAll('*').forEach((el) => {
-    if (FORBIDDEN_TAGS.has(el.tagName)) {
+    if (forbiddenTags.has(el.tagName)) {
       el.remove();
       return;
     }
     Array.from(el.attributes).forEach((attr) => {
       const name = attr.name.toLowerCase();
       const isEvent = name.startsWith('on');
-      const isDangerousName = DANGEROUS_ATTR_NAMES.has(name);
+      const isDangerousName = dangerousAttrNames.has(name);
       const isUriWithDangerousProtocol =
-        URL_ATTR_NAMES.has(name) &&
+        urlAttrNames.has(name) &&
         (name === 'srcset'
           ? hasDangerousSrcset(attr.value)
           : hasDangerousProtocol(attr.value));

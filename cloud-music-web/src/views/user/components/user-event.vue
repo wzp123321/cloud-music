@@ -20,7 +20,7 @@ import { ref, onMounted, watch } from 'vue';
 import { useUserCenter } from '../hooks/useUserCenter';
 import { UC_Event } from '@/apis/user/user.api';
 
-const userCenterService = useUserCenter();
+const { event$: eventResult, loadEvent } = useUserCenter();
 
 const events = ref<UC_Event[]>([]);
 
@@ -31,10 +31,10 @@ const formatTime = (t?: number) => {
 };
 
 // 订阅动态状态，immediate 保证首屏同步到当前值
-watch(userCenterService.event$, (v) => (events.value = v), { immediate: true });
+watch(eventResult, (v) => (events.value = v), { immediate: true });
 
 onMounted(() => {
-  userCenterService.loadEvent();
+  loadEvent();
 });
 </script>
 
@@ -45,7 +45,7 @@ onMounted(() => {
   .up-block-title {
     font-size: 18px;
     font-weight: 600;
-    color: #333;
+    color: var(--color-text-primary);
     margin-bottom: 16px;
   }
 
@@ -62,7 +62,7 @@ onMounted(() => {
       .up-event-user {
         font-size: 14px;
         font-weight: 600;
-        color: #333;
+        color: var(--color-text-primary);
       }
 
       .up-event-msg {
@@ -84,7 +84,7 @@ onMounted(() => {
   .up-empty {
     padding: 40px 0;
     text-align: center;
-    color: #999;
+    color: var(--color-text-secondary);
   }
 }
 </style>

@@ -102,7 +102,7 @@ const linkToAlbumDetail = () => {
 
     span,
     .iconfont {
-      color: #999;
+      color: var(--color-text-secondary);
     }
   }
 

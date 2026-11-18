@@ -47,7 +47,13 @@
         </div>
 
         <!-- 歌词 -->
-        <div v-show="showLyric" ref="lyricsBox" class="md-lyrics">
+        <div
+          v-show="showLyric"
+          ref="lyricsBox"
+          class="md-lyrics"
+          @wheel="pauseFollow"
+          @touchstart="pauseFollow"
+        >
           <p
             v-for="(line, i) in lyric.lrcList"
             :key="i"
@@ -55,10 +61,21 @@
             :class="['lyric-line', { active: i === lyric.activeIndex }]"
             @click="seekToLine(line)"
           >
-            {{ line.lyc || '♪' }}
+            <cm-lyric-line
+              :text="line.lyc || '♪'"
+              :progress="i === lyric.activeIndex ? lineProgress : 0"
+              :base-opacity="i === lyric.activeIndex ? 0.4 : 1"
+              fill-color="currentColor"
+            />
           </p>
           <p v-if="!lyric.lrcList.length" class="lyric-empty">纯音乐，请欣赏</p>
         </div>
+        <!-- 手动滚动后给一个回到当前行的入口，避免被"拽走"后找不到播放到哪 -->
+        <transition name="md-follow">
+          <button v-if="!followLyric && lyric.lrcList.length" type="button" class="md-follow-btn" @click="resumeFollow">
+            回到当前行
+          </button>
+        </transition>
 
         <!-- 歌曲详情（评论 + 相似） -->
         <div v-show="!showLyric" class="md-detail">
@@ -77,8 +94,9 @@
           v-model="player.progress"
           :show-tooltip="false"
           class="md-slider"
-          @mousedown="player.startDragging"
-          @mouseup="player.endDragging"
+          @pointerdown="player.startDragging"
+          @pointerup="player.endDragging"
+          @pointercancel="player.endDragging"
           @change="player.seek"
         />
         <span class="md-time">{{ formatDuration(player.displayDuration) }}</span>
@@ -86,7 +104,12 @@
 
       <div class="md-controls">
         <div class="ctrl-side ctrl-left">
-          <cm-icon name="icon-jushoucang" title="收藏"></cm-icon>
+          <cm-icon
+            name="icon-jushoucang"
+            :title="player.likedIds.includes(player.currentMusic.id) ? '取消收藏' : '收藏'"
+            :class="{ 'is-liked': player.likedIds.includes(player.currentMusic.id) }"
+            @click="player.toggleLike"
+          ></cm-icon>
           <cm-icon name="icon-xiazai" title="下载" @click="player.downloadMusic"></cm-icon>
         </div>
 
@@ -102,6 +125,9 @@
         </div>
 
         <div class="ctrl-side ctrl-right">
+          <button class="md-rate" :title="'播放倍速：' + player.playbackRate + 'x（点击切换）'" @click="player.switchPlaybackRate">
+            {{ player.playbackRate }}x
+          </button>
           <cm-icon
             :name="player.playTypes[playModeKey]"
             :title="playModeKey"
@@ -125,12 +151,15 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, watch } from 'vue';
+import { computed, onUnmounted, ref, watch } from 'vue';
+import type { ApiRawResponse } from '@/apis/types';
 import { useRoute, useRouter } from 'vue-router';
 import { ElSlider } from 'element-plus';
 
 import { usePlayerStore } from '@/store/player';
 import { useLyricStore } from '@/store/lyric';
+import { useLyricProgress } from '@/composables/useLyricProgress';
+import CmLyricLine from '@/components/cm-lyric-line/cm-lyric-line.vue';
 import { formatDuration } from '@/core/utils';
 import defaultCover from '@/assets/images/common/common-avatar-default.png';
 
@@ -143,7 +172,41 @@ const showLyric = ref(true);
 const lyricsBox = ref<HTMLElement | null>(null);
 const lineEls: HTMLElement[] = [];
 
-const setLineRef = (el: any, i: number) => {
+// 逐字高亮：rAF 读音频实时时间，逐字填充才连续
+const { progress: lineProgress } = useLyricProgress();
+
+// 自动跟随：用户手动滚动歌词时暂停，静置 4s 或点「回到当前行」后恢复
+const followLyric = ref(true);
+let followTimer = 0;
+
+const scrollToActive = () => {
+  const box = lyricsBox.value;
+  const el = lineEls[lyric.activeIndex];
+  if (!box || !el) {
+    return;
+  }
+  const top = el.offsetTop - box.clientHeight / 2 + el.clientHeight / 2;
+  box.scrollTo({ top, behavior: 'smooth' });
+};
+
+const pauseFollow = () => {
+  followLyric.value = false;
+  window.clearTimeout(followTimer);
+  followTimer = window.setTimeout(() => {
+    followLyric.value = true;
+    scrollToActive();
+  }, 4000);
+};
+
+const resumeFollow = () => {
+  window.clearTimeout(followTimer);
+  followLyric.value = true;
+  scrollToActive();
+};
+
+onUnmounted(() => window.clearTimeout(followTimer));
+
+const setLineRef = (el: ApiRawResponse, i: number) => {
   if (el) lineEls[i] = el as HTMLElement;
 };
 
@@ -185,17 +248,13 @@ const seekToLine = (line: { time: number; lyc: string }) => {
   }
 };
 
-/** 当前歌词行变化时，把该行滚动到歌词区中央 */
+/** 当前歌词行变化时，把该行滚动到歌词区中央；用户手动滚动期间不打扰 */
 watch(
   () => lyric.activeIndex,
-  (i) => {
-    const box = lyricsBox.value;
-    const el = lineEls[i];
-    if (!box || !el) {
-      return;
+  () => {
+    if (followLyric.value) {
+      scrollToActive();
     }
-    const top = el.offsetTop - box.clientHeight / 2 + el.clientHeight / 2;
-    box.scrollTo({ top, behavior: 'smooth' });
   },
 );
 </script>
@@ -240,7 +299,7 @@ watch(
       transition: color 0.2s;
 
       &:hover {
-        color: var(--color-primary, #c20c0c);
+        color: var(--color-primary);
       }
     }
 
@@ -469,6 +528,40 @@ watch(
     color: rgba(255, 255, 255, 0.5);
   }
 
+  // 手动滚动词歌词后浮现的回到当前行按钮
+  .md-follow-btn {
+    position: fixed;
+    right: 40px;
+    bottom: 200px;
+    z-index: 3;
+    padding: 8px 16px;
+    font-size: 13px;
+    color: #fff;
+    cursor: pointer;
+    background: rgb(0 0 0 / 45%);
+    border: 1px solid rgb(255 255 255 / 28%);
+    border-radius: 999px;
+    backdrop-filter: blur(6px);
+    transition: all 233ms;
+
+    &:hover {
+      color: #fff;
+      background: var(--color-primary);
+      border-color: var(--color-primary);
+    }
+  }
+
+  .md-follow-enter-active,
+  .md-follow-leave-active {
+    transition: opacity 233ms, transform 233ms;
+  }
+
+  .md-follow-enter-from,
+  .md-follow-leave-to {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
   // 评论/相似组件按浅色主题设计，套一层浅色卡片保证在深色播放页上可读
   .md-detail {
     flex: 1;
@@ -476,7 +569,7 @@ watch(
     padding: 24px;
     border-radius: 12px;
     background: rgba(255, 255, 255, 0.95);
-    color: #333;
+    color: var(--color-text-primary);
   }
 
   // 底部控制条
@@ -535,6 +628,22 @@ watch(
     gap: 26px;
   }
 
+  .md-rate {
+    padding: 2px 6px;
+    border: 1px solid rgb(255 255 255 / 30%);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: rgb(255 255 255 / 80%);
+    cursor: pointer;
+    font-size: var(--font-size-xs);
+    line-height: 1.4;
+
+    &:hover {
+      border-color: #fff;
+      color: #fff;
+    }
+  }
+
   .ctrl-side .iconfont {
     font-size: 20px;
     color: rgba(255, 255, 255, 0.8);
@@ -571,7 +680,7 @@ watch(
   .md-vol {
     :deep(.el-slider__bar) {
       height: 3px;
-      background-color: var(--color-primary, #c20c0c) !important;
+      background-color: var(--color-primary) !important;
     }
 
     :deep(.el-slider__runway) {
@@ -590,8 +699,8 @@ watch(
     }
 
     :deep(.el-slider__button-wrapper .el-slider__button) {
-      background-color: #fff;
-      border: 3px solid var(--color-primary, #c20c0c);
+      background-color: var(--color-default);
+      border: 3px solid var(--color-primary);
     }
   }
 }

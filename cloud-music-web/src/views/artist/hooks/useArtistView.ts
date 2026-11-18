@@ -1,9 +1,11 @@
 import { onMounted, ref } from 'vue';
+import type { ApiRawResponse } from '@/apis/types';
 import { useRouter } from 'vue-router';
 
-import contentEnhanceService, { hasLogin as checkLogin } from '@/apis/content-enhance/content-enhance.service';
+import contentEnhanceService from '@/apis/content-enhance/content-enhance.service';
 import { ContentArtistItem, ContentSongItem, ContentMvItem } from '@/apis/content-enhance/index.api';
 import message from '@/utils/message';
+import { sessionManager } from '@/core/session';
 
 export const useArtistView = () => {
   const router = useRouter();
@@ -26,7 +28,7 @@ export const useArtistView = () => {
   const activeType = ref<string>('1');
   const activeArea = ref<number>(-1);
   const loading = ref<boolean>(false);
-  const hasLogin = checkLogin();
+  const hasLogin = sessionManager.isAlive();
   const artistList = ref<ContentArtistItem[]>([]);
   const followedArtists = ref<ContentArtistItem[]>([]);
   const newSongs = ref<ContentSongItem[]>([]);
@@ -58,9 +60,9 @@ export const useArtistView = () => {
       contentEnhanceService.getArtistNewMv({ limit: 10 }).catch(() => null),
     ]);
     followedArtists.value = (sublist?.data as ContentArtistItem[]) || [];
-    const songData: any = songs?.data;
+    const songData: ApiRawResponse = songs?.data;
     newSongs.value = (Array.isArray(songData) ? songData : songData?.list || []) as ContentSongItem[];
-    const mvData: any = mvs?.data;
+    const mvData: ApiRawResponse = mvs?.data;
     newMvs.value = (Array.isArray(mvData) ? mvData : mvData?.list || []) as ContentMvItem[];
   };
 

@@ -3,13 +3,19 @@ import { computed, nextTick, ref, shallowRef } from 'vue';
 import { Common_IMusic } from '@/apis/common/index.api';
 import { PL_PlayVO } from '@/apis/play-list/index.api';
 import musicService from '@/apis/play-controller/pc.service';
+import playInteractionService from '@/apis/play-interaction/play-interaction.service';
 import message from '@/utils/message';
+import { sessionManager } from '@/core/session';
 import { usePlaylistStore } from './playlist';
 import { useLyricStore } from './lyric';
-import { EMPTY_MUSIC, PLAY_TYPE, PLAY_TYPES, PLAY_TYPE_KEYS } from '@/constant';
+import { emptyMusic, PlayType, playTypes, playTypeKeys } from '@/constant';
 
-/** 旧版本把当前索引以纯数字字符串写在这个 key 下 */
-const INDEX_STORAGE_KEY = 'cloud-play-index';
+/** 持久化 key：早期版本存纯数字索引，现存 { currentIndex, playTimestamp, playbackRate } */
+const playStorageKey = 'cloud-play-index';
+
+/** 支持的播放倍速，切换时循环 */
+const playbackRates = [0.75, 1, 1.25, 1.5, 2] as const;
+type PlaybackRate = (typeof playbackRates)[number];
 
 export const usePlayerStore = defineStore(
   'player',
@@ -27,29 +33,27 @@ export const usePlayerStore = defineStore(
     const dragging = ref(false);
     const isMute = ref(false);
     const volume = ref(50);
+    const playbackRate = ref<PlaybackRate>(1);
+    /** 已红心歌曲 id 集合：由 /likelist 加载，供播放条收藏按钮回显 */
+    const likedIds = ref<number[]>([]);
     const errorList = ref<number[]>([]);
     /** 音频真实时长(ms)：loadedmetadata 后从 el.duration 读取，校准接口 dt 与音源实际长度不符 */
     const realDuration = ref(0);
     /** 歌词按歌曲缓存：避免暂停→恢复、单曲循环重复请求 /lyric 并 reset 导致歌词闪烁 */
     const lyricRawCache = new Map<number, string>();
     let lyricLoadedId = 0;
-    /** 试听片段提示按歌曲只弹一次，避免单曲循环时反复刷提示 */
-    let trialTipShownFor = 0;
+    /** 首次 startPlayback 用持久化进度续听，之后切歌/循环都从头 */
+    let restoreTimestampPending = true;
 
     /** 当前歌曲从队列派生，不再额外维护一份副本 */
-    const currentMusic = computed<Common_IMusic>(
-      () => playlist.musicList[currentIndex.value] ?? EMPTY_MUSIC,
-    );
-    const playTypes = PLAY_TYPES;
-    /** 展示用总时长：真实音源时长优先，接口 dt 兜底。试听片段时避免显示 5:00 却 0:30 就结束 */
-    const displayDuration = computed(() => realDuration.value || currentMusic.value.dt || 0);
-
+    const currentMusic = computed<Common_IMusic>(() => playlist.musicList[currentIndex.value] ?? emptyMusic);
     /** 组件挂载后注入音频元素，并同步音量 / 静音态 */
     const bindAudio = (el: HTMLAudioElement | null) => {
       audioEl.value = el;
       if (el) {
         el.volume = volume.value / 100;
         el.muted = isMute.value;
+        el.playbackRate = playbackRate.value;
       }
     };
 
@@ -73,8 +77,7 @@ export const usePlayerStore = defineStore(
         if (url) setCurrentUrl(url);
       }
       const noPlayableUrl =
-        !url ||
-        (playlist.musicList.length > 0 && errorList.value.length === playlist.musicList.length);
+        !url || (playlist.musicList.length > 0 && errorList.value.length === playlist.musicList.length);
       if (noPlayableUrl) {
         // 无可用音源：仅停止播放并提示，不要递归 onEnded。
         // 原逻辑在此调用 onEnded → switchMusic → nextTick(startPlayback)，
@@ -87,7 +90,11 @@ export const usePlayerStore = defineStore(
         return;
       }
       if (resetFlag) {
-        el.currentTime = 0;
+        // 首次播放还原上次进度；其余换歌场景一律从头
+        const resumeMs = restoreTimestampPending ? playTimestamp.value : 0;
+        restoreTimestampPending = false;
+        const maxMs = currentMusic.value.dt || resumeMs;
+        el.currentTime = Math.max(0, Math.min(resumeMs, maxMs)) / 1000;
       }
       document.title = currentMusic.value.name || 'Cloud Music';
       // :src 是响应式绑定：切歌、还原持久化队列、补拉限时 url 都会改它。
@@ -157,37 +164,18 @@ export const usePlayerStore = defineStore(
       if (!list.length) {
         return;
       }
-      const el = audioEl.value;
-      const dt = currentMusic.value.dt || 0;
-      // 片段检测：真实时长显著小于接口时长（试听/受限音源）。上游只给 30 秒片段时，
-      // 不能把整个队列停死（表现为「播一半就没了」），给一次明确提示后仍按播放模式推进。
-      // 完整音源要靠登录态（request.ts 统一带 cookie）与可用的音源接口，见 playlist.queryMusicUrl。
-      if (
-        el &&
-        realDuration.value &&
-        dt &&
-        realDuration.value < dt * 0.9 &&
-        trialTipShownFor !== currentMusic.value.id
-      ) {
-        trialTipShownFor = currentMusic.value.id;
-        message.info('该歌曲仅提供试听片段，登录或开通会员后可听完整版');
-      }
-      const type = PLAY_TYPE_KEYS[playTypeIndex.value % PLAY_TYPE_KEYS.length];
+      const type = playTypeKeys[playTypeIndex.value % playTypeKeys.length];
       switch (type) {
-        case PLAY_TYPE.LOOP:
+        case PlayType.LOOP:
           switchMusic(direction);
           break;
-        case PLAY_TYPE.SINGLE:
+        case PlayType.SINGLE:
           playTimestamp.value = 0;
           nextTick(() => startPlayback());
           isPlaying.value = true;
           break;
-        case PLAY_TYPE.RANDOM:
-          realDuration.value = 0;
-          currentIndex.value = Math.min(
-            Math.round(Math.random() * list.length),
-            list.length - 1,
-          );
+        case PlayType.RANDOM:
+          currentIndex.value = Math.min(Math.round(Math.random() * list.length), list.length - 1);
           nextTick(() => startPlayback());
           isPlaying.value = true;
           break;
@@ -211,15 +199,21 @@ export const usePlayerStore = defineStore(
       playTimestamp.value = 0;
       // 切歌后 src 会变，旧的真实时长作废，等新 loadedmetadata 回填
       realDuration.value = 0;
-      currentIndex.value =
-        type === 'preview'
-          ? (currentIndex.value - 1 + len) % len
-          : (currentIndex.value + 1) % len;
+      currentIndex.value = type === 'preview' ? (currentIndex.value - 1 + len) % len : (currentIndex.value + 1) % len;
       nextTick(() => startPlayback());
     };
 
     const switchPlayType = () => {
       playTypeIndex.value += 1;
+    };
+
+    /** 循环切换倍速并同步到当前音频元素 */
+    const switchPlaybackRate = () => {
+      const index = playbackRates.indexOf(playbackRate.value);
+      playbackRate.value = playbackRates[(index + 1) % playbackRates.length];
+      if (audioEl.value) {
+        audioEl.value.playbackRate = playbackRate.value;
+      }
     };
 
     const switchPlayStatus = () => {
@@ -237,16 +231,14 @@ export const usePlayerStore = defineStore(
     /** <audio> loadedmetadata：读取真实时长校准接口 dt（进度/切歌语义以真实音源为准） */
     const onLoadedMetadata = () => {
       const el = audioEl.value;
-      realDuration.value =
-        el && Number.isFinite(el.duration) && el.duration > 0 ? el.duration * 1000 : 0;
+      realDuration.value = el && Number.isFinite(el.duration) && el.duration > 0 ? el.duration * 1000 : 0;
     };
 
     /** <audio> timeupdate：刷新进度并推进歌词 */
     const onTimeUpdate = () => {
       const el = audioEl.value;
-      // 暂停/拖拽期间仍会派发滞后的 timeupdate，它带着旧的 currentTime 回写 progress，
-      // 会把用户刚点选的滑块值覆盖掉（表现为进度条跳回原处 / 从头播）。
-      if (!el || el.paused) {
+      // 拖动中进度由滑块 v-model 驱动，不能用音频时间回写，否则滑块被拽回原位
+      if (!el || dragging.value) {
         return;
       }
       playTimestamp.value = el.currentTime * 1000;
@@ -257,22 +249,21 @@ export const usePlayerStore = defineStore(
       lyric.syncPanel(playTimestamp.value);
     };
 
-    /** 进度条 @change：以本次交互最终的滑块值为准跳转并恢复播放 */
-    // el-slider 的 change payload 类型为 Arrayable<number>；本项目未启用 range，数组时取首值
-    const seek = (value?: number | number[]) => {
+    /** 进度条释放（el-slider @change）：按滑块 progress（0~100）写回音频；播放中则续播 */
+    const seek = () => {
       dragging.value = false;
-      const el = audioEl.value;
-      // 跳转基准必须与 onTimeUpdate 计算 progress 的分母一致，否则试听片段（真实 30s、
-      // 接口 dt 5 分钟）时点一下进度条就 seek 到音频之外，立刻触发 ended / 播放失败。
-      const total = realDuration.value || currentMusic.value.dt || 0;
-      if (!el || !total) {
-        return;
+      const dt = currentMusic.value.dt || 0;
+      if (audioEl.value && dt) {
+        audioEl.value.currentTime = (progress.value / 100) * (dt / 1000);
+        // 在播放中拖动：释放后必须显式续播。不能依赖 endDragging（mouseup 可能落在滑块外）
+        if (isPlaying.value) {
+          audioEl.value.play().catch(() => undefined);
+        }
       }
       // change 的 payload 才是权威值；中途 progress 可能被滞后的 timeupdate 覆盖，
       // 无参数调用（如程序触发）时回退到当前 progress。
       const changed = Array.isArray(value) ? value[0] : value;
-      const percent =
-        typeof changed === 'number' && Number.isFinite(changed) ? changed : progress.value;
+      const percent = typeof changed === 'number' && Number.isFinite(changed) ? changed : progress.value;
       progress.value = Math.max(0, Math.min(100, percent));
       const timeMs = Math.max(0, Math.min(total, (progress.value / 100) * total));
       el.currentTime = timeMs / 1000;
@@ -282,13 +273,12 @@ export const usePlayerStore = defineStore(
       isPlaying.value = true;
     };
 
+    /** 拖住滑块：暂停时间回写即可，不 pause 音频——避免 mouseup 丢失导致永久暂停 */
     const startDragging = () => {
       if (!playlist.musicList.length) {
         return;
       }
       dragging.value = true;
-      isPlaying.value = false;
-      audioEl.value?.pause();
     };
 
     /** 跳转到指定毫秒位置（用于点击歌词行） */
@@ -305,21 +295,28 @@ export const usePlayerStore = defineStore(
       lyric.syncPanel(timeMs);
     };
 
-    /**
-     * 进度条 @mouseup：只结束拖拽态。
-     * Element Plus 的 change 在 nextTick 之后才 emit，此时 progress 仍是点击前的值；
-     * 跳转与恢复播放统一交给 seek()，避免这里先 play() 触发 timeupdate
-     * 把 progress 覆盖回旧位置，导致点击进度条后跳回去 / 从头播。
-     */
+    /** pointerup / pointercancel 兜底：仅清拖动标记，播放态由 seek 决定 */
     const endDragging = () => {
-      dragging.value = false;
+      if (!playlist.musicList.length) {
+        return;
+      }
+      if (dragging.value) {
+        dragging.value = false;
+        playTimestamp.value = currentMusic.value.dt * (progress.value / 100);
+      }
     };
 
-    /** 音量滑块 change：应用到音频元素 */
+    /** 音量滑块 change：应用到音频元素；静音态下拖音量自动解除静音 */
     const setVolume = () => {
       dragging.value = false;
       if (audioEl.value) {
         audioEl.value.volume = volume.value / 100;
+      }
+      if (isMute.value && volume.value > 0) {
+        isMute.value = false;
+        if (audioEl.value) {
+          audioEl.value.muted = false;
+        }
       }
     };
 
@@ -330,11 +327,22 @@ export const usePlayerStore = defineStore(
       }
     };
 
+    /** 快捷键调音量：按步进增减，静音态下加音量自动解除静音 */
+    const adjustVolume = (delta: number) => {
+      volume.value = Math.min(100, Math.max(0, volume.value + delta));
+      if (audioEl.value) {
+        audioEl.value.volume = volume.value / 100;
+      }
+      if (isMute.value && volume.value > 0) {
+        isMute.value = false;
+        if (audioEl.value) {
+          audioEl.value.muted = false;
+        }
+      }
+    };
+
     const onError = () => {
-      if (
-        playlist.musicList.length > 0 &&
-        errorList.value.length === playlist.musicList.length
-      ) {
+      if (playlist.musicList.length > 0 && errorList.value.length === playlist.musicList.length) {
         isPlaying.value = false;
         audioEl.value?.pause();
         return;
@@ -378,6 +386,43 @@ export const usePlayerStore = defineStore(
       }
     };
 
+    /** 加载我喜欢的歌曲 id，供播放条收藏状态回显；未登录直接跳过 */
+    const loadLikedIds = async () => {
+      if (!sessionManager.isAlive()) {
+        likedIds.value = [];
+        return;
+      }
+      const res = await playInteractionService.getLikelist();
+      const raw = (res as { data?: unknown; ids?: unknown } | null)?.ids ?? (res as { data?: unknown } | null)?.data;
+      likedIds.value = Array.isArray(raw) ? raw.map(Number).filter((id) => Number.isFinite(id)) : [];
+    };
+
+    /** 播放条红心：未登录提示、二次确认、成功后回写本地集合 */
+    const toggleLike = () => {
+      if (!sessionManager.isAlive()) {
+        message.info('请先登录后再收藏歌曲');
+        return;
+      }
+      const id = currentMusic.value.id;
+      if (!id) {
+        return;
+      }
+      const liked = likedIds.value.includes(id);
+      const action = liked ? '取消收藏' : '收藏';
+      if (!window.confirm(`确认${action}「${currentMusic.value.name || '当前歌曲'}」？`)) {
+        return;
+      }
+      void playInteractionService.setLike({ id, t: liked ? 0 : 1 }).then((res) => {
+        const code = (res as { code?: number } | null)?.code;
+        if (code !== undefined && code !== 200) {
+          message.error(`${action}失败，请稍后重试`);
+          return;
+        }
+        likedIds.value = liked ? likedIds.value.filter((item) => item !== id) : [...likedIds.value, id];
+        message.success(`${action}成功`);
+      });
+    };
+
     const downloadMusic = async () => {
       try {
         const res = await musicService.getSongDownloadUrl({ id: currentMusic.value.id });
@@ -403,6 +448,9 @@ export const usePlayerStore = defineStore(
       dragging,
       isMute,
       volume,
+      playbackRate,
+      playbackRates,
+      likedIds,
       errorList,
       currentMusic,
       playTypes,
@@ -413,6 +461,7 @@ export const usePlayerStore = defineStore(
       onLoadedMetadata,
       switchMusic,
       switchPlayType,
+      switchPlaybackRate,
       switchPlayStatus,
       onTimeUpdate,
       seek,
@@ -421,20 +470,52 @@ export const usePlayerStore = defineStore(
       seekTo,
       setVolume,
       switchIsMute,
+      adjustVolume,
       onError,
       getSongLyric,
+      loadLikedIds,
+      toggleLike,
       downloadMusic,
     };
   },
   {
     persist: {
-      key: INDEX_STORAGE_KEY,
+      key: playStorageKey,
       storage: localStorage,
-      pick: ['currentIndex'],
-      // 旧格式是纯数字字符串（如 "3"），不是 JSON 对象
+      pick: ['currentIndex', 'playTimestamp', 'playbackRate'],
+      // 兼容旧格式：早期值是纯数字字符串（如 "3"），现为 JSON 对象
       serializer: {
-        serialize: (data) => String(data.currentIndex ?? 0),
-        deserialize: (raw) => ({ currentIndex: Number(raw) || 0 }),
+        serialize: (data) =>
+          JSON.stringify({
+            currentIndex: data.currentIndex ?? 0,
+            playTimestamp: data.playTimestamp ?? 0,
+            playbackRate: data.playbackRate ?? 1,
+          }),
+        deserialize: (raw) => {
+          const trimmed = String(raw ?? '').trim();
+          if (!trimmed) return { currentIndex: 0, playTimestamp: 0, playbackRate: 1 };
+          // 旧格式：纯数字索引
+          if (/^-?\d+$/.test(trimmed)) {
+            return { currentIndex: Number(trimmed) || 0, playTimestamp: 0, playbackRate: 1 };
+          }
+          try {
+            const parsed = JSON.parse(trimmed) as Partial<{
+              currentIndex: number;
+              playTimestamp: number;
+              playbackRate: number;
+            }>;
+            return {
+              currentIndex: Number(parsed.currentIndex) || 0,
+              playTimestamp: Number(parsed.playTimestamp) || 0,
+              // 非法倍速值回退到 1，避免 audio.playbackRate 抛异常
+              playbackRate: (playbackRates as readonly number[]).includes(Number(parsed.playbackRate))
+                ? Number(parsed.playbackRate)
+                : 1,
+            };
+          } catch {
+            return { currentIndex: 0, playTimestamp: 0, playbackRate: 1 };
+          }
+        },
       },
     },
   },

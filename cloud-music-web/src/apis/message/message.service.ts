@@ -1,4 +1,5 @@
 import { getRequest } from '@/apis/request';
+import type { ApiRawResponse } from '@/apis/types';
 
 /**
  * P1 4.x 消息私信与分享（social-message）接口封装。
@@ -13,42 +14,42 @@ import { getRequest } from '@/apis/request';
  * - hug_comment 的 cid ← msg_comments 返回的评论 commentId，或页面输入
  */
 
-type Params = Record<string, any>;
+type Params = Record<string, unknown>;
 
 const messageService = {
   //#region 4.1 消息中心（需登录只读）
   /** 评论 */
-  getMsgComments: (params: Params = {}): Promise<any> => getRequest('/msg/comments', params),
+  getMsgComments: (params: Params = {}): Promise<ApiRawResponse> => getRequest('/msg/comments', params),
   /** @我 / 转发 */
-  getMsgForwards: (params: Params = {}): Promise<any> => getRequest('/msg/forwards', params),
+  getMsgForwards: (params: Params = {}): Promise<ApiRawResponse> => getRequest('/msg/forwards', params),
   /** 通知 */
-  getMsgNotices: (params: Params = {}): Promise<any> => getRequest('/msg/notices', params),
+  getMsgNotices: (params: Params = {}): Promise<ApiRawResponse> => getRequest('/msg/notices', params),
   /** 私信 */
-  getMsgPrivate: (params: Params = {}): Promise<any> => getRequest('/msg/private', params),
+  getMsgPrivate: (params: Params = {}): Promise<ApiRawResponse> => getRequest('/msg/private', params),
   /** 私信历史：uid ← 私信 / 最近联系人 */
-  getMsgPrivateHistory: (params: Params = {}): Promise<any> => getRequest('/msg/private/history', params),
+  getMsgPrivateHistory: (params: Params = {}): Promise<ApiRawResponse> => getRequest('/msg/private/history', params),
   /** 最近联系人 */
-  getMsgRecentcontact: (params: Params = {}): Promise<any> => getRequest('/msg/recentcontact', params),
+  getMsgRecentcontact: (params: Params = {}): Promise<ApiRawResponse> => getRequest('/msg/recentcontact', params),
   //#endregion
 
   //#region 4.2 分享与私信发送（写操作）
   /** 发送文本私信 */
-  sendText: (params: Params): Promise<any> => getRequest('/send/text', params),
+  sendText: (params: Params): Promise<ApiRawResponse> => getRequest('/send/text', params),
   /** 发送歌曲 */
-  sendSong: (params: Params): Promise<any> => getRequest('/send/song', params),
+  sendSong: (params: Params): Promise<ApiRawResponse> => getRequest('/send/song', params),
   /** 发送歌单 */
-  sendPlaylist: (params: Params): Promise<any> => getRequest('/send/playlist', params),
+  sendPlaylist: (params: Params): Promise<ApiRawResponse> => getRequest('/send/playlist', params),
   /** 发送专辑 */
-  sendAlbum: (params: Params): Promise<any> => getRequest('/send/album', params),
+  sendAlbum: (params: Params): Promise<ApiRawResponse> => getRequest('/send/album', params),
   /** 分享资源 */
-  shareResource: (params: Params): Promise<any> => getRequest('/share/resource', params),
+  shareResource: (params: Params): Promise<ApiRawResponse> => getRequest('/share/resource', params),
   //#endregion
 
   //#region 4.3 评论补充（写操作）
   /** 通用发评论 */
-  comment: (params: Params): Promise<any> => getRequest('/comment', params),
+  comment: (params: Params): Promise<ApiRawResponse> => getRequest('/comment', params),
   /** 评论抱抱 */
-  hugComment: (params: Params): Promise<any> => getRequest('/hug/comment', params),
+  hugComment: (params: Params): Promise<ApiRawResponse> => getRequest('/hug/comment', params),
   //#endregion
 };
 

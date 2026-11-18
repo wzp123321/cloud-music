@@ -1,11 +1,12 @@
+import { sessionManager } from '@/core/session';
 // 歌手详情服务
 import { getQueryParam } from '@/core/token';
 import artistDetailService from '../../../../apis/artist-detail/ad.service';
 
 import { ArtistVO, AlbumVO, MvVO, DescRes } from '../../../../apis/artist-detail/artist-detail-api';
 import { Common_IMusic } from '@/apis/common/index.api';
-import { ref, reactive, type Ref } from 'vue';
-import contentEnhanceService, { hasLogin } from '@/apis/content-enhance/content-enhance.service';
+import { ref, type Ref } from 'vue';
+import contentEnhanceService from '@/apis/content-enhance/content-enhance.service';
 import {
   ArtistFollowCountRes,
   ContentSongItem,
@@ -41,7 +42,7 @@ const create = () => {
   const id = ref(0); // 歌手 id
   const artistVO = ref<ArtistVO>() as Ref<ArtistVO>; // 歌手详情：保持旧 getter 的返回类型 ArtistVO
   const loading = ref<boolean>(false);
-  const is_error = ref<boolean>(false);
+  const isError = ref<boolean>(false);
   const songs = ref<Common_IMusic[]>([]);
   const selectedCode = ref<string>(navs[0].code);
   const albumList = ref<AlbumVO[]>([]);
@@ -68,7 +69,7 @@ const create = () => {
   const init = async () => {
     id.value = Number(getQueryParam('id'));
     loading.value = true;
-    is_error.value = false;
+    isError.value = false;
     try {
       const res = await artistDetailService.getArtistDetail({
         id: id.value,
@@ -88,7 +89,7 @@ const create = () => {
         });
       }
     } catch {
-      is_error.value = true;
+      isError.value = true;
     } finally {
       loading.value = false;
     }
@@ -121,7 +122,7 @@ const create = () => {
     if (albumList.value?.length) {
       return;
     }
-    is_error.value = false;
+    isError.value = false;
     itemLoading.value = true;
     try {
       const res = await artistDetailService.getArtistAlbumList({
@@ -134,7 +135,7 @@ const create = () => {
       }
     } catch {
       albumList.value = [];
-      is_error.value = true;
+      isError.value = true;
     } finally {
       setTimeout(() => {
         itemLoading.value = false;
@@ -147,7 +148,7 @@ const create = () => {
     if (mvList.value?.length) {
       return;
     }
-    is_error.value = false;
+    isError.value = false;
     itemLoading.value = true;
     try {
       const res = await artistDetailService.getArtistMVList({
@@ -160,7 +161,7 @@ const create = () => {
       }
     } catch {
       mvList.value = [];
-      is_error.value = true;
+      isError.value = true;
     } finally {
       setTimeout(() => {
         itemLoading.value = false;
@@ -173,7 +174,7 @@ const create = () => {
     if (desc.value?.briefDesc) {
       return;
     }
-    is_error.value = false;
+    isError.value = false;
     itemLoading.value = true;
     try {
       const res = await artistDetailService.getArtistDesc({
@@ -191,7 +192,7 @@ const create = () => {
         };
       }
     } catch {
-      is_error.value = true;
+      isError.value = true;
       desc.value = {
         briefDesc: '',
         code: 0,
@@ -278,7 +279,7 @@ const create = () => {
 
   /** 关注/取消关注歌手：artist_sub（需登录，成功后刷新粉丝数与状态） */
   const toggleSub = async () => {
-    if (!hasLogin()) {
+    if (!sessionManager.isAlive()) {
       actionTip.value = '登录后可关注歌手';
       return;
     }
@@ -307,15 +308,13 @@ const create = () => {
   };
   //#endregion
 
-  // reactive 包装：ref 自动解包，svc.xxx 仍是「值」，与旧 getter 行为一致；
-  // 原带 setter 的字段（selectedCode）经 reactive 写回仍可赋值
-  const state = reactive({
-    // 状态字段（对应原 public getter / readonly 字段）
+  // 对外直出各 ref / 方法，消费方解构后使用（脚本内 .value，模板自动解包）
+  return {
     id,
     artistVO,
     songs,
     loading,
-    is_error,
+    isError,
     selectedCode,
     albumList,
     mvList,
@@ -332,7 +331,6 @@ const create = () => {
     actionTip,
     navs,
     pageSize: 20,
-    // 方法（对应原 public 方法，签名不变）
     init,
     handleNavChange,
     queryArtistAlbum,
@@ -347,8 +345,7 @@ const create = () => {
     switchSongOrder,
     toggleSub,
     formatSongArtists,
-  });
-  return state;
+  };
 };
 
 /** 歌手详情页状态：每次调用创建新实例，保证切换歌手 id 后重新初始化 */

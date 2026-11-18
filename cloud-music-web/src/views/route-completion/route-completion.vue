@@ -52,6 +52,7 @@
 
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue';
+import type { ApiRawResponse } from '@/apis/types';
 import { getRequest } from '@/apis/request';
 import contentEnhanceService from '@/apis/content-enhance/content-enhance.service';
 
@@ -81,8 +82,8 @@ const loadSourceList = async () => {
   detailText.value = '点击左侧列表项，用返回的 id 请求详情接口。';
   try {
     if (activeTab.value === 'album') {
-      const res: any = await getRequest('/album/list', { area: 'ALL', limit: 20, offset: 0 });
-      const rows: any[] = res?.products || res?.albums || res?.data || [];
+      const res: ApiRawResponse = await getRequest('/album/list', { area: 'ALL', limit: 20, offset: 0 });
+      const rows: ApiRawResponse[] = res?.products || res?.albums || res?.data || [];
       sourceList.value = rows
         .filter((item) => item.albumId != null || item.id != null)
         .map((item) => ({
@@ -90,8 +91,8 @@ const loadSourceList = async () => {
           name: item.albumName || item.name || '未命名专辑',
         }));
     } else {
-      const res: any = await getRequest('/artist/list', { type: 1, area: -1, limit: 20, offset: 0 });
-      const rows: any[] = res?.artists || res?.data || [];
+      const res: ApiRawResponse = await getRequest('/artist/list', { type: 1, area: -1, limit: 20, offset: 0 });
+      const rows: ApiRawResponse[] = res?.artists || res?.data || [];
       sourceList.value = rows
         .filter((item) => item.id != null)
         .map((item) => ({ id: item.id, name: item.name || '未命名歌手' }));
@@ -107,7 +108,7 @@ const queryDetail = async (item: SourceItem) => {
   activeId.value = item.id;
   loadingDetail.value = true;
   try {
-    const res: any =
+    const res: ApiRawResponse =
       activeTab.value === 'album'
         ? await contentEnhanceService.getAlbumDetailExtra({ id: item.id })
         : await contentEnhanceService.getArtistDetailExtra({ id: item.id });
@@ -147,14 +148,14 @@ onMounted(() => {
     background: rgba(0, 0, 0, 0.03);
     font-size: 13px;
     line-height: 22px;
-    color: #666;
+    color: var(--color-text-secondary);
 
     code {
       padding: 1px 5px;
       border-radius: 3px;
       background: rgba(0, 0, 0, 0.06);
       font-size: 12px;
-      color: var(--color-primary, #c20c0c);
+      color: var(--color-primary);
     }
   }
 
@@ -168,14 +169,14 @@ onMounted(() => {
     padding: 8px 22px;
     border: 1px solid rgba(0, 0, 0, 0.12);
     border-radius: 20px;
-    background: #fff;
+    background: var(--color-default);
     font-size: 14px;
     color: #555;
     cursor: pointer;
 
     &.active {
-      border-color: var(--color-primary, #c20c0c);
-      background: var(--color-primary, #c20c0c);
+      border-color: var(--color-primary);
+      background: var(--color-primary);
       color: #fff;
     }
   }
@@ -195,21 +196,21 @@ onMounted(() => {
     padding: 18px;
     border: 1px solid rgba(0, 0, 0, 0.08);
     border-radius: 10px;
-    background: #fff;
+    background: var(--color-default);
   }
 
   &--heading {
     margin-bottom: 14px;
     font-size: 15px;
     font-weight: 600;
-    color: #333;
+    color: var(--color-text-primary);
   }
 
   &--status {
     padding: 24px 0;
     text-align: center;
     font-size: 13px;
-    color: #999;
+    color: var(--color-text-secondary);
   }
 
   &--source-list {
@@ -237,7 +238,7 @@ onMounted(() => {
   &--source-name {
     overflow: hidden;
     font-size: 13px;
-    color: #333;
+    color: var(--color-text-primary);
     text-overflow: ellipsis;
     white-space: nowrap;
   }
