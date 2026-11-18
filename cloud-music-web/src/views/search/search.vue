@@ -53,9 +53,9 @@
       ></cm-mv-card>
     </div>
     <!-- 歌词：/search/lyric 命中片段 -->
-    <div v-if="search.type === SEARCH_TYPE.歌词" class="search-lyric">
+    <div v-if="type === SearchType.歌词" class="search-lyric">
       <div
-        v-for="hit in search.lyrics"
+        v-for="hit in lyrics"
         :key="'lyric_' + hit.id"
         class="lyric-card"
         @click="onLyricClick(hit.id)"
@@ -66,16 +66,16 @@
           <p class="lyric-text">{{ hit.matched }}</p>
         </div>
       </div>
-      <p v-if="!search.lyrics.length" class="search-empty">暂无歌词匹配结果</p>
+      <p v-if="!lyrics.length" class="search-empty">暂无歌词匹配结果</p>
     </div>
     <!-- 歌手 / 歌单 / 用户 / 电台 / 视频 / 综合：通用卡片 -->
     <div v-else-if="showGeneric" class="search-generic">
-      <div v-for="hit in search.generic" :key="'gen_' + hit.id" class="generic-card">
+      <div v-for="hit in generic" :key="'gen_' + hit.id" class="generic-card">
         <cm-image class="generic-cover" :src="hit.cover" alt="" />
         <p class="generic-name">{{ hit.name }}</p>
         <p class="generic-sub">{{ hit.sub }}</p>
       </div>
-      <p v-if="!search.generic.length" class="search-empty">暂无匹配结果</p>
+      <p v-if="!generic.length" class="search-empty">暂无匹配结果</p>
     </div>
   </div>
 </template>
@@ -90,15 +90,28 @@ import { SearchType } from '../../apis/search/index.api';
 const urlKeyword = computed(() => {
   return getQueryParam('keyword') as string;
 });
-const { type, songs, albums, mvs, multimatch, loadingResult$, query, queryMultimatch, handleTypeChange } = useSearch();
+const router = useRouter();
+const {
+  type,
+  songs,
+  albums,
+  mvs,
+  lyrics,
+  generic,
+  multimatch,
+  loadingResult$,
+  query,
+  queryMultimatch,
+  handleTypeChange,
+} = useSearch();
 
 query();
 queryMultimatch();
 const isLoading = ref<boolean>(false);
 
 /** 已有专属渲染的类型；其余 tab 走通用卡片 */
-const plainTypes: string[] = [SEARCH_TYPE.单曲, SEARCH_TYPE.专辑, SEARCH_TYPE.MV, SEARCH_TYPE.歌词];
-const showGeneric = computed(() => !plainTypes.includes(search.type as string));
+const plainTypes: string[] = [SearchType.单曲, SearchType.专辑, SearchType.MV, SearchType.歌词];
+const showGeneric = computed(() => !plainTypes.includes(type.value as string));
 
 /** 歌词命中项 → 打开歌曲详情 */
 const onLyricClick = (id: number) => {

@@ -11,7 +11,7 @@ import {
   likeComment,
   sendComment,
 } from '../cm-comment.api';
-import { hasLogin } from '@/apis/content-enhance/content-enhance.service';
+import { sessionManager } from '@/core/session';
 import { highValueComment } from '@/apis/server-coverage/high-value.service';
 
 /** cm-comment 的 props 形状（.vue 内 defineProps 传入，保持单一数据源） */
@@ -172,7 +172,7 @@ export const useComment = (props: CommentProps) => {
   /** 举报评论（/comment/report）：登录 + 二次确认后才提交 */
   const onReport = async (item: CM_CommentVO) => {
     if (!canInteract.value || !item?.commentId) return;
-    if (!hasLogin()) {
+    if (!sessionManager.isAlive()) {
       editorTip.value = '请先登录后再举报';
       return;
     }

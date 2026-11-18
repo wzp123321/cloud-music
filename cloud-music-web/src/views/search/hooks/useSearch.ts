@@ -76,14 +76,14 @@ const create = () => {
     _generic.value = [];
     try {
       // 歌词搜索走专用接口：data.resources[].song / matchedLyric
-      if (requestType === SEARCH_TYPE.歌词) {
+      if (requestType === SearchType.歌词) {
         const res = await highValueSearch.lyric(requestKeyword);
         if (mySeq !== seq) return;
-        const resources = ((res?.data as { resources?: unknown })?.resources ?? []) as any[];
-        _lyrics.value = resources.map((entry: any) => ({
+        const resources = ((res?.data as { resources?: unknown })?.resources ?? []) as ApiRawResponse[];
+        _lyrics.value = resources.map((entry: ApiRawResponse) => ({
           id: entry?.song?.id,
           name: entry?.song?.name ?? '',
-          artist: entry?.song?.ar?.map((a: any) => a?.name).filter(Boolean).join('、') ?? '',
+          artist: entry?.song?.ar?.map((a: ApiRawResponse) => a?.name).filter(Boolean).join('、') ?? '',
           matched: entry?.matchedLyric ?? entry?.highlightText ?? String(entry?.lyric ?? '').slice(0, 120),
           cover: entry?.song?.al?.picUrl ?? '',
         }));
@@ -140,16 +140,16 @@ const create = () => {
         default: {
           // 歌手 / 歌单 / 用户 / 电台 / 视频 / 综合：统一渲染成通用卡片，避免 tab 空白
           const keyMap: Record<string, string> = {
-            [SEARCH_TYPE.歌手]: 'artists',
-            [SEARCH_TYPE.歌单]: 'playlists',
-            [SEARCH_TYPE.用户]: 'userprofiles',
-            [SEARCH_TYPE.电台]: 'djRadios',
-            [SEARCH_TYPE.视频]: 'videos',
-            [SEARCH_TYPE.综合]: 'songs',
+            [SearchType.歌手]: 'artists',
+            [SearchType.歌单]: 'playlists',
+            [SearchType.用户]: 'userprofiles',
+            [SearchType.电台]: 'djRadios',
+            [SearchType.视频]: 'videos',
+            [SearchType.综合]: 'songs',
           };
           const result = res?.result ?? {};
           const list = result[keyMap[requestType] ?? ''] ?? [];
-          _generic.value = (Array.isArray(list) ? list : []).map((entry: any) => ({
+          _generic.value = (Array.isArray(list) ? list : []).map((entry: ApiRawResponse) => ({
             id: entry?.id,
             name: entry?.name ?? entry?.nickname ?? entry?.title ?? '',
             sub: entry?.artist?.name ?? entry?.creator?.nickname ?? entry?.description ?? '',
@@ -205,8 +205,8 @@ const create = () => {
     songs,
     albums,
     mvs,
-    lyrics,
-    generic,
+    lyrics: _lyrics,
+    generic: _generic,
     multimatch,
     loadingResult$,
     keyword,

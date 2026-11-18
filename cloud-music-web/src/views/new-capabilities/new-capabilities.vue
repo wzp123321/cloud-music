@@ -72,6 +72,7 @@ import {
   highValueService,
   type HV_Result,
 } from '@/apis/server-coverage/high-value.service';
+import type { ApiRawResponse } from '@/apis/types';
 
 interface Field {
   name: string;
@@ -212,7 +213,7 @@ for (const section of sections) {
 const brief = (item: unknown): string => {
   if (item === null || item === undefined) return '';
   if (typeof item !== 'object') return String(item);
-  const obj = item as Record<string, any>;
+  const obj = item as ApiRawResponse;
   const name = obj.name ?? obj.title ?? obj.nickname ?? obj.song?.name ?? obj.content ?? obj.lyric ?? obj.desc;
   const sub = obj.artist?.name ?? obj.ar?.[0]?.name ?? obj.creator?.nickname
     ?? obj.updateFrequency ?? obj.subtitle ?? obj.timeStr ?? obj.score ?? obj.id;

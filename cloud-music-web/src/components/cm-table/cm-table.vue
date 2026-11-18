@@ -50,10 +50,6 @@ import { PropType, ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { formatDuration } from '@/core/utils';
-import { hasLogin } from '@/apis/content-enhance/content-enhance.service';
-import { highValueSong } from '@/apis/server-coverage/high-value.service';
-import { downloadFileByUrl } from '@/apis/file-download-upload/util';
-
 import { usePlayerStore } from '@/store/player';
 import { usePlaylistStore } from '@/store/playlist';
 
