@@ -47,6 +47,8 @@ export const usePlayerStore = defineStore(
 
     /** 当前歌曲从队列派生，不再额外维护一份副本 */
     const currentMusic = computed<Common_IMusic>(() => playlist.musicList[currentIndex.value] ?? emptyMusic);
+    /** 展示用总时长：真实音源时长优先，接口 dt 兜底。试听片段时避免显示 5:00 却 0:30 就结束 */
+    const displayDuration = computed(() => realDuration.value || currentMusic.value.dt || 0);
     /** 组件挂载后注入音频元素，并同步音量 / 静音态 */
     const bindAudio = (el: HTMLAudioElement | null) => {
       audioEl.value = el;
@@ -252,25 +254,19 @@ export const usePlayerStore = defineStore(
     /** 进度条释放（el-slider @change）：按滑块 progress（0~100）写回音频；播放中则续播 */
     const seek = () => {
       dragging.value = false;
-      const dt = currentMusic.value.dt || 0;
-      if (audioEl.value && dt) {
-        audioEl.value.currentTime = (progress.value / 100) * (dt / 1000);
-        // 在播放中拖动：释放后必须显式续播。不能依赖 endDragging（mouseup 可能落在滑块外）
-        if (isPlaying.value) {
-          audioEl.value.play().catch(() => undefined);
-        }
+      const el = audioEl.value;
+      const total = realDuration.value || currentMusic.value.dt || 0;
+      if (!el || !total) {
+        return;
       }
-      // change 的 payload 才是权威值；中途 progress 可能被滞后的 timeupdate 覆盖，
-      // 无参数调用（如程序触发）时回退到当前 progress。
-      const changed = Array.isArray(value) ? value[0] : value;
-      const percent = typeof changed === 'number' && Number.isFinite(changed) ? changed : progress.value;
-      progress.value = Math.max(0, Math.min(100, percent));
-      const timeMs = Math.max(0, Math.min(total, (progress.value / 100) * total));
+      const timeMs = Math.max(0, Math.min((progress.value / 100) * total, total));
       el.currentTime = timeMs / 1000;
       playTimestamp.value = timeMs;
       lyric.syncPanel(timeMs);
-      el.play().catch(() => undefined);
-      isPlaying.value = true;
+      // 在播放中拖动：释放后必须显式续播。不能依赖 endDragging（mouseup 可能落在滑块外）
+      if (isPlaying.value) {
+        el.play().catch(() => undefined);
+      }
     };
 
     /** 拖住滑块：暂停时间回写即可，不 pause 音频——避免 mouseup 丢失导致永久暂停 */

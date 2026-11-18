@@ -190,6 +190,8 @@ import { sanitizeHtml } from '@/utils/sanitize';
 import { useArtistDetail } from './hooks/useArtistDetail';
 import { usePlayerStore } from '@/store/player';
 
+const player = usePlayerStore();
+
 const {
   actionTip,
   albumList,
@@ -224,7 +226,7 @@ const artistId = Number(getQueryParam('id') ?? 0);
 
 /** 播放全部：歌手热门歌曲整张入队，从第一首开始 */
 const playAll = () => {
-  const list = artistDetail.songs ?? [];
+  const list = songs.value ?? [];
   if (list.length) {
     player.play(list[0], list);
   }

@@ -76,30 +76,30 @@
             <div class="api-coverage--form">
               <label class="api-coverage--field">
                 <span>请求方式</span>
-                <select v-model="methods[route.path]" class="api-coverage--select">
-                  <option value="post">POST</option>
-                  <option value="get">GET</option>
-                </select>
+                <el-select v-model="methods[route.path]" class="api-coverage--select">
+                  <el-option value="post" label="POST" />
+                  <el-option value="get" label="GET" />
+                </el-select>
               </label>
               <label class="api-coverage--field is-wide">
                 <span>参数（JSON 对象，登录凭证由请求层自动注入）</span>
-                <textarea
+                <cm-textarea
                   v-model="paramTexts[route.path]"
                   class="api-coverage--textarea"
                   rows="3"
                   spellcheck="false"
-                ></textarea>
+                />
               </label>
               <label v-if="route.file" class="api-coverage--field is-wide">
                 <span>上传文件（FormData 提交）</span>
-                <input class="api-coverage--file" type="file" @change="onFile(route.path, $event)" />
+                <cm-input class="api-coverage--file" type="file" @change="onFile(route.path, $event)" />
               </label>
             </div>
 
             <div class="api-coverage--actions">
-              <button class="api-coverage--run" :disabled="results[route.path]?.loading" @click="run(route)">
+              <cm-button class="api-coverage--run" :disabled="results[route.path]?.loading" @click="run(route)">
                 {{ results[route.path]?.loading ? '请求中…' : '发起请求' }}
-              </button>
+              </cm-button>
               <span v-if="route.kind === 'write'" class="api-coverage--hint">写操作会二次确认后才会提交</span>
               <span v-if="route.file" class="api-coverage--hint">该接口需要选择本地文件</span>
             </div>
@@ -113,9 +113,9 @@
         </article>
 
         <p v-if="!visibleRoutes.length" class="api-coverage--empty">没有匹配的接口，换个关键词试试</p>
-        <button v-if="hasMore" class="api-coverage--more" @click="limit += 60">
+        <cm-button v-if="hasMore" class="api-coverage--more" @click="limit += 60">
           显示更多（还有 {{ filtered.length - limit }} 条）
-        </button>
+        </cm-button>
       </section>
     </div>
   </div>

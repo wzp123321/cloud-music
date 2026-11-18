@@ -5,7 +5,7 @@ import prettier from 'eslint-config-prettier';
 
 export default [
   {
-    ignores: ['dist', 'dist.bak*', 'node_modules', 'auto-imports.d.ts', 'components.d.ts'],
+    ignores: ['dist', '.dist-bak-*', 'node_modules', 'auto-imports.d.ts', 'components.d.ts'],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,

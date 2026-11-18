@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import { getRequest } from '@/apis/request';
 import { PL_PlayVO } from '@/apis/play-list/index.api';
+import { Common_IMusic } from '@/apis/common/index.api';
 import { useSettingStore } from './setting';
 
 /** 旧版本直接把队列数组写在这个 key 下，必须用自定义 serializer 保持格式兼容 */
@@ -21,16 +22,6 @@ export const usePlaylistStore = defineStore(
     // 队列唯一真相源：合并原 Player._musicList 与 PlayListService._musicList
     const musicList = ref<PL_PlayVO[]>([]);
 
-    interface ISongUrlItem {
-      url?: string;
-      time?: number;
-      freeTrialInfo?: unknown;
-    }
-    interface ISongUrlRes {
-      data?: ISongUrlItem[];
-      code?: number;
-    }
-
     /**
      * 查询歌曲可播放地址，接口异常时返回空串。
      *
@@ -49,16 +40,6 @@ export const usePlaylistStore = defineStore(
       } catch {
         return '';
       }
-      // 优先「非试听且时长更长」的音源：试听片段 time 通常只有 30 秒左右
-      candidates.sort((a, b) => {
-        const aTrial = a.freeTrialInfo ? 1 : 0;
-        const bTrial = b.freeTrialInfo ? 1 : 0;
-        if (aTrial !== bTrial) {
-          return aTrial - bTrial;
-        }
-        return (b.time ?? 0) - (a.time ?? 0);
-      });
-      return candidates[0].url ?? '';
     };
 
     /** 加入队列：已存在返回原索引；否则补齐 url 后插入队首并返回 0 */
@@ -136,7 +117,7 @@ export const usePlaylistStore = defineStore(
       }
     };
 
-    return { musicList, addMusic, removeMusic, queryMusicUrl, invalidateUrls, loadFromStorage };
+    return { musicList, addMusic, removeMusic, setQueue, queryMusicUrl, invalidateUrls, loadFromStorage };
   },
   {
     persist: {

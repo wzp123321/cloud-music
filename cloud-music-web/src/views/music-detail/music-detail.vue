@@ -72,9 +72,9 @@
         </div>
         <!-- 手动滚动后给一个回到当前行的入口，避免被"拽走"后找不到播放到哪 -->
         <transition name="md-follow">
-          <button v-if="!followLyric && lyric.lrcList.length" type="button" class="md-follow-btn" @click="resumeFollow">
+          <cm-button v-if="!followLyric && lyric.lrcList.length" type="button" class="md-follow-btn" @click="resumeFollow">
             回到当前行
-          </button>
+          </cm-button>
         </transition>
 
         <!-- 歌曲详情（评论 + 相似） -->
@@ -125,9 +125,13 @@
         </div>
 
         <div class="ctrl-side ctrl-right">
-          <button class="md-rate" :title="'播放倍速：' + player.playbackRate + 'x（点击切换）'" @click="player.switchPlaybackRate">
+          <cm-button
+            class="md-rate"
+            :title="'播放倍速：' + player.playbackRate + 'x（点击切换）'"
+            @click="player.switchPlaybackRate"
+          >
             {{ player.playbackRate }}x
-          </button>
+          </cm-button>
           <cm-icon
             :name="player.playTypes[playModeKey]"
             :title="playModeKey"
