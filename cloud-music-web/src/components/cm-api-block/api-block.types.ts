@@ -7,6 +7,7 @@
 export type BlockKind = 'read' | 'login-read' | 'write' | 'invalid';
 
 import type { ApiCard } from '@/utils/api-normalize';
+import type { ApiRawResponse } from '@/apis/types';
 
 /** 列表卡片：各接口返回结构不一，统一压成这四个展示位 */
 export type BlockCard = ApiCard;
@@ -16,7 +17,7 @@ export interface BlockState {
   loading: boolean;
   loaded: boolean;
   cards: BlockCard[];
-  raw: any;
+  raw: ApiRawResponse;
   tip: string;
 }
 
@@ -48,8 +49,8 @@ export interface ApiBlock {
   buttonText?: string;
   /** 补充说明（失效接口用于展示失效原因与降级约定） */
   note?: string;
-  params?: (sel: Record<string, any>, v: string) => Record<string, any>;
-  run: (p: any) => Promise<any>;
+  params?: (sel: Record<string, ApiRawResponse>, v: string) => Record<string, ApiRawResponse>;
+  run: (p: ApiRawResponse) => Promise<ApiRawResponse>;
 }
 
 /** 默认的区块类型文案 */

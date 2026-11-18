@@ -7,6 +7,7 @@
  *   history_recommend_songs_detail 的 id ← history_recommend_songs。
  */
 import playInteractionService from '../../apis/play-interaction/play-interaction.service';
+import type { ApiRawResponse } from '@/apis/types';
 import type { ApiBlock } from '@/components/cm-api-block/api-block.types';
 
 /** 分组 tab：code 与区块的 tab 字段对应 */
@@ -19,7 +20,7 @@ export const tabs: { code: string; name: string }[] = [
 ];
 
 const songInput = { label: '歌曲 id（默认取上方「当前歌曲 ID」，可手动输入）', def: '' };
-const songParams = (s: Record<string, any>, v: string): Record<string, any> => ({
+const songParams = (s: Record<string, ApiRawResponse>, v: string): Record<string, ApiRawResponse> => ({
   id: Number(v) || s.songId || 0,
 });
 

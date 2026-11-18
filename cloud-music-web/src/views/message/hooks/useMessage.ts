@@ -1,4 +1,5 @@
 import { sessionManager } from '@/core/session';
+import type { ApiRawResponse } from '@/apis/types';
 import { onMounted, ref } from 'vue';
 
 
@@ -75,7 +76,7 @@ export const useMessage = () => {
   };
 
   /** 候选字段优先级：消息类接口以 comments / notices / msgs 为主 */
-  const listCandidates = (res: any): any[] => [
+  const listCandidates = (res: ApiRawResponse): ApiRawResponse[] => [
     res.data, res.result, res.list, res.comments, res.notices, res.msgs, res.messages,
     res.records, res.events, res.playlist, res.playlists, res.topics, res.hot,
     res.songs, res.albums, res.videos, res.data?.list, res.result?.list,
@@ -83,13 +84,13 @@ export const useMessage = () => {
   ];
 
   /** 兼容 res.data / res.result / res.list / res.xxx / res.data.list 等多种结构 */
-  const extractList = (res: any): any[] => extractListByCandidates(res, listCandidates);
+  const extractList = (res: ApiRawResponse): ApiRawResponse[] => extractListByCandidates(res, listCandidates);
 
   /** 详情 / 写操作返回兼容 res.data / res.result / res 本身 */
   const extractObj = extractObject;
 
   /** 归一为统一卡片模型 */
-  const toCard = (raw: any): CardItem => {
+  const toCard = (raw: ApiRawResponse): CardItem => {
     const r = raw || {};
     const id = Number(
       r.id ?? r.songId ?? r.commentId ?? r.userId ?? r.uid ?? r.actid ?? r.eventId ?? r.vid ?? r.mvid ?? 0,
@@ -105,18 +106,18 @@ export const useMessage = () => {
     return { id, title, cover, subtitle, raw: r };
   };
 
-  const pickUid = (raw: any): number => {
+  const pickUid = (raw: ApiRawResponse): number => {
     const r = raw || {};
     return Number(r.uid ?? r.userId ?? r.userid ?? r.id ?? r.fromUserid ?? r.fromUserId ??
       r.fromUser?.userId ?? r.user?.userId ?? 0) || 0;
   };
 
-  const pickCommentId = (raw: any): number => {
+  const pickCommentId = (raw: ApiRawResponse): number => {
     const r = raw || {};
     return Number(r.commentId ?? r.cid ?? r.id ?? 0) || 0;
   };
 
-  const pickResourceId = (raw: any): number => {
+  const pickResourceId = (raw: ApiRawResponse): number => {
     const r = raw || {};
     return Number(r.resourceId ?? r.id ?? r.threadId ?? 0) || 0;
   };
@@ -144,7 +145,7 @@ export const useMessage = () => {
   };
 
   /** 写操作统一包装：confirm + try/catch + 失败给空值 + 展示多结构返回 */
-  const runWrite = async (label: string, fn: () => Promise<any>) => {
+  const runWrite = async (label: string, fn: () => Promise<ApiRawResponse>) => {
     if (!writeGuard(`确定执行「${label}」吗？该操作会向服务端提交数据。`)) return;
     try {
       const res = await fn();
@@ -159,7 +160,7 @@ export const useMessage = () => {
   const loadMsg = async (code: string) => {
     if (!requireLogin()) return;
     try {
-      let res: any = null;
+      let res: ApiRawResponse = null;
       switch (code) {
         case 'comments':
           res = await messageService.getMsgComments({ limit: 30 });

@@ -3,6 +3,7 @@
  * 该页面面向「接口清单可视化」，各接口返回结构不统一，这里统一压成卡片结构再渲染
  */
 import type { Ref } from 'vue';
+import type { ApiRawResponse } from '@/apis/types';
 import {
   extractObject,
   extractListByCandidates,
@@ -15,13 +16,13 @@ import {
 export type SupplementCard = ApiCard;
 
 /** 写操作结果文案（各面板共用同一份格式） */
-export const formatWriteResult = (label: string, res: any): string => {
+export const formatWriteResult = (label: string, res: ApiRawResponse): string => {
   const obj = extractObj(res);
   return `${label} 已提交｜code=${obj.code ?? res?.code ?? '—'}｜${obj.message ?? res?.message ?? '无附加信息'}`;
 };
 
 /** 候选字段优先级：此页面接口以 playlist / events / comments 等为主 */
-const listCandidates = (res: any): any[] => [
+const listCandidates = (res: ApiRawResponse): ApiRawResponse[] => [
   res.data,
   res.result,
   res.list,
@@ -42,12 +43,12 @@ const listCandidates = (res: any): any[] => [
 ];
 
 /** 兼容 res.data / res.result / res.list / res.playlist / res.xxx / res.data.list 等多种结构 */
-export const extractList = (res: any): any[] => extractListByCandidates(res, listCandidates);
+export const extractList = (res: ApiRawResponse): ApiRawResponse[] => extractListByCandidates(res, listCandidates);
 
 export const extractObj = extractObject;
 
 /** 单条原始对象 → 卡片 */
-export const toCard = (raw: any): SupplementCard => {
+export const toCard = (raw: ApiRawResponse): SupplementCard => {
   const r = raw || {};
   const id = Number(r.id ?? r.songId ?? r.playlistId ?? r.uid ?? r.userId ?? r.commentId ?? 0) || 0;
   const title = String(r.title ?? r.name ?? r.songName ?? r.nickname ?? r.content ?? r.msg ?? '未命名');
@@ -68,7 +69,7 @@ export const toCard = (raw: any): SupplementCard => {
 };
 
 /** 列表型归一；详情型对象包成一条卡片，保证有内容可展示 */
-export const toList = (res: any): SupplementCard[] =>
+export const toList = (res: ApiRawResponse): SupplementCard[] =>
   toCardList<SupplementCard>(
     res,
     listCandidates,
@@ -77,10 +78,10 @@ export const toList = (res: any): SupplementCard[] =>
   );
 
 /** 云盘文件 → songId（详情 / 删除接口的入参来源） */
-export const pickSongId = (raw: any): number => pickNumberId(raw, ['songId', 'id', 'songid']);
+export const pickSongId = (raw: ApiRawResponse): number => pickNumberId(raw, ['songId', 'id', 'songid']);
 
 /** 歌单 → playlistId（9 个 playlist_* 接口的入参来源） */
-export const pickPlaylistId = (raw: any): number => pickNumberId(raw, ['id', 'playlistId']);
+export const pickPlaylistId = (raw: ApiRawResponse): number => pickNumberId(raw, ['id', 'playlistId']);
 
 export interface SupplementGuardOptions {
   /** 当前登录态（来自 props，用函数取以保持响应式） */
@@ -123,7 +124,7 @@ export const useWriteRunner = (
   writeResult: Ref<string>,
   writeGuard: (confirmText: string) => boolean,
 ) => {
-  return async (label: string, fn: () => Promise<any>) => {
+  return async (label: string, fn: () => Promise<ApiRawResponse>) => {
     if (!writeGuard(`确定执行「${label}」吗？该操作会向服务端提交数据。`)) return;
     try {
       const res = await fn();

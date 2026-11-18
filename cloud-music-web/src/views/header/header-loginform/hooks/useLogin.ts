@@ -1,4 +1,5 @@
 import { useSingletonStore } from "@/store/singletons";
+import type { ApiRawResponse } from '@/apis/types';
 import { ref, watch } from 'vue';
 
 import { postRequest } from '@/apis/request';
@@ -47,7 +48,7 @@ const create = () => {
    * @param profile 用户资料
    * @param sessionCookie 登录接口响应体里的 cookie 串（MUSIC_U 等）
    */
-  const onLoginSuccess = (profile: any, sessionCookie?: string) => {
+  const onLoginSuccess = (profile: ApiRawResponse, sessionCookie?: string) => {
     if (!profile) return;
     useUserStore().setLogin(profile, sessionCookie);
     loginResult$.value = { profile };

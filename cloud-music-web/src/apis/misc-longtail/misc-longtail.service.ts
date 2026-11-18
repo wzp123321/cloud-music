@@ -1,4 +1,5 @@
 import { getRequest } from '@/apis/request';
+import type { ApiRawResponse } from '@/apis/types';
 
 /**
  * P2 8.x「杂项长尾」接口封装（共 9 个）。
@@ -11,7 +12,7 @@ import { getRequest } from '@/apis/request';
  * - calendar 需登录只读（页面未登录降级），时间参数用 new Date() 生成；
  * - pl_count 业务异常属「待核不进主路径」，仅用户手动点击触发，不自动加载。
  */
-const call = async (url: string, params: Record<string, unknown> = {}): Promise<any> => {
+const call = async (url: string, params: Record<string, unknown> = {}): Promise<ApiRawResponse> => {
   try {
     const res = await getRequest(url, params);
     return res ?? {};
@@ -24,23 +25,23 @@ const call = async (url: string, params: Record<string, unknown> = {}): Promise<
 const miscLongtailService = {
   //#region 8.1 杂项与统计（9）
   /** 内部版本自检（只读，可 onMounted 自动加载） */
-  getInnerVersion: (p: Record<string, any> = {}) => call('/inner/version', p),
+  getInnerVersion: (p: Record<string, unknown> = {}) => call('/inner/version', p),
   /** Web 日志上报（写操作）：需登录 + 二次确认 */
-  sendWeblog: (p: Record<string, any> = {}) => call('/weblog', p),
+  sendWeblog: (p: Record<string, unknown> = {}) => call('/weblog', p),
   /** 阈值详情（只读） */
-  getThresholdDetail: (p: Record<string, any> = {}) => call('/threshold/detail/get', p),
+  getThresholdDetail: (p: Record<string, unknown> = {}) => call('/threshold/detail/get', p),
   /** 年度听歌总结（只读） */
-  getSummaryAnnual: (p: Record<string, any> = {}) => call('/summary/annual', p),
+  getSummaryAnnual: (p: Record<string, unknown> = {}) => call('/summary/annual', p),
   /** 创作者认证信息（只读） */
-  getCreatorAuthinfo: (p: Record<string, any> = {}) => call('/creator/authinfo/get', p),
+  getCreatorAuthinfo: (p: Record<string, unknown> = {}) => call('/creator/authinfo/get', p),
   /** 计数（待核，业务异常，不进主路径，仅手动触发） */
-  getPlCount: (p: Record<string, any> = {}) => call('/pl/count', p),
+  getPlCount: (p: Record<string, unknown> = {}) => call('/pl/count', p),
   /** 批量接口（只读） */
-  getBatch: (p: Record<string, any> = {}) => call('/batch', p),
+  getBatch: (p: Record<string, unknown> = {}) => call('/batch', p),
   /** 用户 ID 查询（只读） */
-  getUserids: (p: Record<string, any> = {}) => call('/get/userids', p),
+  getUserids: (p: Record<string, unknown> = {}) => call('/get/userids', p),
   /** 日历（需登录只读，startTime/endTime 用 new Date() 生成） */
-  getCalendar: (p: Record<string, any> = {}) => call('/calendar', p),
+  getCalendar: (p: Record<string, unknown> = {}) => call('/calendar', p),
   //#endregion
 };
 

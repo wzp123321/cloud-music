@@ -1,4 +1,5 @@
 import { sessionManager } from '@/core/session';
+import type { ApiRawResponse } from '@/apis/types';
 import { computed, onMounted, ref, type Ref } from 'vue';
 
 
@@ -18,7 +19,7 @@ export interface Block {
   name: string;
   tab: string;
   kind: BlockKind;
-  run: () => Promise<any>;
+  run: () => Promise<ApiRawResponse>;
   inputKey?: string;
   inputLabel?: string;
   inputHint?: string;
@@ -65,7 +66,7 @@ export const useApiConsoleBlocks = (config: ApiConsoleConfig) => {
   const panelTip = computed(() => panelTips[activeTab.value] || '');
 
   /** 候选字段优先级：此组接口以 programs / djRadios / voices / tasks 等为主 */
-  const listCandidates = (res: any): any[] => [
+  const listCandidates = (res: ApiRawResponse): ApiRawResponse[] => [
     res.data, res.result, res.list, res.data?.list, res.result?.list, res.data?.data, res.data?.records,
     res.programs, res.data?.programs, res.result?.programs, res.djRadios, res.data?.djRadios,
     res.categories, res.data?.categories, res.radios, res.data?.radios, res.toplist, res.data?.toplist,
@@ -75,7 +76,7 @@ export const useApiConsoleBlocks = (config: ApiConsoleConfig) => {
 
   const extractObj = extractObject;
 
-  const toCard = (raw: any): CardItem => {
+  const toCard = (raw: ApiRawResponse): CardItem => {
     const r = raw || {};
     const id = Number(r.id ?? r.rid ?? r.vid ?? r.cateId ?? r.categoryId ?? r.voiceId ?? r.voiceListId ?? r.programId ?? r.taskId ?? r.songId ?? r.userId ?? 0) || 0;
     const title = String(r.title ?? r.name ?? r.radioName ?? r.djName ?? r.nickname ?? r.content ?? r.msg ?? r.desc ?? '未命名');
@@ -84,7 +85,7 @@ export const useApiConsoleBlocks = (config: ApiConsoleConfig) => {
     return { id, title, cover, subtitle, raw: r };
   };
 
-  const toList = (res: any): CardItem[] =>
+  const toList = (res: ApiRawResponse): CardItem[] =>
     toCardList<CardItem>(
       res,
       listCandidates,
@@ -93,7 +94,7 @@ export const useApiConsoleBlocks = (config: ApiConsoleConfig) => {
       true,
     );
 
-  const pickId = (raw: any): number =>
+  const pickId = (raw: ApiRawResponse): number =>
     pickNumberId(raw, [
       'id', 'rid', 'vid', 'cateId', 'categoryId', 'voiceId', 'voiceListId', 'programId', 'mainSongId',
     ]);

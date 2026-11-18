@@ -51,6 +51,7 @@
 
 <script lang="ts" setup>
 import { ref, computed, onMounted, watch } from 'vue';
+import type { ApiRawResponse } from '@/apis/types';
 
 import { useUserCenter } from './hooks/useUserCenter';
 import { UC_UserDetail, UC_Playlist, UC_UserLevel, UC_UserSubcount, UC_Record } from '@/apis/user/user.api';
@@ -67,7 +68,7 @@ import UserEditDialog from './components/user-edit-dialog.vue';
 
 const { uid, loading, recordType, reloadRecord, loadAll, init, userDetail$, playlists$, level$, subcount$, record$ } = useUserCenter();
 
-const detail = ref<UC_UserDetail>({ profile: {} as any });
+const detail = ref<UC_UserDetail>({ profile: {} as ApiRawResponse });
 const playlists = ref<UC_Playlist[]>([]);
 const level = ref<UC_UserLevel>({ level: 0, progress: 0 });
 const subcount = ref<UC_UserSubcount>({
@@ -100,7 +101,7 @@ const canEdit = computed(() => {
 
 const goTab = (key: string) => {
   if (key === 'event' || key === 'follow' || key === 'cloud' || key === 'record' || key === 'home') {
-    activeTab.value = key as any;
+    activeTab.value = key as ApiRawResponse;
   }
 };
 

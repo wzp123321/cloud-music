@@ -3,6 +3,7 @@
  * 区块渲染交给 cm-api-block，请求编排交给 useApiConsole；本文件只描述接口与参数链路
  */
 import type { ApiBlock } from '@/components/cm-api-block/api-block.types';
+import type { ApiRawResponse } from '@/apis/types';
 
 import discoveryService from '../../apis/discovery/discovery.service';
 
@@ -19,7 +20,7 @@ export const tabs: { code: string; name: string }[] = [
 // mlog_url / mlog_to_video 的 id ← mlog_music_rcmd；cloudsearch 的 keywords ← 页面输入。
 
 const tagInput = { label: 'tagId（默认取 style_list 选中项，可手动输入）', def: '' };
-const tagParams = (s: Record<string, any>, v: string): Record<string, any> => ({
+const tagParams = (s: Record<string, ApiRawResponse>, v: string): Record<string, ApiRawResponse> => ({
   tagId: Number(v) || s.tagId || 0,
   limit: 20,
 });

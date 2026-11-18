@@ -1,4 +1,5 @@
 import { onMounted, ref } from 'vue';
+import type { ApiRawResponse } from '@/apis/types';
 
 
 import feedService from '@/apis/feed/feed.service';
@@ -51,18 +52,18 @@ export const useFeed = () => {
   };
 
   /** 候选字段优先级：动态 / 话题类接口以 events / topics / hot 为主 */
-  const listCandidates = (res: any): any[] => [
+  const listCandidates = (res: ApiRawResponse): ApiRawResponse[] => [
     res.data, res.result, res.list, res.events, res.records, res.topics, res.hot,
     res.playlist, res.playlists, res.videos, res.songs, res.comments, res.notices,
     res.data?.list, res.result?.list, res.data?.data, res.data?.events, res.data?.records,
   ];
 
   /** 兼容 res.data / res.result / res.xxx / res.data.list 等多种结构 */
-  const extractList = (res: any): any[] => extractListByCandidates(res, listCandidates);
+  const extractList = (res: ApiRawResponse): ApiRawResponse[] => extractListByCandidates(res, listCandidates);
 
   const extractObj = extractObject;
 
-  const toCard = (raw: any): CardItem => {
+  const toCard = (raw: ApiRawResponse): CardItem => {
     const r = raw || {};
     const id = Number(r.id ?? r.actid ?? r.actId ?? r.topicId ?? r.eventId ?? r.vid ?? r.mvid ?? r.songId ?? 0) || 0;
     const title = String(r.title ?? r.name ?? r.topicName ?? r.content ?? r.msg ?? r.text ?? '未命名');
@@ -72,7 +73,7 @@ export const useFeed = () => {
   };
 
   /** 列表型返回归一；详情型返回对象时包成一条卡片，保证有内容可展示 */
-  const toList = (res: any): CardItem[] => {
+  const toList = (res: ApiRawResponse): CardItem[] => {
     const list = extractList(res);
     if (list.length) return list.map(toCard);
     const obj = extractObj(res);
@@ -82,12 +83,12 @@ export const useFeed = () => {
     return [];
   };
 
-  const pickEventId = (raw: any): number => {
+  const pickEventId = (raw: ApiRawResponse): number => {
     const r = raw || {};
     return Number(r.id ?? r.eventId ?? r.eid ?? r.actid ?? 0) || 0;
   };
 
-  const pickActid = (raw: any): number => {
+  const pickActid = (raw: ApiRawResponse): number => {
     const r = raw || {};
     return Number(r.actid ?? r.actId ?? r.id ?? r.topicId ?? r.activityId ?? 0) || 0;
   };
@@ -114,7 +115,7 @@ export const useFeed = () => {
     return true;
   };
 
-  const runWrite = async (label: string, fn: () => Promise<any>) => {
+  const runWrite = async (label: string, fn: () => Promise<ApiRawResponse>) => {
     if (!writeGuard(`确定执行「${label}」吗？该操作会向服务端提交数据。`)) return;
     try {
       const res = await fn();

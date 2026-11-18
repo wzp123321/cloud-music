@@ -1,4 +1,5 @@
 import { getRequest } from '../../apis/request';
+import type { ApiRawResponse } from '@/apis/types';
 
 /**
  * 相似推荐接口封装（simi_*）
@@ -28,12 +29,12 @@ export interface CM_SimiItem {
 /** 各 simi 接口原始响应 */
 export interface CM_SimiRes {
   code?: number;
-  songs?: any[];
-  playlists?: any[];
-  artists?: any[];
-  mvs?: any[];
-  userprofiles?: any[];
-  [key: string]: any;
+  songs?: ApiRawResponse[];
+  playlists?: ApiRawResponse[];
+  artists?: ApiRawResponse[];
+  mvs?: ApiRawResponse[];
+  userprofiles?: ApiRawResponse[];
+  [key: string]: ApiRawResponse;
 }
 
 /** 相似歌曲（simi_song，入参 songid） */
@@ -87,38 +88,38 @@ export const fetchSimi = async (
 export const normalizeSimi = (type: CM_SimiType, res: CM_SimiRes): CM_SimiItem[] => {
   switch (type) {
     case 'song':
-      return (res?.songs ?? []).map((s: any) => ({
+      return (res?.songs ?? []).map((s: ApiRawResponse) => ({
         id: s?.id,
         name: s?.name ?? '',
         cover: s?.album?.picUrl ?? s?.album?.blurPicUrl,
         subtitle: (s?.artists ?? s?.ar ?? [])
-          .map((a: any) => a?.name)
+          .map((a: ApiRawResponse) => a?.name)
           .filter(Boolean)
           .join(' / '),
       }));
     case 'playlist':
-      return (res?.playlists ?? []).map((p: any) => ({
+      return (res?.playlists ?? []).map((p: ApiRawResponse) => ({
         id: p?.id,
         name: p?.name ?? '',
         cover: p?.coverImgUrl,
         subtitle: p?.creator?.nickname,
       }));
     case 'artist':
-      return (res?.artists ?? []).map((a: any) => ({
+      return (res?.artists ?? []).map((a: ApiRawResponse) => ({
         id: a?.id,
         name: a?.name ?? '',
         cover: a?.picUrl ?? a?.img1v1Url,
         subtitle: '',
       }));
     case 'mv':
-      return (res?.mvs ?? []).map((m: any) => ({
+      return (res?.mvs ?? []).map((m: ApiRawResponse) => ({
         id: m?.id,
         name: m?.name ?? '',
         cover: m?.cover ?? m?.picUrl ?? m?.imgurl16v9,
         subtitle: m?.artistName,
       }));
     case 'user':
-      return (res?.userprofiles ?? []).map((u: any) => ({
+      return (res?.userprofiles ?? []).map((u: ApiRawResponse) => ({
         id: u?.userId,
         name: u?.nickname ?? '',
         cover: u?.avatarUrl,

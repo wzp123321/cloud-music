@@ -1,4 +1,5 @@
 import { useSingletonStore } from "@/store/singletons";
+import type { ApiRawResponse } from '@/apis/types';
  
 import { ref } from 'vue';
 
@@ -16,7 +17,7 @@ import {
   UC_FollowUser,
 } from '@/apis/user/user.api';
 
-const emptyDetail: UC_UserDetail = { profile: {} as any };
+const emptyDetail: UC_UserDetail = { profile: {} as ApiRawResponse };
 
 // 创建用户中心共享状态：响应式数据统一用 ref，行为统一为 const 箭头函数
 const create = () => {

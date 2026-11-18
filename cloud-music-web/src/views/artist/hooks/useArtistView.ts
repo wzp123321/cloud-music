@@ -1,4 +1,5 @@
 import { onMounted, ref } from 'vue';
+import type { ApiRawResponse } from '@/apis/types';
 import { useRouter } from 'vue-router';
 
 import contentEnhanceService from '@/apis/content-enhance/content-enhance.service';
@@ -59,9 +60,9 @@ export const useArtistView = () => {
       contentEnhanceService.getArtistNewMv({ limit: 10 }).catch(() => null),
     ]);
     followedArtists.value = (sublist?.data as ContentArtistItem[]) || [];
-    const songData: any = songs?.data;
+    const songData: ApiRawResponse = songs?.data;
     newSongs.value = (Array.isArray(songData) ? songData : songData?.list || []) as ContentSongItem[];
-    const mvData: any = mvs?.data;
+    const mvData: ApiRawResponse = mvs?.data;
     newMvs.value = (Array.isArray(mvData) ? mvData : mvData?.list || []) as ContentMvItem[];
   };
 

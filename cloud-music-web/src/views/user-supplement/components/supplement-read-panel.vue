@@ -56,6 +56,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import type { ApiRawResponse } from '@/apis/types';
 
 import userSupplementService from '../../../apis/user-supplement/user-supplement.service';
 import { toList, useSupplementGuard, useWriteRunner, type SupplementCard } from '../use-supplement';
@@ -102,7 +103,7 @@ const runWrite = useWriteRunner(writeResult, writeGuard);
 const loadRead = async (code: string) => {
   if (!requireLogin()) return;
   try {
-    let res: any = null;
+    let res: ApiRawResponse = null;
     switch (code) {
       case 'account':
         res = await userSupplementService.getUserAccount();

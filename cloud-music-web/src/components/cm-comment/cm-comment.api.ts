@@ -1,4 +1,5 @@
 import { Common_IUserVO } from '../../apis/common/user.api';
+import type { ApiRawResponse } from '@/apis/types';
 import { getRequest, postRequest } from '../../apis/request';
 
 /**
@@ -57,7 +58,7 @@ export interface CM_CommentVO {
   };
   pendantData?: CM_CommentVO;
   user?: Common_IUserVO;
-  [key: string]: any;
+  [key: string]: ApiRawResponse;
 }
 
 /** 评论列表响应（comment_music~event / comment_hot） */
@@ -68,7 +69,7 @@ export interface CM_CommentListRes {
   total?: number;
   more?: boolean;
   moreHot?: boolean;
-  [key: string]: any;
+  [key: string]: ApiRawResponse;
 }
 
 /** 新版通用评论响应（comment_new） */
@@ -78,9 +79,9 @@ export interface CM_CommentNewRes {
     comments?: CM_CommentVO[];
     hotComments?: CM_CommentVO[];
     totalCount?: number;
-    [key: string]: any;
+    [key: string]: ApiRawResponse;
   };
-  [key: string]: any;
+  [key: string]: ApiRawResponse;
 }
 
 /** 楼层评论响应（comment_floor） */
@@ -90,9 +91,9 @@ export interface CM_CommentFloorRes {
     comments?: CM_CommentVO[];
     ownerComment?: CM_CommentVO;
     totalCount?: number;
-    [key: string]: any;
+    [key: string]: ApiRawResponse;
   };
-  [key: string]: any;
+  [key: string]: ApiRawResponse;
 }
 
 /** 点赞用户列表响应（comment_hug_list） */
@@ -101,10 +102,10 @@ export interface CM_HugListRes {
   data?: {
     hugComments?: CM_CommentVO[];
     comments?: CM_CommentVO[];
-    [key: string]: any;
+    [key: string]: ApiRawResponse;
   };
   hugComments?: CM_CommentVO[];
-  [key: string]: any;
+  [key: string]: ApiRawResponse;
 }
 
 /** 通用资源参数 */
@@ -112,7 +113,7 @@ interface CM_ResourceParam {
   type: CM_CommentType;
   id: number | string;
   threadId?: string;
-  [key: string]: any;
+  [key: string]: ApiRawResponse;
 }
 
 //#region 各类型评论列表 comment_music/album/playlist/mv/dj/video/event
@@ -128,7 +129,7 @@ export const getCommentList = (
     offset?: number;
     before?: number;
     threadId?: string;
-    [key: string]: any;
+    [key: string]: ApiRawResponse;
   } = {},
 ): Promise<CM_CommentListRes> => getRequest(cmCommentRoute[type], { id, ...params });
 //#endregion
@@ -204,7 +205,7 @@ export const getCommentHugList = (
 /** 点赞 / 取消点赞评论（comment_like；t=1 点赞 / 0 取消） */
 export const likeComment = (
   params: CM_ResourceParam & { cid: number; t: 1 | 0 },
-): Promise<any> => {
+): Promise<ApiRawResponse> => {
   const { type, id, threadId, ...rest } = params;
   return postRequest('/comment/like', {
     type: cmCommentTypeNum[type] ?? 0,
@@ -225,7 +226,7 @@ export const sendComment = (
     commentId?: number;
     t?: 1 | 0 | 2;
   },
-): Promise<any> => {
+): Promise<ApiRawResponse> => {
   const { type, id, threadId, ...rest } = params;
   return postRequest('/comment', {
     type: cmCommentTypeNum[type] ?? 0,

@@ -1,5 +1,8 @@
 <template>
-  <api-console-page title="歌曲互动与播放记录" :blocks="blocks" :tabs="tabs"
+  <api-console-page
+    title="歌曲互动与播放记录"
+    :blocks="blocks"
+    :tabs="tabs"
     root-class="pi"
   >
     <template #intro>

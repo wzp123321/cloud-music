@@ -1,4 +1,5 @@
 import { ref } from 'vue';
+import type { ApiRawResponse } from '@/apis/types';
 
 import { getQueryParam } from '@/core/token';
 import { PD_PlaylistDetail } from '../../../../apis/playlist-detail/index.api';
@@ -89,7 +90,7 @@ const create = () => {
     try {
       const res = await getPlaylistTrackAll({ id: playlistId, limit: 1000 });
       const songs = res?.songs || [];
-      playListMusicListResult$.value = songs.map((item: any) => ({
+      playListMusicListResult$.value = songs.map((item: ApiRawResponse) => ({
         dt: item.dt,
         url: '',
         name: item.name,
@@ -102,7 +103,7 @@ const create = () => {
       // 失败回退到原逻辑
       try {
         const res = await getRequest(EPath.查询歌单详情, { id: playlistId });
-        const ids = res?.playlist?.trackIds?.map((item: any) => item?.id)?.join(',');
+        const ids = res?.playlist?.trackIds?.map((item: ApiRawResponse) => item?.id)?.join(',');
         const commonService = new CommonService();
         const songRes = await commonService.getMusicDetailByIds(ids);
         playListMusicListResult$.value = (songRes?.songs || []).map((item) => ({

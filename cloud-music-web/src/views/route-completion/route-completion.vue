@@ -52,6 +52,7 @@
 
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue';
+import type { ApiRawResponse } from '@/apis/types';
 import { getRequest } from '@/apis/request';
 import contentEnhanceService from '@/apis/content-enhance/content-enhance.service';
 
@@ -81,8 +82,8 @@ const loadSourceList = async () => {
   detailText.value = '点击左侧列表项，用返回的 id 请求详情接口。';
   try {
     if (activeTab.value === 'album') {
-      const res: any = await getRequest('/album/list', { area: 'ALL', limit: 20, offset: 0 });
-      const rows: any[] = res?.products || res?.albums || res?.data || [];
+      const res: ApiRawResponse = await getRequest('/album/list', { area: 'ALL', limit: 20, offset: 0 });
+      const rows: ApiRawResponse[] = res?.products || res?.albums || res?.data || [];
       sourceList.value = rows
         .filter((item) => item.albumId != null || item.id != null)
         .map((item) => ({
@@ -90,8 +91,8 @@ const loadSourceList = async () => {
           name: item.albumName || item.name || '未命名专辑',
         }));
     } else {
-      const res: any = await getRequest('/artist/list', { type: 1, area: -1, limit: 20, offset: 0 });
-      const rows: any[] = res?.artists || res?.data || [];
+      const res: ApiRawResponse = await getRequest('/artist/list', { type: 1, area: -1, limit: 20, offset: 0 });
+      const rows: ApiRawResponse[] = res?.artists || res?.data || [];
       sourceList.value = rows
         .filter((item) => item.id != null)
         .map((item) => ({ id: item.id, name: item.name || '未命名歌手' }));
@@ -107,7 +108,7 @@ const queryDetail = async (item: SourceItem) => {
   activeId.value = item.id;
   loadingDetail.value = true;
   try {
-    const res: any =
+    const res: ApiRawResponse =
       activeTab.value === 'album'
         ? await contentEnhanceService.getAlbumDetailExtra({ id: item.id })
         : await contentEnhanceService.getArtistDetailExtra({ id: item.id });

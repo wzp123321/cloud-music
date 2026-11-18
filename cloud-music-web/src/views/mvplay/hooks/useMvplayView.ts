@@ -1,4 +1,5 @@
 import { sessionManager } from '@/core/session';
+import type { ApiRawResponse } from '@/apis/types';
 import { onMounted, ref, watch } from 'vue';
 
 import { getQueryParam } from '@/core/token';
@@ -67,7 +68,7 @@ export const useMvplayView = () => {
     if (!mvid || !sessionManager.isAlive()) return;
     try {
       const res = await contentEnhanceService.getMvSublist({ limit: 100 });
-      isSubed.value = (res?.data || []).some((item: any) => Number(item.id || item.mvid) === mvid);
+      isSubed.value = (res?.data || []).some((item: ApiRawResponse) => Number(item.id || item.mvid) === mvid);
     } catch {
       isSubed.value = false;
     }

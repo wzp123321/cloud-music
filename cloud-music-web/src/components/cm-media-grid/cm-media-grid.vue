@@ -6,20 +6,20 @@
   >
     <div
       v-for="(item, index) in items"
-      :key="itemKey ? String((item as Record<string, any>)[itemKey]) : index"
+      :key="itemKey ? String((item as Record<string, ApiRawResponse>)[itemKey]) : index"
       class="cm-media-grid--item"
       @click="emit('item-click', item, index)"
     >
       <cm-skeleton
         width="100%"
-        :image-url="(item as Record<string, any>).cover || ''"
+        :image-url="(item as Record<string, ApiRawResponse>).cover || ''"
         :border-radius="'6px'"
       ></cm-skeleton>
-      <p class="cm-media-grid--title" :title="(item as Record<string, any>).title">
-        {{ (item as Record<string, any>).title }}
+      <p class="cm-media-grid--title" :title="(item as Record<string, ApiRawResponse>).title">
+        {{ (item as Record<string, ApiRawResponse>).title }}
       </p>
-      <p v-if="(item as Record<string, any>).subtitle" class="cm-media-grid--sub">
-        {{ (item as Record<string, any>).subtitle }}
+      <p v-if="(item as Record<string, ApiRawResponse>).subtitle" class="cm-media-grid--sub">
+        {{ (item as Record<string, ApiRawResponse>).subtitle }}
       </p>
       <!-- 自定义扩展区，如「id: xxx」等额外文案 -->
       <slot name="extra" :item="item" :index="index"></slot>
@@ -28,10 +28,11 @@
 </template>
 
 <script setup lang="ts">
+import type { ApiRawResponse } from '@/apis/types';
 // 全局组件按文件名注册，cm-skeleton 已在 components 下自动注册，无需 import
 defineProps<{
   /** 卡片数据列表，每项至少含 cover/title，可选 subtitle */
-  items: Record<string, any>[];
+  items: Record<string, ApiRawResponse>[];
   /** 列数，默认 6 */
   cols?: number;
   /** 列间距（px），默认 18 */
@@ -41,7 +42,7 @@ defineProps<{
 }>();
 
 const emit = defineEmits<{
-  (e: 'item-click', item: Record<string, any>, index: number): void;
+  (e: 'item-click', item: Record<string, ApiRawResponse>, index: number): void;
 }>();
 </script>
 

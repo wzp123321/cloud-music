@@ -7,6 +7,7 @@
  *   room_check/status/sync_playlist_get 的 roomId ← room_create 返回或页面输入。
  */
 import type { ApiBlock } from '@/components/cm-api-block/api-block.types';
+import type { ApiRawResponse } from '@/apis/types';
 
 import ugcListentogetherService from '../../apis/ugc-listentogether/ugc-listentogether.service';
 
@@ -17,11 +18,11 @@ export const tabs: { code: string; name: string }[] = [
 ];
 
 const ugcIdInput = { label: 'id（默认取参数池 ugcId，可手动输入）', def: '' };
-const ugcIdParams = (s: Record<string, any>, v: string): Record<string, any> => ({
+const ugcIdParams = (s: Record<string, ApiRawResponse>, v: string): Record<string, ApiRawResponse> => ({
   id: Number(v) || s.ugcId || 0,
 });
 const roomInput = { label: 'roomId（默认取参数池 roomId，可手动输入）', def: '' };
-const roomParams = (s: Record<string, any>, v: string): Record<string, any> => ({
+const roomParams = (s: Record<string, ApiRawResponse>, v: string): Record<string, ApiRawResponse> => ({
   roomId: v || s.roomId || 0,
 });
 

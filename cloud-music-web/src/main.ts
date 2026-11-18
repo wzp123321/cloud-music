@@ -1,4 +1,4 @@
-import { createApp } from 'vue';
+import { createApp, type App as AppInstance } from 'vue';
 import { createPinia } from 'pinia';
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
 import router from './router/index';
@@ -15,7 +15,7 @@ const pinia = createPinia();
 // 播放队列与播放索引由各 store 的 persist 选项负责持久化
 pinia.use(piniaPluginPersistedstate);
 
-const app: any = createApp(App);
+const app: AppInstance = createApp(App);
 registerGlobalComponents(app);
 injectDirective(app);
 app.use(pinia);

@@ -1,4 +1,5 @@
 import { sessionManager } from '@/core/session';
+import type { ApiRawResponse } from '@/apis/types';
 /*
  * @Description: 接口调用台 · 通用状态与请求编排
  * 三个「接口清单」页面（账号资料 / 歌曲互动 / UGC 一起听）结构一致：
@@ -25,7 +26,7 @@ export const useApiConsole = (blocks: ApiBlock[], options: ApiConsoleOptions = {
   const activeTab = ref<string>(options.initialTab ?? blocks[0]?.tab ?? '');
 
   // 参数池：自动收集所有 needs / provides 的 key，值来自上游列表点击项或手动输入
-  const sel = ref<Record<string, any>>({});
+  const sel = ref<Record<string, ApiRawResponse>>({});
   blocks.forEach((block) => {
     if (block.needs) sel.value[block.needs] = 0;
     (block.provides || []).forEach((key) => {
@@ -71,7 +72,7 @@ export const useApiConsole = (blocks: ApiBlock[], options: ApiConsoleOptions = {
     }
 
     const inputVal = inputs.value[block.module] ?? '';
-    let payload: any;
+    let payload: ApiRawResponse;
     if (block.file) {
       // 上传类接口：参数平铺进 FormData
       const formData = new FormData();

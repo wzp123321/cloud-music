@@ -1,4 +1,5 @@
 import { getRequest, postFormRequest } from '@/apis/request';
+import type { ApiRawResponse } from '@/apis/types';
 
 /**
  * P1 6.x 用户与歌单补充（user-playlist-supplement）接口封装。
@@ -13,60 +14,60 @@ import { getRequest, postFormRequest } from '@/apis/request';
  *   在本页仅作为 id 来源，不计入本 change 的 16 个接口。
  */
 
-type Params = Record<string, any>;
+type Params = Record<string, unknown>;
 
 const userSupplementService = {
   //#region 上游列表来源（用于取 id，不属本 change 16 个接口）
   /** 我的云盘：返回 data.list[].songId */
-  getCloudList: (params: Params = {}): Promise<any> => getRequest('/user/cloud', { limit: 30, offset: 0, ...params }),
+  getCloudList: (params: Params = {}): Promise<ApiRawResponse> => getRequest('/user/cloud', { limit: 30, offset: 0, ...params }),
   /** 我的歌单：返回 playlist[].id */
-  getMyPlaylists: (params: Params = {}): Promise<any> => getRequest('/user/playlist', { limit: 30, offset: 0, ...params }),
+  getMyPlaylists: (params: Params = {}): Promise<ApiRawResponse> => getRequest('/user/playlist', { limit: 30, offset: 0, ...params }),
   //#endregion
 
   //#region 6.1 用户补充
   /** 账户信息（需登录只读） */
-  getUserAccount: (params: Params = {}): Promise<any> => getRequest('/user/account', params),
+  getUserAccount: (params: Params = {}): Promise<ApiRawResponse> => getRequest('/user/account', params),
   /** 音频足迹（需登录只读） */
-  getUserAudio: (params: Params = {}): Promise<any> => getRequest('/user/audio', params),
+  getUserAudio: (params: Params = {}): Promise<ApiRawResponse> => getRequest('/user/audio', params),
   /** 电台足迹（需登录只读） */
-  getUserDj: (params: Params = {}): Promise<any> => getRequest('/user/dj', params),
+  getUserDj: (params: Params = {}): Promise<ApiRawResponse> => getRequest('/user/dj', params),
   /** 评论历史（需登录只读） */
-  getUserCommentHistory: (params: Params = {}): Promise<any> => getRequest('/user/comment/history', params),
+  getUserCommentHistory: (params: Params = {}): Promise<ApiRawResponse> => getRequest('/user/comment/history', params),
   /** 换绑手机（写操作） */
-  replacePhone: (params: Params): Promise<any> => getRequest('/user/replacephone', params),
+  replacePhone: (params: Params): Promise<ApiRawResponse> => getRequest('/user/replacephone', params),
   //#endregion
 
   //#region 6.2 云盘
   /** 【上游已失效】/user/cloud/detail 实测 404：方法保留供手动核验，不进主流程自动请求 */
-  getUserCloudDetail: (params: Params = {}): Promise<any> => getRequest('/user/cloud/detail', params),
+  getUserCloudDetail: (params: Params = {}): Promise<ApiRawResponse> => getRequest('/user/cloud/detail', params),
   /** 删除云盘歌曲（写操作） */
-  delUserCloud: (params: Params): Promise<any> => getRequest('/user/cloud/del', params),
+  delUserCloud: (params: Params): Promise<ApiRawResponse> => getRequest('/user/cloud/del', params),
   //#endregion
 
   //#region 6.3 歌单补充
   /** 更新歌单（写操作） */
-  updatePlaylist: (params: Params): Promise<any> => getRequest('/playlist/update', params),
+  updatePlaylist: (params: Params): Promise<ApiRawResponse> => getRequest('/playlist/update', params),
   /** 歌单歌曲增删（写操作） */
-  getPlaylistTracks: (params: Params): Promise<any> => getRequest('/playlist/tracks', params),
+  getPlaylistTracks: (params: Params): Promise<ApiRawResponse> => getRequest('/playlist/tracks', params),
   /** 更新歌单播放量（写操作） */
-  updatePlaylistPlaycount: (params: Params): Promise<any> => getRequest('/playlist/update/playcount', params),
+  updatePlaylistPlaycount: (params: Params): Promise<ApiRawResponse> => getRequest('/playlist/update/playcount', params),
   /** 最近播放视频歌单（只读） */
-  getPlaylistVideoRecent: (params: Params = {}): Promise<any> => getRequest('/playlist/video/recent', params),
+  getPlaylistVideoRecent: (params: Params = {}): Promise<ApiRawResponse> => getRequest('/playlist/video/recent', params),
   /** 更新歌单封面（写操作，multipart 上传） */
-  updatePlaylistCover: (id: number, file: File): Promise<any> => {
+  updatePlaylistCover: (id: number, file: File): Promise<ApiRawResponse> => {
     const formData = new FormData();
     formData.append('id', String(id));
     formData.append('imgFile', file);
     return postFormRequest('/playlist/cover/update', formData);
   },
   /** 更新歌单描述（写操作） */
-  updatePlaylistDesc: (params: Params): Promise<any> => getRequest('/playlist/desc/update', params),
+  updatePlaylistDesc: (params: Params): Promise<ApiRawResponse> => getRequest('/playlist/desc/update', params),
   /** 更新歌单标签（写操作） */
-  updatePlaylistTags: (params: Params): Promise<any> => getRequest('/playlist/tags/update', params),
+  updatePlaylistTags: (params: Params): Promise<ApiRawResponse> => getRequest('/playlist/tags/update', params),
   /** 调整歌单顺序（写操作） */
-  updatePlaylistOrder: (params: Params): Promise<any> => getRequest('/playlist/order/update', params),
+  updatePlaylistOrder: (params: Params): Promise<ApiRawResponse> => getRequest('/playlist/order/update', params),
   /** 设置歌单隐私（写操作） */
-  updatePlaylistPrivacy: (params: Params): Promise<any> => getRequest('/playlist/privacy', params),
+  updatePlaylistPrivacy: (params: Params): Promise<ApiRawResponse> => getRequest('/playlist/privacy', params),
   //#endregion
 };
 

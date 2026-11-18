@@ -1,5 +1,8 @@
 <template>
-  <api-console-page title="个性化发现与风格分类" :blocks="blocks" :tabs="tabs"
+  <api-console-page
+    title="个性化发现与风格分类"
+    :blocks="blocks"
+    :tabs="tabs"
     root-class="discovery"
   >
     <template #intro>

@@ -3,6 +3,7 @@
  * 区块渲染交给 cm-api-block，请求编排交给 useApiConsole；本文件只描述接口与参数链路
  */
 import type { ApiBlock } from '@/components/cm-api-block/api-block.types';
+import type { ApiRawResponse } from '@/apis/types';
 
 import fanscenterDigitalalbumService from '../../apis/fanscenter-digitalalbum/fanscenter-digitalalbum.service';
 
@@ -19,7 +20,7 @@ export const tabs: { code: string; name: string }[] = [
 // 参数来源：detail/sales/ordering 的 id ← digitalAlbum_purchased 返回或页面输入。
 
 const albumIdInput = { label: '专辑 id（默认取参数池 albumId，可手动输入；detail/sales 需有效 id）', def: '' };
-const albumIdParams = (s: Record<string, any>, v: string): Record<string, any> => ({
+const albumIdParams = (s: Record<string, ApiRawResponse>, v: string): Record<string, ApiRawResponse> => ({
   id: Number(v) || s.albumId || 0,
 });
 

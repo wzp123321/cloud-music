@@ -63,6 +63,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
+import type { ApiRawResponse } from '@/apis/types';
 
 import { pretty } from './api-block.util';
 import { defaultKindLabels, type ApiBlock, type BlockCard, type BlockState } from './api-block.types';
@@ -79,7 +80,7 @@ const props = defineProps<{
   /** 该区块的请求态 */
   state: BlockState;
   /** 全局参数池，透传用于展示当前上游 id */
-  sel: Record<string, any>;
+  sel: Record<string, ApiRawResponse>;
   /** 该区块输入框的值 */
   inputValue: string;
   /** 区块类型文案，页面可按业务改写（如账号动作类） */

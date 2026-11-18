@@ -1,4 +1,5 @@
 import { onMounted, ref } from 'vue';
+import type { ApiRawResponse } from '@/apis/types';
 import {
   getPlaylistCatlist,
   getPlaylistHot,
@@ -57,10 +58,10 @@ export const usePlaylistView = () => {
       }
 
       const hotTagsRaw = hotRes?.tags || hotRes?.data || [];
-      hotTags.value = hotTagsRaw.map((t: any) => ({ name: t.name }));
+      hotTags.value = hotTagsRaw.map((t: ApiRawResponse) => ({ name: t.name }));
 
       const hqTagsRaw = hqRes?.tags || [];
-      hqTags.value = hqTagsRaw.map((t: any) => ({ name: t.name }));
+      hqTags.value = hqTagsRaw.map((t: ApiRawResponse) => ({ name: t.name }));
     } catch {
       // 分类接口异常不影响精品列表
     } finally {

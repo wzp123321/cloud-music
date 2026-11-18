@@ -1,4 +1,5 @@
 import { ref, watch } from 'vue';
+import type { ApiRawResponse } from '@/apis/types';
 
 import { usePlayListDetail } from './usePlayListDetail';
 import { PD_PlaylistDetail } from '../../../../apis/playlist-detail/index.api';
@@ -67,7 +68,7 @@ export const usePlaylistDetailView = () => {
     comments: [],
     hotComments: [],
   });
-  const dynamic = ref<any>(null);
+  const dynamic = ref<ApiRawResponse>(null);
 
   const addVisible = ref(false);
   const addSongIds = ref('');

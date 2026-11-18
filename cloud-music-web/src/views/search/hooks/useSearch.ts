@@ -1,5 +1,6 @@
 // 搜索服务
 import { ref } from 'vue';
+import type { ApiRawResponse } from '@/apis/types';
 
 import message from '@/utils/message';
 import { getQueryParam } from '@/core/token';
@@ -54,7 +55,7 @@ const create = () => {
       if (mySeq !== seq) return;
       switch (requestType) {
         case SearchType.单曲:
-          songs.value = res?.result?.songs?.map((item: any) => {
+          songs.value = res?.result?.songs?.map((item: ApiRawResponse) => {
             return {
               dt: item?.duration,
               url: '',
@@ -67,12 +68,12 @@ const create = () => {
           });
           break;
         case SearchType.专辑:
-          albums.value = res?.result?.albums?.map((item: any) => {
+          albums.value = res?.result?.albums?.map((item: ApiRawResponse) => {
             return {
               title: item?.name ?? '',
               artist:
                 item?.artists
-                  ?.map((childItem: any) => {
+                  ?.map((childItem: ApiRawResponse) => {
                     return childItem?.name;
                   })
                   ?.join('，') ?? '',

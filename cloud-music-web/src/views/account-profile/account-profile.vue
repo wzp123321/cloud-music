@@ -1,5 +1,8 @@
 <template>
-  <api-console-page title="账号资料" :blocks="blocks" :tabs="tabs"
+  <api-console-page
+    title="账号资料"
+    :blocks="blocks"
+    :tabs="tabs"
     :kind-labels="kindLabels"
   >
     <template #intro>

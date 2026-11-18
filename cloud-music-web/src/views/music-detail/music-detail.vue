@@ -126,6 +126,7 @@
 
 <script lang="ts" setup>
 import { computed, ref, watch } from 'vue';
+import type { ApiRawResponse } from '@/apis/types';
 import { useRoute, useRouter } from 'vue-router';
 import { ElSlider } from 'element-plus';
 
@@ -143,7 +144,7 @@ const showLyric = ref(true);
 const lyricsBox = ref<HTMLElement | null>(null);
 const lineEls: HTMLElement[] = [];
 
-const setLineRef = (el: any, i: number) => {
+const setLineRef = (el: ApiRawResponse, i: number) => {
   if (el) lineEls[i] = el as HTMLElement;
 };
 

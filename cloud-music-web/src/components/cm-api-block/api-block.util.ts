@@ -3,6 +3,7 @@
  * 接口返回结构五花八门（res.data / res.result / res.xxx），这里统一捞出第一个数组并映射成卡片
  */
 import type { BlockCard } from './api-block.types';
+import type { ApiRawResponse } from '@/apis/types';
 import { pickListBfs, prettyJson } from '@/utils/api-normalize';
 
 /** 常见列表字段名，按优先级探测（取各接口并集，命中即返回） */
@@ -41,9 +42,9 @@ const listKeys = [
 ];
 
 /** 在响应体（含 data / result / 任意嵌套）中找出第一个数组作为列表 */
-export const pickList = (res: any): any[] => pickListBfs(res, listKeys);
+export const pickList = (res: ApiRawResponse): ApiRawResponse[] => pickListBfs(res, listKeys);
 
-const pickId = (raw: any, index: number): any => {
+const pickId = (raw: ApiRawResponse, index: number): ApiRawResponse => {
   const r = raw ?? {};
   return (
     r.id ??
@@ -68,7 +69,7 @@ const pickId = (raw: any, index: number): any => {
   );
 };
 
-const pickTitle = (raw: any, index: number): string => {
+const pickTitle = (raw: ApiRawResponse, index: number): string => {
   const r = raw ?? {};
   const t =
     r.name ??
@@ -89,7 +90,7 @@ const pickTitle = (raw: any, index: number): string => {
   return String(t ?? `条目 ${index + 1}`);
 };
 
-const pickCover = (raw: any): string => {
+const pickCover = (raw: ApiRawResponse): string => {
   const r = raw ?? {};
   return String(
     r.cover ??
@@ -109,7 +110,7 @@ const pickCover = (raw: any): string => {
   );
 };
 
-const pickSubtitle = (raw: any): string => {
+const pickSubtitle = (raw: ApiRawResponse): string => {
   const r = raw ?? {};
   const artist =
     r.artistName ??
@@ -128,7 +129,7 @@ const pickSubtitle = (raw: any): string => {
 };
 
 /** 统一归一为 { id, title, cover, subtitle } 再渲染，最多 30 条 */
-export const normalize = (res: any): BlockCard[] => {
+export const normalize = (res: ApiRawResponse): BlockCard[] => {
   return pickList(res)
     .slice(0, 30)
     .map((raw, index) => ({
@@ -150,11 +151,11 @@ export const pretty = prettyJson;
 export const captureProvided = (
   provides: string[] | undefined,
   cards: BlockCard[],
-  raw: any,
-  sel: Record<string, any>,
+  raw: ApiRawResponse,
+  sel: Record<string, ApiRawResponse>,
 ): void => {
   if (!provides || !provides.length) return;
-  let id: any = cards.length ? cards[0].id : undefined;
+  let id: ApiRawResponse = cards.length ? cards[0].id : undefined;
   if (id == null) {
     const r = raw ?? {};
     id =

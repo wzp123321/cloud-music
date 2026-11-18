@@ -1,4 +1,5 @@
 import { useSingletonStore } from "@/store/singletons";
+import type { ApiRawResponse } from '@/apis/types';
 import { ref } from 'vue';
 
 import { menus as menuTabs } from '../constant/index';
@@ -104,7 +105,7 @@ const create = () => {
         const list: SE_SuggestItem[] = [];
         order.forEach((key) => {
           const items = result[key] ?? [];
-          items.forEach((item: any) => {
+          items.forEach((item: ApiRawResponse) => {
             const text = item?.keyword ?? item?.name ?? item?.searchWord ?? '';
             if (text) {
               list.push({ keyword: String(text), type: mapSuggestType(key) });
