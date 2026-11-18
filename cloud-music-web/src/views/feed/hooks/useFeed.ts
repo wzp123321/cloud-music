@@ -1,12 +1,42 @@
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import type { ApiRawResponse } from '@/apis/types';
 
-
+import { useApiConsoleGuard } from '@/composables/useApiConsoleGuard';
 import feedService from '@/apis/feed/feed.service';
 import { extractObject, extractListByCandidates, type ApiCard } from '@/utils/api-normalize';
 import { sessionManager } from '@/core/session';
 
 type CardItem = ApiCard;
+
+export type FeedBlockKind = 'read' | 'login-read' | 'write';
+
+/** 输入框描述符只保存访问器：值仍读写原 ref，避免模板里嵌套 ref 的拆包歧义 */
+export interface FeedBlockInput {
+  label: string;
+  placeholder: string;
+  get: () => string;
+  set: (value: string) => void;
+}
+
+export interface FeedBlockList {
+  getItems: () => CardItem[];
+  emptyText: string;
+  onItemClick?: (item: CardItem) => void;
+  showCount?: boolean;
+  showId?: boolean;
+}
+
+export interface FeedBlock {
+  module: string;
+  name: string;
+  tab: string;
+  kind: FeedBlockKind;
+  wide?: boolean;
+  buttonText: string;
+  run: () => void | Promise<void>;
+  inputs?: FeedBlockInput[];
+  list?: FeedBlockList;
+}
 
 /**
  * 动态流 · 话题 · 相关推荐（P1 5.1~5.3）调试台的数据与交互编排。
@@ -24,6 +54,8 @@ export const useFeed = () => {
   const activeTab = ref<string>('c5_1');
   const toast = ref<string>('');
   const writeResult = ref<string>('');
+
+  const { requireLogin, writeGuard } = useApiConsoleGuard(hasLogin, toast);
 
   const eventList = ref<CardItem[]>([]);
   const eventDelId = ref<string>('');
@@ -91,28 +123,6 @@ export const useFeed = () => {
   const pickActid = (raw: ApiRawResponse): number => {
     const r = raw || {};
     return Number(r.actid ?? r.actId ?? r.id ?? r.topicId ?? r.activityId ?? 0) || 0;
-  };
-
-  /** 需登录只读：未登录降级提示，不请求 */
-  const requireLogin = (): boolean => {
-    if (!hasLogin.value) {
-      toast.value = '该接口需要登录后才能查看（已降级，不发请求）';
-      return false;
-    }
-    return true;
-  };
-
-  /** 写操作：未登录降级不发请求 + 二次确认 */
-  const writeGuard = (confirmText: string): boolean => {
-    if (!hasLogin.value) {
-      toast.value = '请先登录后再执行该写操作（已降级，不发请求）';
-      return false;
-    }
-    if (!window.confirm(confirmText)) {
-      toast.value = '已取消操作';
-      return false;
-    }
-    return true;
   };
 
   const runWrite = async (label: string, fn: () => Promise<ApiRawResponse>) => {
@@ -240,6 +250,187 @@ export const useFeed = () => {
     }
   };
 
+  /** 9 个区块的展示描述，run / 访问器都指向上面既有的调用点与 ref，字段映射不变 */
+  const blocks: FeedBlock[] = [
+    {
+      module: 'event',
+      name: '动态列表（需登录）',
+      tab: 'c5_1',
+      kind: 'login-read',
+      wide: true,
+      buttonText: '加载动态',
+      run: loadEvent,
+      list: {
+        getItems: () => eventList.value,
+        emptyText: '暂无动态数据或接口返回为空',
+        onItemClick: onEventClick,
+        showCount: true,
+        showId: true,
+      },
+    },
+    {
+      module: 'event_del',
+      name: '删除动态（写操作）',
+      tab: 'c5_1',
+      kind: 'write',
+      buttonText: '删除动态',
+      run: doDelEvent,
+      inputs: [
+        {
+          label: '动态 id',
+          placeholder: '点选上方动态自动填入，或手填',
+          get: () => eventDelId.value,
+          set: (value) => (eventDelId.value = value),
+        },
+      ],
+    },
+    {
+      module: 'event_forward',
+      name: '转发动态（写操作）',
+      tab: 'c5_1',
+      kind: 'write',
+      buttonText: '转发动态',
+      run: doForwardEvent,
+      inputs: [
+        {
+          label: '动态 id',
+          placeholder: '点选上方动态自动填入，或手填',
+          get: () => eventForwardId.value,
+          set: (value) => (eventForwardId.value = value),
+        },
+        {
+          label: '转发给 uid',
+          placeholder: '可选',
+          get: () => eventForwardUid.value,
+          set: (value) => (eventForwardUid.value = value),
+        },
+        {
+          label: '转发文案',
+          placeholder: '可选',
+          get: () => eventForwardMsg.value,
+          set: (value) => (eventForwardMsg.value = value),
+        },
+      ],
+    },
+    {
+      module: 'hot_topic',
+      name: '热门话题（独立调用点）',
+      tab: 'c5_2',
+      kind: 'read',
+      wide: true,
+      buttonText: '加载热门话题',
+      run: loadHotTopic,
+      list: {
+        getItems: () => hotTopicList.value,
+        emptyText: '暂无热门话题或接口返回为空',
+        onItemClick: onHotTopicClick,
+        showCount: true,
+        showId: true,
+      },
+    },
+    {
+      module: 'topic_detail',
+      name: '话题详情（actid ← hot_topic 点选或手填）',
+      tab: 'c5_2',
+      kind: 'read',
+      buttonText: '查看话题详情',
+      run: loadTopicDetail,
+      inputs: [
+        {
+          label: 'actid',
+          placeholder: '点选热门话题自动填入，或手填',
+          get: () => topicActid.value,
+          set: (value) => (topicActid.value = value),
+        },
+      ],
+      list: {
+        getItems: () => topicDetailList.value,
+        emptyText: '暂无话题详情',
+      },
+    },
+    {
+      module: 'topic_detail_event_hot',
+      name: '话题热门动态（actid ← hot_topic 点选或手填）',
+      tab: 'c5_2',
+      kind: 'read',
+      buttonText: '查看话题热门动态',
+      run: loadTopicHotEvent,
+      inputs: [
+        {
+          label: 'actid',
+          placeholder: '与话题详情共享 actid',
+          get: () => topicActid.value,
+          set: (value) => (topicActid.value = value),
+        },
+      ],
+      list: {
+        getItems: () => topicHotList.value,
+        emptyText: '暂无话题热门动态',
+      },
+    },
+    {
+      module: 'topic_sublist',
+      name: '已订阅话题（需登录）',
+      tab: 'c5_2',
+      kind: 'login-read',
+      wide: true,
+      buttonText: '加载已订阅话题',
+      run: loadTopicSublist,
+      list: {
+        getItems: () => topicSubList.value,
+        emptyText: '暂无订阅话题或接口返回为空',
+        onItemClick: onHotTopicClick,
+        showCount: true,
+      },
+    },
+    {
+      module: 'related_allvideo',
+      name: '相关视频',
+      tab: 'c5_3',
+      kind: 'read',
+      buttonText: '查看相关视频',
+      run: loadRelatedAllvideo,
+      inputs: [
+        {
+          label: '资源 id',
+          placeholder: '视频 / 资源 id',
+          get: () => relatedVideoId.value,
+          set: (value) => (relatedVideoId.value = value),
+        },
+      ],
+      list: {
+        getItems: () => relatedVideoList.value,
+        emptyText: '暂无相关视频',
+      },
+    },
+    {
+      module: 'related_playlist',
+      name: '相关歌单',
+      tab: 'c5_3',
+      kind: 'read',
+      buttonText: '查看相关歌单',
+      run: loadRelatedPlaylist,
+      inputs: [
+        {
+          label: '歌单 id',
+          placeholder: '歌单 id',
+          get: () => relatedPlaylistId.value,
+          set: (value) => (relatedPlaylistId.value = value),
+        },
+      ],
+      list: {
+        getItems: () => relatedPlaylistList.value,
+        emptyText: '暂无相关歌单',
+      },
+    },
+  ];
+
+  const visibleBlocks = computed(() => blocks.filter((block) => block.tab === activeTab.value));
+
+  const onBlockInput = (input: FeedBlockInput, e: Event) => {
+    input.set((e.target as HTMLInputElement).value);
+  };
+
   /** 仅加载读取型接口：hot_topic 独立调用点 + event（登录时）；写操作绝不在此调用 */
   onMounted(() => {
     loadHotTopic();
@@ -266,8 +457,10 @@ export const useFeed = () => {
     relatedVideoList,
     relatedPlaylistId,
     relatedPlaylistList,
+    visibleBlocks,
     setActiveTab,
     clearToast,
+    onBlockInput,
     loadEvent,
     onEventClick,
     doDelEvent,

@@ -145,7 +145,7 @@ const router = useRouter();
     .name {
       max-width: 100%;
       font-size: 13px;
-      color: #333;
+      color: var(--color-text-primary);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;

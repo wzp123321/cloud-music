@@ -46,14 +46,14 @@ const formatPlayCount = (count: number) => {
     align-items: baseline;
     font-size: 18px;
     font-weight: 600;
-    color: #333;
+    color: var(--color-text-primary);
     margin-bottom: 16px;
 
     .up-count {
       margin-left: 8px;
       font-size: 13px;
       font-weight: 400;
-      color: #999;
+      color: var(--color-text-secondary);
     }
   }
 
@@ -94,7 +94,7 @@ const formatPlayCount = (count: number) => {
     .up-card-name {
       margin-top: 8px;
       font-size: 13px;
-      color: #333;
+      color: var(--color-text-primary);
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -104,7 +104,7 @@ const formatPlayCount = (count: number) => {
   .up-empty {
     padding: 40px 0;
     text-align: center;
-    color: #999;
+    color: var(--color-text-secondary);
     font-size: 14px;
   }
 }

@@ -55,20 +55,20 @@ const onSwitch = (t: number) => {
     .up-block-title {
       font-size: 18px;
       font-weight: 600;
-      color: #333;
+      color: var(--color-text-primary);
     }
 
     .up-record-switch {
       display: flex;
       gap: 16px;
       font-size: 13px;
-      color: #999;
+      color: var(--color-text-secondary);
 
       span {
         cursor: pointer;
 
         &.active {
-          color: #c20c0c;
+          color: var(--color-primary);
           font-weight: 600;
         }
       }
@@ -88,7 +88,7 @@ const onSwitch = (t: number) => {
     .up-rank {
       width: 28px;
       text-align: center;
-      color: #c20c0c;
+      color: var(--color-primary);
       font-weight: 600;
     }
 
@@ -106,13 +106,13 @@ const onSwitch = (t: number) => {
 
       .up-rec-name {
         font-size: 14px;
-        color: #333;
+        color: var(--color-text-primary);
       }
 
       .up-rec-artist {
         margin-top: 4px;
         font-size: 12px;
-        color: #999;
+        color: var(--color-text-secondary);
       }
     }
 
@@ -125,7 +125,7 @@ const onSwitch = (t: number) => {
   .up-empty {
     padding: 40px 0;
     text-align: center;
-    color: #999;
+    color: var(--color-text-secondary);
   }
 }
 </style>

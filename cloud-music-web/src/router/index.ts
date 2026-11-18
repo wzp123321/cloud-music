@@ -7,7 +7,7 @@ import message from '@/utils/message';
  *
  * 约定：`router/modules/{moduleName}.ts` 默认导出 `RouteRecordRaw[]`。
  * 新增模块只需在同目录新建文件，无需改动本文件。
- * 注册顺序按文件名升序，保证多次构建结果稳定（各路由 path 均为静态字面量，顺序不影响匹配）。
+ * 注册顺序按文件名升序，保证多次构建结果稳定（通配路由由 Vue Router 按权重降级匹配，顺序不影响结果）。
  */
 const modules = import.meta.glob<{ default: RouteRecordRaw[] }>('./modules/*.ts', {
   eager: true,

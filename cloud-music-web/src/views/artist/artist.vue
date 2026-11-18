@@ -132,7 +132,7 @@ const {
 
   &--filter-label {
     font-size: 13px;
-    color: #999;
+    color: var(--color-text-secondary);
     margin-right: 4px;
   }
 
@@ -141,13 +141,13 @@ const {
     border: none;
     border-radius: 12px;
     background: rgba(0, 0, 0, 0.04);
-    color: #666;
+    color: var(--color-text-secondary);
     font-size: 13px;
     cursor: pointer;
 
     &.active {
       color: #fff;
-      background: var(--color-primary, #c20c0c);
+      background: var(--color-primary);
     }
   }
 
@@ -161,14 +161,14 @@ const {
   &--heading {
     font-size: 20px;
     font-weight: 600;
-    color: #333;
+    color: var(--color-text-primary);
   }
 
   &--status,
   &--tip {
     margin-top: 16px;
     font-size: 13px;
-    color: #999;
+    color: var(--color-text-secondary);
   }
 
   &--grid {
@@ -188,14 +188,14 @@ const {
     }
 
     &:hover .artist--name {
-      color: var(--color-primary, #c20c0c);
+      color: var(--color-primary);
     }
   }
 
   &--name {
     margin-top: 10px;
     font-size: 14px;
-    color: #333;
+    color: var(--color-text-primary);
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -204,7 +204,7 @@ const {
   &--sub {
     margin-top: 4px;
     font-size: 12px;
-    color: #999;
+    color: var(--color-text-secondary);
   }
 
   &--chips {
@@ -217,7 +217,7 @@ const {
       padding: 5px 14px;
       border-radius: 14px;
       background: rgba(0, 0, 0, 0.04);
-      color: #666;
+      color: var(--color-text-secondary);
       font-size: 13px;
       cursor: pointer;
     }
@@ -243,12 +243,12 @@ const {
 
   &--list-index {
     width: 40px;
-    color: #999;
+    color: var(--color-text-secondary);
   }
 
   &--list-name {
     flex: 2;
-    color: #333;
+    color: var(--color-text-primary);
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -256,7 +256,7 @@ const {
 
   &--list-sub {
     flex: 1;
-    color: #999;
+    color: var(--color-text-secondary);
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;

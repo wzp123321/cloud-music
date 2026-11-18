@@ -68,7 +68,7 @@ const emit = defineEmits<{
   &--title {
     margin-top: 8px;
     font-size: 13px;
-    color: #333;
+    color: var(--color-text-primary);
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -77,7 +77,7 @@ const emit = defineEmits<{
   &--sub {
     margin-top: 4px;
     font-size: 11px;
-    color: #999;
+    color: var(--color-text-secondary);
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;

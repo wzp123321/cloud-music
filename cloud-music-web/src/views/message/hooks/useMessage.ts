@@ -2,7 +2,7 @@ import { sessionManager } from '@/core/session';
 import type { ApiRawResponse } from '@/apis/types';
 import { onMounted, ref } from 'vue';
 
-
+import { useApiConsoleGuard } from '@/composables/useApiConsoleGuard';
 import messageService from '@/apis/message/message.service';
 import { extractObject, extractListByCandidates, type ApiCard } from '@/utils/api-normalize';
 
@@ -33,6 +33,8 @@ export const useMessage = () => {
   const activeTab = ref<string>('c4_1');
   const toast = ref<string>('');
   const writeResult = ref<string>('');
+
+  const { requireLogin, writeGuard } = useApiConsoleGuard(hasLogin, toast);
 
   const msgLists = ref<Record<string, CardItem[]>>({
     comments: [],
@@ -120,28 +122,6 @@ export const useMessage = () => {
   const pickResourceId = (raw: ApiRawResponse): number => {
     const r = raw || {};
     return Number(r.resourceId ?? r.id ?? r.threadId ?? 0) || 0;
-  };
-
-  /** 需登录只读接口：未登录降级提示，不请求 */
-  const requireLogin = (): boolean => {
-    if (!hasLogin.value) {
-      toast.value = '该接口需要登录后才能查看（已降级，不发请求）';
-      return false;
-    }
-    return true;
-  };
-
-  /** 写操作前置：未登录降级不发请求；用户点击后二次确认 */
-  const writeGuard = (confirmText: string): boolean => {
-    if (!hasLogin.value) {
-      toast.value = '请先登录后再执行该写操作（已降级，不发请求）';
-      return false;
-    }
-    if (!window.confirm(confirmText)) {
-      toast.value = '已取消操作';
-      return false;
-    }
-    return true;
   };
 
   /** 写操作统一包装：confirm + try/catch + 失败给空值 + 展示多结构返回 */

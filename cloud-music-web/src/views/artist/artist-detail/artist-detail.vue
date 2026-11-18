@@ -65,7 +65,7 @@
     <div
       v-show="selectedCode ===  navs[0].code  && ! itemLoading  && ! isError"
     >
-      <cm-table :data-source="songs"></cm-table>
+      <cm-table :data-source="songs" empty-text="该歌手暂无歌曲"></cm-table>
 
       <!-- 热门 50 首 / 全部歌曲：artist_top_song、artist_songs -->
       <div class="artist-detail--enhance mt36">
@@ -263,14 +263,14 @@ init();
 
     label,
     span {
-      color: #999;
+      color: var(--color-text-secondary);
       font-size: 18px;
       font-weight: 300;
       line-height: 25px;
     }
 
     span.count-value {
-      color: #666;
+      color: var(--color-text-secondary);
     }
 
     .desc {
@@ -336,16 +336,16 @@ init();
 
 .artist-detail--follow-btn {
   padding: 6px 18px;
-  border: 1px solid var(--color-primary, #c20c0c);
+  border: 1px solid var(--color-primary);
   border-radius: 18px;
-  background: var(--color-primary, #c20c0c);
+  background: var(--color-primary);
   color: #fff;
   font-size: 14px;
   cursor: pointer;
 
   &.followed {
     background: transparent;
-    color: var(--color-primary, #c20c0c);
+    color: var(--color-primary);
   }
 
   &:disabled {
@@ -356,7 +356,7 @@ init();
 
 .artist-detail--tip {
   font-size: 12px;
-  color: #999;
+  color: var(--color-text-secondary);
 }
 
 .artist-detail--enhance {
@@ -381,13 +381,13 @@ init();
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 14px;
   background: transparent;
-  color: #666;
+  color: var(--color-text-secondary);
   font-size: 13px;
   cursor: pointer;
 
   &.active {
-    border-color: var(--color-primary, #c20c0c);
-    color: var(--color-primary, #c20c0c);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
   }
 }
 
@@ -404,12 +404,12 @@ init();
 
 .artist-detail--song-index {
   width: 40px;
-  color: #999;
+  color: var(--color-text-secondary);
 }
 
 .artist-detail--song-name {
   flex: 2;
-  color: #333;
+  color: var(--color-text-primary);
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -417,7 +417,7 @@ init();
 
 .artist-detail--song-sub {
   flex: 1;
-  color: #999;
+  color: var(--color-text-secondary);
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -444,7 +444,7 @@ init();
   p {
     margin-top: 6px;
     font-size: 12px;
-    color: #666;
+    color: var(--color-text-secondary);
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -469,7 +469,7 @@ init();
 .artist-detail--video-name {
   margin-top: 8px;
   font-size: 14px;
-  color: #333;
+  color: var(--color-text-primary);
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -478,7 +478,7 @@ init();
 .artist-detail--video-sub {
   margin-top: 4px;
   font-size: 12px;
-  color: #999;
+  color: var(--color-text-secondary);
 }
 
 </style>

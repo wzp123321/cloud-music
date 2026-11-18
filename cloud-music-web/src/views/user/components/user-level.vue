@@ -94,7 +94,7 @@ const subItems = computed(() => {
         .up-progress-inner {
           height: 100%;
           border-radius: 4px;
-          background: linear-gradient(90deg, #ff6a6a, #c20c0c);
+          background: linear-gradient(90deg, #ff6a6a, var(--color-primary));
         }
       }
 
@@ -114,20 +114,20 @@ const subItems = computed(() => {
     .up-sub-item {
       text-align: center;
       padding: 16px 0;
-      background: #fff;
+      background: var(--color-default);
       border-radius: 8px;
       box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
 
       .up-sub-num {
         font-size: 20px;
         font-weight: 600;
-        color: #333;
+        color: var(--color-text-primary);
       }
 
       .up-sub-label {
         margin-top: 4px;
         font-size: 12px;
-        color: #999;
+        color: var(--color-text-secondary);
       }
     }
   }

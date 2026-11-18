@@ -128,9 +128,9 @@ const {
       .mp-data--sub-btn {
         margin-left: 20px;
         padding: 5px 16px;
-        border: 1px solid var(--color-primary, #c20c0c);
+        border: 1px solid var(--color-primary);
         border-radius: 16px;
-        background: var(--color-primary, #c20c0c);
+        background: var(--color-primary);
         color: #fff;
         font-size: 13px;
         cursor: pointer;

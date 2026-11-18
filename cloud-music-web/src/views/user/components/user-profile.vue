@@ -42,13 +42,13 @@ defineEmits<{
   width: 100%;
   border-radius: 8px;
   overflow: hidden;
-  background: #fff;
+  background: var(--color-default);
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
 
   .up-cover {
     width: 100%;
     height: 160px;
-    background: linear-gradient(135deg, #c20c0c, #ff6a6a);
+    background: linear-gradient(135deg, var(--color-primary), #ff6a6a);
 
     .up-bg {
       width: 100%;
@@ -79,7 +79,7 @@ defineEmits<{
         .up-nick {
           font-size: 22px;
           font-weight: 600;
-          color: #333;
+          color: var(--color-text-primary);
         }
 
         .el-tag {
@@ -94,7 +94,7 @@ defineEmits<{
       .up-sign {
         margin-top: 8px;
         font-size: 13px;
-        color: #888;
+        color: var(--color-text-secondary);
       }
 
       .up-stats {
@@ -102,13 +102,13 @@ defineEmits<{
         display: flex;
         gap: 24px;
         font-size: 13px;
-        color: #666;
+        color: var(--color-text-secondary);
 
         span {
           cursor: pointer;
 
           &:hover {
-            color: #c20c0c;
+            color: var(--color-primary);
           }
         }
       }

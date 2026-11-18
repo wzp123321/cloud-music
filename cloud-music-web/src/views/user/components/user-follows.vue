@@ -69,13 +69,13 @@ onMounted(() => {
     span {
       cursor: pointer;
       font-size: 15px;
-      color: #666;
+      color: var(--color-text-secondary);
       padding-bottom: 10px;
 
       &.active {
-        color: #c20c0c;
+        color: var(--color-primary);
         font-weight: 600;
-        border-bottom: 2px solid #c20c0c;
+        border-bottom: 2px solid var(--color-primary);
       }
     }
   }
@@ -97,13 +97,13 @@ onMounted(() => {
 
       .up-item-name {
         font-size: 14px;
-        color: #333;
+        color: var(--color-text-primary);
       }
 
       .up-item-sign {
         margin-top: 4px;
         font-size: 12px;
-        color: #999;
+        color: var(--color-text-secondary);
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -115,7 +115,7 @@ onMounted(() => {
   .up-empty {
     padding: 40px 0;
     text-align: center;
-    color: #999;
+    color: var(--color-text-secondary);
   }
 }
 </style>

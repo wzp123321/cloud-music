@@ -66,6 +66,12 @@
           </template>
         </div>
       </div>
+      <cm-icon
+        name="icon-shezhi"
+        class="header-setting"
+        title="设置与快捷键（?）"
+        @click="setting.openPanel()"
+      ></cm-icon>
       <div v-if="!userInfo?.profile?.nickname" class="header-username font14 ml16" @click="handleLoginDialogShow">
         登录/注册
       </div>
@@ -88,6 +94,7 @@
   </div>
 
   <login-form></login-form>
+  <cm-settings></cm-settings>
 </div>
 
 </template>
@@ -96,8 +103,12 @@
 import { ElPopover } from 'element-plus';
 import LoginForm from './header-loginform/header-loginform.vue';
 import { useHeaderView } from './hooks/useHeaderView';
+import CmSettings from '@/components/cm-settings/cm-settings.vue';
+import { useSettingStore } from '@/store/setting';
 
 defineOptions({ name: 'AppHeader' });
+
+const setting = useSettingStore();
 
 const {
   menus,
@@ -136,6 +147,18 @@ const {
     padding-left: 24px;
     padding-right: 24px;
 
+    .header-setting {
+      margin-left: 16px;
+      font-size: 18px;
+      color: var(--color-text-secondary);
+      cursor: pointer;
+      transition: color 233ms;
+
+      &:hover {
+        color: var(--color-primary);
+      }
+    }
+
     .header-tabs {
       li {
         cursor: pointer;
@@ -151,7 +174,7 @@ const {
       }
 
       li.active {
-        background-color: #c20c0c;
+        background-color: var(--color-primary);
         color: #fff;
         font-weight: 600;
       }
@@ -177,7 +200,7 @@ const {
         color: var(--color-text-title);
 
         &:focus {
-          background: #fff;
+          background: var(--color-default);
           border-color: rgba(194, 12, 12, 0.45);
         }
       }
@@ -192,7 +215,7 @@ const {
         overflow-y: auto;
         padding: 8px 0;
         border-radius: 8px;
-        background: #fff;
+        background: var(--color-default);
         box-shadow: 0 6px 24px rgba(0, 0, 0, 0.14);
 
         .panel-title {

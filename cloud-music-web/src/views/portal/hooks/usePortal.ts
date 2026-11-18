@@ -366,34 +366,18 @@ const create = () => {
   };
   //#endregion
   //#region 推荐流跳转
-  const linkToPlaylist = (id?: number | string) => {
+  /** 六个带 id 的跳转仅路由与 query key 不同，统一在此降级并携带参数 */
+  const goDetail = (path: string, key: string, id?: number | string) => {
     if (id == null) {
       message.info('该内容暂无详情信息');
       return;
     }
-    router.push({ path: '/playlist_detail', query: { id: String(id) } });
+    router.push({ path, query: { [key]: String(id) } });
   };
-  const linkToSong = (id?: number | string) => {
-    if (id == null) {
-      message.info('该内容暂无详情信息');
-      return;
-    }
-    router.push({ path: '/music_detail', query: { id: String(id) } });
-  };
-  const linkToMv = (id?: number | string) => {
-    if (id == null) {
-      message.info('该内容暂无详情信息');
-      return;
-    }
-    router.push({ path: '/mvplay', query: { mvid: String(id) } });
-  };
-  const linkToAlbum = (id?: number | string) => {
-    if (id == null) {
-      message.info('该内容暂无详情信息');
-      return;
-    }
-    router.push({ path: '/album_detail', query: { id: String(id) } });
-  };
+  const linkToPlaylist = (id?: number | string) => goDetail('/playlist_detail', 'id', id);
+  const linkToSong = (id?: number | string) => goDetail('/music_detail', 'id', id);
+  const linkToMv = (id?: number | string) => goDetail('/mvplay', 'mvid', id);
+  const linkToAlbum = (id?: number | string) => goDetail('/album_detail', 'id', id);
   const linkToDailyRecommend = () => {
     router.push({ path: '/daily_recommend' });
   };
@@ -412,20 +396,8 @@ const create = () => {
   };
   //#endregion
   //#region 电台 / 节目跳转
-  const linkToDjRadio = (rid?: number | string) => {
-    if (rid == null) {
-      message.info('该内容暂无详情信息');
-      return;
-    }
-    router.push({ path: '/dj-radio-detail', query: { rid: String(rid) } });
-  };
-  const linkToDjProgram = (id?: number | string) => {
-    if (id == null) {
-      message.info('该内容暂无详情信息');
-      return;
-    }
-    router.push({ path: '/dj-program-detail', query: { id: String(id) } });
-  };
+  const linkToDjRadio = (rid?: number | string) => goDetail('/dj-radio-detail', 'rid', rid);
+  const linkToDjProgram = (id?: number | string) => goDetail('/dj-program-detail', 'id', id);
   //#endregion
 
   // 对外直出各 ref / 方法，消费方解构后使用（脚本内 .value，模板自动解包）

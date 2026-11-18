@@ -2,7 +2,7 @@ import { sessionManager } from '@/core/session';
 import type { ApiRawResponse } from '@/apis/types';
 import { computed, onMounted, ref, type Ref } from 'vue';
 
-
+import { useApiConsoleGuard } from './useApiConsoleGuard';
 import {
   extractObject,
   toCardList,
@@ -62,6 +62,8 @@ export const useApiConsoleBlocks = (config: ApiConsoleConfig) => {
   const writeResult = ref<string>('');
   const results = ref<Record<string, CardItem[]>>({});
 
+  const { requireLogin, writeGuard } = useApiConsoleGuard(hasLogin, toast);
+
   const visibleBlocks = computed(() => blocks.filter((b) => b.tab === activeTab.value));
   const panelTip = computed(() => panelTips[activeTab.value] || '');
 
@@ -98,26 +100,6 @@ export const useApiConsoleBlocks = (config: ApiConsoleConfig) => {
     pickNumberId(raw, [
       'id', 'rid', 'vid', 'cateId', 'categoryId', 'voiceId', 'voiceListId', 'programId', 'mainSongId',
     ]);
-
-  const requireLogin = (): boolean => {
-    if (!hasLogin.value) {
-      toast.value = '该接口需要登录后才能查看（已降级，不发请求）';
-      return false;
-    }
-    return true;
-  };
-
-  const writeGuard = (confirmText: string): boolean => {
-    if (!hasLogin.value) {
-      toast.value = '请先登录后再执行该写操作（已降级，不发请求）';
-      return false;
-    }
-    if (!window.confirm(confirmText)) {
-      toast.value = '已取消操作';
-      return false;
-    }
-    return true;
-  };
 
   const onFileChange = (e: Event) => {
     uploadFile.value = (e.target as HTMLInputElement).files?.[0] ?? null;

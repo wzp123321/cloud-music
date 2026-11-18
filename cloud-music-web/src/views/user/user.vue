@@ -139,11 +139,11 @@ onMounted(() => {
   .user-empty {
     padding: 120px 0;
     text-align: center;
-    color: #999;
+    color: var(--color-text-secondary);
     font-size: 15px;
 
     .user-link {
-      color: #c20c0c;
+      color: var(--color-primary);
       cursor: pointer;
     }
   }
@@ -161,13 +161,13 @@ onMounted(() => {
     span {
       cursor: pointer;
       font-size: 16px;
-      color: #666;
+      color: var(--color-text-secondary);
       padding-bottom: 12px;
 
       &.active {
-        color: #c20c0c;
+        color: var(--color-primary);
         font-weight: 600;
-        border-bottom: 2px solid #c20c0c;
+        border-bottom: 2px solid var(--color-primary);
       }
     }
   }

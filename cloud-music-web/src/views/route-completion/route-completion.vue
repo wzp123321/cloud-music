@@ -148,14 +148,14 @@ onMounted(() => {
     background: rgba(0, 0, 0, 0.03);
     font-size: 13px;
     line-height: 22px;
-    color: #666;
+    color: var(--color-text-secondary);
 
     code {
       padding: 1px 5px;
       border-radius: 3px;
       background: rgba(0, 0, 0, 0.06);
       font-size: 12px;
-      color: var(--color-primary, #c20c0c);
+      color: var(--color-primary);
     }
   }
 
@@ -169,14 +169,14 @@ onMounted(() => {
     padding: 8px 22px;
     border: 1px solid rgba(0, 0, 0, 0.12);
     border-radius: 20px;
-    background: #fff;
+    background: var(--color-default);
     font-size: 14px;
     color: #555;
     cursor: pointer;
 
     &.active {
-      border-color: var(--color-primary, #c20c0c);
-      background: var(--color-primary, #c20c0c);
+      border-color: var(--color-primary);
+      background: var(--color-primary);
       color: #fff;
     }
   }
@@ -196,21 +196,21 @@ onMounted(() => {
     padding: 18px;
     border: 1px solid rgba(0, 0, 0, 0.08);
     border-radius: 10px;
-    background: #fff;
+    background: var(--color-default);
   }
 
   &--heading {
     margin-bottom: 14px;
     font-size: 15px;
     font-weight: 600;
-    color: #333;
+    color: var(--color-text-primary);
   }
 
   &--status {
     padding: 24px 0;
     text-align: center;
     font-size: 13px;
-    color: #999;
+    color: var(--color-text-secondary);
   }
 
   &--source-list {
@@ -238,7 +238,7 @@ onMounted(() => {
   &--source-name {
     overflow: hidden;
     font-size: 13px;
-    color: #333;
+    color: var(--color-text-primary);
     text-overflow: ellipsis;
     white-space: nowrap;
   }

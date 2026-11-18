@@ -109,17 +109,26 @@ const onSubmit = async () => {
   }
 
   // edit
+  const trimmedName = form.value.name.trim();
+  const nameChanged = Boolean(props.showName && trimmedName) && trimmedName !== (props.name ?? '');
+  const descChanged = form.value.desc !== (props.desc ?? '');
+  const tags = form.value.tags.trim();
+  const tagsChanged = tags !== (props.tags ?? '');
+  if (!nameChanged && !descChanged && !tagsChanged) {
+    message.info('无修改');
+    return;
+  }
+
   const id = props.playlistId as number;
   submitting.value = true;
   try {
-    if (props.showName && form.value.name.trim() && form.value.name !== props.name) {
-      await updatePlaylistName({ id, name: form.value.name.trim() });
+    if (nameChanged) {
+      await updatePlaylistName({ id, name: trimmedName });
     }
-    if (form.value.desc !== (props.desc ?? '')) {
+    if (descChanged) {
       await updatePlaylistDesc({ id, desc: form.value.desc });
     }
-    const tags = form.value.tags.trim();
-    if (tags !== (props.tags ?? '')) {
+    if (tagsChanged) {
       await updatePlaylistTags({ id, tags });
     }
     message.success('保存成功');

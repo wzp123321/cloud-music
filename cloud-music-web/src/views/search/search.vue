@@ -23,7 +23,11 @@
     >
     </cm-navbar>
     <!-- 单曲 -->
-    <cm-table v-if="type === SearchType.单曲" :data-source="songs"></cm-table>
+    <cm-table
+      v-if="type === SearchType.单曲"
+      :data-source="songs"
+      empty-text="没有找到相关歌曲"
+    ></cm-table>
     <!-- 专辑 -->
     <div v-if="type === SearchType.专辑" class="search-album">
       <cm-album-card

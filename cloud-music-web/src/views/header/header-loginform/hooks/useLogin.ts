@@ -28,6 +28,8 @@ const create = () => {
     username: '',
     password: '',
   });
+  /** 提交锁：请求在途时拦截重复点击 */
+  const submitting = ref(false);
   //#endregion
 
   //#region 二维码登录状态
@@ -90,7 +92,25 @@ const create = () => {
     }
   };
 
+  const phonePattern = /^1[3-9]\d{9}$/;
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
   const handlePhoneLogin = async () => {
+    if (submitting.value) return;
+    const username = form.value.username.trim();
+    if (!username) {
+      message.info('请输入手机号码');
+      return;
+    }
+    if (!phonePattern.test(username)) {
+      message.info('手机号格式不正确');
+      return;
+    }
+    if (!form.value.password) {
+      message.info('请输入密码');
+      return;
+    }
+    submitting.value = true;
     try {
       const res = await postRequest(EPath.手机号码登陆, {
         phone: form.value.username,
@@ -104,10 +124,27 @@ const create = () => {
       }
     } catch {
       message.error('服务器异常');
+    } finally {
+      submitting.value = false;
     }
   };
 
   const handleEmailLogin = async () => {
+    if (submitting.value) return;
+    const username = form.value.username.trim();
+    if (!username) {
+      message.info('请输入邮箱');
+      return;
+    }
+    if (!emailPattern.test(username)) {
+      message.info('邮箱格式不正确');
+      return;
+    }
+    if (!form.value.password) {
+      message.info('请输入密码');
+      return;
+    }
+    submitting.value = true;
     try {
       const res = await postRequest(EPath.邮箱登陆, {
         email: form.value.username,
@@ -121,18 +158,12 @@ const create = () => {
       }
     } catch {
       message.error('服务器异常');
+    } finally {
+      submitting.value = false;
     }
   };
 
   const submit = () => {
-    if (!form.value.username) {
-      message.error(type.value === ELOGINTYPE.手机 ? '请输入手机号码' : '请输入邮箱');
-      return;
-    }
-    if (!form.value.password) {
-      message.error('请输入密码');
-      return;
-    }
     if (type.value === ELOGINTYPE.手机) {
       handlePhoneLogin();
     } else {
@@ -220,6 +251,7 @@ const create = () => {
     visible,
     type,
     form,
+    submitting,
     qrImg,
     qrTip,
     show,

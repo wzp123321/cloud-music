@@ -49,7 +49,7 @@
           @keyup.enter="submit"
         />
       </el-form-item>
-      <cm-button primary class="hl-submit" @click="submit">登 录</cm-button>
+      <cm-button primary class="hl-submit" :disabled="submitting" @click="submit">登 录</cm-button>
       <p class="hl-register">
         没有账号？<span @click="onRegister">前往注册</span>
       </p>
@@ -74,7 +74,7 @@ import { ELOGINTYPE } from '../../../apis/header-loginform/index.api';
 import { useLogin } from './hooks/useLogin';
 
 const router = useRouter();
-const { visible, type, form, qrImg, qrTip, handleClose, setTab, submit, refreshQr, stopQr } = useLogin();
+const { visible, type, form, qrImg, qrTip, submitting, handleClose, setTab, submit, refreshQr, stopQr } = useLogin();
 
 // useLogin 是模块级单例，组件销毁不会带走轮询；卸载时必须显式停止
 onUnmounted(() => stopQr());

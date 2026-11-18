@@ -167,7 +167,7 @@ defineOptions({ name: 'PortalBlockPage' });
 
     .title {
       font-size: 13px;
-      color: #333;
+      color: var(--color-text-primary);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -184,14 +184,14 @@ defineOptions({ name: 'PortalBlockPage' });
     padding: 8px 28px;
     border: 1px solid #e0e0e0;
     border-radius: 20px;
-    background: #fff;
-    color: #666;
+    background: var(--color-default);
+    color: var(--color-text-secondary);
     font-size: 14px;
     cursor: pointer;
     transition: color 233ms, border-color 233ms;
 
     &:hover {
-      color: #333;
+      color: var(--color-text-primary);
       border-color: #bbb;
     }
   }

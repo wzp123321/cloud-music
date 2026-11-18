@@ -5,7 +5,7 @@
   <!-- 所有榜单 toplist -->
   <section class="rank--section">
     <h3 class="rank--heading">官方榜单</h3>
-    <cm-error v-if="! toplist.length" :title="'暂无榜单'"></cm-error>
+    <cm-state v-if="! toplist.length" empty :empty-text="'暂无榜单'"></cm-state>
     <div v-else class="rank--toplist grid-cols-5">
       <div
         v-for="item in  toplist"
@@ -28,7 +28,7 @@
   <!-- 榜单详情 top_list -->
   <section class="rank--section">
     <h3 class="rank--heading">榜单详情</h3>
-    <cm-error v-if="! rankTrackList.length" :title="'暂无榜单歌曲'"></cm-error>
+    <cm-state v-if="! rankTrackList.length" empty :empty-text="'暂无榜单歌曲'"></cm-state>
     <ul v-else class="rank--track-list">
       <li v-for="(track, index) in  rankTrackList" :key="'tr_' + index" class="rank--track-item">
         <span class="cell-index">{{ index + 1 }}</span>
@@ -42,7 +42,7 @@
   <!-- 精品歌单 top_playlist_highquality -->
   <section class="rank--section">
     <h3 class="rank--heading">精品歌单</h3>
-    <cm-error v-if="! highqualityList.length" :title="'暂无精品歌单'"></cm-error>
+    <cm-state v-if="! highqualityList.length" empty :empty-text="'暂无精品歌单'"></cm-state>
     <div v-else class="rank--grid flex-row-justify-start flex-wrap">
       <cm-playlist-card
         v-for="item in  highqualityList"
@@ -58,7 +58,7 @@
   <!-- 新歌速递 top_song -->
   <section class="rank--section">
     <h3 class="rank--heading">新歌速递</h3>
-    <cm-error v-if="! topSongList.length" :title="'暂无新歌'"></cm-error>
+    <cm-state v-if="! topSongList.length" empty :empty-text="'暂无新歌'"></cm-state>
     <ul v-else class="rank--track-list">
       <li v-for="(song, index) in  topSongList" :key="'ts_' + index" class="rank--track-item">
         <span class="cell-index">{{ index + 1 }}</span>
@@ -72,7 +72,7 @@
   <!-- MV 排行榜 top_mv -->
   <section class="rank--section">
     <h3 class="rank--heading">MV 排行榜</h3>
-    <cm-error v-if="! topMvList.length" :title="'暂无 MV'"></cm-error>
+    <cm-state v-if="! topMvList.length" empty :empty-text="'暂无 MV'"></cm-state>
     <div v-else class="rank--mv-grid grid-cols-4">
       <div
         v-for="(mv, index) in  topMvList"
@@ -99,6 +99,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { usePortal } from '../portal/hooks/usePortal';
 import { TopListTrack, TopSongItem, TopMvItem } from '../../apis/portal/portal-api';
 import message from '@/utils/message';
+import CmState from '@/components/cm-state/cm-state.vue';
 
 const { highqualityList, linkToMv, linkToSong, queryRankDetail, queryTopMv, queryTopPlaylistHighquality, queryTopSong, queryToplist, rankTrackList, selectedRankId, topMvList, topSongList, toplist } = usePortal();
 defineOptions({ name: 'Rank' });
@@ -173,7 +174,7 @@ const router = useRouter();
   &--heading {
     font-size: 20px;
     font-weight: 600;
-    color: #333;
+    color: var(--color-text-primary);
   }
 
   &--toplist {
@@ -200,7 +201,7 @@ const router = useRouter();
     }
 
     &.active {
-      border-color: #c20c0c;
+      border-color: var(--color-primary);
       background-color: rgba(194, 12, 12, 0.05);
     }
   }
@@ -208,7 +209,7 @@ const router = useRouter();
   &--toplist-name {
     margin-top: 8px;
     font-size: 14px;
-    color: #333;
+    color: var(--color-text-primary);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -217,7 +218,7 @@ const router = useRouter();
   &--toplist-freq {
     margin-top: 4px;
     font-size: 12px;
-    color: #999;
+    color: var(--color-text-secondary);
   }
 
   &--grid {
@@ -237,7 +238,7 @@ const router = useRouter();
     height: 44px;
     padding: 0 12px;
     font-size: 14px;
-    color: #333;
+    color: var(--color-text-primary);
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 
     &:nth-child(odd) {
@@ -251,7 +252,7 @@ const router = useRouter();
     .cell-index {
       width: 40px;
       flex-shrink: 0;
-      color: #999;
+      color: var(--color-text-secondary);
     }
 
     .cell-name {
@@ -262,13 +263,13 @@ const router = useRouter();
       text-overflow: ellipsis;
 
       &:hover {
-        color: var(--color-primary, #c20c0c);
+        color: var(--color-primary);
       }
     }
 
     .cell-artists {
       flex: 1.5;
-      color: #666;
+      color: var(--color-text-secondary);
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
@@ -276,7 +277,7 @@ const router = useRouter();
 
     .cell-album {
       flex: 1.5;
-      color: #999;
+      color: var(--color-text-secondary);
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
@@ -307,7 +308,7 @@ const router = useRouter();
   &--mv-name {
     margin-top: 8px;
     font-size: 14px;
-    color: #333;
+    color: var(--color-text-primary);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -316,7 +317,7 @@ const router = useRouter();
   &--mv-artist {
     margin-top: 4px;
     font-size: 12px;
-    color: #999;
+    color: var(--color-text-secondary);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

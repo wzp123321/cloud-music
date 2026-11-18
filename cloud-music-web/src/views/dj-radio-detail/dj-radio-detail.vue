@@ -166,7 +166,7 @@ const onSub = () => {
 
     > p {
       font-size: 14px;
-      color: #666;
+      color: var(--color-text-secondary);
       line-height: 21px;
       text-indent: 2em;
       white-space: pre-wrap;
@@ -202,7 +202,7 @@ const onSub = () => {
       }
 
       &:hover span {
-        color: var(--color-primary, #c20c0c);
+        color: var(--color-primary);
       }
     }
 
@@ -230,16 +230,16 @@ const onSub = () => {
     .dj-radio-detail--sub-btn {
       margin-top: 16px;
       padding: 5px 16px;
-      border: 1px solid var(--color-primary, #c20c0c);
+      border: 1px solid var(--color-primary);
       border-radius: 16px;
-      background: var(--color-primary, #c20c0c);
+      background: var(--color-primary);
       color: #fff;
       font-size: 14px;
       cursor: pointer;
 
       &.subed {
         background: transparent;
-        color: var(--color-primary, #c20c0c);
+        color: var(--color-primary);
       }
 
       &:disabled {
@@ -296,7 +296,7 @@ const onSub = () => {
 
       .name {
         font-size: 15px;
-        color: #333;
+        color: var(--color-text-primary);
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
@@ -305,13 +305,13 @@ const onSub = () => {
       .sub {
         margin-top: 6px;
         font-size: 12px;
-        color: #999;
+        color: var(--color-text-secondary);
       }
     }
 
     .play {
       font-size: 20px;
-      color: var(--color-primary, #c20c0c);
+      color: var(--color-primary);
       opacity: 0.55;
       cursor: pointer;
       transition: opacity 233ms;

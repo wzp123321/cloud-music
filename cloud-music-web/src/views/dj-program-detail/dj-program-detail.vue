@@ -145,7 +145,7 @@ const playCurrent = () => {
 
       &.pd-radio:hover,
       &.pd-anchor:hover {
-        color: var(--color-primary, #c20c0c);
+        color: var(--color-primary);
       }
     }
 
@@ -173,7 +173,7 @@ const playCurrent = () => {
 
     .pd-desc {
       font-size: 14px;
-      color: #666;
+      color: var(--color-text-secondary);
       line-height: 22px;
       white-space: pre-wrap;
     }

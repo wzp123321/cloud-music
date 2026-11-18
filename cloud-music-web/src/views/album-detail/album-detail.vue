@@ -38,7 +38,7 @@
     </cm-button>
 
     <!-- 歌曲列表复用 cm-table：封面、歌名跳转、播放、操作按钮统一由组件提供 -->
-    <cm-table :data-source="songList"></cm-table>
+    <cm-table :data-source="songList" empty-text="该专辑暂无歌曲"></cm-table>
 
     <!-- 已收藏专辑：album_sublist（需登录，未登录降级提示） -->
     <div class="album-detail--sublist mt36">
@@ -153,7 +153,7 @@ const router = useRouter();
 
     > p {
       font-size: 14px;
-      color: #666;
+      color: var(--color-text-secondary);
       line-height: 21px;
       text-indent: 2em;
     }
@@ -176,7 +176,7 @@ const router = useRouter();
       word-break: break-all;
       margin-top: 14px;
       font-size: 18px;
-      color: #666;
+      color: var(--color-text-secondary);
       line-height: 25px;
     }
 
@@ -206,16 +206,16 @@ const router = useRouter();
 
 .album-detail--sub-btn {
   padding: 5px 16px;
-  border: 1px solid var(--color-primary, #c20c0c);
+  border: 1px solid var(--color-primary);
   border-radius: 16px;
-  background: var(--color-primary, #c20c0c);
+  background: var(--color-primary);
   color: #fff;
   font-size: 14px;
   cursor: pointer;
 
   &.subed {
     background: transparent;
-    color: var(--color-primary, #c20c0c);
+    color: var(--color-primary);
   }
 
   &:disabled {
@@ -226,7 +226,7 @@ const router = useRouter();
 
 .album-detail--tip {
   font-size: 12px;
-  color: #999;
+  color: var(--color-text-secondary);
 }
 
 .album-detail--sublist {
@@ -253,7 +253,7 @@ const router = useRouter();
   p {
     margin-top: 6px;
     font-size: 13px;
-    color: #666;
+    color: var(--color-text-secondary);
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;

@@ -37,6 +37,7 @@
       <cm-table
         :data-source="musicList"
         :show-remove="true"
+        empty-text="歌单里还没有歌曲"
         @remove="onRemove"
       ></cm-table>
 
@@ -156,7 +157,7 @@ const {
     p {
       width: 100%;
       font-size: 14px;
-      color: #666;
+      color: var(--color-text-secondary);
       line-height: 21px;
     }
   }
@@ -190,7 +191,7 @@ const {
       span {
         font-size: 18px;
         height: 25px;
-        color: #666;
+        color: var(--color-text-secondary);
         line-height: 25px;
         font-weight: 400;
 
@@ -237,7 +238,7 @@ const {
     .pd-stat {
       margin-left: 16px;
       font-size: 13px;
-      color: #999;
+      color: var(--color-text-secondary);
 
       .iconfont {
         margin-right: 2px;

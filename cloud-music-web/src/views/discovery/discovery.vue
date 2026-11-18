@@ -52,10 +52,10 @@ const loggedIn = sessionManager.isAlive();
     margin-top: 20px;
     font-size: 13px;
     line-height: 1.8;
-    color: #888;
+    color: var(--color-text-secondary);
 
     b {
-      color: var(--color-primary, #c20c0c);
+      color: var(--color-primary);
     }
   }
 
@@ -75,7 +75,7 @@ const loggedIn = sessionManager.isAlive();
     align-items: center;
     gap: 8px;
     font-size: 13px;
-    color: #666;
+    color: var(--color-text-secondary);
 
     input {
       width: 240px;
@@ -99,13 +99,13 @@ const loggedIn = sessionManager.isAlive();
     border: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: 18px;
     background: var(--color-default, #fff);
-    color: #666;
+    color: var(--color-text-secondary);
     font-size: 14px;
     cursor: pointer;
 
     &.active {
-      border-color: var(--color-primary, #c20c0c);
-      color: var(--color-primary, #c20c0c);
+      border-color: var(--color-primary);
+      color: var(--color-primary);
       background: rgba(194, 12, 12, 0.06);
     }
   }

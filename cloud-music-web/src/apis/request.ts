@@ -52,7 +52,15 @@ const withSession = (payload?: unknown): unknown => {
 
 // 响应拦截：统一错误归一，业务层只需关心 resolve 数据 / catch 统一错误
 instance.interceptors.response.use(
-  (response: AxiosResponse) => response,
+  (response: AxiosResponse) => {
+    // 网易云以业务码 301 表示未登录/登录已过期；只认这一个明确码，避免误伤其他 4xx
+    const data = response.data as { code?: number } | undefined;
+    if (data?.code === 301) {
+      sessionManager.revoke();
+      message.info('登录已过期，请重新登录');
+    }
+    return response;
+  },
   (error: AxiosError) => {
     // 全局兜底：service 层静默降级的路径也能得到反馈（消除「点了没反应」）。
     // 业务层 catch 会再弹更具体的文案；message.show() 先 close 上一条，用户只会看到最后一条，不堆叠。

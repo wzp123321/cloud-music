@@ -156,7 +156,7 @@ const onFileChange = (event: Event) => {
     padding: 2px 10px;
     border-radius: 4px;
     background: rgba(194, 12, 12, 0.08);
-    color: var(--color-primary, #c20c0c);
+    color: var(--color-primary);
     font-family: monospace;
     font-size: 12px;
   }
@@ -164,14 +164,14 @@ const onFileChange = (event: Event) => {
   &--title {
     font-size: 18px;
     font-weight: 600;
-    color: #333;
+    color: var(--color-text-primary);
   }
 
   &--kind {
     padding: 2px 10px;
     border-radius: 12px;
     font-size: 12px;
-    color: #666;
+    color: var(--color-text-secondary);
     background: rgba(0, 0, 0, 0.05);
 
     &.kind-login-read {
@@ -180,12 +180,12 @@ const onFileChange = (event: Event) => {
     }
 
     &.kind-write {
-      color: #c20c0c;
+      color: var(--color-primary);
       background: rgba(194, 12, 12, 0.12);
     }
 
     &.kind-invalid {
-      color: #999;
+      color: var(--color-text-secondary);
       background: rgba(0, 0, 0, 0.06);
       text-decoration: line-through;
     }
@@ -194,7 +194,7 @@ const onFileChange = (event: Event) => {
   &--desc {
     margin-top: 8px;
     font-size: 13px;
-    color: #999;
+    color: var(--color-text-secondary);
   }
 
   &--url {
@@ -204,7 +204,7 @@ const onFileChange = (event: Event) => {
     background: rgba(0, 0, 0, 0.04);
     font-family: monospace;
     font-size: 12px;
-    color: #666;
+    color: var(--color-text-secondary);
   }
 
   &--controls {
@@ -232,7 +232,7 @@ const onFileChange = (event: Event) => {
     padding: 7px 18px;
     border: none;
     border-radius: 6px;
-    background: var(--color-primary, #c20c0c);
+    background: var(--color-primary);
     color: #fff;
     font-size: 13px;
     cursor: pointer;
@@ -241,10 +241,10 @@ const onFileChange = (event: Event) => {
   &--chain,
   &--provides {
     font-size: 12px;
-    color: #999;
+    color: var(--color-text-secondary);
 
     b {
-      color: var(--color-primary, #c20c0c);
+      color: var(--color-primary);
     }
   }
 
@@ -262,7 +262,7 @@ const onFileChange = (event: Event) => {
   &--tip {
     margin-top: 14px;
     font-size: 13px;
-    color: #999;
+    color: var(--color-text-secondary);
   }
 
   &--tip {
@@ -272,7 +272,7 @@ const onFileChange = (event: Event) => {
   &--card-sub {
     margin-top: 4px;
     font-size: 11px;
-    color: #999;
+    color: var(--color-text-secondary);
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -284,7 +284,7 @@ const onFileChange = (event: Event) => {
 
     summary {
       cursor: pointer;
-      color: #888;
+      color: var(--color-text-secondary);
     }
 
     pre {

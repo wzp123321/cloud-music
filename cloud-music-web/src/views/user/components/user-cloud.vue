@@ -51,7 +51,7 @@ onMounted(() => {
   .up-block-title {
     font-size: 18px;
     font-weight: 600;
-    color: #333;
+    color: var(--color-text-primary);
     margin-bottom: 16px;
   }
 
@@ -66,13 +66,13 @@ onMounted(() => {
 
       .up-cloud-name {
         font-size: 14px;
-        color: #333;
+        color: var(--color-text-primary);
       }
 
       .up-cloud-artist {
         margin-top: 4px;
         font-size: 12px;
-        color: #999;
+        color: var(--color-text-secondary);
       }
     }
 
@@ -85,7 +85,7 @@ onMounted(() => {
   .up-empty {
     padding: 40px 0;
     text-align: center;
-    color: #999;
+    color: var(--color-text-secondary);
   }
 }
 </style>

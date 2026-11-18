@@ -5,7 +5,7 @@
   <!-- 每日推荐歌曲 recommend_songs -->
   <section class="daily-recommend--section">
     <h3 class="daily-recommend--heading">每日推荐歌曲</h3>
-    <cm-error v-if="! recommendSongList.length" :title="'暂无推荐歌曲'"></cm-error>
+    <cm-state v-if="! recommendSongList.length" empty :empty-text="'暂无推荐歌曲'"></cm-state>
     <ul v-else class="daily-recommend--song-list">
       <li
         v-for="(song, index) in  recommendSongList"
@@ -24,7 +24,7 @@
   <!-- 每日推荐歌单 recommend_resource -->
   <section class="daily-recommend--section">
     <h3 class="daily-recommend--heading">每日推荐歌单</h3>
-    <cm-error v-if="! recommendResourceList.length" :title="'暂无推荐歌单'"></cm-error>
+    <cm-state v-if="! recommendResourceList.length" empty :empty-text="'暂无推荐歌单'"></cm-state>
     <div v-else class="daily-recommend--grid flex-row-justify-start flex-wrap">
       <cm-playlist-card
         v-for="item in  recommendResourceList"
@@ -40,7 +40,7 @@
   <!-- 个性化推荐歌单 personalized -->
   <section class="daily-recommend--section">
     <h3 class="daily-recommend--heading">猜你喜欢</h3>
-    <cm-error v-if="! personalizedList.length" :title="'暂无推荐歌单'"></cm-error>
+    <cm-state v-if="! personalizedList.length" empty :empty-text="'暂无推荐歌单'"></cm-state>
     <div v-else class="daily-recommend--grid flex-row-justify-start flex-wrap">
       <cm-playlist-card
         v-for="item in  personalizedList"
@@ -56,7 +56,7 @@
   <!-- 推荐新歌 personalized_newsong -->
   <section class="daily-recommend--section">
     <h3 class="daily-recommend--heading">推荐新歌</h3>
-    <cm-error v-if="! newSongList.length" :title="'暂无推荐新歌'"></cm-error>
+    <cm-state v-if="! newSongList.length" empty :empty-text="'暂无推荐新歌'"></cm-state>
     <ul v-else class="daily-recommend--song-list">
       <li
         v-for="(item, index) in  newSongList"
@@ -82,6 +82,7 @@ import {  onMounted } from 'vue';
 import { usePortal } from '../portal/hooks/usePortal';
 import { RecommendSongItem, PersonalizedNewSongItem } from '../../apis/portal/portal-api';
 import message from '@/utils/message';
+import CmState from '@/components/cm-state/cm-state.vue';
 
 const { dislikeRecommendSong, linkToSong, newSongList, personalizedList, queryNewSong, queryPersonalized, queryRecommendResource, queryRecommendSongs, recommendResourceList, recommendSongList } = usePortal();
 defineOptions({ name: 'DailyRecommend' });
@@ -131,7 +132,7 @@ defineOptions({ name: 'DailyRecommend' });
   &--heading {
     font-size: 20px;
     font-weight: 600;
-    color: #333;
+    color: var(--color-text-primary);
   }
 
   &--grid {
@@ -151,7 +152,7 @@ defineOptions({ name: 'DailyRecommend' });
     height: 44px;
     padding: 0 12px;
     font-size: 14px;
-    color: #333;
+    color: var(--color-text-primary);
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 
     &:nth-child(odd) {
@@ -165,7 +166,7 @@ defineOptions({ name: 'DailyRecommend' });
     .cell-index {
       width: 40px;
       flex-shrink: 0;
-      color: #999;
+      color: var(--color-text-secondary);
     }
 
     .cell-name {
@@ -176,13 +177,13 @@ defineOptions({ name: 'DailyRecommend' });
       text-overflow: ellipsis;
 
       &:hover {
-        color: var(--color-primary, #c20c0c);
+        color: var(--color-primary);
       }
     }
 
     .cell-artists {
       flex: 1.5;
-      color: #666;
+      color: var(--color-text-secondary);
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
@@ -190,7 +191,7 @@ defineOptions({ name: 'DailyRecommend' });
 
     .cell-album {
       flex: 1.5;
-      color: #999;
+      color: var(--color-text-secondary);
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
@@ -200,11 +201,11 @@ defineOptions({ name: 'DailyRecommend' });
       width: 80px;
       flex-shrink: 0;
       text-align: right;
-      color: #999;
+      color: var(--color-text-secondary);
       cursor: pointer;
 
       &:hover {
-        color: var(--color-primary, #c20c0c);
+        color: var(--color-primary);
       }
     }
   }
