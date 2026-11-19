@@ -615,8 +615,8 @@ const run = async (route: ServerRoute) => {
     border-radius: 6px;
     outline: none;
     font-size: 13px;
-    color: #333;
-    background: #fff;
+    color: var(--color-text-primary);
+    background: var(--color-default);
   }
 
   &--textarea {

@@ -197,7 +197,7 @@ const onRegister = () => {
       }
 
       &.is-focus {
-        background-color: #fff;
+        background-color: var(--color-default);
         box-shadow: 0 0 0 1px var(--color-primary) inset, 0 0 0 3px var(--color-box-focus);
       }
     }
@@ -258,7 +258,7 @@ const onRegister = () => {
       display: flex;
       align-items: center;
       justify-content: center;
-      background: #fff;
+      background: var(--color-default);
       border: 1px solid var(--color-text-divider);
       border-radius: 12px;
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);

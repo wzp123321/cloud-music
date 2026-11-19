@@ -1,55 +1,21 @@
+/*
+ * 主题令牌表：三层结构
+ * L1 色板（:root，不随主题变）/ L2 语义令牌（:root 浅、html.dark 深）/ L3 EP 映射
+ * 令牌名保持不变，消费点无需改动。
+ * 深浅覆盖靠 html.dark 特异性 + 加载顺序，不依赖强制声明。
+ * 加载顺序见 main.ts：EP 基础 CSS → EP 官方 dark/css-vars.css → 本表。
+ */
+
+/* ===== L1 色板：不随主题变化的原始值 ===== */
 :root {
-  /* Element Plus 主色对齐品牌红 */
-  --el-color-primary: #c20c0c !important;
-  --el-color-primary-light-3: #d5453d !important;
-  --el-color-primary-light-5: #e17d78 !important;
-  --el-color-primary-light-7: #edb5b2 !important;
-  --el-color-primary-light-8: #f3cfcd !important;
-  --el-color-primary-light-9: #f9e7e6 !important;
-  --el-color-primary-dark-2: #a20a0a !important;
-
-  --color-border25: rgba(0, 0, 0, 0.25);
-
-  /* 基础色（品牌主色统一红色系） */
-  --color-default: white !important;
-  --color-hover: rgba(194, 12, 12, 0.06) !important;
-  --color-active: rgba(194, 12, 12, 0.12) !important;
-  --color-primary: #c20c0c !important;
-  --color-btn-primary: #c20c0c !important;
-  --color-primary-hover: rgba(220, 58, 58, 1) !important;
-  --color-primary-active: rgba(162, 10, 10, 1) !important;
-  --color-danger: rgba(255, 78, 87, 1) !important;
-  --color-danger-hover: rgba(255, 78, 87, 0.15) !important;
-  --color-danger-active: rgba(210, 7, 0, 1) !important;
-
-  /* 功能色 */
-  --color-error: rgba(255, 78, 87, 1) !important;
-  --color-success: rgba(66, 199, 84, 1) !important;
-  --color-warning: rgba(255, 173, 38, 1) !important;
-  --color-link: #c20c0c !important;
-
-  /* 文本色 */
-  --color-text: black !important;
-  --color-text-title: rgba(0, 0, 0, 0.85) !important;
-  --color-text-primary: rgba(0, 0, 0, 0.65) !important;
-  --color-text-secondary: rgba(0, 0, 0, 0.45) !important;
-  --color-text-disable: rgba(0, 0, 0, 0.25) !important;
-  --color-text-border: rgba(0, 0, 0, 0.15) !important;
-  --color-text-divider: rgba(0, 0, 0, 0.06) !important;
-  --color-text-background: rgba(0, 0, 0, 0.04) !important;
-
-  /* 边框 */
-  --color-box-focus: rgba(194, 12, 12, 0.18) !important;
-
-  /* 表格 */
-  --color-table-header: #fafafa !important;
-  --color-table-body: #fafafa !important;
-  --color-table-td-hover: #f5f5f5 !important;
-
-  /* 滚动条 */
-  --color-scrollbar: rgba(0, 0, 0, 0.25) !important;
-  --color-scrollbar-hover: rgba(0, 0, 0, 0.45) !important;
-  --color-scrollbar-active: rgba(0, 0, 0, 0.65) !important;
+  /* 品牌红色阶 */
+  --palette-primary: #c20c0c;
+  --palette-primary-hover: #dc3a3a;
+  --palette-primary-active: #a20a0a;
+  --palette-danger: #ff4e57;
+  --palette-danger-active: #d20700;
+  --palette-success: #42c754;
+  --palette-warning: #ffad26;
 
   /* 字体 */
   --param-font-regular: 400;
@@ -64,12 +30,12 @@
   --font-size-xl: 20px;
   --font-size-2xl: 24px;
 
-  /* 圆角：统一 4/8/16，替代散落的 3/4/6/8/12/16/18 */
+  /* 圆角：统一 4/8/16 */
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 16px;
 
-  /* 阴影：三层语义，替代 12 处各写各的 box-shadow */
+  /* 阴影：三层语义 */
   --shadow-sm: 0 1px 4px rgb(0 0 0 / 6%);
   --shadow-md: 0 4px 12px rgb(0 0 0 / 10%);
   --shadow-lg: 0 8px 24px rgb(0 0 0 / 14%);
@@ -78,52 +44,97 @@
   --param-transition-time: 233ms;
 }
 
-/*
- * 深色主题：只覆盖语义变量，不改组件代码。
- * 原变量带 !important，这里同样保留并靠 :root[data-theme] 的更高特异性取胜。
- * 深浅切换由 setting store 写 <html data-theme> 驱动。
- */
-:root[data-theme='dark'] {
-  --el-color-primary-light-9: #2a1618 !important;
-  --el-color-primary-light-8: #3a1c1e !important;
-  --el-color-primary-light-7: #552426 !important;
+/* ===== L2 语义令牌 · 浅色 ===== */
+:root {
+  --color-border25: rgba(0, 0, 0, 0.25);
 
-  --color-default: #16161a !important;
-  --color-hover: rgba(255, 255, 255, 0.06) !important;
-  --color-active: rgba(255, 255, 255, 0.1) !important;
-  --color-btn-primary: #c20c0c !important;
+  /* 基础色（品牌主色统一红色系） */
+  --color-default: white;
+  --color-hover: rgba(194, 12, 12, 0.06);
+  --color-active: rgba(194, 12, 12, 0.12);
+  --color-primary: var(--palette-primary);
+  --color-btn-primary: var(--palette-primary);
+  --color-primary-hover: var(--palette-primary-hover);
+  --color-primary-active: var(--palette-primary-active);
+  --color-danger: var(--palette-danger);
+  --color-danger-hover: rgba(255, 78, 87, 0.15);
+  --color-danger-active: var(--palette-danger-active);
 
-  --color-text: rgba(255, 255, 255, 0.88) !important;
-  --color-text-title: rgba(255, 255, 255, 0.92) !important;
-  --color-text-primary: rgba(255, 255, 255, 0.72) !important;
-  --color-text-secondary: rgba(255, 255, 255, 0.52) !important;
-  --color-text-disable: rgba(255, 255, 255, 0.32) !important;
-  --color-text-border: rgba(255, 255, 255, 0.12) !important;
-  --color-text-divider: rgba(255, 255, 255, 0.08) !important;
-  --color-text-background: rgba(255, 255, 255, 0.06) !important;
+  /* 功能色 */
+  --color-error: var(--palette-danger);
+  --color-success: var(--palette-success);
+  --color-warning: var(--palette-warning);
+  --color-link: var(--palette-primary);
 
-  --color-box-focus: rgba(194, 12, 12, 0.35) !important;
+  /* 文本色 */
+  --color-text: black;
+  --color-text-title: rgba(0, 0, 0, 0.85);
+  --color-text-primary: rgba(0, 0, 0, 0.65);
+  --color-text-secondary: rgba(0, 0, 0, 0.45);
+  --color-text-disable: rgba(0, 0, 0, 0.25);
+  --color-text-border: rgba(0, 0, 0, 0.15);
+  --color-text-divider: rgba(0, 0, 0, 0.06);
+  --color-text-background: rgba(0, 0, 0, 0.04);
 
-  --color-table-header: #1d1d22 !important;
-  --color-table-body: #16161a !important;
-  --color-table-td-hover: #232329 !important;
+  /* 边框 */
+  --color-box-focus: rgba(194, 12, 12, 0.18);
 
-  --color-scrollbar: rgba(255, 255, 255, 0.22) !important;
-  --color-scrollbar-hover: rgba(255, 255, 255, 0.4) !important;
-  --color-scrollbar-active: rgba(255, 255, 255, 0.58) !important;
+  /* 表格 */
+  --color-table-header: #fafafa;
+  --color-table-body: #fafafa;
+  --color-table-td-hover: #f5f5f5;
 
-  /* Element Plus 暗色映射：弹层、输入框、分页、滑块都靠这组变量 */
-  --el-bg-color: #1d1d22;
-  --el-bg-color-overlay: #1d1d22;
-  --el-bg-color-page: #16161a;
-  --el-text-color-primary: rgba(255, 255, 255, 0.9);
-  --el-text-color-regular: rgba(255, 255, 255, 0.72);
-  --el-text-color-secondary: rgba(255, 255, 255, 0.52);
-  --el-text-color-placeholder: rgba(255, 255, 255, 0.32);
-  --el-border-color: rgba(255, 255, 255, 0.16);
-  --el-border-color-light: rgba(255, 255, 255, 0.12);
-  --el-border-color-lighter: rgba(255, 255, 255, 0.08);
-  --el-fill-color-blank: #16161a;
-  --el-fill-color-light: rgba(255, 255, 255, 0.06);
-  --el-mask-color: rgba(0, 0, 0, 0.6);
+  /* 滚动条 */
+  --color-scrollbar: rgba(0, 0, 0, 0.25);
+  --color-scrollbar-hover: rgba(0, 0, 0, 0.45);
+  --color-scrollbar-active: rgba(0, 0, 0, 0.65);
+}
+
+/* ===== L2 语义令牌 · 深色 ===== */
+html.dark {
+  --color-default: #16161a;
+  --color-hover: rgba(255, 255, 255, 0.06);
+  --color-active: rgba(255, 255, 255, 0.1);
+
+  --color-text: rgba(255, 255, 255, 0.88);
+  --color-text-title: rgba(255, 255, 255, 0.92);
+  --color-text-primary: rgba(255, 255, 255, 0.72);
+  --color-text-secondary: rgba(255, 255, 255, 0.52);
+  --color-text-disable: rgba(255, 255, 255, 0.32);
+  --color-text-border: rgba(255, 255, 255, 0.12);
+  --color-text-divider: rgba(255, 255, 255, 0.08);
+  --color-text-background: rgba(255, 255, 255, 0.06);
+
+  --color-box-focus: rgba(194, 12, 12, 0.35);
+
+  --color-table-header: #1d1d22;
+  --color-table-body: #16161a;
+  --color-table-td-hover: #232329;
+
+  --color-scrollbar: rgba(255, 255, 255, 0.22);
+  --color-scrollbar-hover: rgba(255, 255, 255, 0.4);
+  --color-scrollbar-active: rgba(255, 255, 255, 0.58);
+}
+
+/* ===== L3 EP 映射：只覆盖品牌主色，其余暗色令牌由官方 dark/css-vars.css 负责 ===== */
+:root {
+  --el-color-primary: var(--palette-primary);
+  --el-color-primary-light-3: #d5453d;
+  --el-color-primary-light-5: #e17d78;
+  --el-color-primary-light-7: #edb5b2;
+  --el-color-primary-light-8: #f3cfcd;
+  --el-color-primary-light-9: #f9e7e6;
+  --el-color-primary-dark-2: var(--palette-primary-active);
+}
+
+/* 官方 dark 文件把主色重置为 #409eff，这里在 html.dark 上重新覆盖为品牌红；
+   light-7/8/9 用暗红适配深色底，避免浅红在深背景上刺眼。 */
+html.dark {
+  --el-color-primary: var(--palette-primary);
+  --el-color-primary-light-3: #d5453d;
+  --el-color-primary-light-5: #e17d78;
+  --el-color-primary-light-7: #552426;
+  --el-color-primary-light-8: #3a1c1e;
+  --el-color-primary-light-9: #2a1618;
+  --el-color-primary-dark-2: var(--palette-primary-active);
 }

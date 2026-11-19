@@ -41,18 +41,22 @@ export const useSettingStore = defineStore(
     /** 设置面板 / 快捷键面板是否打开，由 header 与全局快捷键共同控制 */
     const panelOpen = ref(false);
     const panelTab = ref<'appearance' | 'shortcut'>('appearance');
-    /** 解析后的实际主题，供需要判断明暗的组件使用（如深色版黑胶） */
+    /**
+     * 解析后的实际主题，供需要判断明暗的组件使用（如深色版黑胶）。
+     * 当前无组件消费，保留为组件级明暗分支的入口；不要因搜索零引用而删除。
+     */
     const isDark = ref(false);
 
     const audioLevelLabel = computed(
       () => audioLevelOptions.find((item) => item.value === audioLevel.value)?.label ?? '极高',
     );
 
-    /** 把主题写到 <html data-theme>，CSS 变量在 theme.css 中按此切换 */
+    /** 把主题写到 <html data-theme> 与 html.dark：前者供业务判断，后者供 EP 官方暗色变量命中 */
     const applyTheme = () => {
       const dark = theme.value === 'dark' || (theme.value === 'system' && darkQuery.matches);
       isDark.value = dark;
       document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+      document.documentElement.classList.toggle('dark', dark);
     };
 
     const setTheme = (value: ThemeMode) => {

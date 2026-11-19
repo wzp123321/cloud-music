@@ -389,8 +389,8 @@ const run = async (action: Action) => {
       border-radius: 6px;
       outline: none;
       font-size: 12px;
-      color: #333;
-      background: #fff;
+      color: var(--color-text-primary);
+      background: var(--color-default);
 
       &::placeholder {
         color: #ccc;
