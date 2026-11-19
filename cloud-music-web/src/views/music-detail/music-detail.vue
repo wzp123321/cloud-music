@@ -77,8 +77,23 @@
           </cm-button>
         </transition>
 
-        <!-- 歌曲详情（评论 + 相似） -->
+        <!-- 歌曲详情（百科 + 红心数 + 评论 + 相似） -->
         <div v-show="!showLyric" class="md-detail">
+          <!-- 百科与红心数：数据为空或接口失败时整块隐藏，不显示占位 -->
+          <div v-if="wiki.summary || wiki.entries.length" class="md-enrich-block md-wiki">
+            <h4 class="md-enrich-title">歌曲百科</h4>
+            <p v-if="wiki.summary" class="md-wiki-summary">{{ wiki.summary }}</p>
+            <ul class="md-wiki-entries">
+              <li v-for="(entry, i) in wiki.entries" :key="i" class="md-wiki-entry">
+                <span class="md-wiki-label">{{ entry.label }}</span>
+                <span class="md-wiki-value">{{ entry.value }}</span>
+              </li>
+            </ul>
+          </div>
+          <div v-if="redCount !== null" class="md-enrich-block md-red-count">
+            <span class="md-red-label">红心数</span>
+            <span class="md-red-value">{{ redCount }}</span>
+          </div>
           <cm-comment :id="detailId" type="music"></cm-comment>
           <cm-simi :id="detailId" type="song"></cm-simi>
           <cm-simi :id="detailId" type="user"></cm-simi>
@@ -166,6 +181,7 @@ import { useLyricProgress } from '@/composables/useLyricProgress';
 import CmLyricLine from '@/components/cm-lyric-line/cm-lyric-line.vue';
 import { formatDuration } from '@/core/utils';
 import defaultCover from '@/assets/images/common/common-avatar-default.png';
+import { useSongEnrichment } from './hooks/useSongEnrichment';
 
 const player = usePlayerStore();
 const lyric = useLyricStore();
@@ -238,6 +254,9 @@ const detailId = computed<number>(() => {
   const q = Number(route.query.id);
   return q || player.currentMusic.id || 0;
 });
+
+/** 百科与红心数：跟随详情歌曲 id 变化加载，序号防切歌串数据 */
+const { wiki, redCount } = useSongEnrichment(detailId);
 
 /** 当前播放模式 key（用于映射图标） */
 const playModeKey = computed(() => {
@@ -566,14 +585,72 @@ watch(
     transform: translateY(6px);
   }
 
-  // 评论/相似组件按浅色主题设计，套一层浅色卡片保证在深色播放页上可读
+  // 卡片底色/文字走语义变量：浅色为白底黑字，深色自动跟随为深底浅字
   .md-detail {
     flex: 1;
     overflow-y: auto;
     padding: 24px;
     border-radius: 12px;
-    background: rgba(255, 255, 255, 0.95);
+    background: var(--color-default);
     color: var(--color-text-primary);
+
+    // 百科与红心数：显式声明卡片底色与正文/次要文字色，避免白底白字
+    .md-enrich-block {
+      margin-bottom: 16px;
+      padding: 12px 16px;
+      background: var(--color-default);
+      color: var(--color-text-primary);
+      border-left: 3px solid var(--color-primary);
+      border-radius: var(--radius-sm);
+    }
+
+    .md-enrich-title {
+      margin: 0 0 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-primary);
+    }
+
+    .md-wiki-summary {
+      margin: 0 0 8px;
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--color-text-primary);
+    }
+
+    .md-wiki-entries {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .md-wiki-entry {
+      display: flex;
+      gap: 12px;
+      font-size: var(--font-size-xs);
+      line-height: 1.8;
+    }
+
+    .md-wiki-label {
+      flex-shrink: 0;
+      color: var(--color-primary);
+    }
+
+    .md-wiki-value {
+      color: var(--color-text-primary);
+    }
+
+    .md-red-label {
+      margin-right: 8px;
+      font-size: var(--font-size-xs);
+      color: var(--color-text-secondary);
+    }
+
+    .md-red-value {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--color-primary);
+    }
   }
 
   // 底部控制条
