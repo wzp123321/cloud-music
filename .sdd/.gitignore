@@ -1,0 +1,6 @@
+# 一次性探针脚本与验收截图不入库，只保留流程文档
+*.py
+*.js
+*.json
+.playwright-cli/
+screenshots/
