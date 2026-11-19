@@ -16,6 +16,9 @@
         <span v-for="(item, index) in playListDetail?.tags" :key="'tag_' + index"> {{ item }}</span>
       </div>
 
+      <!-- 订阅者：作者信息区之后，空列表时不渲染 -->
+      <subscriber-list v-if="subscribers.length" :subscribers="subscribers" />
+
       <!-- 操作栏：订阅 / 编辑 / 添加歌曲 -->
       <div class="pd-toolbar mb24">
         <el-button type="primary" @click="playAll">
@@ -67,6 +70,24 @@
         type="playlist"
       ></cm-comment>
 
+      <!-- 相关推荐：当前歌单的同好歌单，空列表时不渲染 -->
+      <section v-if="rcmdPlaylists.length" class="pd-rcmd">
+        <div class="pd-musiclist-header">
+          <h5>相关推荐</h5>
+        </div>
+        <div class="pd-rcmd-list">
+          <cm-playlist-card
+            v-for="item in rcmdPlaylists"
+            :id="Number(item.id)"
+            :key="'rcmd-' + item.id"
+            :title="item.name"
+            :cover-image-url="item.coverImgUrl"
+            :play-count="item.playCount"
+            :size="180"
+          />
+        </div>
+      </section>
+
       <!-- 相似推荐：simi_playlist（取歌单内歌曲） -->
       <cm-simi :id="musicList[0]?.id" type="playlist"></cm-simi>
     </section>
@@ -101,6 +122,7 @@
 
 <script lang="ts" setup>
 import PlaylistFormDialog from '../components/playlist-form-dialog.vue';
+import SubscriberList from './components/subscriber-list.vue';
 import { usePlaylistDetailView } from './hooks/usePlaylistDetailView';
 import { usePlayerStore } from '@/store/player';
 
@@ -112,6 +134,8 @@ const {
   musicList,
   commentRes,
   dynamic,
+  subscribers,
+  rcmdPlaylists,
   addVisible,
   addSongIds,
   adding,
@@ -261,6 +285,17 @@ const playAll = () => {
       .ml12 {
         margin-left: 12px;
       }
+    }
+  }
+
+  .pd-rcmd {
+    margin-top: 40px;
+
+    &-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      margin-top: 12px;
     }
   }
 }

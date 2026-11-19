@@ -1,5 +1,9 @@
-import { ref, watch } from 'vue';
+import { computed, onScopeDispose, ref, watch } from 'vue';
+import { useRoute } from 'vue-router';
 import type { ApiRawResponse } from '@/apis/types';
+import { highValueService } from '@/apis/server-coverage/high-value.service';
+import { normalizeRcmd, normalizeSubscribers } from '../api/playlist-social.api';
+import type { RcmdPlaylistVO, SubscriberVO } from '../api/playlist-social.api';
 
 import { usePlayListDetail } from './usePlayListDetail';
 import { PD_PlaylistDetail } from '../../../../apis/playlist-detail/index.api';
@@ -60,7 +64,8 @@ export const usePlaylistDetailView = () => {
     removeTrack,
   } = usePlayListDetail();
 
-  const playlistId = Number(new URLSearchParams(window.location.search).get('id') || '0');
+  const route = useRoute();
+  const playlistId = computed(() => Number(route.query.id || 0));
 
   const playListDetail = ref<PD_PlaylistDetail>(createEmptyDetail());
   const musicList = ref<Common_IMusic[]>([]);
@@ -96,6 +101,47 @@ export const usePlaylistDetailView = () => {
     { immediate: true },
   );
   watch(serviceDynamic$, (v) => (dynamic.value = v), { immediate: true });
+
+  // 订阅者与相关推荐：独立监听路由 query，组件复用时也能随歌单切换更新。
+  const subscribers = ref<SubscriberVO[]>([]);
+  const rcmdPlaylists = ref<RcmdPlaylistVO[]>([]);
+  const currentPlaylistId = computed(() => Number(route.query.id || 0));
+
+  // 主详情同步：组件被复用时 setup 不会重跑，需在 query.id 变化后重新拉取主详情
+  watch(currentPlaylistId, (id, prevId) => {
+    if (id && id !== prevId) init();
+  });
+
+  let socialSeq = 0;
+  watch(
+    currentPlaylistId,
+    (id) => {
+      const mySeq = ++socialSeq;
+      subscribers.value = [];
+      rcmdPlaylists.value = [];
+      if (!id) return;
+      Promise.all([
+        highValueService.playlist.subscribers(id),
+        highValueService.playlist.rcmd(id),
+      ])
+        .then(([subscribersRes, rcmdRes]) => {
+          // 已有更新的请求发出，丢弃本次过期响应
+          if (mySeq !== socialSeq) return;
+          subscribers.value = normalizeSubscribers(subscribersRes);
+          rcmdPlaylists.value = normalizeRcmd(rcmdRes);
+        })
+        .catch(() => {
+          // 失败只置空新增区块，不影响主流程、不弹错
+          if (mySeq !== socialSeq) return;
+          subscribers.value = [];
+          rcmdPlaylists.value = [];
+        });
+    },
+    { immediate: true },
+  );
+  onScopeDispose(() => {
+    socialSeq++;
+  });
 
   const onToggleSubscribe = async () => {
     try {
@@ -163,6 +209,8 @@ export const usePlaylistDetailView = () => {
     musicList,
     commentRes,
     dynamic,
+    subscribers,
+    rcmdPlaylists,
     addVisible,
     addSongIds,
     adding,

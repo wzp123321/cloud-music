@@ -21,9 +21,9 @@ enum EPath {
 }
 
 const create = () => {
-  // 从地址栏读取歌单 id（一次）。
+  // 从地址栏读取歌单 id；组件复用时由 init() 同步为最新 query.id。
   const idParam = getQueryParam('id');
-  const playlistId = idParam ? Number(idParam) : 0;
+  let playlistId = idParam ? Number(idParam) : 0;
 
   //#region
   const playListResult$ = ref<PD_PlaylistDetail>({
@@ -136,12 +136,16 @@ const create = () => {
   };
 
   const init = async () => {
-    const id = getQueryParam('id');
+    // 组件复用（仅 query.id 变化）时也走这里，需同步最新 id 供歌曲/动态/订阅接口使用
+    const id = Number(getQueryParam('id')) || 0;
+    playlistId = id;
     loading.value = true;
     try {
       const res = await getRequest(EPath.查询歌单详情, {
         id,
       });
+      // 已切到其他歌单：丢弃本次过期响应，避免新旧数据串台
+      if (id !== (Number(getQueryParam('id')) || 0)) return;
       playListResult$.value = res?.playlist;
 
       refreshTracks();
@@ -151,7 +155,7 @@ const create = () => {
     } catch {
       // 详情拉取失败时保留上一帧数据，仅结束 loading
     } finally {
-      loading.value = false;
+      if (id === (Number(getQueryParam('id')) || 0)) loading.value = false;
     }
   };
 
