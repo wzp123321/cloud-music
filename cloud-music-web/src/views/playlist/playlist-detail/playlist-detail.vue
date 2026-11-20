@@ -121,10 +121,13 @@
 </template>
 
 <script lang="ts" setup>
+import { watch } from 'vue';
+import { useRoute } from 'vue-router';
 import PlaylistFormDialog from '../components/playlist-form-dialog.vue';
 import SubscriberList from './components/subscriber-list.vue';
 import { usePlaylistDetailView } from './hooks/usePlaylistDetailView';
 import { usePlayerStore } from '@/store/player';
+import { getScrollKey, applyPendingRestore } from '@/router';
 
 const {
   serviceLoading,
@@ -150,6 +153,22 @@ const {
 } = usePlaylistDetailView();
 
 const player = usePlayerStore();
+const route = useRoute();
+
+/**
+ * 数据就绪后触发恢复（D4 / Q23 时序修复）：
+ * scrollBehavior 首写时列表可能尚未渲染、高度不足（写不进），
+ * 改由 router 层 applyPendingRestore 在 5s 窗口内持续校正 .home.scrollTop，
+ * 避免内容分批渲染导致的 clamp 到 0 / 漂移；新导航无 pendingRestore 时自然停止。
+ */
+watch(
+  serviceLoading,
+  (loading) => {
+    if (loading) return;
+    applyPendingRestore(getScrollKey(route));
+  },
+  { immediate: true },
+);
 
 /** 播放全部：整张歌单作为播放上下文，从第一首开始 */
 const playAll = () => {

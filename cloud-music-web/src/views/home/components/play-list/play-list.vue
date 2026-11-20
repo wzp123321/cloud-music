@@ -21,6 +21,7 @@
         :list="playList.musicList"
         @play="handlePlay"
         @remove="playList.removeMusic"
+        @reorder="playList.reorderMusic"
       />
       <div v-else class="common-table-empty flex-column-center-center">
         <cm-image src="../../../../assets/images/common/common-data-none.svg" alt="" />

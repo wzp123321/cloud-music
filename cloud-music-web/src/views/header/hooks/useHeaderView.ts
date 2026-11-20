@@ -6,6 +6,7 @@ import { useHeader } from './useHeader';
 import { useLogin } from '../header-loginform/hooks/useLogin';
 import { HL_LoginUserVO } from '../../../apis/header-loginform/index.api';
 import message from '@/utils/message';
+import { addHistory } from '@/utils/searchHistory';
 import { sessionManager } from '@/core/session';
 import { useUserStore } from '@/store/user';
 
@@ -18,7 +19,7 @@ export const useHeaderView = () => {
   const route = useRoute();
   const router = useRouter();
   const userStore = useUserStore();
-  const { menus, currentTab, keyword, searchFocus, hotList, hotDetail, suggestList, panelLoading, adjustActiveTab, loadDefaultKeyword, loadHot, loadSuggest, clearSuggest } = useHeader();
+  const { menus, currentTab, keyword, searchFocus, hotList, hotDetail, suggestList, historyList, panelLoading, adjustActiveTab, loadDefaultKeyword, loadHot, loadSuggest, clearSuggest, loadHistory, deleteHistory, clearAllHistory } = useHeader();
   const { show: showLogin } = useLogin();
 
   loadDefaultKeyword();
@@ -39,6 +40,8 @@ export const useHeaderView = () => {
   };
 
   const handleSearch = () => {
+    // 用户主动提交搜索时在 keyword 被清空前记一条历史，空白由工具函数内部过滤
+    addHistory(keyword.value.trim());
     router.replace({
       path: '/search',
       query: {
@@ -50,9 +53,10 @@ export const useHeaderView = () => {
     clearSuggest();
   };
 
-  /** 聚焦搜索框：加载热搜榜 */
+  /** 聚焦搜索框：加载热搜榜并刷新本地搜索历史 */
   const onSearchFocus = () => {
     searchFocus.value = true;
+    loadHistory();
     if (!hotList.value.length) {
       loadHot();
     }
@@ -69,6 +73,35 @@ export const useHeaderView = () => {
         keyword: selectedKeyword,
       },
     });
+  };
+
+  /** 点击搜索历史：回填关键词后复用既有 handleSearch 立即跳转 */
+  const onSelectHistory = (word: string) => {
+    keyword.value = word;
+    handleSearch();
+  };
+
+  /** 删除单条搜索历史：即时生效，无需确认 */
+  const onDeleteHistory = (word: string) => {
+    deleteHistory(word);
+  };
+
+  /** 清空全部搜索历史：复用项目既有确认弹窗二次确认 */
+  const onClearHistory = () => {
+    ElMessageBox.confirm('确认清空全部搜索历史吗？', '清空搜索历史', {
+      confirmButtonText: '确认',
+      cancelButtonText: '取消',
+      showClose: false,
+      type: 'warning',
+    })
+      .then((res) => {
+        if (res === 'confirm') {
+          clearAllHistory();
+        }
+      })
+      .catch(() => {
+        // 用户取消清空，不处理
+      });
   };
 
   /** 建议类型文案 */
@@ -153,6 +186,7 @@ export const useHeaderView = () => {
     hotList,
     hotDetail,
     suggestList,
+    historyList,
     panelLoading,
     loadSuggest,
     userInfo,
@@ -161,6 +195,9 @@ export const useHeaderView = () => {
     handleSearch,
     onSearchFocus,
     onSelectKeyword,
+    onSelectHistory,
+    onDeleteHistory,
+    onClearHistory,
     suggestTypeText,
     handleLoginDialogShow,
     handleLoginOut,

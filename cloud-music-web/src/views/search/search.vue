@@ -81,8 +81,9 @@
 </template>
 <script lang="ts" setup>
 import { ref, computed, watch } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { getQueryParam } from '@/core/token';
+import { getScrollKey, applyPendingRestore } from '@/router';
 import { useSearch, SEARCH_MultimatchEntry } from './hooks/useSearch';
 
 import { SearchType } from '../../apis/search/index.api';
@@ -91,6 +92,7 @@ const urlKeyword = computed(() => {
   return getQueryParam('keyword') as string;
 });
 const router = useRouter();
+const route = useRoute();
 const {
   type,
   songs,
@@ -151,6 +153,18 @@ watch(
   },
   { immediate: true },
 );
+
+/**
+ * 结果就绪后触发恢复（D4 / Q23 时序修复）：
+ * scrollBehavior 首写时结果列表可能为空、高度不足（写不进），
+ * 改由 router 层 applyPendingRestore 在 5s 窗口内持续校正 .home.scrollTop，
+ * 避免内容分批渲染导致的 clamp 到 0 / 漂移；新导航 / 换词无 pendingRestore 时自然停止。
+ */
+const applyRestore = () => {
+  if (isLoading.value) return;
+  applyPendingRestore(getScrollKey(route));
+};
+watch(isLoading, (v) => { if (!v) applyRestore(); }, { immediate: true });
 </script>
 <style lang="less" scoped>
 .search {

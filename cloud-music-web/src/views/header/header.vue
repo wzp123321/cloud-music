@@ -39,6 +39,19 @@
           </ul>
           <!-- 热搜榜 + 热搜详情 -->
           <template v-else>
+            <!-- 搜索历史：点击词即搜，支持单条删除与一键清空；与建议分区互斥、不覆盖 -->
+            <template v-if="historyList.length">
+              <div class="panel-title panel-title--history">
+                <span>搜索历史</span>
+                <span class="history-clear" @mousedown.prevent="onClearHistory">清空</span>
+              </div>
+              <ul class="header-history">
+                <li v-for="(word, index) in historyList" :key="'his_' + index">
+                  <span class="history-word" :title="word" @mousedown.prevent="onSelectHistory(word)">{{ word }}</span>
+                  <span class="history-delete" title="删除" @mousedown.prevent.stop="onDeleteHistory(word)">×</span>
+                </li>
+              </ul>
+            </template>
             <div v-if="hotList.length" class="panel-title">热搜榜</div>
             <ul v-if="hotList.length" class="header-hot">
               <li
@@ -118,6 +131,7 @@ const {
   hotList,
   hotDetail,
   suggestList,
+  historyList,
   panelLoading,
   loadSuggest,
   userInfo,
@@ -126,6 +140,9 @@ const {
   handleSearch,
   onSearchFocus,
   onSelectKeyword,
+  onSelectHistory,
+  onDeleteHistory,
+  onClearHistory,
   suggestTypeText,
   handleLoginDialogShow,
   handleLoginOut,
@@ -289,6 +306,46 @@ const {
               overflow: hidden;
               text-overflow: ellipsis;
               white-space: nowrap;
+            }
+          }
+        }
+
+        .panel-title--history {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+
+          .history-clear {
+            cursor: pointer;
+            color: var(--color-text-secondary);
+
+            &:hover {
+              color: var(--color-primary);
+            }
+          }
+        }
+
+        .header-history {
+          li {
+            .history-word {
+              flex: 1;
+              min-width: 0;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+            }
+
+            .history-delete {
+              flex: 0 0 auto;
+              margin-left: 8px;
+              padding: 0 2px;
+              color: var(--color-text-secondary);
+              font-size: 14px;
+              line-height: 1;
+
+              &:hover {
+                color: var(--color-primary);
+              }
             }
           }
         }

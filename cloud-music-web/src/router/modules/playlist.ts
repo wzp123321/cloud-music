@@ -6,6 +6,9 @@ const playlistRoutes: RouteRecordRaw[] = [
     path: '/playlist_detail',
     meta: {
       name: 'playlist_detail',
+      // 列表页：离开时记忆滚动位置；关键参数 id 来自真实 query，换 id 即换 key 回顶
+      keepScroll: true,
+      scrollParams: ['id'],
     },
     component: () => import('@/views/playlist/playlist-detail/playlist-detail.vue'),
   },

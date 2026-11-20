@@ -5,6 +5,7 @@ import { ref } from 'vue';
 import { menus as menuTabs } from '../constant/index';
 
 import { getRequest } from '@/apis/request';
+import { getHistory, removeHistory, clearHistory } from '@/utils/searchHistory';
 import {
   getSearchHot,
   getSearchHotDetail,
@@ -51,6 +52,8 @@ const create = () => {
   const hotDetail = ref<SE_HotDetailItem[]>([]);
   /** 搜索建议（search_suggest） */
   const suggestList = ref<SE_SuggestItem[]>([]);
+  /** 本地搜索历史（最近在前，未登录可用） */
+  const historyList = ref<string[]>([]);
   /** 面板加载态 */
   const panelLoading = ref<boolean>(false);
   /** 建议去抖定时器（非响应式状态） */
@@ -134,6 +137,25 @@ const create = () => {
   };
   //#endregion
 
+  //#region 本地搜索历史（纯 localStorage，不接 withSession、不触发接口）
+  /** 刷新历史列表：聚焦搜索框时调用 */
+  const loadHistory = () => {
+    historyList.value = getHistory();
+  };
+
+  /** 删除单条历史：即时生效 */
+  const deleteHistory = (word: string) => {
+    removeHistory(word);
+    historyList.value = getHistory();
+  };
+
+  /** 清空全部历史：确认由视图编排层负责，此处只做数据清理 */
+  const clearAllHistory = () => {
+    clearHistory();
+    historyList.value = [];
+  };
+  //#endregion
+
   return {
     menus: menuTabs,
     currentTab,
@@ -143,12 +165,16 @@ const create = () => {
     hotList,
     hotDetail,
     suggestList,
+    historyList,
     panelLoading,
     adjustActiveTab,
     loadDefaultKeyword,
     loadHot,
     loadSuggest,
     clearSuggest,
+    loadHistory,
+    deleteHistory,
+    clearAllHistory,
   };
 };
 

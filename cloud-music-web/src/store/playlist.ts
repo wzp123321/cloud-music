@@ -4,6 +4,9 @@ import { getRequest } from '@/apis/request';
 import { PL_PlayVO } from '@/apis/play-list/index.api';
 import { Common_IMusic } from '@/apis/common/index.api';
 import { useSettingStore } from './setting';
+// player.ts:9 顶层 import 了 playlist；这里只在 reorderMusic 函数体内惰性调用 usePlayerStore()，
+// 模块初始化期不访问该绑定，运行时才取值，从而规避顶层反向 import 造成的循环依赖（详设 §4 R1）。
+import { usePlayerStore } from './player';
 
 /** 旧版本直接把队列数组写在这个 key 下，必须用自定义 serializer 保持格式兼容 */
 const listStorageKey = 'cloud-music-list';
@@ -21,6 +24,36 @@ export const usePlaylistStore = defineStore(
     const setting = useSettingStore();
     // 队列唯一真相源：合并原 Player._musicList 与 PlayListService._musicList
     const musicList = ref<PL_PlayVO[]>([]);
+
+    /**
+     * 队列重排：把 from 处的歌曲移动到 to，并按当前播放歌曲 id 重算 player.currentIndex。
+     * splice 移动的是原对象引用（不 spread / 不 clone），currentMusic 派生结果不变，
+     * <audio :src> 稳定、播放不中断；不改 url / isPlaying / playTimestamp，不重新拉音源。
+     * 顺序随本 store 既有 persist(pick musicList) 自动落盘，跨刷新保持。
+     */
+    const reorderMusic = (from: number, to: number) => {
+      const len = musicList.value.length;
+      if (
+        len <= 1 ||
+        !Number.isInteger(from) ||
+        !Number.isInteger(to) ||
+        from < 0 ||
+        to < 0 ||
+        from >= len ||
+        to >= len ||
+        from === to
+      ) {
+        return;
+      }
+      const player = usePlayerStore();
+      const playingId = player.currentMusic.id;
+      const [moved] = musicList.value.splice(from, 1);
+      musicList.value.splice(to, 0, moved);
+      if (player && typeof playingId === 'number') {
+        const next = musicList.value.findIndex((item) => item.id === playingId);
+        player.currentIndex = next >= 0 ? next : Math.min(player.currentIndex, musicList.value.length - 1);
+      }
+    };
 
     /**
      * 查询歌曲可播放地址，接口异常时返回空串。
@@ -117,7 +150,16 @@ export const usePlaylistStore = defineStore(
       }
     };
 
-    return { musicList, addMusic, removeMusic, setQueue, queryMusicUrl, invalidateUrls, loadFromStorage };
+    return {
+      musicList,
+      addMusic,
+      removeMusic,
+      setQueue,
+      queryMusicUrl,
+      invalidateUrls,
+      loadFromStorage,
+      reorderMusic,
+    };
   },
   {
     persist: {
